@@ -1,4 +1,4 @@
-workspace
+kit
 ===
 
-vimrc/vimfiles for git-bash on Windows
+kit more than the code
