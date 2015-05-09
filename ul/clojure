@@ -1,0 +1,2 @@
+CLOJURE_JAR=/opt/bin/clojure-1.6.0.jar
+java -cp $CLOJURE_JAR clojure.main
