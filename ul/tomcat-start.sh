@@ -3,7 +3,6 @@ VERSION=v6041
 ##DEBUG=0
 MODE="NORMAL"
 
-echo "vars: $#2"
 export CATALINA_BASE="/opt/web/tomcat/$VERSION"
 JAVA_OPTS="$JAVA_OPTS -Dhttp.port=8080 -Dshutdown.port=8005 -Dcom.sun.management.jmxremote "
 export JAVA_OPTS
