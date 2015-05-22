@@ -1,16 +1,18 @@
-#!/bin/sh
-VERSION=v6041
-##DEBUG=0
+#!/bin/bash
+VERSION=v7061
+DEBUG="${DEBUG}0"
 MODE="NORMAL"
+JPDA=""
 
 export CATALINA_BASE="/opt/web/tomcat/$VERSION"
 JAVA_OPTS="$JAVA_OPTS -Dshutdown.port=8005"
 export JAVA_OPTS
 ##/usr/share/tomcat6/bin/catalina.sh jpda stop
-if [ "$DEBUG" -eq 1 ]; then
-    $CATALINA_BASE/bin/catalina.sh jpda stop
+if [ "$DEBUG" -gt 0 ]; then
     MODE="DEBUG"
+    JPDA=jpda
 fi
+$CATALINA_BASE/bin/catalina.sh $JPDA stop
 
 echo "---------------------------------"
 echo "JAVA_OPTS=$JAVA_OPTS"
