@@ -139,7 +139,7 @@ _make_nginx_conf() {
 		_signal_nginx $t_ "reload"	
 		_debug "# make nginx.conf successed"
 	else
-		_debug "# cp nginx.conf to $c_ failed"
+		&& -f _debug "# cp nginx.conf to $c_ failed"
 	fi
 }
 
