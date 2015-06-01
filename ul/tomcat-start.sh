@@ -1,7 +1,7 @@
 #!/bin/bash
 
 RUN=${RUN:="stop"}
-VERSION=${VERSION:="v7062"}
+VER="v${VER:='7062'}"
 DEBUG="${DEBUG:=0}"
 MODE="NORMAL"
 DUMP="${DUMP:=0}"
@@ -10,7 +10,7 @@ JPDA=""
 HTTP_PORT=${HTTP_PORT:=8080}
 STOP_PORT=${STOP_PORT:=8005}
 
-export CATALINA_BASE=${CATALINA_BASE:="/opt/web/tomcat/${VERSION}"}
+export CATALINA_BASE=${CATALINA_BASE:="/opt/web/tomcat/${VER}"}
 
 if [ "$DUMP" -gt 0 ]; then
     HEAP_DUMP="-XX:+HeapDumpOnOutOfMemoryError  \
@@ -44,4 +44,4 @@ esac
 echo "---------------------------------"
 echo "JAVA_OPTS=$JAVA_OPTS"
 echo "CATALINA_OPTS=$CATALINA_OPTS"
-echo "Tomcat $VERSION {$RUN} in $MODE mode"
+echo "Tomcat $VER {$RUN} in $MODE mode"
