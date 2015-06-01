@@ -1,6 +1,6 @@
 #!/bin/bash
 VERSION=v7062
-DEBUG="${DEBUG}0"
+DEBUG="${DEBUG:=0}"
 MODE="NORMAL"
 JPDA=""
 

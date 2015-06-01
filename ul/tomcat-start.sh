@@ -1,20 +1,17 @@
 #!/bin/bash
-VERSION=v7062
-DEBUG="${DEBUG}0"
+VERSION=${VERSION:="v7062"}
+DEBUG="${DEBUG:=0}"
 MODE="NORMAL"
-DUMP="${DUMP}0"
+DUMP="${DUMP:=0}"
 HEAP_DUMP=""
 JPDA=""
+export CATALINA_BASE=${CATALINA_BASE:="/opt/web/tomcat/${VERSION}"}
 
-export CATALINA_BASE="/opt/bin/tomcat/$VERSION"
+if [ "$DUMP" -gt 0 ]; then
+    HEAP_DUMP="-XX:+HeapDumpOnOutOfMemoryError " \
+        "-XX:HeapDumpPath=${CATALINA_BASE}/logs"
+fi
 
-##if [ "$DUMP" -gt 0 ]; then
-##    HEAP_DUMP="-XX:+HeapDumpOnOutOfMemoryError " \
-##        "-XX:HeapDumpPath=${CATALINA_BASE}/logs"
-##fi
-XX="$XX" \
-    "YY"
-echo $XX
 JAVA_OPTS="$JAVA_OPTS "                 \
     "-Dhttp.port=8080 "                 \
     "-Dshutdown.port=8005 "             \
