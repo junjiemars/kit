@@ -1,7 +1,7 @@
 #!/bin/bash
 
 RUN=${RUN:="stop"}
-VER="v${VER:='7062'}"
+VER="${VER:=7062}"
 DEBUG="${DEBUG:=0}"
 MODE="NORMAL"
 DUMP="${DUMP:=0}"
@@ -9,8 +9,9 @@ HEAP_DUMP=""
 JPDA=""
 HTTP_PORT=${HTTP_PORT:=8080}
 STOP_PORT=${STOP_PORT:=8005}
+BASE=${BASE:="/opt/tomcat"}
 
-export CATALINA_BASE=${CATALINA_BASE:="/opt/web/tomcat/${VER}"}
+export CATALINA_BASE=${CATALINA_BASE:="${BASE}/${VER}"}
 
 if [ "$DUMP" -gt 0 ]; then
     HEAP_DUMP="-XX:+HeapDumpOnOutOfMemoryError  \
