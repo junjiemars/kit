@@ -10,7 +10,7 @@
 #===============================================
 # MANUAL
 #===============================================
-passcode=""
+PASSCODE=""
 dmpdir=""
 dmpname=""
 tables=""
@@ -18,14 +18,18 @@ sqllike=""
 sqlexclude=""
 debug=false
 EXP_OPTS="${EXP_OPTS:="FEEDBACK=1"}"
-HELP="usage -h -p<username/password> -d<dump-dir> -t<tables> -s<sqllike> -x<excluded>"
+HELP="usage:\t-h\t\t\thelp\n\
+    \t-p<username/password>\toracle login\n\
+    \t-d<dump-dir>\t\tdump directory\n\
+    \t-t<tables>\t\ttable list, seperate by ','\n\
+    \t-s<like-filter>\t\tlike filter, ABC%\n\
+    \t-x<excluded>\t\texcluded tables, seperate by ','"
 
 while getopts "hp:dn:t:s:" arg
 do
 	case ${arg} in
-#		h) echo "usage: -h -p<passcode> -d<dmpdir> -n<dmpname> -t<tables> -s<sqllike> -x<exclue>";;
-        h) echo $HELP;;
-		p) passcode=${OPTARG};;
+        h) echo -e $HELP;;
+		p) PASSCODE=${OPTARG};;
 		d) dmpdir=${OPTARG};;
 		n) dmpname=${OPTARG};;
 		t) tables=${OPTARG};;
@@ -35,7 +39,7 @@ do
 done
 
 #echo ${dmpname}
-passcode="${passcode:-system/Hell0@localhost:1521/XE}"
+PASSCODE="${PASSCODE:-xws/xws@localhost:1521/XE}"
 dmpdir="${dmpdir:-/home/junjie/cache/xe}"
 dmpname="${dmpname:-tables}"
 sqlexclude=""
@@ -48,7 +52,7 @@ function build_tables() {
 
 echo "${sqllike}"
 #echo "${sqlexclude}"
-sqlplus ${passcode} <<!
+sqlplus ${PASSCODE} <<!
 set heading off;
 set echo off;
 set pages 1000
@@ -79,6 +83,6 @@ fi
 if [ -n "${sqllike}" ]; then
 	build_tables
 fi
-#echo "exp ${passcode} file=${dmpfile} log=${logfile} tables=${tables} sqllike=${sqllike}"
-exp ${passcode} file=${dmpfile} log=${logfile} tables=${tables} ${EXP_OPTS}
+#echo "exp ${PASSCODE} file=${dmpfile} log=${logfile} tables=${tables} sqllike=${sqllike}"
+exp ${PASSCODE} file=${dmpfile} log=${logfile} tables=${tables} ${EXP_OPTS}
 
