@@ -76,15 +76,13 @@ if [[ -n "$SQL_LIKE" ]]; then
     build_tables
 fi
 
-echo $TABLES
-
 if [[ -z "$TABLES" ]]; then
     echo "!-t<tables> or -s<like-filter> is null/empty."
     echo -e $HELP; exit 1
 fi
 
 if [[ -n "$SQL_EXCLUDE" ]]; then
-    TABLES=$(echo $TABLES | awk -vX=$SQL_EXCLUDE 'BEGIN{gsub(/%/,"\\w*",X);X=X "[,]*";t="";}END{split($0,a,",");for(i in a){if(match(a[i],X)>0)delete a[i];}for(i in a){if(a[i]=="")continue;t=length(t)==0?a[i]:t "," a[i];}print t;}')
+    TABLES=$(echo $TABLES | awk -v X=$SQL_EXCLUDE 'BEGIN{gsub(/%/,"\\w*",X);gsub(/,/,"|",X);X=X "[,]*";t="";}END{split($0,a,",");for(i in a){if(match(a[i],X)>0)delete a[i];}for(i in a){if(a[i]=="")continue;t=length(t)==0?a[i]:t "," a[i];}print t;}')
     echo $TABLES
 fi
 
