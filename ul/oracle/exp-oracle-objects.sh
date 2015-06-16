@@ -10,40 +10,44 @@
 # piece by piece.
 #=====================================================
 # MANUAL: The best advice: Don't use it if u need 
-#         a manual really.
+#         a manual exactly.
 #=====================================================
 PASSCODE="${PASSCODE:-xws/xws@localhost:1521/XE}"
 EXP_DIR=${EXP_DIR:-$PWD}
 TODAY=`date +%Y-%m-%d`
 EXP_FILE="${EXP_FILE:-${EXP_DIR}/exp-${TODAY}.dmp}"
 EXP_LOG="${EXP_LOG:-${EXP_DIR}/exp-${TODAY}.log}"
+EXP_OPTS="${EXP_OPTS:="FEEDBACK=1"}"
+OBJECT_LIST="${EXP_DIR}/object.list"
+SQLPLUS_PAGES="${SQLPLUS_PAGES:-1000}"
+SQLPLUS_LONG="${SQLPLUS_LONG:-90000}"
 OBJECTS=""
 SQL_LIKE=""
 SQL_EXCLUDE=""
-EXP_OPTS="${EXP_OPTS:="FEEDBACK=1"}"
-OBJECT_LIST="${EXP_DIR}/object.list"
-SQLPLUS_PAGES=1000
-SQLPLUS_LONG=90000
+SQL_DDL_NAME=""
+OBJECT_TYPE=""
 
-DEBUG=0
+DEBUG="${DEBUG:-0}"
 HELP="usage:\texp-oracle-tables.sh <options>\n\
 options:-h\t\t\thelp\n\
     \t-p<username/password>\toracle's login\n\
     \t[-w<dump-dir>]\t\tdump directory\n\
+    \t[-t<ddl-type>]\t\tddl type:one of table,procedure,sequence\n\
     \t-n<object>\t\tobject list, seperate by ','\n\
-    \t-l<like-filter>\t\tlike filter, ABC\%, etc.\n\
+    \t-f<like-filter>\t\tlike filter, ABC\%, etc.\n\
     \t[-x<excluded>]\t\texcluded tables, seperate by ',' or like '%'"
 
-while getopts "hdp:wn:l:x:" arg
+while getopts "hdt:p:wn:f:x:" arg
 do
 	case ${arg} in
         h) echo -e $HELP; exit 0;;
         d) DEBUG=1;;
+        t) OBJECT_TYPE=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
 		p) PASSCODE=${OPTARG};;
 		w) EXP_DIR=${OPTARG};;
-		n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
-		l) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
-        x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
+		n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
+		f) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
+        x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
         *) echo -e $HELP; exit 1;;
 	esac
 done
@@ -54,51 +58,120 @@ echo -e "#Objects Filter:${SQL_LIKE}"
 echo -e "#eXclude Objects/Filter:${SQL_EXCLUDE}"
 echo -e "========================================"
 
+function summary() {
+    echo -e "\n#SUMMARY:==============================="
+    echo -e "#${OBJECT_TYPE}(`echo ${OBJECTS}|awk 'BEGIN{FS=","}{print NF;}'`):${OBJECTS}"
+    echo -e "$OBJECTS" | tr ',' '\n'
+    echo -e "#Exp File:${EXP_FILE}"
+    echo -e "#Exp Log:${EXP_LOG}"
+    if [ "$DEBUG" -gt 0 ]; then
+        echo -e "#SQL:$@"
+    fi
+    echo -e "========================================\n"
+}
+
 function run_sqlplus() {
 sqlplus ${PASSCODE} <<!
 set heading off;
 set echo off;
-set pages ${SQLPLUS_PAGES}
+set pages ${SQLPLUS_PAGES};
 set long ${SQLPLUS_LONG};
 define objects_output='${OBJECT_LIST}';
 define sql_like='${SQL_LIKE}';
 spool '&objects_output'
-$1
+$@
 spool off
 exit
 !
 
-#define sql_exclude='${SQL_EXCLUDE}';
-#select table_name from user_tables where table_name like '&sql_like';
 }
 
-if [[ -n "$SQL_LIKE" ]]; then
-    run_sqlplus "select table_name from user_tables where table_name like '&sql_like';"
-    if [ -f ${OBJECT_LIST} ]; then
-        _TABLES=$(awk -v SQL_LIKE=${SQL_LIKE} 'BEGIN{t="";f="^" SQL_LIKE;gsub(/%/,"\\w*",f);}{if (match($0,f)){gsub(/[ \t]*/,"",$0);t=length(t)==0?$0:t "," $0}}END{print t;}' ${OBJECT_LIST})
-        if [[ -n "$OBJECTS" ]]; then
-            OBJECTS="${OBJECTS},${_TABLES}"
-        else
-            OBJECTS="$_TABLES"
+function exp_tables() {
+    local _TABLES=""
+    if [[ -n "$SQL_LIKE" ]]; then
+        run_sqlplus "select table_name from user_tables where table_name like '&sql_like';"
+        if [ -f ${OBJECT_LIST} ]; then
+            _TABLES=$(awk -v SQL_LIKE=${SQL_LIKE} 'BEGIN{t="";f="^" SQL_LIKE;gsub(/%/,"\\w*",f);}{if (match($0,f)){gsub(/[ \t]*/,"",$0);t=length(t)==0?$0:t "," $0}}END{print t;}' ${OBJECT_LIST})
+            if [[ -n "$OBJECTS" ]]; then
+                OBJECTS="${OBJECTS},${_TABLES}"
+            else
+                OBJECTS="$_TABLES"
+            fi
+        fi
     fi
-fi
+    
+    if [[ -z "$OBJECTS" ]]; then
+        echo -e "========================================"
+        echo "!-n<object> or -f<like-filter> is empty."
+        echo -e "========================================"
+        echo -e $HELP; exit 1
+    fi
+    
+    if [[ -n "$SQL_EXCLUDE" ]]; then
+        OBJECTS=$(echo $OBJECTS | awk -v X=$SQL_EXCLUDE 'BEGIN{gsub(/%/,"\\w*",X);gsub(/,/,"|",X);X=X "[,]*";t="";}END{split($0,a,",");for(i in a){if(match(a[i],X)>0)delete a[i];}for(i in a){if(a[i]=="")continue;t=length(t)==0?a[i]:t "," a[i];}print t;}')
+    fi
+    summary
+    
+    if [[ -n "$OBJECTS" ]]; then
+        exp ${PASSCODE} file=${EXP_FILE} log=${EXP_LOG} tables=${OBJECTS} ${EXP_OPTS}
+    fi
+}
 
-fi
+function to_single_quoted() {
+    local _L=$(echo $@|awk 'BEGIN{FS=",";t="";}END{for(i=1;i<=NF;i++){length(t)==0?t="'\''" $i "'\''":t=t ",'\''" $i "'\''";}print t;}')
+    echo $_L
+}
 
-if [[ -z "$OBJECTS" ]]; then
-    echo -e "========================================"
-    echo "!-n<object> or -l<like-filter> is empty."
-    echo -e "========================================"
-    echo -e $HELP; exit 1
-fi
+function to_exclude_ddl() {
+    local _X=$@
+    if [[ -n "$SQL_EXCLUDE" ]]; then
+        OBJECTS=$(to_single_quoted $SQL_EXCLUDE)
+        _X=$(echo $_X|awk -v X=$OBJECTS -v Y=$SQL_DDL_NAME 'END{if(match($0,/;/)>0){gsub(/;/,"",$0);printf "%s and (%s not in (%s));",$0,Y,X}}')
+    fi
+    echo $_X
+}
 
-if [[ -n "$SQL_EXCLUDE" ]]; then
-    OBJECTS=$(echo $OBJECTS | awk -v X=$SQL_EXCLUDE 'BEGIN{gsub(/%/,"\\w*",X);gsub(/,/,"|",X);X=X "[,]*";t="";}END{split($0,a,",");for(i in a){if(match(a[i],X)>0)delete a[i];}for(i in a){if(a[i]=="")continue;t=length(t)==0?a[i]:t "," a[i];}print t;}')
-fi
+function exp_procedures() {
+    local _SQL="select dbms_metadata.get_ddl('PROCEDURE', d.object_name) from user_procedures d"
+    if [[ -n "$SQL_LIKE" ]]; then
+        _SQL="${_SQL} where d.object_name like '${SQL_LIKE}';"
+    elif [[ -n "$OBJECTS" ]]; then
+        OBJECTS=$(to_single_quoted $OBJECTS)
+        _SQL="${_SQL} where d.object_name in (${OBJECTS});"
+    else
+        echo -e $HELP
+        exit 1
+    fi
+    SQL_DDL_NAME="d.object_name"
+    _SQL=$(to_exclude_ddl $_SQL)
+    echo -e $_SQL
+    summary $_SQL
+    run_sqlplus ${_SQL}
+}
 
-echo -e "\n#Objects(`echo ${OBJECTS}|awk 'BEGIN{FS=","}{print NF;}'`):${OBJECTS}"
-echo -e "$OBJECTS" | tr ',' '\n'
+function exp_sequense() {
+    local _SQL="select dbms_metadata.get_ddl('SEQUENCE', s.sequence_name) from user_sequences s "
+    if [[ -n "$SQL_LIKE" ]]; then
+        _SQL="${_SQL} where s.sequence_name like '${SQL_LIKE}';"
+    elif [[ -n "$OBJECTS" ]]; then
+        OBJECTS=$(to_single_quoted $OBJECTS)
+        _SQL="${_SQL} where s.sequence_name in (${OBJECTS});"
+    else
+        echo -e $HELP
+        exit 1
+    fi
+    SQL_DDL_NAME="s.sequence_name"
+    _SQL=$(to_exclude_ddl $_SQL)
+    summary $_SQL
+    run_sqlplus ${_SQL}
+}
 
-if [[ -n "$OBJECTS" ]]; then
-    exp ${PASSCODE} file=${EXP_FILE} log=${EXP_LOG} tables=${OBJECTS} ${EXP_OPTS}
-fi
+case ".$OBJECT_TYPE" in
+    .) exp_tables;;
+    .TABLE) echo "XXX";;
+    .PROCEDURE) exp_procedures;;
+    .SEQUENCE) exp_sequense;;
+    *)to_single_quoted "A,B,C";;
+esac
+
+
