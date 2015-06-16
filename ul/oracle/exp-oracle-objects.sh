@@ -131,7 +131,7 @@ function to_exclude_ddl() {
     echo $_X
 }
 
-function exp_procedures() {
+function exp_procedure_ddl() {
     local _SQL="select dbms_metadata.get_ddl('PROCEDURE', d.object_name) from user_procedures d"
     if [[ -n "$SQL_LIKE" ]]; then
         _SQL="${_SQL} where d.object_name like '${SQL_LIKE}';"
@@ -149,7 +149,7 @@ function exp_procedures() {
     run_sqlplus ${_SQL}
 }
 
-function exp_sequense() {
+function exp_sequence_ddl() {
     local _SQL="select dbms_metadata.get_ddl('SEQUENCE', s.sequence_name) from user_sequences s "
     if [[ -n "$SQL_LIKE" ]]; then
         _SQL="${_SQL} where s.sequence_name like '${SQL_LIKE}';"
@@ -166,11 +166,28 @@ function exp_sequense() {
     run_sqlplus ${_SQL}
 }
 
+function exp_table_ddl() {
+    local _SQL="select dbms_metadata.get_ddl('TABLE', d.table_name) from user_tables d "
+    if [[ -n "$SQL_LIKE" ]]; then
+        _SQL="${_SQL} where d.table_name like '${SQL_LIKE}';"
+    elif [[ -n "$OBJECTS" ]]; then
+        OBJECTS=$(to_single_quoted $OBJECTS)
+        _SQL="${_SQL} where d.table_name in (${OBJECTS});"
+    else
+        echo -e $HELP
+        exit 1
+    fi
+    SQL_DDL_NAME="d.table_name"
+    _SQL=$(to_exclude_ddl $_SQL)
+    summary $_SQL
+    run_sqlplus ${_SQL}
+}
+
 case ".$OBJECT_TYPE" in
     .) exp_tables;;
-    .TABLE) echo "XXX";;
-    .PROCEDURE) exp_procedures;;
-    .SEQUENCE) exp_sequense;;
+    .TABLE) exp_table_ddl;;
+    .PROCEDURE) exp_procedure_ddl;;
+    .SEQUENCE) exp_sequence_ddl;;
     *)to_single_quoted "A,B,C";;
 esac
 
