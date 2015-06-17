@@ -39,7 +39,7 @@ options:-h\t\t\thelp\n\
     \t[-t<ddl-type>]\t\tddl type:one of table,procedure,sequence\n\
     \t-n<object>\t\tobject list, seperate by ','\n\
     \t-l<like-filter>\t\tlike filter, ABC\%, etc.\n\
-    \t[-x<excluded>]\t\texcluded tables, seperate by ',' or like '%'"
+    \t[-x<exclude>]\t\texclude objects, seperate by ',' or like '%'"
 
 while getopts "hdt:p:wn:l:x:" arg
 do
