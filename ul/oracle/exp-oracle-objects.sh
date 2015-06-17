@@ -15,12 +15,16 @@
 PASSCODE="${PASSCODE:-xws/xws@localhost:1521/XE}"
 EXP_DIR=${EXP_DIR:-$PWD}
 TODAY=`date +%Y-%m-%d`
-EXP_FILE="${EXP_FILE:-${EXP_DIR}/exp-${TODAY}.dmp}"
-EXP_LOG="${EXP_LOG:-${EXP_DIR}/exp-${TODAY}.log}"
+EXP_FILE=""
+EXP_LOG=""
 EXP_OPTS="${EXP_OPTS:="FEEDBACK=1"}"
-OBJECT_LIST="${EXP_DIR}/object.list"
-SQLPLUS_PAGES="${SQLPLUS_PAGES:-1000}"
+OBJECT_LIST=""
+
+SQLPLUS_PAGESIZE="${SQLPLUS_PAGESIZE:-0}"
 SQLPLUS_LONG="${SQLPLUS_LONG:-90000}"
+SQLPLUS_LINESIZE="${SQLPLUS_LINESIZE:-80}"
+SQLPLUS_TERMOUT="${SQLPLUS_TERMOUT:-ON}"
+
 OBJECTS=""
 SQL_LIKE=""
 SQL_EXCLUDE=""
@@ -34,32 +38,41 @@ options:-h\t\t\thelp\n\
     \t[-w<dump-dir>]\t\tdump directory\n\
     \t[-t<ddl-type>]\t\tddl type:one of table,procedure,sequence\n\
     \t-n<object>\t\tobject list, seperate by ','\n\
-    \t-f<like-filter>\t\tlike filter, ABC\%, etc.\n\
+    \t-l<like-filter>\t\tlike filter, ABC\%, etc.\n\
     \t[-x<excluded>]\t\texcluded tables, seperate by ',' or like '%'"
 
-while getopts "hdt:p:wn:f:x:" arg
+while getopts "hdt:p:wn:l:x:" arg
 do
 	case ${arg} in
         h) echo -e $HELP; exit 0;;
         d) DEBUG=1;;
         t) OBJECT_TYPE=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
 		p) PASSCODE=${OPTARG};;
-		w) EXP_DIR=${OPTARG};;
+		w) EXP_DIR=${OPTARG:-$PWD};;
 		n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
-		f) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
+		l) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
         x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
         *) echo -e $HELP; exit 1;;
 	esac
 done
 
-echo -e "========================================"
-echo -e "#Included Objects:${OBJECTS}"
-echo -e "#Objects Filter:${SQL_LIKE}"
-echo -e "#eXclude Objects/Filter:${SQL_EXCLUDE}"
-echo -e "========================================"
+function spec() {
+    local _TYPE=""
+    if [[ -z "$OBJECT_TYPE" ]]; then
+        _TYPE="TABLE<DUMP>"
+    else
+        _TYPE="$OBJECT_TYPE<DDL>"
+    fi
+    echo -e "=SPEC==================================="
+    echo -e "#Object Type:${_TYPE}"
+    echo -e "#Included Objects:${OBJECTS}"
+    echo -e "#Objects Filter:${SQL_LIKE}"
+    echo -e "#eXclude Objects/Filter:${SQL_EXCLUDE}"
+    echo -e "========================================"
+}
 
 function summary() {
-    echo -e "\n#SUMMARY:==============================="
+    echo -e "\n=SUMMARY:==============================="
     echo -e "#${OBJECT_TYPE}(`echo ${OBJECTS}|awk 'BEGIN{FS=","}{print NF;}'`):${OBJECTS}"
     echo -e "$OBJECTS" | tr ',' '\n'
     echo -e "#Exp File:${EXP_FILE}"
@@ -71,11 +84,19 @@ function summary() {
 }
 
 function run_sqlplus() {
+if [ "$DEBUG" -gt 0 ];then
+    SQLPLUS_TERMOUT="ON"
+else
+    SQLPLUS_TERMOUT="OFF"
+fi
+
 sqlplus ${PASSCODE} <<!
+set termout ${SQLPLUS_TERMOUT};
 set heading off;
 set echo off;
-set pages ${SQLPLUS_PAGES};
+set pages ${SQLPLUS_PAGESIZE};
 set long ${SQLPLUS_LONG};
+set linesize ${SQLPLUS_LINESIZE};
 define objects_output='${OBJECT_LIST}';
 define sql_like='${SQL_LIKE}';
 spool '&objects_output'
@@ -92,6 +113,7 @@ function exp_tables() {
         run_sqlplus "select table_name from user_tables where table_name like '&sql_like';"
         if [ -f ${OBJECT_LIST} ]; then
             _TABLES=$(awk -v SQL_LIKE=${SQL_LIKE} 'BEGIN{t="";f="^" SQL_LIKE;gsub(/%/,"\\w*",f);}{if (match($0,f)){gsub(/[ \t]*/,"",$0);t=length(t)==0?$0:t "," $0}}END{print t;}' ${OBJECT_LIST})
+            echo -e "XXX: $_TABLES"
             if [[ -n "$OBJECTS" ]]; then
                 OBJECTS="${OBJECTS},${_TABLES}"
             else
@@ -100,9 +122,9 @@ function exp_tables() {
         fi
     fi
     
-    if [[ -z "$OBJECTS" ]]; then
+    if [[ -z "$OBJECTS" ]] && [[ "$DEBUG" -gt 0 ]]; then
         echo -e "========================================"
-        echo "!-n<object> or -f<like-filter> is empty."
+        echo -e "#!'<\$OBJECTS>' is zero"
         echo -e "========================================"
         echo -e $HELP; exit 1
     fi
@@ -131,6 +153,13 @@ function to_exclude_ddl() {
     echo $_X
 }
 
+function to_ddl() {
+    if [[ -n "$OBJECT_TYPE" && -f "$OBJECT_LIST" ]]; then
+        EXP_FILE=$(echo $EXP_FILE|awk '{gsub(/.dmp/,".sql",$0);print $0;}')
+        awk '!/SQL>/{print $0;}' $OBJECT_LIST > $EXP_FILE
+    fi
+}
+
 function exp_procedure_ddl() {
     local _SQL="select dbms_metadata.get_ddl('PROCEDURE', d.object_name) from user_procedures d"
     if [[ -n "$SQL_LIKE" ]]; then
@@ -144,9 +173,9 @@ function exp_procedure_ddl() {
     fi
     SQL_DDL_NAME="d.object_name"
     _SQL=$(to_exclude_ddl $_SQL)
-    echo -e $_SQL
     summary $_SQL
     run_sqlplus ${_SQL}
+    to_ddl
 }
 
 function exp_sequence_ddl() {
@@ -164,6 +193,7 @@ function exp_sequence_ddl() {
     _SQL=$(to_exclude_ddl $_SQL)
     summary $_SQL
     run_sqlplus ${_SQL}
+    to_ddl
 }
 
 function exp_table_ddl() {
@@ -181,7 +211,13 @@ function exp_table_ddl() {
     _SQL=$(to_exclude_ddl $_SQL)
     summary $_SQL
     run_sqlplus ${_SQL}
+    to_ddl
 }
+
+EXP_FILE="${EXP_FILE:-${EXP_DIR}/exp-${TODAY}.dmp}"
+EXP_LOG="${EXP_LOG:-${EXP_DIR}/exp-${TODAY}.log}"
+OBJECT_LIST="${OBJECT_LIST:-${EXP_DIR}/object.list}"
+spec
 
 case ".$OBJECT_TYPE" in
     .) exp_tables;;
