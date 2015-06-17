@@ -119,15 +119,6 @@ function build_object_list(){
         fi
     fi
     
-    if [[ -z "$_OBJ" ]]; then
-        if [[ "$DEBUG" -gt 0 ]]; then
-            echo -e "========================================"
-            echo -e "#!'<\$OBJECTS>' is zero"
-            echo -e "========================================"
-        fi 
-        echo -e $HELP; exit 1
-    fi
-    
     if [[ -n "$SQL_EXCLUDE" ]]; then
         _OBJ=$(echo $_OBJ | awk -v X=$SQL_EXCLUDE 'BEGIN{gsub(/%/,"\\w*",X);gsub(/,/,"$|",X);X=X "$";t="";}END{split($0,a,",");for(i in a){if(match(a[i],X)>0)delete a[i];}for(i in a){if(a[i]=="")continue;t=length(t)==0?a[i]:t "," a[i];}print t;}')
     fi
@@ -204,7 +195,7 @@ function exp_sequence_ddl() {
 function exp_table_ddl() {
     local _SQL="select dbms_metadata.get_ddl('TABLE', d.table_name) from user_tables d "
     if [[ -n "$SQL_LIKE" ]]; then
-        _SQL="${_SQL} where d.table_name like '${SQL_LIKE}';"
+        _SQL="${_SQL} where d.table_name like '${SQL_LIKE}';" 
     elif [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         _SQL="${_SQL} where d.table_name in (${OBJECTS});"
