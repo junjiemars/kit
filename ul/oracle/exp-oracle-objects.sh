@@ -92,6 +92,7 @@ fi
 
 sqlplus ${PASSCODE} <<!
 set termout ${SQLPLUS_TERMOUT};
+set serveroutput off;
 set heading off;
 set echo off;
 set pages ${SQLPLUS_PAGESIZE};
@@ -210,6 +211,20 @@ function exp_table_ddl() {
     to_ddl
 }
 
+function exp_package_ddl() {
+    local _SQL="select a.text from user_source a where a.name='${OBJECTS}' and a.type='PACKAGE' union all select b.text from user_source b where b.name='${OBJECTS}' and b.type='PACKAGE BODY';"
+    local _TMP="${EXP_FILE}.TMP"
+    echo -e $_SQL 
+    summary $_SQL
+    run_sqlplus $_SQL
+    to_ddl
+    if [[ -f "$EXP_FILE" ]]; then
+        cp $EXP_FILE "$_TMP"
+        awk -v X=${OBJECTS} '{gsub(X ";",X ";/",$0);gsub("[0-9]+ rows selected.","",$0);print $0;}' < $_TMP > $EXP_FILE
+    fi
+}
+
+
 EXP_FILE="${EXP_FILE:-${EXP_DIR}/exp-${TODAY}.dmp}"
 EXP_LOG="${EXP_LOG:-${EXP_DIR}/exp-${TODAY}.log}"
 OBJECT_LIST="${OBJECT_LIST:-${EXP_DIR}/object.list}"
@@ -220,6 +235,7 @@ case ".$OBJECT_TYPE" in
     .TABLE) exp_table_ddl;;
     .PROCEDURE) exp_procedure_ddl;;
     .SEQUENCE) exp_sequence_ddl;;
+    .PACKAGE) exp_package_ddl;;
     *)echo -e "fin(o)n(0)y";echo -e $HELP;;
 esac
 
