@@ -108,29 +108,36 @@ exit
 }
 
 function exp_tables() {
-    local _TABLES=""
+    local _OBJ=""
     if [[ -n "$SQL_LIKE" ]]; then
         run_sqlplus "select table_name from user_tables where table_name like '&sql_like';"
         if [ -f ${OBJECT_LIST} ]; then
-            _TABLES=$(awk -v SQL_LIKE=${SQL_LIKE} 'BEGIN{t="";f="^" SQL_LIKE;gsub(/%/,"\\w*",f);}{if (match($0,f)){gsub(/[ \t]*/,"",$0);t=length(t)==0?$0:t "," $0}}END{print t;}' ${OBJECT_LIST})
-            echo -e "XXX: $_TABLES"
+            _OBJ=$(awk -v SQL_LIKE=${SQL_LIKE} 'BEGIN{t="";f="^" SQL_LIKE;gsub(/%/,"\\w*",f);}{if (match($0,f)){gsub(/[ \t]*/,"",$0);t=length(t)==0?$0:t "," $0}}END{print t;}' ${OBJECT_LIST})
+            echo -e "XXX: $_OBJ"
             if [[ -n "$OBJECTS" ]]; then
-                OBJECTS="${OBJECTS},${_TABLES}"
+                OBJECTS="${OBJECTS},${_OBJ}"
             else
-                OBJECTS="$_TABLES"
+                OBJECTS="$_OBJ"
             fi
         fi
     fi
     
-    if [[ -z "$OBJECTS" ]] && [[ "$DEBUG" -gt 0 ]]; then
-        echo -e "========================================"
-        echo -e "#!'<\$OBJECTS>' is zero"
-        echo -e "========================================"
+    echo -e "ZYX:$OBJECTS"
+    echo -e "_OBJ:$_OBJ"
+    if [[ -z "$OBJECTS" ]]; then
+        if [[ "$DEBUG" -gt 0 ]]; then
+            echo -e "========================================"
+            echo -e "#!'<\$OBJECTS>' is zero"
+            echo -e "========================================"
+        fi 
         echo -e $HELP; exit 1
     fi
     
     if [[ -n "$SQL_EXCLUDE" ]]; then
-        OBJECTS=$(echo $OBJECTS | awk -v X=$SQL_EXCLUDE 'BEGIN{gsub(/%/,"\\w*",X);gsub(/,/,"|",X);X=X "[,]*";t="";}END{split($0,a,",");for(i in a){if(match(a[i],X)>0)delete a[i];}for(i in a){if(a[i]=="")continue;t=length(t)==0?a[i]:t "," a[i];}print t;}')
+        echo -e "eXclude:$OBJECTS|x:$SQL_EXCLUDE "
+        OBJECTS=$(echo $OBJECTS | awk -v X=$SQL_EXCLUDE 'BEGIN{gsub(/%/,"\\w*",X);gsub(/,/,"$|",X);X=X "$";t="";}END{print "(x):" X;split($0,a,",");for(i in a){if(match(a[i],X)>0)delete a[i];}for(i in a){if(a[i]=="")continue;t=length(t)==0?a[i]:t "," a[i];}print t;}')
+
+        echo -e "eXclude:$OBJECTS"
     fi
     summary
     
