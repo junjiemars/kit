@@ -107,24 +107,19 @@ exit
 
 }
 
-function exp_tables() {
+function build_object_list(){
     local _OBJ=""
     if [[ -n "$SQL_LIKE" ]]; then
-        run_sqlplus "select table_name from user_tables where table_name like '&sql_like';"
+        run_sqlplus $@
         if [ -f ${OBJECT_LIST} ]; then
             _OBJ=$(awk -v SQL_LIKE=${SQL_LIKE} 'BEGIN{t="";f="^" SQL_LIKE;gsub(/%/,"\\w*",f);}{if (match($0,f)){gsub(/[ \t]*/,"",$0);t=length(t)==0?$0:t "," $0}}END{print t;}' ${OBJECT_LIST})
-            echo -e "XXX: $_OBJ"
             if [[ -n "$OBJECTS" ]]; then
-                OBJECTS="${OBJECTS},${_OBJ}"
-            else
-                OBJECTS="$_OBJ"
+                _OBJ="${OBJECTS},${_OBJ}"
             fi
         fi
     fi
     
-    echo -e "ZYX:$OBJECTS"
-    echo -e "_OBJ:$_OBJ"
-    if [[ -z "$OBJECTS" ]]; then
+    if [[ -z "$_OBJ" ]]; then
         if [[ "$DEBUG" -gt 0 ]]; then
             echo -e "========================================"
             echo -e "#!'<\$OBJECTS>' is zero"
@@ -134,12 +129,15 @@ function exp_tables() {
     fi
     
     if [[ -n "$SQL_EXCLUDE" ]]; then
-        echo -e "eXclude:$OBJECTS|x:$SQL_EXCLUDE "
-        OBJECTS=$(echo $OBJECTS | awk -v X=$SQL_EXCLUDE 'BEGIN{gsub(/%/,"\\w*",X);gsub(/,/,"$|",X);X=X "$";t="";}END{print "(x):" X;split($0,a,",");for(i in a){if(match(a[i],X)>0)delete a[i];}for(i in a){if(a[i]=="")continue;t=length(t)==0?a[i]:t "," a[i];}print t;}')
-
-        echo -e "eXclude:$OBJECTS"
+        _OBJ=$(echo $_OBJ | awk -v X=$SQL_EXCLUDE 'BEGIN{gsub(/%/,"\\w*",X);gsub(/,/,"$|",X);X=X "$";t="";}END{split($0,a,",");for(i in a){if(match(a[i],X)>0)delete a[i];}for(i in a){if(a[i]=="")continue;t=length(t)==0?a[i]:t "," a[i];}print t;}')
     fi
-    summary
+    OBJECTS=$_OBJ
+}
+
+function exp_tables() {
+    local _SQL="select table_name from user_tables where table_name like '&sql_like';"
+    build_object_list $_SQL
+    summary $_SQL
     
     if [[ -n "$OBJECTS" ]]; then
         exp ${PASSCODE} file=${EXP_FILE} log=${EXP_LOG} tables=${OBJECTS} ${EXP_OPTS}
@@ -227,11 +225,11 @@ OBJECT_LIST="${OBJECT_LIST:-${EXP_DIR}/object.list}"
 spec
 
 case ".$OBJECT_TYPE" in
-    .) exp_tables;;
+    .) OBJECT_TYPE="DUMP";exp_tables;;
     .TABLE) exp_table_ddl;;
     .PROCEDURE) exp_procedure_ddl;;
     .SEQUENCE) exp_sequence_ddl;;
-    *)to_single_quoted "A,B,C";;
+    *)echo -e "fin(o)n(0)y";echo -e $HELP;;
 esac
 
 
