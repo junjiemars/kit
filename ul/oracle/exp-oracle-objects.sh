@@ -10,24 +10,26 @@
 # piece by piece.
 #=====================================================
 # MANUAL: The best advice: Don't use it if u need 
-#         a manual exactly.
+#         a manual exactly. But there is one:
+#         where ([-l] or [-n]) and ([-x] not in)
 #=====================================================
 PASSCODE="${PASSCODE:-xws/xws@localhost:1521/XE}"
+EXP_OPTS="${EXP_OPTS:="FEEDBACK=1"}"
 EXP_DIR=${EXP_DIR:-$PWD}
 EXP_FILE=""
 EXP_LOG=""
-EXP_OPTS="${EXP_OPTS:="FEEDBACK=1"}"
 OBJECT_LIST=""
 
 SQLPLUS_PAGESIZE="${SQLPLUS_PAGESIZE:-0}"
 SQLPLUS_LONG="${SQLPLUS_LONG:-90000}"
-SQLPLUS_LINESIZE="${SQLPLUS_LINESIZE:-80}"
-SQLPLUS_TERMOUT="${SQLPLUS_TERMOUT:-ON}"
+SQLPLUS_LINESIZE="${SQLPLUS_LINESIZE:-200}"
+SQLPLUS_TERMOUT="OFF"
 
 OBJECTS=""
 SQL_LIKE=""
 SQL_EXCLUDE=""
-SQL_DDL_NAME=""
+SQLF=""
+SQLQ=""
 OBJECT_TYPE="DUMP"
 
 DEBUG="${DEBUG:-0}"
@@ -73,30 +75,28 @@ function spec() {
 function summary() {
     echo -e "\n=SUMMARY:==============================="
     echo -e "#${OBJECT_TYPE}(`echo ${OBJECTS}|awk 'BEGIN{FS=","}{print NF;}'`):${OBJECTS}"
-    echo -e "$OBJECTS" | tr ',' '\n'
+    if [[ -n "$OBJECTS" ]]; then
+        echo -e "$OBJECTS" | tr ',' '\n'
+    fi
     echo -e "#Exp File:${EXP_FILE}"
     echo -e "#Exp Log:${EXP_LOG}"
     if [ "$DEBUG" -gt 0 ]; then
-        echo -e "#SQL:$@"
+        echo -e "#SQL:$SQLQ"
     fi
     echo -e "========================================\n"
 }
 
 function run_sqlplus() {
-if [ "$DEBUG" -gt 0 ];then
-    SQLPLUS_TERMOUT="ON"
-else
-    SQLPLUS_TERMOUT="OFF"
-fi
-
+##set serveroutput off;
+##set termout on;
+##SQLPLUS_TERMOUT="ON"
 sqlplus ${PASSCODE} <<!
-set termout ${SQLPLUS_TERMOUT};
-set serveroutput off;
 set heading off;
-set echo off;
+set echo on;
 set pages ${SQLPLUS_PAGESIZE};
 set long ${SQLPLUS_LONG};
 set linesize ${SQLPLUS_LINESIZE};
+set trimspool on;
 define objects_output='${OBJECT_LIST}';
 define sql_like='${SQL_LIKE}';
 spool '&objects_output'
@@ -107,34 +107,20 @@ exit
 
 }
 
-function build_object_list(){
-    local _OBJ=""
-    if [[ -n "$SQL_LIKE" ]]; then
-        run_sqlplus $@
-        if [ -f ${OBJECT_LIST} ]; then
-            _OBJ=$(awk -v SQL_LIKE=${SQL_LIKE} 'BEGIN{t="";f="^" SQL_LIKE;gsub(/%/,"\\w*",f);}{if (match($0,f)){gsub(/[ \t]*/,"",$0);t=length(t)==0?$0:t "," $0}}END{print t;}' ${OBJECT_LIST})
-        fi
-    fi
-    
+function build_filter() {
+    SQLQ="$@ where ($SQLF like '@L' or $SQLF in (@N)) and (@X);"
     if [[ -n "$OBJECTS" ]]; then
-        _OBJ="${OBJECTS},${_OBJ}"
+        OBJECTS=$(to_single_quoted $OBJECTS)
+    else
+        OBJECTS="''"
     fi
-
     if [[ -n "$SQL_EXCLUDE" ]]; then
-        _OBJ=$(echo $_OBJ | awk -v X=$SQL_EXCLUDE 'BEGIN{gsub(/%/,"\\w*",X);gsub(/,/,"$|",X);X=X "$";t="";}END{split($0,a,",");for(i in a){if(match(a[i],X)>0)delete a[i];}for(i in a){if(a[i]=="")continue;t=length(t)==0?a[i]:t "," a[i];}print t;}')
+        SQL_EXCLUDE=$(to_single_quoted $SQL_EXCLUDE)
+        SQL_EXCLUDE="$SQLF not in ($SQL_EXCLUDE)"
+    else
+        SQL_EXCLUDE="1=1"
     fi
-    OBJECTS=$_OBJ
-}
-
-function exp_tables() {
-    local _SQL="select table_name from user_tables where table_name like '&sql_like';"
-    build_object_list $_SQL
-    summary $_SQL
-    
-    EXP_FILE=$(echo $EXP_FILE|awk '{gsub(/.sql/,".dmp",$0);print $0;}')
-    if [[ -n "$OBJECTS" ]]; then
-        exp ${PASSCODE} file=${EXP_FILE} log=${EXP_LOG} tables=${OBJECTS} ${EXP_OPTS}
-    fi
+    SQLQ=$(echo $SQLQ|awk -v N="$OBJECTS" -v L="$SQL_LIKE" -v X="$SQL_EXCLUDE" '{gsub("@N",N,$0);gsub("@L",L,$0);gsub("@X",X,$0);print $0}')
 }
 
 function to_single_quoted() {
@@ -142,85 +128,82 @@ function to_single_quoted() {
     echo $_L
 }
 
-function to_exclude_ddl() {
-    local _X=$@
-    if [[ -n "$SQL_EXCLUDE" ]]; then
-        OBJECTS=$(to_single_quoted $SQL_EXCLUDE)
-        _X=$(echo $_X|awk -v X=$OBJECTS -v Y=$SQL_DDL_NAME 'END{if(match($0,/;/)>0){gsub(/;/,"",$0);printf "%s and (%s not in (%s));",$0,Y,X}}')
-    fi
-    echo $_X
-}
-
 function to_ddl() {
     if [[ -n "$OBJECT_TYPE" && -f "$OBJECT_LIST" ]]; then
-        awk '!/SQL>/{print $0;}' $OBJECT_LIST > $EXP_FILE
+        awk '!/^SQL>/{if (NF > 0)print $0;}' $OBJECT_LIST | awk '!/^no rows/{print $0}' > $EXP_FILE
     fi
 }
 
-function exp_procedure_ddl() {
-    local _SQL="select dbms_metadata.get_ddl('PROCEDURE', d.object_name) from user_procedures d"
-    if [[ -n "$SQL_LIKE" ]]; then
-        _SQL="${_SQL} where d.object_name like '${SQL_LIKE}';"
-    elif [[ -n "$OBJECTS" ]]; then
-        OBJECTS=$(to_single_quoted $OBJECTS)
-        _SQL="${_SQL} where d.object_name in (${OBJECTS});"
-    else
-        echo -e $HELP
-        exit 1
+function describe_objects() {
+    build_filter "$@"
+    run_sqlplus "$SQLQ"
+    if [[ -f "$OBJECT_LIST" ]]; then
+        OBJECTS=$(awk '!/^SQL>/{if(NF>0)print $0;}' < $OBJECT_LIST | awk '!/^no rows/{print $0;}')
+        if [[ -n "$OBJECTS" ]]; then
+            OBJECTS=$(echo $OBJECTS|awk '{gsub(" ",",");print $0;}')
+        fi
     fi
-    SQL_DDL_NAME="d.object_name"
-    _SQL=$(to_exclude_ddl $_SQL)
-    summary $_SQL
-    run_sqlplus ${_SQL}
-    to_ddl
 }
 
-function exp_sequence_ddl() {
-    local _SQL="select dbms_metadata.get_ddl('SEQUENCE', s.sequence_name) from user_sequences s "
-    if [[ -n "$SQL_LIKE" ]]; then
-        _SQL="${_SQL} where s.sequence_name like '${SQL_LIKE}';"
-    elif [[ -n "$OBJECTS" ]]; then
-        OBJECTS=$(to_single_quoted $OBJECTS)
-        _SQL="${_SQL} where s.sequence_name in (${OBJECTS});"
-    else
-        echo -e $HELP
-        exit 1
+function exp_tables() {
+    SQLF="t.table_name"
+    describe_objects "select table_name from user_tables t "
+    if [[ -n "$OBJECTS" ]]; then
+        EXP_FILE=$(echo $EXP_FILE|awk '{gsub(/.sql/,".dmp",$0);print $0;}')
+        exp ${PASSCODE} file=${EXP_FILE} log=${EXP_LOG} tables=${OBJECTS} ${EXP_OPTS}
     fi
-    SQL_DDL_NAME="s.sequence_name"
-    _SQL=$(to_exclude_ddl $_SQL)
-    summary $_SQL
-    run_sqlplus ${_SQL}
-    to_ddl
+    summary "$SQLQ"
 }
 
 function exp_table_ddl() {
-    local _SQL="select dbms_metadata.get_ddl('TABLE', d.table_name) from user_tables d "
-    if [[ -n "$SQL_LIKE" ]]; then
-        _SQL="${_SQL} where d.table_name like '${SQL_LIKE}';" 
-    elif [[ -n "$OBJECTS" ]]; then
+    SQLF="t.table_name"
+    describe_objects "select table_name from user_tables t "
+    SQLQ="select dbms_metadata.get_ddl('TABLE', t.table_name) from user_tables t "
+    if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
-        _SQL="${_SQL} where d.table_name in (${OBJECTS});"
-    else
-        echo -e $HELP
-        exit 1
+        SQLQ="$SQLQ where t.table_name in ($OBJECTS);"
+        run_sqlplus $SQLQ
     fi
-    SQL_DDL_NAME="d.table_name"
-    _SQL=$(to_exclude_ddl $_SQL)
-    summary $_SQL
-    run_sqlplus ${_SQL}
     to_ddl
+    summary "$SQLQ"
+}
+
+function exp_procedure_ddl() {
+    SQLF="p.object_name"
+    describe_objects "select p.object_name from user_procedures p "
+    SQLQ="select dbms_metadata.get_ddl('PROCEDURE', p.object_name) from user_procedures p "
+    if [[ -n "$OBJECTS" ]]; then
+        OBJECTS=$(to_single_quoted $OBJECTS)
+        SQLQ="$SQLQ where p.object_name in ($OBJECTS);"
+        run_sqlplus $SQLQ
+    fi 
+    to_ddl
+    summary "$SQLQ"
+ }
+
+function exp_sequence_ddl() {
+    SQLF="s.sequence_name"
+    describe_objects "select s.sequence_name from user_sequences s "
+    SQLQ="select dbms_metadata.get_ddl('SEQUENCE', s.sequence_name) from user_sequences s "
+    if [[ -n "$OBJECTS" ]]; then
+        OBJECTS=$(to_single_quoted $OBJECTS)
+        SQLQ="$SQLQ where s.sequence_name in ($OBJECTS);"
+        run_sqlplus $SQLQ
+    fi
+    to_ddl
+    summary "$SQLQ"
 }
 
 function exp_package_ddl() {
-    local _SQL="select a.text from user_source a where a.name='${OBJECTS}' and a.type='PACKAGE' union all select b.text from user_source b where b.name='${OBJECTS}' and b.type='PACKAGE BODY';"
     #local _TMP="${EXP_FILE##*/}" #extract filename 
     local _TMP="${EXP_DIR}/.package.sql"
-    summary $_SQL
-    run_sqlplus $_SQL
+    SQLQ="select a.text from user_source a where a.name='${OBJECTS}' and a.type='PACKAGE' union all select b.text from user_source b where b.name='${OBJECTS}' and b.type='PACKAGE BODY';"
+    run_sqlplus $SQLQ
     to_ddl
+    summary $SQLQ
     if [[ -f "$EXP_FILE" ]]; then
         if [[ 0 -eq $(cp $EXP_FILE "$_TMP" 2>/dev/null; echo $?) ]]; then
-            awk -v X=${OBJECTS} '{gsub(X ";",X ";/",$0);gsub("[0-9]+ rows selected.","",$0);print $0;}' < $_TMP > $EXP_FILE
+            awk -v X=${OBJECTS} '{gsub("^package ","create or replace package ",$0);gsub(X ";",X ";\n/",$0);gsub("[0-9]+ rows selected.","",$0);print $0;}' < $_TMP > $EXP_FILE
         fi
     fi
 }
@@ -233,6 +216,7 @@ spec
 
 echo -e "EXP_DIR:$EXP_DIR "
 echo -e "EXP_FILE:$EXP_FILE "
+
 case ".$OBJECT_TYPE" in
     .) echo -e $HELP;;
     .DUMP) exp_tables;;
