@@ -14,7 +14,6 @@
 #=====================================================
 PASSCODE="${PASSCODE:-xws/xws@localhost:1521/XE}"
 EXP_DIR=${EXP_DIR:-$PWD}
-TODAY=`date +%Y-%m-%d`
 EXP_FILE=""
 EXP_LOG=""
 EXP_OPTS="${EXP_OPTS:="FEEDBACK=1"}"
@@ -29,7 +28,7 @@ OBJECTS=""
 SQL_LIKE=""
 SQL_EXCLUDE=""
 SQL_DDL_NAME=""
-OBJECT_TYPE=""
+OBJECT_TYPE="DUMP"
 
 DEBUG="${DEBUG:-0}"
 HELP="usage:\texp-oracle-tables.sh <options>\n\
@@ -131,6 +130,7 @@ function exp_tables() {
     build_object_list $_SQL
     summary $_SQL
     
+    EXP_FILE=$(echo $EXP_FILE|awk '{gsub(/.sql/,".dmp",$0);print $0;}')
     if [[ -n "$OBJECTS" ]]; then
         exp ${PASSCODE} file=${EXP_FILE} log=${EXP_LOG} tables=${OBJECTS} ${EXP_OPTS}
     fi
@@ -152,7 +152,6 @@ function to_exclude_ddl() {
 
 function to_ddl() {
     if [[ -n "$OBJECT_TYPE" && -f "$OBJECT_LIST" ]]; then
-        EXP_FILE=$(echo $EXP_FILE|awk '{gsub(/.dmp/,".sql",$0);print $0;}')
         awk '!/SQL>/{print $0;}' $OBJECT_LIST > $EXP_FILE
     fi
 }
@@ -213,30 +212,32 @@ function exp_table_ddl() {
 
 function exp_package_ddl() {
     local _SQL="select a.text from user_source a where a.name='${OBJECTS}' and a.type='PACKAGE' union all select b.text from user_source b where b.name='${OBJECTS}' and b.type='PACKAGE BODY';"
-    local _TMP="${EXP_FILE}.TMP"
-    echo -e $_SQL 
+    #local _TMP="${EXP_FILE##*/}" #extract filename 
+    local _TMP="${EXP_DIR}/.package.sql"
     summary $_SQL
     run_sqlplus $_SQL
     to_ddl
     if [[ -f "$EXP_FILE" ]]; then
-        cp $EXP_FILE "$_TMP"
-        awk -v X=${OBJECTS} '{gsub(X ";",X ";/",$0);gsub("[0-9]+ rows selected.","",$0);print $0;}' < $_TMP > $EXP_FILE
+        if [[ 0 -eq $(cp $EXP_FILE "$_TMP" 2>/dev/null; echo $?) ]]; then
+            awk -v X=${OBJECTS} '{gsub(X ";",X ";/",$0);gsub("[0-9]+ rows selected.","",$0);print $0;}' < $_TMP > $EXP_FILE
+        fi
     fi
 }
 
-
-EXP_FILE="${EXP_FILE:-${EXP_DIR}/exp-${TODAY}.dmp}"
-EXP_LOG="${EXP_LOG:-${EXP_DIR}/exp-${TODAY}.log}"
-OBJECT_LIST="${OBJECT_LIST:-${EXP_DIR}/object.list}"
+TODAY=`date +%Y-%m-%d`
+EXP_FILE="${EXP_FILE:-${EXP_DIR}/exp-${OBJECT_TYPE}-${TODAY}.sql}";
+EXP_LOG="${EXP_LOG:-${EXP_DIR}/exp-${OBJECT_TYPE}-${TODAY}.log}";
+OBJECT_LIST="${OBJECT_LIST:-${EXP_DIR}/.object.list}"
 spec
 
 case ".$OBJECT_TYPE" in
-    .) OBJECT_TYPE="DUMP";exp_tables;;
+    .) echo -e $HELP;;
+    .DUMP) exp_tables;;
     .TABLE) exp_table_ddl;;
     .PROCEDURE) exp_procedure_ddl;;
     .SEQUENCE) exp_sequence_ddl;;
     .PACKAGE) exp_package_ddl;;
-    *)echo -e "fin(o)n(0)y";echo -e $HELP;;
+    *) echo -e "fin(o)n(0)y";echo -e $HELP;;
 esac
 
 
