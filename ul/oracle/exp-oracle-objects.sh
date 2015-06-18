@@ -35,19 +35,19 @@ HELP="usage:\texp-oracle-tables.sh <options>\n\
 options:-h\t\t\thelp\n\
     \t-p<username/password>\toracle's login\n\
     \t[-w<dump-dir>]\t\tdump directory\n\
-    \t[-t<ddl-type>]\t\tddl type:one of table,procedure,sequence\n\
+    \t[-t<ddl-type>]\t\tddl type:one of table,procedure,sequence,package\n\
     \t-n<object>\t\tobject list, seperate by ','\n\
     \t-l<like-filter>\t\tlike filter, ABC\%, etc.\n\
     \t[-x<exclude>]\t\texclude objects, seperate by ',' or like '%'"
 
-while getopts "hdt:p:wn:l:x:" arg
+while getopts "hdt:p:w:n:l:x:" arg
 do
 	case ${arg} in
         h) echo -e $HELP; exit 0;;
         d) DEBUG=1;;
         t) OBJECT_TYPE=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
 		p) PASSCODE=${OPTARG};;
-		w) EXP_DIR=${OPTARG:-$PWD};;
+		w) EXP_DIR=${OPTARG};;
 		n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
 		l) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
         x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
@@ -113,12 +113,13 @@ function build_object_list(){
         run_sqlplus $@
         if [ -f ${OBJECT_LIST} ]; then
             _OBJ=$(awk -v SQL_LIKE=${SQL_LIKE} 'BEGIN{t="";f="^" SQL_LIKE;gsub(/%/,"\\w*",f);}{if (match($0,f)){gsub(/[ \t]*/,"",$0);t=length(t)==0?$0:t "," $0}}END{print t;}' ${OBJECT_LIST})
-            if [[ -n "$OBJECTS" ]]; then
-                _OBJ="${OBJECTS},${_OBJ}"
-            fi
         fi
     fi
     
+    if [[ -n "$OBJECTS" ]]; then
+        _OBJ="${OBJECTS},${_OBJ}"
+    fi
+
     if [[ -n "$SQL_EXCLUDE" ]]; then
         _OBJ=$(echo $_OBJ | awk -v X=$SQL_EXCLUDE 'BEGIN{gsub(/%/,"\\w*",X);gsub(/,/,"$|",X);X=X "$";t="";}END{split($0,a,",");for(i in a){if(match(a[i],X)>0)delete a[i];}for(i in a){if(a[i]=="")continue;t=length(t)==0?a[i]:t "," a[i];}print t;}')
     fi
@@ -230,6 +231,8 @@ EXP_LOG="${EXP_LOG:-${EXP_DIR}/exp-${OBJECT_TYPE}-${TODAY}.log}";
 OBJECT_LIST="${OBJECT_LIST:-${EXP_DIR}/.object.list}"
 spec
 
+echo -e "EXP_DIR:$EXP_DIR "
+echo -e "EXP_FILE:$EXP_FILE "
 case ".$OBJECT_TYPE" in
     .) echo -e $HELP;;
     .DUMP) exp_tables;;
