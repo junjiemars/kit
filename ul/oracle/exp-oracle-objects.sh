@@ -141,9 +141,8 @@ function to_single_quoted() {
     echo $_L
 }
 
-function to_end_objects_re() {
-    local _R=$OBJECTS
-
+function rm_single_quoted() {
+    echo $(echo $OBJECTS | awk '{gsub(/'\''/,"");print $0;}')
 }
 
 function to_ddl() {
@@ -194,7 +193,7 @@ function exp_tables() {
 function exp_table_ddl() {
     SQLF="t.table_name"
     describe_objects "select table_name from user_tables t "
-    SQLQ="select dbms_metadata.get_ddl('TABLE', t.table_name) from user_tables t "
+    SQLQ="select dbms_metadata.get_ddl('TABLE', t.table_name) || '/' from user_tables t "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where t.table_name in ($OBJECTS);"
@@ -203,6 +202,13 @@ function exp_table_ddl() {
         trans_scheme
     fi
     summary "$SQLQ"
+    if [[ -f "$EXP_FILE" ]]; then
+        log_file $EXP_FILE
+        if [ 0 -eq $(cp $EXP_FILE "$EXP_TMP" 2>/dev/null;echo $?) ]; then
+            awk -v X=$(rm_single_quoted) 'BEGIN{IGNORECASE=1;}{gsub("create table","CREATE OR REPLACE TABLE");print $0;}' < $EXP_TMP > $EXP_FILE
+            #awk -v X=$OBJECTS 'BEGIN{IGNORECASE=1;}{gsub(/'\''/,"",X);split(X,a,",");for(i in a)gsub("end " a[i] ";","end " a[i] ";\n/");print $0;}' < $EXP_TMP > $EXP_FILE
+        fi
+    fi
 }
 
 function exp_procedure_ddl() {
@@ -220,7 +226,7 @@ function exp_procedure_ddl() {
     if [[ -f "$EXP_FILE" ]]; then
         log_file $EXP_FILE
         if [ 0 -eq $(cp $EXP_FILE "$EXP_TMP" 2>/dev/null;echo $?) ]; then
-            awk -v X=$OBJECTS 'BEGIN{IGNORECASE=1;}{gsub(/'\''/,"",X);split(X,a,",");for(i in a)gsub("end " a[i] ";","end " a[i] ";\n/");print $0;}' < $EXP_TMP > $EXP_FILE
+            awk -v X=$(rm_single_quoted) 'BEGIN{IGNORECASE=1;}{split(X,a,",");for(i in a)gsub("end " a[i] ";","end " a[i] ";\n/");print $0;}' < $EXP_TMP > $EXP_FILE
         fi
     fi
  }
