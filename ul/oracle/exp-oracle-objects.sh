@@ -22,7 +22,7 @@ OBJECT_LIST=""
 
 SQLPLUS_PAGESIZE="${SQLPLUS_PAGESIZE:-0}"
 SQLPLUS_LONG="${SQLPLUS_LONG:-90000}"
-SQLPLUS_LINESIZE="${SQLPLUS_LINESIZE:-256}"
+SQLPLUS_LINESIZE="${SQLPLUS_LINESIZE:-200}"
 SQLPLUS_TERMOUT="OFF"
 
 OBJECTS=""
@@ -95,6 +95,7 @@ set heading off;
 set echo on;
 set pages ${SQLPLUS_PAGESIZE};
 set long ${SQLPLUS_LONG};
+set longchunksize ${SQLPLUS_LONG};
 set linesize ${SQLPLUS_LINESIZE};
 set trimspool on;
 define objects_output='${OBJECT_LIST}';
@@ -183,14 +184,19 @@ function exp_procedure_ddl() {
  }
 
 function exp_sequence_ddl() {
+    local _TMP="${EXP_DIR}/.sequence.sql"
     SQLF="s.sequence_name"
     describe_objects "select s.sequence_name from user_sequences s "
-    SQLQ="select dbms_metadata.get_ddl('SEQUENCE', s.sequence_name) || ';/' from user_sequences s "
+    SQLQ="select dbms_metadata.get_ddl('SEQUENCE', s.sequence_name) || '/' from user_sequences s "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where s.sequence_name in ($OBJECTS);"
         run_sqlplus $SQLQ
         to_ddl
+        #if [[ -f "$EXP_FILE" ]]; then
+        #    if [[ 0 -eq $(cp $EXP_FILE "$_TMP" 2>/dev/null; echo $?) ]];then
+        #    fi
+        #fi
     fi
     summary "$SQLQ"
 }
@@ -225,6 +231,7 @@ case ".$OBJECT_TYPE" in
     .PROCEDURE) exp_procedure_ddl;;
     .SEQUENCE) exp_sequence_ddl;;
     .PACKAGE) exp_package_ddl;;
+    .CLEAN) rm *.sql *.log *.dmp;;
     *) echo -e "fin(o)n(0)y";echo -e $HELP;;
 esac
 
