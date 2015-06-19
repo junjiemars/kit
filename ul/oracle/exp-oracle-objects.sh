@@ -67,7 +67,6 @@ function spec() {
     if [[ -z "$OBJECT_TYPE" ]]; then
         _TYPE="TABLE<DUMP>"
     else
-SQL_SCHEME=""
         _TYPE="$OBJECT_TYPE<DDL>"
     fi
     echo -e "=SPEC==================================="
@@ -147,14 +146,13 @@ function to_ddl() {
 }
 
 function trans_scheme() {
-    echo "xxxx:"
     if [[ -n "$SQL_SCHEME" && -f "$EXP_FILE" ]]; then
-        echo "xxx:"
-        if [ 0 -eq $(cp $EXP_FILE $EXP_TMP) ]; then
-            echo "yyy:"
+        if [ 0 -eq $(cp $EXP_FILE $EXP_TMP 2>/dev/null;echo $?) ]; then
             if [ 2 -eq $(echo $SQL_SCHEME | awk 'BEGIN{FS=":";}{print NF;}') ]; then
-                echo "zzz:"
-                awk -v S=$SQL_SCHEME 'BEGIN{FS=":";}{gsub("\"" $1 "\".","\"" $2 "\".");print $0;}' < $EXP_TMP > $EXP_FILE
+                awk -v S=$SQL_SCHEME 'BEGIN{split(S,s,":");}{gsub("\"" s[1] "\".","\"" s[2] "\".");print $0;}' < $EXP_TMP > $EXP_FILE
+            else 
+                echo -e "#![-s<scheme] is wrong."
+                echo -e $HELP 
             fi
         fi
     fi
