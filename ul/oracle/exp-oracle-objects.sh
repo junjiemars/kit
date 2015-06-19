@@ -220,7 +220,6 @@ function exp_procedure_ddl() {
     if [[ -f "$EXP_FILE" ]]; then
         log_file $EXP_FILE
         if [ 0 -eq $(cp $EXP_FILE "$EXP_TMP" 2>/dev/null;echo $?) ]; then
-            echo "xyz:"
             awk -v X=$OBJECTS 'BEGIN{IGNORECASE=1;}{gsub(/'\''/,"",X);split(X,a,",");for(i in a)gsub("end " a[i] ";","end " a[i] ";\n/");print $0;}' < $EXP_TMP > $EXP_FILE
         fi
     fi
