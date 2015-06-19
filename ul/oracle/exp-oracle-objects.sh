@@ -22,7 +22,7 @@ OBJECT_LIST=""
 
 SQLPLUS_PAGESIZE="${SQLPLUS_PAGESIZE:-0}"
 SQLPLUS_LONG="${SQLPLUS_LONG:-90000}"
-SQLPLUS_LINESIZE="${SQLPLUS_LINESIZE:-200}"
+SQLPLUS_LINESIZE="${SQLPLUS_LINESIZE:-256}"
 SQLPLUS_TERMOUT="OFF"
 
 OBJECTS=""
@@ -78,8 +78,8 @@ function summary() {
     if [[ -n "$OBJECTS" ]]; then
         echo -e "$OBJECTS" | tr ',' '\n'
     fi
-    echo -e "#Exp File:${EXP_FILE}"
-    echo -e "#Exp Log:${EXP_LOG}"
+    echo -e "#Exp File(`[[ ! -f ${EXP_FILE} ]];echo $?`):${EXP_FILE}"
+    echo -e "#Exp Log(`[[ ! -f ${EXP_LOG} ]];echo $?`):${EXP_LOG}"
     if [ "$DEBUG" -gt 0 ]; then
         echo -e "#SQL:$SQLQ"
     fi
@@ -130,6 +130,7 @@ function to_single_quoted() {
 
 function to_ddl() {
     if [[ -n "$OBJECT_TYPE" && -f "$OBJECT_LIST" ]]; then
+        cp $OBJECT_LIST $EXP_LOG
         awk '!/^SQL>/{if (NF > 0)print $0;}' $OBJECT_LIST | awk '!/^no rows/{print $0}' > $EXP_FILE
     fi
 }
@@ -163,8 +164,8 @@ function exp_table_ddl() {
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where t.table_name in ($OBJECTS);"
         run_sqlplus $SQLQ
+        to_ddl
     fi
-    to_ddl
     summary "$SQLQ"
 }
 
@@ -176,21 +177,21 @@ function exp_procedure_ddl() {
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where p.object_name in ($OBJECTS);"
         run_sqlplus $SQLQ
+        to_ddl
     fi 
-    to_ddl
     summary "$SQLQ"
  }
 
 function exp_sequence_ddl() {
     SQLF="s.sequence_name"
     describe_objects "select s.sequence_name from user_sequences s "
-    SQLQ="select dbms_metadata.get_ddl('SEQUENCE', s.sequence_name) from user_sequences s "
+    SQLQ="select dbms_metadata.get_ddl('SEQUENCE', s.sequence_name) || ';/' from user_sequences s "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where s.sequence_name in ($OBJECTS);"
         run_sqlplus $SQLQ
+        to_ddl
     fi
-    to_ddl
     summary "$SQLQ"
 }
 
