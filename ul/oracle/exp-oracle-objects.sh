@@ -114,6 +114,9 @@ exit
 }
 
 function log() {
+    echo -e "========================================" >> $EXP_LOG
+    echo -e "#$(date)" >> $EXP_LOG
+    echo -e "========================================" >> $EXP_LOG
     cat < $@ >> $EXP_LOG
 }
 
@@ -252,7 +255,11 @@ case ".$OBJECT_TYPE" in
     .PROCEDURE) exp_procedure_ddl;;
     .SEQUENCE) exp_sequence_ddl;;
     .PACKAGE) exp_package_ddl;;
-    .CLEAN) rm *.sql *.log *.dmp;;
+    .CLEAN) 
+        if [ "$DEBUG" -gt 0 ]; then 
+            rm *.sql *.log *.dmp 
+        fi
+        ;;
     *) echo -e "fin(o)n(0)y";echo -e $HELP;;
 esac
 
