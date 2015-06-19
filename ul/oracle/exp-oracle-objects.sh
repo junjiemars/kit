@@ -113,7 +113,7 @@ exit
 
 }
 
-function log() {
+function log_file() {
     echo -e "========================================" >> $EXP_LOG
     echo -e "#$(date)" >> $EXP_LOG
     echo -e "========================================" >> $EXP_LOG
@@ -141,10 +141,18 @@ function to_single_quoted() {
     echo $_L
 }
 
+function to_end_objects_re() {
+    local _R=$OBJECTS
+
+}
+
 function to_ddl() {
     if [[ -n "$OBJECT_TYPE" && -f "$EXP_TMP" ]]; then
-        log $EXP_TMP
-        awk '!/^SQL>/{if (NF > 0)print $0;}' < $EXP_TMP | awk '!/^no rows/{print $0}' > $EXP_FILE
+        log_file $EXP_TMP
+        #awk '!/^SQL>/{if (NF > 0)print $0;}' < $EXP_TMP | awk '!/^no rows/{print $0}' > $EXP_FILE
+        #awk '{gsub("^SQL>\w*","");gsub("(no|d+) rows\w*","");print $0;}' < $EXP_TMP > $EXP_FILE
+        awk 'BEGIN{IGNORECASE=1;}!/^SQL>/{print $0;}' < $EXP_TMP | \
+            awk 'BEGIN{IGNORECASE=1;}!/^(no|[0-9]*) rows/{print $0;}' > $EXP_FILE
     fi
 }
 
@@ -165,7 +173,7 @@ function describe_objects() {
     build_filter "$@"
     SQLPLUS_SPOOL=$OBJECT_LIST run_sqlplus "$SQLQ"
     if [[ -f "$OBJECT_LIST" ]]; then
-        log $OBJECT_LIST
+        log_file $OBJECT_LIST
         OBJECTS=$(awk '!/^SQL>/{if(NF>0)print $0;}' < $OBJECT_LIST | awk '!/^no rows/{print $0;}')
         if [[ -n "$OBJECTS" ]]; then
             OBJECTS=$(echo $OBJECTS|awk '{gsub(" ",",");print $0;}')
@@ -190,8 +198,9 @@ function exp_table_ddl() {
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where t.table_name in ($OBJECTS);"
-        run_sqlplus $SQLQ
+        SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
         to_ddl
+        trans_scheme
     fi
     summary "$SQLQ"
 }
@@ -203,10 +212,18 @@ function exp_procedure_ddl() {
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where p.object_name in ($OBJECTS);"
-        run_sqlplus $SQLQ
+        SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
         to_ddl
+        trans_scheme
     fi 
     summary "$SQLQ"
+    if [[ -f "$EXP_FILE" ]]; then
+        log_file $EXP_FILE
+        if [ 0 -eq $(cp $EXP_FILE "$EXP_TMP" 2>/dev/null;echo $?) ]; then
+            echo "xyz:"
+            awk -v X=$OBJECTS 'BEGIN{IGNORECASE=1;}{gsub(/'\''/,"",X);split(X,a,",");for(i in a)gsub("end " a[i] ";","end " a[i] ";\n/");print $0;}' < $EXP_TMP > $EXP_FILE
+        fi
+    fi
  }
 
 function exp_sequence_ddl() {
@@ -225,14 +242,15 @@ function exp_sequence_ddl() {
 
 function exp_package_ddl() {
     #local _TMP="${EXP_FILE##*/}" #extract filename 
-    local _TMP="${EXP_DIR}/.package.sql"
+    EXP_TMP="${EXP_DIR}/.package.sql"
     SQLQ="select a.text from user_source a where a.name='${OBJECTS}' and a.type='PACKAGE' union all select b.text from user_source b where b.name='${OBJECTS}' and b.type='PACKAGE BODY';"
-    run_sqlplus $SQLQ
+    SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
     to_ddl
     summary $SQLQ
     if [[ -f "$EXP_FILE" ]]; then
-        if [[ 0 -eq $(cp $EXP_FILE "$_TMP" 2>/dev/null; echo $?) ]]; then
-            awk -v X=${OBJECTS} '{gsub("^package ","create or replace package ",$0);gsub(X ";",X ";\n/",$0);gsub("[0-9]+ rows selected.","",$0);print $0;}' < $_TMP > $EXP_FILE
+        log_file $EXP_FILE
+        if [ 0 -eq $(cp $EXP_FILE "$EXP_TMP" 2>/dev/null;echo $?) ]; then
+            awk -v X="end ${OBJECTS};" 'BEGIN{IGNORECASE=1;}{gsub("^package ","create or replace package ",$0);gsub(X,X "\n/");gsub("[0-9]+ rows selected.","");print $0;}' < $EXP_TMP > $EXP_FILE
         fi
     fi
 }
@@ -246,7 +264,6 @@ spec
 
 echo -e "EXP_DIR:$EXP_DIR "
 echo -e "EXP_FILE:$EXP_FILE "
-echo -e "xyz:$SQL_SCHEME"
 
 case ".$OBJECT_TYPE" in
     .) echo -e $HELP;;
@@ -257,7 +274,7 @@ case ".$OBJECT_TYPE" in
     .PACKAGE) exp_package_ddl;;
     .CLEAN) 
         if [ "$DEBUG" -gt 0 ]; then 
-            rm *.sql *.log *.dmp 
+            rm *.sql *.log *.dmp .*.sql .*.list 
         fi
         ;;
     *) echo -e "fin(o)n(0)y";echo -e $HELP;;
