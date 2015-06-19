@@ -34,6 +34,7 @@ SQL_EXCLUDE=""
 SQLF=""
 SQLQ=""
 SQL_SCHEME=""
+SQL_TERMINATOR="true"
 
 DEBUG="${DEBUG:-0}"
 HELP="usage:\texp-oracle-tables.sh <options>\n\
@@ -105,6 +106,7 @@ set linesize ${SQLPLUS_LINESIZE};
 set trimspool on;
 define objects_output="${SQLPLUS_SPOOL}";
 define sql_like='${SQL_LIKE}';
+execute dbms_metadata.set_transform_param(dbms_metadata.session_transform,'SQLTERMINATOR',${SQL_TERMINATOR});
 spool '&objects_output'
 $@
 spool off
@@ -150,8 +152,7 @@ function to_ddl() {
         log_file $EXP_TMP
         #awk '!/^SQL>/{if (NF > 0)print $0;}' < $EXP_TMP | awk '!/^no rows/{print $0}' > $EXP_FILE
         #awk '{gsub("^SQL>\w*","");gsub("(no|d+) rows\w*","");print $0;}' < $EXP_TMP > $EXP_FILE
-        awk 'BEGIN{IGNORECASE=1;}!/^SQL>/{print $0;}' < $EXP_TMP | \
-            awk 'BEGIN{IGNORECASE=1;}!/^(no|[0-9]*) rows/{print $0;}' > $EXP_FILE
+        awk 'BEGIN{IGNORECASE=1;}!/^SQL>/{print $0;}' < $EXP_TMP | awk 'BEGIN{IGNORECASE=1;}!/^(no|[0-9]*) rows/{print $0;}' > $EXP_FILE
     fi
 }
 
@@ -193,7 +194,7 @@ function exp_tables() {
 function exp_table_ddl() {
     SQLF="t.table_name"
     describe_objects "select table_name from user_tables t "
-    SQLQ="select dbms_metadata.get_ddl('TABLE', t.table_name) || '/' from user_tables t "
+    SQLQ="select dbms_metadata.get_ddl('TABLE', t.table_name) from user_tables t "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where t.table_name in ($OBJECTS);"
@@ -202,13 +203,12 @@ function exp_table_ddl() {
         trans_scheme
     fi
     summary "$SQLQ"
-    if [[ -f "$EXP_FILE" ]]; then
-        log_file $EXP_FILE
-        if [ 0 -eq $(cp $EXP_FILE "$EXP_TMP" 2>/dev/null;echo $?) ]; then
-            awk -v X=$(rm_single_quoted) 'BEGIN{IGNORECASE=1;}{gsub("create table","CREATE OR REPLACE TABLE");print $0;}' < $EXP_TMP > $EXP_FILE
-            #awk -v X=$OBJECTS 'BEGIN{IGNORECASE=1;}{gsub(/'\''/,"",X);split(X,a,",");for(i in a)gsub("end " a[i] ";","end " a[i] ";\n/");print $0;}' < $EXP_TMP > $EXP_FILE
-        fi
-    fi
+    ##if [[ -f "$EXP_FILE" ]]; then
+    ##    log_file $EXP_FILE
+    ##    if [ 0 -eq $(cp $EXP_FILE "$EXP_TMP" 2>/dev/null;echo $?) ]; then
+    ##        awk -v X=$(rm_single_quoted) 'BEGIN{IGNORECASE=1;}{gsub("create table","CREATE OR REPLACE TABLE");print $0;}' < $EXP_TMP > $EXP_FILE
+    ##    fi
+    ##fi
 }
 
 function exp_procedure_ddl() {
