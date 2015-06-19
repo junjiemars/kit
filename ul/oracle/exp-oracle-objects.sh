@@ -18,19 +18,22 @@ EXP_OPTS="${EXP_OPTS:="FEEDBACK=1"}"
 EXP_DIR=${EXP_DIR:-$PWD}
 EXP_FILE=""
 EXP_LOG=""
+EXP_TMP=""
 OBJECT_LIST=""
+OBJECT_TYPE="DUMP"
 
 SQLPLUS_PAGESIZE="${SQLPLUS_PAGESIZE:-0}"
 SQLPLUS_LONG="${SQLPLUS_LONG:-90000}"
 SQLPLUS_LINESIZE="${SQLPLUS_LINESIZE:-200}"
 SQLPLUS_TERMOUT="OFF"
+SQLPLUS_SPOOL=""
 
 OBJECTS=""
 SQL_LIKE=""
 SQL_EXCLUDE=""
 SQLF=""
 SQLQ=""
-OBJECT_TYPE="DUMP"
+SQL_SCHEME=""
 
 DEBUG="${DEBUG:-0}"
 HELP="usage:\texp-oracle-tables.sh <options>\n\
@@ -40,9 +43,10 @@ options:-h\t\t\thelp\n\
     \t[-t<ddl-type>]\t\tddl type:one of table,procedure,sequence,package\n\
     \t-n<object>\t\tobject list, seperate by ','\n\
     \t-l<like-filter>\t\tlike filter, ABC\%, etc.\n\
-    \t[-x<exclude>]\t\texclude objects, seperate by ',' or like '%'"
+    \t[-x<exclude>]\t\texclude objects, seperate by ',' or like '%'\n\
+    \t[-s<scheme>]\t\ttrans scheme:<origin-scheme>:<new-scheme>"
 
-while getopts "hdt:p:w:n:l:x:" arg
+while getopts "hdt:p:w:n:l:x:s:" arg
 do
 	case ${arg} in
         h) echo -e $HELP; exit 0;;
@@ -50,9 +54,10 @@ do
         t) OBJECT_TYPE=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
 		p) PASSCODE=${OPTARG};;
 		w) EXP_DIR=${OPTARG};;
-		n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
-		l) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
-        x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *'//g`;;
+		n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
+		l) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
+        x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
+        s) SQL_SCHEME=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
         *) echo -e $HELP; exit 1;;
 	esac
 done
@@ -62,6 +67,7 @@ function spec() {
     if [[ -z "$OBJECT_TYPE" ]]; then
         _TYPE="TABLE<DUMP>"
     else
+SQL_SCHEME=""
         _TYPE="$OBJECT_TYPE<DDL>"
     fi
     echo -e "=SPEC==================================="
@@ -98,7 +104,7 @@ set long ${SQLPLUS_LONG};
 set longchunksize ${SQLPLUS_LONG};
 set linesize ${SQLPLUS_LINESIZE};
 set trimspool on;
-define objects_output='${OBJECT_LIST}';
+define objects_output="${SQLPLUS_SPOOL}";
 define sql_like='${SQL_LIKE}';
 spool '&objects_output'
 $@
@@ -106,6 +112,10 @@ spool off
 exit
 !
 
+}
+
+function log() {
+    cat < $@ >> $EXP_LOG
 }
 
 function build_filter() {
@@ -130,16 +140,31 @@ function to_single_quoted() {
 }
 
 function to_ddl() {
-    if [[ -n "$OBJECT_TYPE" && -f "$OBJECT_LIST" ]]; then
-        cp $OBJECT_LIST $EXP_LOG
-        awk '!/^SQL>/{if (NF > 0)print $0;}' $OBJECT_LIST | awk '!/^no rows/{print $0}' > $EXP_FILE
+    if [[ -n "$OBJECT_TYPE" && -f "$EXP_TMP" ]]; then
+        log $EXP_TMP
+        awk '!/^SQL>/{if (NF > 0)print $0;}' < $EXP_TMP | awk '!/^no rows/{print $0}' > $EXP_FILE
+    fi
+}
+
+function trans_scheme() {
+    echo "xxxx:"
+    if [[ -n "$SQL_SCHEME" && -f "$EXP_FILE" ]]; then
+        echo "xxx:"
+        if [ 0 -eq $(cp $EXP_FILE $EXP_TMP) ]; then
+            echo "yyy:"
+            if [ 2 -eq $(echo $SQL_SCHEME | awk 'BEGIN{FS=":";}{print NF;}') ]; then
+                echo "zzz:"
+                awk -v S=$SQL_SCHEME 'BEGIN{FS=":";}{gsub("\"" $1 "\".","\"" $2 "\".");print $0;}' < $EXP_TMP > $EXP_FILE
+            fi
+        fi
     fi
 }
 
 function describe_objects() {
     build_filter "$@"
-    run_sqlplus "$SQLQ"
+    SQLPLUS_SPOOL=$OBJECT_LIST run_sqlplus "$SQLQ"
     if [[ -f "$OBJECT_LIST" ]]; then
+        log $OBJECT_LIST
         OBJECTS=$(awk '!/^SQL>/{if(NF>0)print $0;}' < $OBJECT_LIST | awk '!/^no rows/{print $0;}')
         if [[ -n "$OBJECTS" ]]; then
             OBJECTS=$(echo $OBJECTS|awk '{gsub(" ",",");print $0;}')
@@ -184,19 +209,15 @@ function exp_procedure_ddl() {
  }
 
 function exp_sequence_ddl() {
-    local _TMP="${EXP_DIR}/.sequence.sql"
     SQLF="s.sequence_name"
     describe_objects "select s.sequence_name from user_sequences s "
     SQLQ="select dbms_metadata.get_ddl('SEQUENCE', s.sequence_name) || '/' from user_sequences s "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where s.sequence_name in ($OBJECTS);"
-        run_sqlplus $SQLQ
+        SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
         to_ddl
-        #if [[ -f "$EXP_FILE" ]]; then
-        #    if [[ 0 -eq $(cp $EXP_FILE "$_TMP" 2>/dev/null; echo $?) ]];then
-        #    fi
-        #fi
+        trans_scheme
     fi
     summary "$SQLQ"
 }
@@ -218,11 +239,13 @@ function exp_package_ddl() {
 TODAY=`date +%Y-%m-%d`
 EXP_FILE="${EXP_FILE:-${EXP_DIR}/exp-${OBJECT_TYPE}-${TODAY}.sql}";
 EXP_LOG="${EXP_LOG:-${EXP_DIR}/exp-${OBJECT_TYPE}-${TODAY}.log}";
+EXP_TMP="${EXP_DIR}/.$(echo ${OBJECT_TYPE}|awk '{print tolower($0);}').sql"
 OBJECT_LIST="${OBJECT_LIST:-${EXP_DIR}/.object.list}"
 spec
 
 echo -e "EXP_DIR:$EXP_DIR "
 echo -e "EXP_FILE:$EXP_FILE "
+echo -e "xyz:$SQL_SCHEME"
 
 case ".$OBJECT_TYPE" in
     .) echo -e $HELP;;
