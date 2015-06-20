@@ -25,8 +25,9 @@ OBJECT_TYPE="DUMP"
 SQLPLUS_PAGESIZE="${SQLPLUS_PAGESIZE:-0}"
 SQLPLUS_LONG="${SQLPLUS_LONG:-90000}"
 SQLPLUS_LINESIZE="${SQLPLUS_LINESIZE:-200}"
-SQLPLUS_TERMOUT="OFF"
+SQLPLUS_TERMOUT="${SQLPLUS_TERMOUT:-off}"
 SQLPLUS_SPOOL=""
+SQLPLUS_VERIFY="${SQLPLUS_VERIFY:-on}"
 
 OBJECTS=""
 SQL_LIKE=""
@@ -108,6 +109,7 @@ set long ${SQLPLUS_LONG};
 set longchunksize ${SQLPLUS_LONG};
 set linesize ${SQLPLUS_LINESIZE};
 set trimspool on;
+set verify ${SQLPLUS_VERIFY};
 define objects_output="${SQLPLUS_SPOOL}";
 define sql_like='${SQL_LIKE}';
 execute dbms_metadata.set_transform_param(dbms_metadata.session_transform,'SQLTERMINATOR',${SQL_TERMINATOR});
@@ -210,7 +212,7 @@ function exp_tables() {
 function exp_table_ddl() {
     SQLF="t.table_name"
     describe_objects "select table_name from user_tables t "
-    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', t.table_name) || dbms_metadata.get_dependent_ddl('COMMENT',t.table_name) from user_tables t "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', t.table_name) || case (select count(*) from user_col_comments c where c.table_name=t.table_name and c.comments is not null) when 0 then empty_clob() else dbms_metadata.get_dependent_ddl('COMMENT',t.table_name) end from user_tables t "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where t.table_name in ($OBJECTS);"
