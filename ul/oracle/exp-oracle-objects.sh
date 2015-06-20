@@ -210,7 +210,7 @@ function exp_tables() {
 function exp_table_ddl() {
     SQLF="t.table_name"
     describe_objects "select table_name from user_tables t "
-    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', t.table_name) from user_tables t "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', t.table_name) || dbms_metadata.get_dependent_ddl('COMMENT',t.table_name) from user_tables t "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where t.table_name in ($OBJECTS);"
