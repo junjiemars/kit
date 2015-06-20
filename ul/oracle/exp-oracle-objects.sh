@@ -11,7 +11,7 @@
 #=====================================================
 # MANUAL: The best advice: Don't use it if u need 
 #         a manual exactly. But there is one:
-#         where ([-l] or [-n]) and ([-x] not in)
+#         where ([-s] or [-n]) and ([-x] not in)
 #=====================================================
 PASSCODE="${PASSCODE:-xws/xws@localhost:1521/XE}"
 EXP_OPTS="${EXP_OPTS:="FEEDBACK=1"}"
@@ -34,31 +34,35 @@ SQL_EXCLUDE=""
 SQLF=""
 SQLQ=""
 SQL_SCHEME=""
+SQL_SPACE=""
 SQL_TERMINATOR="true"
 
 DEBUG="${DEBUG:-0}"
 HELP="usage:\texp-oracle-tables.sh <options>\n\
 options:-h\t\t\thelp\n\
-    \t-p<username/password>\toracle's login\n\
+    \t-p<oralce-login>\tusername/password@host:port/sid\n\
     \t[-w<dump-dir>]\t\tdump directory\n\
-    \t[-t<ddl-type>]\t\tddl type:one of table,procedure,sequence,package\n\
-    \t-n<object>\t\tobject list, seperate by ','\n\
-    \t-l<like-filter>\t\tlike filter, ABC\%, etc.\n\
+    \t[-d<ddl-type>]\t\tddl type:one of table,package etc.,\n\
+    \t[-n<object>]\t\tobject list, seperate by ','\n\
+    \t[-s<sql-like>]\tsql like filter, ABC\%, etc.\n\
     \t[-x<exclude>]\t\texclude objects, seperate by ',' or like '%'\n\
-    \t[-s<scheme>]\t\ttrans scheme:<origin-scheme>:<new-scheme>"
+    \t[-u<scheme>]\t\ttrans scheme:<origin-scheme>:<new-scheme>\n\
+    \t[-t<tablespace]\t\ttrans tablespace:<origin-tablespace>:<new-tablespace>\n\
+    \t[-v<verbose>]"
 
-while getopts "hdt:p:w:n:l:x:s:" arg
+while getopts "hvd:p:w:n:s:x:u:t:" arg
 do
 	case ${arg} in
         h) echo -e $HELP; exit 0;;
-        d) DEBUG=1;;
-        t) OBJECT_TYPE=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
+        v) DEBUG=1;;
+        d) OBJECT_TYPE=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
 		p) PASSCODE=${OPTARG};;
 		w) EXP_DIR=${OPTARG};;
 		n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
-		l) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
+		s) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
         x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
-        s) SQL_SCHEME=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
+        u) SQL_SCHEME=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
+        t) SQL_SPACE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
         *) echo -e $HELP; exit 1;;
 	esac
 done
@@ -162,7 +166,7 @@ function trans_scheme() {
             if [ 2 -eq $(echo $SQL_SCHEME | awk 'BEGIN{FS=":";}{print NF;}') ]; then
                 awk -v S=$SQL_SCHEME 'BEGIN{split(S,s,":");}{gsub("\"" s[1] "\".","\"" s[2] "\".");print $0;}' < $EXP_TMP > $EXP_FILE
             else 
-                echo -e "#![-s<scheme] is wrong."
+                echo -e "#![-u<scheme] is wrong."
                 echo -e $HELP 
             fi
         fi
@@ -203,12 +207,6 @@ function exp_table_ddl() {
         trans_scheme
     fi
     summary "$SQLQ"
-    ##if [[ -f "$EXP_FILE" ]]; then
-    ##    log_file $EXP_FILE
-    ##    if [ 0 -eq $(cp $EXP_FILE "$EXP_TMP" 2>/dev/null;echo $?) ]; then
-    ##        awk -v X=$(rm_single_quoted) 'BEGIN{IGNORECASE=1;}{gsub("create table","CREATE OR REPLACE TABLE");print $0;}' < $EXP_TMP > $EXP_FILE
-    ##    fi
-    ##fi
 }
 
 function exp_procedure_ddl() {
@@ -223,18 +221,12 @@ function exp_procedure_ddl() {
         trans_scheme
     fi 
     summary "$SQLQ"
-    if [[ -f "$EXP_FILE" ]]; then
-        log_file $EXP_FILE
-        if [ 0 -eq $(cp $EXP_FILE "$EXP_TMP" 2>/dev/null;echo $?) ]; then
-            awk -v X=$(rm_single_quoted) 'BEGIN{IGNORECASE=1;}{split(X,a,",");for(i in a)gsub("end " a[i] ";","end " a[i] ";\n/");print $0;}' < $EXP_TMP > $EXP_FILE
-        fi
-    fi
  }
 
 function exp_sequence_ddl() {
     SQLF="s.sequence_name"
     describe_objects "select s.sequence_name from user_sequences s "
-    SQLQ="select dbms_metadata.get_ddl('SEQUENCE', s.sequence_name) || '/' from user_sequences s "
+    SQLQ="select dbms_metadata.get_ddl('SEQUENCE', s.sequence_name) from user_sequences s "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where s.sequence_name in ($OBJECTS);"
