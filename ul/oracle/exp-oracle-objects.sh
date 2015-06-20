@@ -173,6 +173,18 @@ function trans_scheme() {
     fi
 }
 
+function trans_tablespace() {
+    if [[ -n "$SQL_SPACE" && -f "$EXP_FILE" ]]; then
+        if [ 0 -eq $(cp $EXP_FILE $EXP_TMP 2>/dev/null;echo $?) ]; then
+            if [ 2 -eq $(echo $SQL_SPACE | awk 'BEGIN{FS=":";}{print NF;}') ]; then
+                awk -v S=$SQL_SPACE 'BEGIN{IGNORECASE=1;split(S,s,":");}{gsub("tablespace \"" s[1] "\"","TABLESPACE \"" s[2] "\"");print $0;}' < $EXP_TMP > $EXP_FILE
+            else 
+                echo -e "#![-t<tablespace>] is wrong."
+                echo -e $HELP 
+            fi
+        fi
+    fi
+}
 function describe_objects() {
     build_filter "$@"
     SQLPLUS_SPOOL=$OBJECT_LIST run_sqlplus "$SQLQ"
@@ -205,6 +217,7 @@ function exp_table_ddl() {
         SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
         to_ddl
         trans_scheme
+        trans_tablespace
     fi
     summary "$SQLQ"
 }
