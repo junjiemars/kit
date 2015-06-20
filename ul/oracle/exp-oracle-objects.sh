@@ -58,11 +58,11 @@ do
         d) OBJECT_TYPE=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
 		p) PASSCODE=${OPTARG};;
 		w) EXP_DIR=${OPTARG};;
-		n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
-		s) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
-        x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
-        u) SQL_SCHEME=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
-        t) SQL_SPACE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e's/\ *//g'`;;
+		n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
+		s) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
+        x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
+        u) SQL_SCHEME=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
+        t) SQL_SPACE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
         *) echo -e $HELP; exit 1;;
 	esac
 done
@@ -198,7 +198,7 @@ function exp_tables() {
 function exp_table_ddl() {
     SQLF="t.table_name"
     describe_objects "select table_name from user_tables t "
-    SQLQ="select dbms_metadata.get_ddl('TABLE', t.table_name) from user_tables t "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', t.table_name) from user_tables t "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where t.table_name in ($OBJECTS);"
@@ -212,7 +212,7 @@ function exp_table_ddl() {
 function exp_procedure_ddl() {
     SQLF="p.object_name"
     describe_objects "select p.object_name from user_procedures p "
-    SQLQ="select dbms_metadata.get_ddl('PROCEDURE', p.object_name) from user_procedures p "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', p.object_name) from user_procedures p "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where p.object_name in ($OBJECTS);"
@@ -226,7 +226,7 @@ function exp_procedure_ddl() {
 function exp_sequence_ddl() {
     SQLF="s.sequence_name"
     describe_objects "select s.sequence_name from user_sequences s "
-    SQLQ="select dbms_metadata.get_ddl('SEQUENCE', s.sequence_name) from user_sequences s "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', s.sequence_name) from user_sequences s "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where s.sequence_name in ($OBJECTS);"
@@ -267,6 +267,7 @@ case ".$OBJECT_TYPE" in
     .DUMP) exp_tables;;
     .TABLE) exp_table_ddl;;
     .PROCEDURE) exp_procedure_ddl;;
+    .FUNCTION) exp_procedure_ddl;;
     .SEQUENCE) exp_sequence_ddl;;
     .PACKAGE) exp_package_ddl;;
     .CLEAN) 
