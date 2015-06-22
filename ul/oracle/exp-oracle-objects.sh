@@ -45,7 +45,7 @@ options:-h\t\t\thelp\n\
     \t[-w<dump-dir>]\t\tdump directory\n\
     \t[-d<ddl-type>]\t\tddl type:one of table,package etc.,\n\
     \t[-n<object>]\t\tobject list, seperate by ','\n\
-    \t[-s<sql-like>]\tsql like filter, ABC\%, etc.\n\
+    \t[-s<sql-like>]\t\tsql like filter, ABC\%, etc.\n\
     \t[-x<exclude>]\t\texclude objects, seperate by ',' or like '%'\n\
     \t[-u<scheme>]\t\ttrans scheme:<origin-scheme>:<new-scheme>\n\
     \t[-t<tablespace]\t\ttrans tablespace:<origin-tablespace>:<new-tablespace>\n\
