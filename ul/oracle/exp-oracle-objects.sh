@@ -211,11 +211,11 @@ function exp_tables() {
 
 function exp_table_ddl() {
     SQLF="t.table_name"
-    describe_objects "select table_name from user_tables t "
-    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', t.table_name) || case (select count(*) from user_col_comments c where c.table_name=t.table_name and c.comments is not null) when 0 then empty_clob() else dbms_metadata.get_dependent_ddl('COMMENT',t.table_name) end from user_tables t "
+    describe_objects "select ${SQLF} from user_tables t "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) || case (select count(*) from user_col_comments c where c.table_name=${SQLF} and c.comments is not null) when 0 then empty_clob() else dbms_metadata.get_dependent_ddl('COMMENT',${SQLF}) end from user_tables t "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
-        SQLQ="$SQLQ where t.table_name in ($OBJECTS);"
+        SQLQ="$SQLQ where ${SQLF} in ($OBJECTS);"
         SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
         to_ddl
         trans_scheme
@@ -240,7 +240,7 @@ function exp_procedure_ddl() {
 
 function exp_sequence_ddl() {
     SQLF="s.sequence_name"
-    describe_objects "select s.sequence_name from user_sequences s "
+    describe_objects "select ${SQLF} from user_sequences s "
     SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_sequences s "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
