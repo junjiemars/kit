@@ -226,11 +226,11 @@ function exp_table_ddl() {
 
 function exp_procedure_ddl() {
     SQLF="p.object_name"
-    describe_objects "select p.object_name from user_procedures p "
-    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', p.object_name) from user_procedures p "
+    describe_objects "select ${SQLF} from (select t.object_name from user_procedures t where t.procedure_name is null) p "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_procedures p "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
-        SQLQ="$SQLQ where p.object_name in ($OBJECTS);"
+        SQLQ="$SQLQ where (${SQLF} in ($OBJECTS));"
         SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
         to_ddl
         trans_scheme
@@ -241,7 +241,7 @@ function exp_procedure_ddl() {
 function exp_sequence_ddl() {
     SQLF="s.sequence_name"
     describe_objects "select s.sequence_name from user_sequences s "
-    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', s.sequence_name) from user_sequences s "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_sequences s "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where s.sequence_name in ($OBJECTS);"
@@ -270,11 +270,27 @@ function exp_package_ddl() {
 function exp_dblink_ddl() {
     SQLF="l.db_link"
     describe_objects "select l.db_link from user_db_links l"
-    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', l.db_link) from user_db_links l "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_db_links l "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where l.db_link in ($OBJECTS);"
         SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
+        to_ddl
+        trans_scheme
+    fi
+    summary "$SQLQ"
+}
+
+function exp_scheduler_ddl() {
+    SQLF="s.job_name"
+    describe_objects "select s.job_name from user_scheduler_jobs s"
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_scheduler_jobs s "
+    if [[ -n "$OBJECTS" ]]; then
+        OBJECTS=$(to_single_quoted $OBJECTS)
+        SQLQ="$SQLQ where s.job_name in ($OBJECTS);"
+        SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
+        to_ddl
+        trans_scheme
     fi
     summary "$SQLQ"
 }
@@ -298,6 +314,8 @@ case ".$OBJECT_TYPE" in
     .SEQUENCE) exp_sequence_ddl;;
     .PACKAGE) exp_package_ddl;;
     .DB_LINK) exp_dblink_ddl;;
+    .SCHEDULER) OBJECT_TYPE="PROCOBJ" exp_scheduler_ddl;;
+    .JOB) exp_job_ddl;;
     .CLEAN) 
         if [ "$DEBUG" -gt 0 ]; then 
             rm *.sql *.log *.dmp .*.sql .*.list 
