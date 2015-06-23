@@ -28,6 +28,7 @@ SQLPLUS_LINESIZE="${SQLPLUS_LINESIZE:-200}"
 SQLPLUS_TERMOUT="${SQLPLUS_TERMOUT:-off}"
 SQLPLUS_SPOOL=""
 SQLPLUS_VERIFY="${SQLPLUS_VERIFY:-on}"
+SQLPLUS_SERVEROUTPUT="${SQLPLUS_SERVEROUTPUT:-off}"
 
 OBJECTS=""
 SQL_LIKE=""
@@ -110,6 +111,7 @@ set longchunksize ${SQLPLUS_LONG};
 set linesize ${SQLPLUS_LINESIZE};
 set trimspool on;
 set verify ${SQLPLUS_VERIFY};
+set serveroutput ${SQLPLUS_SERVEROUTPUT};
 define objects_output="${SQLPLUS_SPOOL}";
 define sql_like='${SQL_LIKE}';
 execute dbms_metadata.set_transform_param(dbms_metadata.session_transform,'SQLTERMINATOR',${SQL_TERMINATOR});
@@ -289,6 +291,19 @@ function exp_scheduler_ddl() {
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where s.job_name in ($OBJECTS);"
         SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
+        to_ddl
+        trans_scheme
+    fi
+    summary "$SQLQ"
+}
+
+function exp_job_ddl() {
+    SQLF="j.job"
+    describe_objects "select j.job from user_jobs j"
+    if [[ -n "$OBJECTS" ]]; then
+        OBJECTS=$(to_single_quoted $OBJECTS)
+        SQLQ="declare job_txt varchar2(4000);begin for c in (select job from user_jobs j where j.job in ($OBJECTS)) loop dbms_job.user_export(c.job,job_txt);dbms_output.put_line(job_txt);end loop;end;\n/"
+        SQLPLUS_SPOOL=$EXP_TMP SQLPLUS_SERVEROUTPUT="on" run_sqlplus $SQLQ
         to_ddl
         trans_scheme
     fi
