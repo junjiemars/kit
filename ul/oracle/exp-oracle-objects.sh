@@ -267,6 +267,18 @@ function exp_package_ddl() {
     fi
 }
 
+function exp_dblink_ddl() {
+    SQLF="l.db_link"
+    describe_objects "select l.db_link from user_db_links l"
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', l.db_link) from user_db_links l "
+    if [[ -n "$OBJECTS" ]]; then
+        OBJECTS=$(to_single_quoted $OBJECTS)
+        SQLQ="$SQLQ where l.db_link in ($OBJECTS);"
+        SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
+    fi
+    summary "$SQLQ"
+}
+
 TODAY=`date +%Y-%m-%d`
 EXP_FILE="${EXP_FILE:-${EXP_DIR}/exp-${OBJECT_TYPE}-${TODAY}.sql}";
 EXP_LOG="${EXP_LOG:-${EXP_DIR}/exp-${OBJECT_TYPE}-${TODAY}.log}";
@@ -285,6 +297,7 @@ case ".$OBJECT_TYPE" in
     .FUNCTION) exp_procedure_ddl;;
     .SEQUENCE) exp_sequence_ddl;;
     .PACKAGE) exp_package_ddl;;
+    .DB_LINK) exp_dblink_ddl;;
     .CLEAN) 
         if [ "$DEBUG" -gt 0 ]; then 
             rm *.sql *.log *.dmp .*.sql .*.list 
