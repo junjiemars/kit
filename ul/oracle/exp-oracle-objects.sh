@@ -21,13 +21,14 @@ EXP_LOG=""
 EXP_TMP=""
 OBJECT_LIST=""
 OBJECT_TYPE="DUMP"
+IN_SQL_FILE=""
 
 SQLPLUS_PAGESIZE="${SQLPLUS_PAGESIZE:-0}"
 SQLPLUS_LONG="${SQLPLUS_LONG:-90000}"
 SQLPLUS_LINESIZE="${SQLPLUS_LINESIZE:-200}"
 SQLPLUS_TERMOUT="${SQLPLUS_TERMOUT:-off}"
 SQLPLUS_SPOOL=""
-SQLPLUS_VERIFY="${SQLPLUS_VERIFY:-on}"
+SQLPLUS_VERIFY="${SQLPLUS_VERIFY:-off}"
 SQLPLUS_SERVEROUTPUT="${SQLPLUS_SERVEROUTPUT:-off}"
 
 OBJECTS=""
@@ -50,9 +51,10 @@ options:-h\t\t\thelp\n\
     \t[-x<exclude>]\t\texclude objects, seperate by ',' or like '%'\n\
     \t[-u<scheme>]\t\ttrans scheme:<origin-scheme>:<new-scheme>\n\
     \t[-t<tablespace]\t\ttrans tablespace:<origin-tablespace>:<new-tablespace>\n\
+    \t[-f<sql-file]\t\ttrans scheme & tablespace of the input sql file\n\
     \t[-v<verbose>]"
 
-while getopts "hvd:p:w:n:s:x:u:t:" arg
+while getopts "hvd:p:w:n:s:x:u:t:f:" arg
 do
 	case ${arg} in
         h) echo -e $HELP; exit 0;;
@@ -65,6 +67,7 @@ do
         x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
         u) SQL_SCHEME=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
         t) SQL_SPACE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
+        f) IN_SQL_FILE=${OPTARG};;
         *) echo -e $HELP; exit 1;;
 	esac
 done
@@ -189,6 +192,7 @@ function trans_tablespace() {
         fi
     fi
 }
+
 function describe_objects() {
     build_filter "$@"
     SQLPLUS_SPOOL=$OBJECT_LIST run_sqlplus "$SQLQ"
@@ -324,6 +328,13 @@ function exp_view_ddl() {
     summary "$SQLQ"
 }
 
+function trans_sql_file() {
+    if [[ -f "${IN_SQL_FILE}" ]]; then
+        EXP_FILE=$IN_SQL_FILE trans_scheme
+        EXP_FILE=$IN_SQL_FILE trans_tablespace
+    fi
+}
+
 TODAY=`date +%Y-%m-%d`
 EXP_FILE="${EXP_FILE:-${EXP_DIR}/exp-${OBJECT_TYPE}-${TODAY}.sql}";
 EXP_LOG="${EXP_LOG:-${EXP_DIR}/exp-${OBJECT_TYPE}-${TODAY}.log}";
@@ -346,6 +357,7 @@ case ".$OBJECT_TYPE" in
     .SCHEDULER) OBJECT_TYPE="PROCOBJ" exp_scheduler_ddl;;
     .JOB) exp_job_ddl;;
     .VIEW) exp_view_ddl;;
+    .SQLFILE) trans_sql_file;;
     .CLEAN) 
         if [ "$DEBUG" -gt 0 ]; then 
             rm *.sql *.log *.dmp .*.sql .*.list 
