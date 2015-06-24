@@ -289,7 +289,7 @@ function exp_scheduler_ddl() {
     SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_scheduler_jobs s "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
-        SQLQ="$SQLQ where s.job_name in ($OBJECTS);"
+        SQLQ="$SQLQ where ${SQLF} in ($OBJECTS);"
         SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
         to_ddl
         trans_scheme
@@ -304,6 +304,20 @@ function exp_job_ddl() {
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="declare job_txt varchar2(4000);begin for c in (select job from user_jobs j where j.job in ($OBJECTS)) loop dbms_job.user_export(c.job,job_txt);dbms_output.put_line(job_txt);end loop;end;\n/"
         SQLPLUS_SPOOL=$EXP_TMP SQLPLUS_SERVEROUTPUT="on" run_sqlplus $SQLQ
+        to_ddl
+        trans_scheme
+    fi
+    summary "$SQLQ"
+}
+
+function exp_view_ddl() {
+    SQLF="v.view_name"
+    describe_objects "select v.view_name from user_views v"
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}',${SQLF}) from user_views v "
+    if [[ -n "$OBJECTS" ]]; then
+        OBJECTS=$(to_single_quoted $OBJECTS)
+        SQLQ="$SQLQ where ${SQLF} in ($OBJECTS);"
+        SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
         to_ddl
         trans_scheme
     fi
@@ -331,6 +345,7 @@ case ".$OBJECT_TYPE" in
     .DB_LINK) exp_dblink_ddl;;
     .SCHEDULER) OBJECT_TYPE="PROCOBJ" exp_scheduler_ddl;;
     .JOB) exp_job_ddl;;
+    .VIEW) exp_view_ddl;;
     .CLEAN) 
         if [ "$DEBUG" -gt 0 ]; then 
             rm *.sql *.log *.dmp .*.sql .*.list 
