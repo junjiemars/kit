@@ -51,7 +51,7 @@ options:-h\t\t\thelp\n\
     \t[-x<exclude>]\t\texclude objects, seperate by ',' or like '%'\n\
     \t[-u<scheme>]\t\ttrans scheme:<origin-scheme>:<new-scheme>\n\
     \t[-t<tablespace]\t\ttrans tablespace:<origin-tablespace>:<new-tablespace>\n\
-    \t[-f<sql-file]\t\ttrans scheme & tablespace of the input sql file\n\
+    \t[-f<sql-file]
     \t[-v<verbose>]"
 
 while getopts "hvd:p:w:n:s:x:u:t:f:" arg
@@ -212,12 +212,16 @@ function exp_tables() {
         EXP_FILE=$(echo $EXP_FILE|awk '{gsub(/.sql/,".dmp",$0);print $0;}')
         exp ${PASSCODE} file=${EXP_FILE} log=${EXP_LOG} tables=${OBJECTS} ${EXP_OPTS}
     fi
-    summary "$SQLQ"
+    summary "$SQLQ" 
 }
 
 function exp_table_ddl() {
     SQLF="t.table_name"
-    describe_objects "select ${SQLF} from user_tables t "
+    if [[ -f "$IN_SQL_FILE" ]]; then
+        OBJECTS=$(cat $IN_SQL_FILE)
+    else
+        describe_objects "select ${SQLF} from user_tables t "
+    fi
     SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) || case (select count(*) from user_col_comments c where c.table_name=${SQLF} and c.comments is not null) when 0 then empty_clob() else dbms_metadata.get_dependent_ddl('COMMENT',${SQLF}) end from user_tables t "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
@@ -240,7 +244,7 @@ function exp_procedure_ddl() {
         SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
         to_ddl
         trans_scheme
-    fi 
+    fi
     summary "$SQLQ"
  }
 
@@ -287,7 +291,7 @@ function exp_dblink_ddl() {
     summary "$SQLQ"
 }
 
-function exp_scheduler_ddl() {
+function exp_scheduler_ddl() { 
     SQLF="s.job_name"
     describe_objects "select s.job_name from user_scheduler_jobs s"
     SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_scheduler_jobs s "
