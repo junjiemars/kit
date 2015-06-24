@@ -149,6 +149,11 @@ function build_filter() {
     SQLQ=$(echo $SQLQ|awk -v N="$OBJECTS" -v L="$SQL_LIKE" -v X="$SQL_EXCLUDE" '{gsub("@N",N,$0);gsub("@L",L,$0);gsub("@X",X,$0);print $0}')
 }
 
+function to_comma_seperated() {
+    local _L=$(echo $@ | awk '{gsub(" |\n",",");print $0;}')
+    echo $_L
+}
+
 function to_single_quoted() {
     local _L=$(echo $@|awk 'BEGIN{FS=",";t="";}END{for(i=1;i<=NF;i++){length(t)==0?t="'\''" $i "'\''":t=t ",'\''" $i "'\''";}print t;}')
     echo $_L
@@ -194,13 +199,18 @@ function trans_tablespace() {
 }
 
 function describe_objects() {
-    build_filter "$@"
-    SQLPLUS_SPOOL=$OBJECT_LIST run_sqlplus "$SQLQ"
-    if [[ -f "$OBJECT_LIST" ]]; then
-        log_file $OBJECT_LIST
-        OBJECTS=$(awk '!/^SQL>/{if(NF>0)print $0;}' < $OBJECT_LIST | awk '!/^no rows/{print $0;}')
-        if [[ -n "$OBJECTS" ]]; then
-            OBJECTS=$(echo $OBJECTS|awk '{gsub(" ",",");print $0;}')
+    if [[ -n "$IN_SQL_FILE" ]]; then
+        OBJECTS=$(cat $IN_SQL_FILE)
+        OBJECTS=$(to_comma_seperated $OBJECTS)
+    else
+        build_filter "$@"
+        SQLPLUS_SPOOL=$OBJECT_LIST run_sqlplus "$SQLQ"
+        if [[ -f "$OBJECT_LIST" ]]; then
+            log_file $OBJECT_LIST
+            OBJECTS=$(awk '!/^SQL>/{if(NF>0)print $0;}' < $OBJECT_LIST | awk '!/^no rows/{print $0;}')
+            if [[ -n "$OBJECTS" ]]; then
+                OBJECTS=$(to_comma_seperated $OBJECTS)
+            fi
         fi
     fi
 }
@@ -217,11 +227,7 @@ function exp_tables() {
 
 function exp_table_ddl() {
     SQLF="t.table_name"
-    if [[ -f "$IN_SQL_FILE" ]]; then
-        OBJECTS=$(cat $IN_SQL_FILE)
-    else
-        describe_objects "select ${SQLF} from user_tables t "
-    fi
+    describe_objects "select ${SQLF} from user_tables t "
     SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) || case (select count(*) from user_col_comments c where c.table_name=${SQLF} and c.comments is not null) when 0 then empty_clob() else dbms_metadata.get_dependent_ddl('COMMENT',${SQLF}) end from user_tables t "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
