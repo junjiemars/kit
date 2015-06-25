@@ -102,6 +102,7 @@ function summary() {
 }
 
 function run_sqlplus() {
+export NLS_LANG="${NLS_LANG:-"AMERICAN_AMERICA.UTF8"}"
 ##set serveroutput off;
 ##set termout on;
 ##SQLPLUS_TERMOUT="ON"
