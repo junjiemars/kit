@@ -11,6 +11,7 @@ STOP_PORT=${STOP_PORT:=8005}
 BASE=${BASE:="/opt/bin/tomcat"}
 
 export CATALINA_BASE=${CATALINA_BASE:="${BASE}/${VER}"}
+export CATALINA_PID="${CATALINA_BASE}/pid"
 
 if [ "$DEBUG" -gt 0 ]; then
     MODE="DEBUG"
@@ -19,7 +20,7 @@ if [ "$DEBUG" -gt 0 ]; then
         -XX:+HeapDumpOnOutOfMemoryError         \
         -XX:HeapDumpPath=${CATALINA_BASE}/logs"
 fi
-CATALINA_OPTS=$(echo $CATALINA_OPTS | tr -s " ")
+export CATALINA_OPTS=$(echo $CATALINA_OPTS | tr -s " ")
 
 JAVA_OPTS="${JAVA_OPTS}                      \
     -Dhttp.port=${HTTP_PORT}                 \
@@ -34,10 +35,13 @@ fi
 case ".$RUN" in
     ".stop") $BIN stop ;;
     ".start") $BIN start ;;
+    ".run") $BIN run ;;
+    ".debug") $BIN debug ;;
+    ".version") $BIN version ;;
     *) echo "#unknown command:$RUN" ;;
 esac
 
 echo "---------------------------------"
 echo "JAVA_OPTS=$JAVA_OPTS"
 echo "CATALINA_OPTS=$CATALINA_OPTS"
-echo "Tomcat $VER {$RUN} in $MODE mode"
+echo "Tomcat {$RUN-${VER}} in $MODE mode"
