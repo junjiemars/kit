@@ -184,7 +184,7 @@ _go_() {
 	local i_=0
 	
 	for p in `seq ${f_} ${UP_INCR} ${l_}`; do
-	  local b_="${t_}/n${i_}/"
+	  local b_="${t_}/n${i_}"
 	  local s1_=$((${s_} + $DOWN_INCR * ${i_}))
           local a1_=$((${a_} + $DOWN_INCR * ${i_}))
 	  (_go_tomcat_ ${b_} ${p} ${s1_} ${a1_} ${w_} ${g_})
