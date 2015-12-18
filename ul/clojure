@@ -2,9 +2,10 @@
 
 CLOJURE_PATH=${CLOJURE_PATH:-"/opt/bin/clojure.git/target"}
 CLOJURE_JAR=$(ls ${CLOJURE_PATH%/}/*.jar | grep -e 'clojure-\d\.\d\d*\.\d\d*\.jar')
+CLASSPATH=$CLOJURE_JAR:$CLASSPATH
 
 if [[ 0 -eq $(rlwrap -v 2>&1 1>/dev/null;echo $?) ]]; then
-  rlwrap java -cp $CLOJURE_JAR clojure.main "$@"
+  rlwrap java -cp $CLASSPATH clojure.main "$@"
 else
-  java -cp $CLOJURE_JAR clojure.main "$@"
+  java -cp $CLASSPATH clojure.main "$@"
 fi

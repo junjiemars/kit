@@ -11,11 +11,11 @@ WEB_ROOT=${WEB_ROOT:-"./"}
 WAR_PATH=${WAR_PATH:-"./"}
 UP_PORT=${UP_PORT:-8080}
 DOWN_PORT=${DOWN_PORT:-8005}
-AJP_PORT=${CONNECTOR_PORT:-8009}
+AJP_PORT=${AJP_PORT:-8009}
 UP_INCR=${UP_INCR:-101}
 DOWN_INCR=${DOWN_INCR:-100}
 NODE_SN=${NODE_SN:-0}
-TIMEOUT=${TIMEOUT:-5}
+TIMEOUT=${TIMEOUT:-3}
 GO=${GO:-0}
 
 _usage_() {
@@ -71,6 +71,12 @@ _get_pid_() {
   fi
 }
 
+_is_running_() {
+  local p_=$1
+  ps -p ${p_} 2>&1 1>/dev/null
+  echo $?
+}
+
 _remove_dir_() {
   local d_=$1
   if [[ -d ${d_} ]]; then
@@ -105,54 +111,52 @@ _go_tomcat_() {
   export JAVA_OPTS=$(echo -e "$JAVA_OPTS \
     -Dhttp.port=${p_} \
     -Dshutdown.port=${s_} \
-    -Dajp.port=${a_}" \
-    |tr -s ' ')
+    -Dajp.port=${a_}" | tr -s ' ')
   export CATALINA_PID=${CATALINA_BASE}/pid
 
-  if [[ 0 -eq $(_is_listening_ ${p_}) ]]; then
+  local pid_=$(_get_pid_ ${CATALINA_PID})
+  if [[ 0 -eq $(_is_listening_ ${p_}) ]] \
+       || [[ 0 -eq $(_is_running_ ${pid_}) ]]; then
     _out_ "# shutdown ${p_}|${s_} [${CATALINA_BASE}]..."
     _out_ $(${CATALINA_BASE}/bin/shutdown.sh) \
-      | sed -r 's/Using /\n% using /g'
+      | sed $'s/Using /\\\n% using /g'
     sleep ${TIMEOUT}
+  fi
 
-    local pid_=$(_get_pid_ ${CATALINA_PID})
-    if [[ ${pid_} -gt 0 ]]; then
-      _out_ "# try to kill pid:[${pid_}] ..."
-      kill -15 ${pid_}
-      sleep ${TIMEOUT}
-    fi
-
-    if [ ! -z $w_ ] && [[ -f $w_ ]]; then
-      local b_=$(basename $w_)
-      local d_="${CATALINA_BASE}/webapps/"${b_%.*}
-      
-      if [[ -d ${d_} ]]; then
-	_out_ "# remove web-app:[${d_}] ..."
-	if [[ 0 -ne $(_remove_dir_ ${d_}) ]]; then
-	  _out_ "! remove web-app:[${d_}] failed"
-	fi
-	sleep ${TIMEOUT}
-      fi
-    fi
+  if [[ 0 -eq $(_is_running_ ${pid_}) ]]; then
+    _out_ "# try to kill pid:[${pid_}] ..."
+    kill -15 ${pid_}
+    sleep ${TIMEOUT}
   fi
 
   if [ ! -z ${w_} ] && [[ -f ${w_} ]]; then
-    local f_="${CATALINA_BASE}/webapps/$(basename ${w_})"
+    local b_=$(basename ${w_})
+    local d_="${CATALINA_BASE}/webapps/${b_%.*}"
+    
+    if [[ -d ${d_} ]]; then
+      _out_ "# remove web-app:[${d_}] ..."
+      if [[ 0 -ne $(_remove_dir_ ${d_}) ]]; then
+	_out_ "! remove web-app:[${d_}] failed"
+      fi
+      sleep ${TIMEOUT}
+    fi
+
+    local f_="${CATALINA_BASE}/webapps/${b_}"
     if [[ -f ${f_} ]] && \
       [ $(_sha1_ ${w_}) = $(_sha1_ ${f_}) ]; then
       _out_ "# skip copy war:[${w_}] sha1:[$(_sha1_ ${f_})]"
     else
+      _out_ "# try to copy war-file [${w_}]->[${f_}] ..."
       if [[ 0 -ne $(_copy_file_ ${w_} ${f_}) ]]; then
-	_out_ "! copy war-file from [$w_]-> [$f_] failed"
-	return
+	_out_ "! copy war-file [${w_}]->[${f_}] failed"
       fi
     fi
-  fi	
+  fi
 
   if [[ ${g_} -gt 0 ]]; then
     _out_ "# startup tomcat:${p_}|${s_} [${CATALINA_BASE}]..."
     _out_ $(${CATALINA_BASE}/bin/startup.sh) \
-      | sed -r 's/Using /\n% using /g'
+      | sed $'s/Using /\\\n% using /g'
   fi
 }
 
