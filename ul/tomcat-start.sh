@@ -26,7 +26,8 @@ JAVA_OPTS="${JAVA_OPTS}                      \
     -Dhttp.port=${HTTP_PORT}                 \
     -Dshutdown.port=${STOP_PORT}             \
     -Dcom.sun.management.jmxremote"
-JAVA_OPTS=$(echo $JAVA_OPTS | tr -s " ")
+export JAVA_OPTS=$(echo $JAVA_OPTS | tr -s " ")
+
 BIN="$CATALINA_BASE/bin/catalina.sh $JPDA"
 
 if [ "$#" -gt 0 ];then
