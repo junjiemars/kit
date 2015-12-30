@@ -13,23 +13,26 @@
 #         a manual exactly. But there is one:
 #         where ([-s] or [-n]) and ([-x] not in)
 #=====================================================
-PASSCODE="${PASSCODE:-xws/xws@localhost:1521/XE}"
-EXP_OPTS="${EXP_OPTS:="FEEDBACK=1"}"
+
+CMD_EXP=exp.sh
+CMD_SQLPLUS=sqlplus.sh
+PASSCODE=${PASSCODE:-'xws/xws@localhost:1521/XE'}
+EXP_OPTS=${EXP_OPTS:='FEEDBACK=1'}
 EXP_DIR=${EXP_DIR:-$PWD}
-EXP_FILE="${EXP_FILE}"
-EXP_LOG="${EXP_LOG}"
+EXP_FILE=${EXP_FILE}
+EXP_LOG=${EXP_LOG}
 EXP_TMP=""
 OBJECT_LIST=""
 OBJECT_TYPE="DUMP"
 IN_SQL_FILE=""
 
-SQLPLUS_PAGESIZE="${SQLPLUS_PAGESIZE:-0}"
-SQLPLUS_LONG="${SQLPLUS_LONG:-90000}"
-SQLPLUS_LINESIZE="${SQLPLUS_LINESIZE:-200}"
-SQLPLUS_TERMOUT="${SQLPLUS_TERMOUT:-off}"
+SQLPLUS_PAGESIZE=${SQLPLUS_PAGESIZE:-0}
+SQLPLUS_LONG=${SQLPLUS_LONG:-90000}
+SQLPLUS_LINESIZE=${SQLPLUS_LINESIZE:-200}
+SQLPLUS_TERMOUT=${SQLPLUS_TERMOUT:-off}
 SQLPLUS_SPOOL=""
-SQLPLUS_VERIFY="${SQLPLUS_VERIFY:-off}"
-SQLPLUS_SERVEROUTPUT="${SQLPLUS_SERVEROUTPUT:-off}"
+SQLPLUS_VERIFY=${SQLPLUS_VERIFY:-off}
+SQLPLUS_SERVEROUTPUT=${SQLPLUS_SERVEROUTPUT:-off}
 
 OBJECTS=""
 SQL_LIKE=""
@@ -60,10 +63,10 @@ do
         h) echo -e $HELP; exit 0;;
         v) DEBUG=1;;
         d) OBJECT_TYPE=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
-		p) PASSCODE=${OPTARG};;
-		w) EXP_DIR=${OPTARG};;
-		n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
-		s) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
+	p) PASSCODE=${OPTARG};;
+	w) EXP_DIR=${OPTARG%/};;
+	n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
+	s) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
         x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
         u) SQL_SCHEME=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
         t) SQL_SPACE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
@@ -102,13 +105,15 @@ function summary() {
 }
 
 function run_sqlplus() {
-export NLS_LANG="${NLS_LANG:-"AMERICAN_AMERICA.UTF8"}"
-##set serveroutput off;
+export NLS_LANG=${NLS_LANG:-"AMERICAN_AMERICA.UTF8"}
 ##set termout on;
 ##SQLPLUS_TERMOUT="ON"
-sqlplus ${PASSCODE} <<!
+${CMD_SQLPLUS} ${PASSCODE} <<!
+set sqlprompt '';
+set feedback off;
+set termout off;
 set heading off;
-set echo on;
+set echo off;
 set pages ${SQLPLUS_PAGESIZE};
 set long ${SQLPLUS_LONG};
 set longchunksize ${SQLPLUS_LONG};
@@ -205,11 +210,11 @@ function describe_objects() {
         OBJECTS=$(to_comma_seperated $OBJECTS)
     else
         build_filter "$@"
-        SQLPLUS_SPOOL=$OBJECT_LIST run_sqlplus "$SQLQ"
-        if [[ -f "$OBJECT_LIST" ]]; then
+        SQLPLUS_SPOOL=$OBJECT_LIST run_sqlplus $SQLQ
+        if [[ -f ${OBJECT_LIST} ]]; then
             log_file $OBJECT_LIST
-            OBJECTS=$(awk '!/^SQL>/{if(NF>0)print $0;}' < $OBJECT_LIST | awk '!/^no rows/{print $0;}')
-            if [[ -n "$OBJECTS" ]]; then
+            OBJECTS=$(awk '!/;/{print $0;}' < $OBJECT_LIST | awk '!/^spool off/{print $0;}')
+            if [[ -n ${OBJECTS} ]]; then
                 OBJECTS=$(to_comma_seperated $OBJECTS)
             fi
         fi
@@ -221,7 +226,7 @@ function exp_tables() {
     describe_objects "select table_name from user_tables t "
     if [[ -n "$OBJECTS" ]]; then
         EXP_FILE=$(echo $EXP_FILE|awk '{gsub(/.sql/,".dmp",$0);print $0;}')
-        exp ${PASSCODE} file=${EXP_FILE} log=${EXP_LOG} tables=${OBJECTS} ${EXP_OPTS}
+        ${CMD_EXP} ${PASSCODE} file=${EXP_FILE} log=${EXP_LOG} tables="${OBJECTS}" ${EXP_OPTS}
     fi
     summary "$SQLQ" 
 }
@@ -374,6 +379,7 @@ case ".$OBJECT_TYPE" in
             rm *.sql *.log *.dmp .*.sql .*.list 
         fi
         ;;
+    .DEBUG) SQLF="t.table_name" build_filter "select table_name from user_tables t ";;
     *) echo -e "fin(o)n(0)y";echo -e $HELP;;
 esac
 
