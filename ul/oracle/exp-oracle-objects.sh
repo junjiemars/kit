@@ -45,8 +45,9 @@ SQL_TERMINATOR="true"
 
 DEBUG="${DEBUG:-0}"
 HELP="usage:\texp-oracle-tables.sh <options>\n\
-options:-h\t\t\thelp\n\
-    \t-p<oralce-login>\tusername/password@host:port/sid\n\
+options:\n
+    \t[-h]\t\t\thelp\n\
+    \t[-p<oralce-login>]\tusername/password@host:port/sid\n\
     \t[-w<dump-dir>]\t\tdump directory\n\
     \t[-d<ddl-type>]\t\tddl type:one of table,package etc.,\n\
     \t[-n<object>]\t\tobject list, seperate by ','\n\
@@ -63,10 +64,10 @@ do
         h) echo -e $HELP; exit 0;;
         v) DEBUG=1;;
         d) OBJECT_TYPE=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
-	p) PASSCODE=${OPTARG};;
-	w) EXP_DIR=${OPTARG%/};;
-	n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
-	s) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
+    	p) PASSCODE=${OPTARG};;
+    	w) EXP_DIR=${OPTARG%/};;
+    	n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
+    	s) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
         x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
         u) SQL_SCHEME=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
         t) SQL_SPACE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
