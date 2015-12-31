@@ -66,11 +66,11 @@ do
         d) OBJECT_TYPE=`echo ${OPTARG}|tr [:lower:] [:upper:]`;;
     	p) PASSCODE=${OPTARG};;
     	w) EXP_DIR=${OPTARG%/};;
-    	n) OBJECTS=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
-    	s) SQL_LIKE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
-        x) SQL_EXCLUDE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
-        u) SQL_SCHEME=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
-        t) SQL_SPACE=`echo ${OPTARG}|tr [:lower:] [:upper:]|sed -e 's/\ *//g'`;;
+    	n) OBJECTS=`echo ${OPTARG}|tr '[:lower:]' '[:upper:]'|sed -e 's/\ *//g'`;;
+    	s) SQL_LIKE=`echo ${OPTARG}|tr '[:lower:]' '[:upper:]'|sed -e 's/\ *//g'`;;
+        x) SQL_EXCLUDE=`echo ${OPTARG}|tr '[:lower:]' '[:upper:]'|sed -e 's/\ *//g'`;;
+        u) SQL_SCHEME=`echo ${OPTARG}|tr '[:lower:]' '[:upper:]'|sed -e 's/\ *//g'`;;
+        t) SQL_SPACE=`echo ${OPTARG}|tr '[:lower:]' '[:upper:]'|sed -e 's/\ *//g'`;;
         f) IN_SQL_FILE=${OPTARG};;
         *) echo -e $HELP; exit 1;;
 	esac
