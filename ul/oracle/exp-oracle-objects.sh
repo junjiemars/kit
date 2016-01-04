@@ -38,6 +38,9 @@ SQLPLUS_SPOOL=""
 SQLPLUS_VERIFY=${SQLPLUS_VERIFY:-off}
 SQLPLUS_SERVEROUTPUT=${SQLPLUS_SERVEROUTPUT:-off}
 
+SPOOL_HEAD='^select dbms_metadata'
+SPOOL_TAIL='^spool off'
+
 OBJECTS=""
 SQL_LIKE=""
 SQL_EXCLUDE=""
@@ -184,23 +187,28 @@ function replace_file_ext() {
     fi
 }
 
+function spool_to_object() {
+    if [[ 4 -eq $# ]] && [[ -f "${3}" ]]; then
+        awk -v H="${1}" 'BEGIN{IGNORECASE=1;}{if ($0 !~ H) print $0;}' "${3}" \
+            | awk -v T="${2}" 'BEGIN{IGNORECASE=1;}{if ($0 !~ T) print $0;}' \
+            > "${4}"
+    fi
+}
+
 function to_ddl() {
     if [[ -n "$OBJECT_TYPE" && -f "$EXP_TMP" ]]; then
         log_file $EXP_TMP
-        #awk '!/^SQL>/{if (NF > 0)print $0;}' < $EXP_TMP | awk '!/^no rows/{print $0}' > $EXP_FILE
-        #awk '{gsub("^SQL>\w*","");gsub("(no|d+) rows\w*","");print $0;}' < $EXP_TMP > $EXP_FILE
-        awk 'BEGIN{IGNORECASE=1;}!/^select dbms_metadata.get_ddl/{print $0;}' < $EXP_TMP | awk 'BEGIN{IGNORECASE=1;}!/^spool off/{print $0;}' > $EXP_FILE
+        spool_to_object "${SPOOL_HEAD}" "${SPOOL_TAIL}" "${EXP_TMP}" "${EXP_FILE}"
     fi
 }
 
 function to_csv() {
-    if [[ -f "${EXP_TMP}" ]]; then
-        EXP_FILE=$(replace_file_ext ".sql" ".csv")
-        awk 'BEGIN{IGNORECASE=1;}!/;/{print $0;}' < "${EXP_TMP}" \
-            | awk 'BEGIN{IGNORECASE=1;}!/^spool off/{print $0;}' \
-            | tr -ds ' ' '' > "${EXP_FILE}"
-    fi
+    EXP_FILE=$(replace_file_ext ".sql" ".csv")
+    SPOOL_HEAD=";"
+    spool_to_object "${SPOOL_HEAD}" "${SPOOL_TAIL}" "${EXP_TMP}" "${EXP_FILE}"
 }
+
+
 
 function trans_scheme() {
     if [[ -n "$SQL_SCHEME" && -f "$EXP_FILE" ]]; then
@@ -249,7 +257,7 @@ function exp_tables() {
     SQLF="t.table_name"
     describe_objects "select table_name from user_tables t "
     if [[ -n "$OBJECTS" ]]; then
-        EXP_FILE=$(echo $EXP_FILE|awk '{gsub(/.sql/,".dmp",$0);print $0;}')
+        EXP_FILE=$(replace_file_ext ".sql" ".dmp")
         ${CMD_EXP} ${PASSCODE} file=${EXP_FILE} log=${EXP_LOG} tables="${OBJECTS}" ${EXP_OPTS}
     fi
     summary "$SQLQ" 
