@@ -177,6 +177,13 @@ function rm_single_quoted() {
     echo $(echo $OBJECTS | awk '{gsub(/'\''/,"");print $0;}')
 }
 
+function replace_file_ext() {
+    if [[ 2 -eq $# ]]; then
+        echo $(echo "${EXP_FILE}" \
+            | awk -v S=$1 -v D=$2 '{gsub(S,D);print $0;}')
+    fi
+}
+
 function to_ddl() {
     if [[ -n "$OBJECT_TYPE" && -f "$EXP_TMP" ]]; then
         log_file $EXP_TMP
@@ -188,6 +195,7 @@ function to_ddl() {
 
 function to_csv() {
     if [[ -f "${EXP_TMP}" ]]; then
+        EXP_FILE=$(replace_file_ext ".sql" ".csv")
         awk 'BEGIN{IGNORECASE=1;}!/;/{print $0;}' < "${EXP_TMP}" \
             | awk 'BEGIN{IGNORECASE=1;}!/^spool off/{print $0;}' \
             | tr -ds ' ' '' > "${EXP_FILE}"
