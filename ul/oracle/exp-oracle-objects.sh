@@ -26,10 +26,14 @@ OBJECT_LIST=""
 OBJECT_TYPE="DUMP"
 IN_SQL_FILE=""
 
+SQLPLUS_HEADING=${SQLPLUS_HEADING:-off}
+SQLPLUS_COLSEP=${SQLPLUS_COLSEP:-" "}
+SQLPLUS_ECHO=${SQLPLUS_ECHO:-off}
 SQLPLUS_PAGESIZE=${SQLPLUS_PAGESIZE:-0}
 SQLPLUS_LONG=${SQLPLUS_LONG:-90000}
 SQLPLUS_LINESIZE=${SQLPLUS_LINESIZE:-200}
 SQLPLUS_TERMOUT=${SQLPLUS_TERMOUT:-off}
+SQLPLUS_TRIMSPOOL=${SQLPLUS_TRIMSPOOL:-on}
 SQLPLUS_SPOOL=""
 SQLPLUS_VERIFY=${SQLPLUS_VERIFY:-off}
 SQLPLUS_SERVEROUTPUT=${SQLPLUS_SERVEROUTPUT:-off}
@@ -75,6 +79,8 @@ do
         *) echo -e $HELP; exit 1;;
 	esac
 done
+shift $(($OPTIND - 1))
+SQLQ="$*"
 
 function spec() {
     local _TYPE=""
@@ -93,14 +99,14 @@ function spec() {
 
 function summary() {
     echo -e "\n=SUMMARY:==============================="
-    echo -e "#${OBJECT_TYPE}(`echo ${OBJECTS}|awk 'BEGIN{FS=","}{print NF;}'`):${OBJECTS}"
+    echo -e "#${OBJECT_TYPE}(`echo ${OBJECTS}|awk 'BEGIN{FS=","}{print NF;}'`): ${OBJECTS}"
     if [[ -n "$OBJECTS" ]]; then
         echo -e "$OBJECTS" | tr ',' '\n'
     fi
-    echo -e "#Exp File(`[[ ! -f ${EXP_FILE} ]];echo $?`):${EXP_FILE}"
-    echo -e "#Exp Log(`[[ ! -f ${EXP_LOG} ]];echo $?`):${EXP_LOG}"
+    echo -e "#Exp File(`[[ ! -f ${EXP_FILE} ]];echo $?`): ${EXP_FILE}"
+    echo -e "#Exp Log(`[[ ! -f ${EXP_LOG} ]];echo $?`): ${EXP_LOG}"
     if [ "$DEBUG" -gt 0 ]; then
-        echo -e "#SQL:$SQLQ"
+        echo -e "#SQL: $SQLQ"
     fi
     echo -e "========================================\n"
 }
@@ -113,17 +119,18 @@ ${CMD_SQLPLUS} ${PASSCODE} <<!
 set sqlprompt '';
 set feedback off;
 set termout off;
-set heading off;
-set echo off;
+set heading ${SQLPLUS_HEADING};
+set echo ${SQLPLUS_ECHO};
+set colsep ${SQLPLUS_COLSEP};
 set pages ${SQLPLUS_PAGESIZE};
 set long ${SQLPLUS_LONG};
 set longchunksize ${SQLPLUS_LONG};
 set linesize ${SQLPLUS_LINESIZE};
-set trimspool on;
+set trimspool ${SQLPLUS_TRIMSPOOL};
 set verify ${SQLPLUS_VERIFY};
 set serveroutput ${SQLPLUS_SERVEROUTPUT};
 define objects_output="${SQLPLUS_SPOOL}";
-define sql_like='${SQL_LIKE}';
+define sql_exec="${SQLQ}";
 execute dbms_metadata.set_transform_param(dbms_metadata.session_transform,'SQLTERMINATOR',${SQL_TERMINATOR});
 spool '&objects_output'
 $@
@@ -175,7 +182,15 @@ function to_ddl() {
         log_file $EXP_TMP
         #awk '!/^SQL>/{if (NF > 0)print $0;}' < $EXP_TMP | awk '!/^no rows/{print $0}' > $EXP_FILE
         #awk '{gsub("^SQL>\w*","");gsub("(no|d+) rows\w*","");print $0;}' < $EXP_TMP > $EXP_FILE
-        awk 'BEGIN{IGNORECASE=1;}!/^SQL>/{print $0;}' < $EXP_TMP | awk 'BEGIN{IGNORECASE=1;}!/^(no|[0-9]*) rows/{print $0;}' > $EXP_FILE
+        awk 'BEGIN{IGNORECASE=1;}!/^select dbms_metadata.get_ddl/{print $0;}' < $EXP_TMP | awk 'BEGIN{IGNORECASE=1;}!/^spool off/{print $0;}' > $EXP_FILE
+    fi
+}
+
+function to_csv() {
+    if [[ -f "${EXP_TMP}" ]]; then
+        awk 'BEGIN{IGNORECASE=1;}!/;/{print $0;}' < "${EXP_TMP}" \
+            | awk 'BEGIN{IGNORECASE=1;}!/^spool off/{print $0;}' \
+            | tr -ds ' ' '' > "${EXP_FILE}"
     fi
 }
 
@@ -232,6 +247,18 @@ function exp_tables() {
     summary "$SQLQ" 
 }
 
+function exp_csv() {
+    SQLPLUS_COLSEP=, 
+    SQLPLUS_HEADING=on 
+    OBJECTS="export-to-csv"
+    if [[ -z "${SQLQ}" ]] && [[ -f "${IN_SQL_FILE}" ]]; then
+        SQLQ="$(cat $IN_SQL_FILE)"
+    fi
+    SQLPLUS_SPOOL="${EXP_TMP}" run_sqlplus "${SQLQ}"
+    to_csv
+    summary "${SQLQ}"
+}
+
 function exp_table_ddl() {
     SQLF="t.table_name"
     describe_objects "select ${SQLF} from user_tables t "
@@ -239,7 +266,7 @@ function exp_table_ddl() {
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where ${SQLF} in ($OBJECTS);"
-        SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
+        SQLPLUS_SPOOL=$EXP_TMP run_sqlplus "${SQLQ}"
         to_ddl
         trans_scheme
         trans_tablespace
@@ -365,6 +392,7 @@ echo -e "EXP_FILE:$EXP_FILE "
 case ".$OBJECT_TYPE" in
     .) echo -e $HELP;;
     .DUMP) exp_tables;;
+    .CSV) exp_csv;;
     .TABLE) exp_table_ddl;;
     .PROCEDURE) exp_procedure_ddl;;
     .FUNCTION) exp_procedure_ddl;;
