@@ -16,7 +16,7 @@
 
 CMD_EXP=exp.sh
 CMD_SQLPLUS=sqlplus.sh
-PASSCODE=${PASSCODE:-'xws/xws@localhost:1521/XE'}
+PASSCODE=${PASSCODE:-'hr/hr@localhost:1521/XE'}
 EXP_OPTS=${EXP_OPTS:='FEEDBACK=1'}
 EXP_DIR=${EXP_DIR:-$PWD}
 EXP_FILE=${EXP_FILE}
@@ -62,7 +62,7 @@ options:\n
     \t[-x<exclude>]\t\texclude objects, seperate by ',' or like '%'\n\
     \t[-u<scheme>]\t\ttrans scheme:<origin-scheme>:<new-scheme>\n\
     \t[-t<tablespace]\t\ttrans tablespace:<origin-tablespace>:<new-tablespace>\n\
-    \t[-f<sql-file]
+    \t[-f<sql-file]\n\
     \t[-v<verbose>]"
 
 while getopts "hvd:p:w:n:s:x:u:t:f:" arg
