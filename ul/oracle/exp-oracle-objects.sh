@@ -5,10 +5,10 @@
 #=====================================================
 # NOTE:
 # If u want to export all objects owned by u
-# just run: exp user/passwd owner=user 
+# just run oracle command: exp user/passwd owner=user 
 # This script just help u to export the objects
-# piece by piece.
-#=====================================================
+# what ur want exactly.
+#====================================================
 # MANUAL: The best advice: Don't use it if u need 
 #         a manual exactly. But there is one:
 #         where ([-s] or [-n]) and ([-x] not in)
@@ -292,7 +292,9 @@ function exp_table_ddl() {
 
 function exp_procedure_ddl() {
     SQLF="p.object_name"
-    describe_objects "select ${SQLF} from (select t.object_name from user_procedures t where t.procedure_name is null) p "
+    describe_objects "select ${SQLF} from (select t.object_name \
+        from user_procedures t \
+        where t.procedure_name is null and t.object_type='${OBJECT_TYPE}') p "
     SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_procedures p "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
@@ -302,7 +304,22 @@ function exp_procedure_ddl() {
         trans_scheme
     fi
     summary "$SQLQ"
- }
+}
+
+function exp_type_ddl() {
+    SQLF="p.type_name"
+    describe_objects "select ${SQLF} from (select t.type_name from user_types t ) p "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_types p "
+    if [[ -n "$OBJECTS" ]]; then
+        OBJECTS=$(to_single_quoted $OBJECTS)
+        SQLQ="$SQLQ where (${SQLF} in ($OBJECTS));"
+        SQLPLUS_SPOOL=$EXP_TMP run_sqlplus $SQLQ
+        to_ddl
+        trans_scheme
+    fi
+    summary "$SQLQ"
+}
+
 
 function exp_sequence_ddl() {
     SQLF="s.sequence_name"
@@ -412,6 +429,7 @@ case ".$OBJECT_TYPE" in
     .TABLE) exp_table_ddl;;
     .PROCEDURE) exp_procedure_ddl;;
     .FUNCTION) exp_procedure_ddl;;
+    .TYPE) exp_type_ddl;;
     .SEQUENCE) exp_sequence_ddl;;
     .PACKAGE) exp_package_ddl;;
     .DB_LINK) exp_dblink_ddl;;
