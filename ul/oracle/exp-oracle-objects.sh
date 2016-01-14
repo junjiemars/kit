@@ -429,6 +429,7 @@ case ".$OBJECT_TYPE" in
     .TABLE) exp_table_ddl;;
     .PROCEDURE) exp_procedure_ddl;;
     .FUNCTION) exp_procedure_ddl;;
+    .TRIGGER) exp_procedure_ddl;;
     .TYPE) exp_type_ddl;;
     .SEQUENCE) exp_sequence_ddl;;
     .PACKAGE) exp_package_ddl;;
