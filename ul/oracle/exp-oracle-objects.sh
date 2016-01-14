@@ -132,6 +132,7 @@ set linesize ${SQLPLUS_LINESIZE};
 set trimspool ${SQLPLUS_TRIMSPOOL};
 set verify ${SQLPLUS_VERIFY};
 set serveroutput ${SQLPLUS_SERVEROUTPUT};
+col source_code format a${SQLPLUS_LINESIZE} WORD_WRAPPED;
 define objects_output="${SQLPLUS_SPOOL}";
 define sql_exec="${SQLQ}";
 execute dbms_metadata.set_transform_param(dbms_metadata.session_transform,'SQLTERMINATOR',${SQL_TERMINATOR});
@@ -278,7 +279,7 @@ function exp_csv() {
 function exp_table_ddl() {
     SQLF="t.table_name"
     describe_objects "select ${SQLF} from user_tables t "
-    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) || case (select count(*) from user_col_comments c where c.table_name=${SQLF} and c.comments is not null) when 0 then empty_clob() else dbms_metadata.get_dependent_ddl('COMMENT',${SQLF}) end from user_tables t "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) || case (select count(*) as source_code from user_col_comments c where c.table_name=${SQLF} and c.comments is not null) when 0 then empty_clob() else dbms_metadata.get_dependent_ddl('COMMENT',${SQLF}) end from user_tables t "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where ${SQLF} in ($OBJECTS);"
@@ -295,7 +296,7 @@ function exp_procedure_ddl() {
     describe_objects "select ${SQLF} from (select t.object_name \
         from user_procedures t \
         where t.procedure_name is null and t.object_type='${OBJECT_TYPE}') p "
-    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_procedures p "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) as source_code from user_procedures p "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where (${SQLF} in ($OBJECTS));"
@@ -309,7 +310,7 @@ function exp_procedure_ddl() {
 function exp_type_ddl() {
     SQLF="p.type_name"
     describe_objects "select ${SQLF} from (select t.type_name from user_types t ) p "
-    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_types p "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) as source_code from user_types p "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where (${SQLF} in ($OBJECTS));"
@@ -324,7 +325,7 @@ function exp_type_ddl() {
 function exp_sequence_ddl() {
     SQLF="s.sequence_name"
     describe_objects "select ${SQLF} from user_sequences s "
-    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_sequences s "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) as source_code from user_sequences s "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where s.sequence_name in ($OBJECTS);"
@@ -353,7 +354,7 @@ function exp_package_ddl() {
 function exp_dblink_ddl() {
     SQLF="l.db_link"
     describe_objects "select l.db_link from user_db_links l"
-    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) from user_db_links l "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}', ${SQLF}) as source_code from user_db_links l "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where l.db_link in ($OBJECTS);"
@@ -394,7 +395,7 @@ function exp_job_ddl() {
 function exp_view_ddl() {
     SQLF="v.view_name"
     describe_objects "select v.view_name from user_views v"
-    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}',${SQLF}) from user_views v "
+    SQLQ="select dbms_metadata.get_ddl('${OBJECT_TYPE}',${SQLF}) as source_code from user_views v "
     if [[ -n "$OBJECTS" ]]; then
         OBJECTS=$(to_single_quoted $OBJECTS)
         SQLQ="$SQLQ where ${SQLF} in ($OBJECTS);"
