@@ -7,6 +7,6 @@ set sqlprompt '&_user.@&_connect_identifier.> ';
 -- whenever sqlerror exit sql.sqlcode
 
 set serveroutput on
-define _editor=/usr/bin/vi
+##define _editor=/usr/bin/vi
 
 
