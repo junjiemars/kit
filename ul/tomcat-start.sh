@@ -1,4 +1,5 @@
 #!/bin/bash
+## MINGW/Unix-Like env
 
 RUN=${RUN:="stop"}
 VER="${VER:=7062}"
@@ -10,7 +11,7 @@ HTTP_PORT=${HTTP_PORT:=8080}
 STOP_PORT=${STOP_PORT:=8005}
 BASE=${BASE:="/opt/bin/tomcat"}
 
-export CATALINA_BASE=${CATALINA_BASE:="${BASE}/${VER}"}
+export CATALINA_BASE="${CATALINA_BASE:=${BASE}/${VER}}"
 export CATALINA_PID="${CATALINA_BASE}/pid"
 
 if [ "$DEBUG" -gt 0 ]; then
