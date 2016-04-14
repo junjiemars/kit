@@ -7,7 +7,7 @@
 # For multiple ORACLE_HOME env only.
 #=====================================================
 
-ORACLE_HOME=/usr/lib/oracle/xe/app/oracle/product/10.2.0/server
+ORACLE_HOME=${ORACLE_HOME:-"/usr/lib/oracle/xe/app/oracle/product/10.2.0/server"}
 ORACLE_SID=XE
 
 LD_LIBRARY_PATH=$ORACLE_HOME/lib
