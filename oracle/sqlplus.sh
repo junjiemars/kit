@@ -3,6 +3,7 @@
 # 1. download instantclient basic and unzip it;
 # 2. download sqlplus and unzip into basic;
 
+ORACLE_HOME=${ORACLE_HOME:-"<where-if-not-set>"}
 export SQLPLUS_HOME=${SQLPLUS_HOME:-"/opt/oracle/instantclient_12_1/"}
 export SQLPATH=${SQLPATH:-"/opt/oracle/sql"}
 export NLS_LANG=AMERICAN_AMERICA.UTF8

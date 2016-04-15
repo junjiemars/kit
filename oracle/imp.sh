@@ -10,7 +10,7 @@
 # imp.sh passcode file=? fromuser=? touser=? ignore=y
 #=====================================================
 
-ORACLE_HOME=/usr/lib/oracle/xe/app/oracle/product/10.2.0/server
+ORACLE_HOME=${ORACLE_HOME:-"<oracle-home-dir>"}
 ORACLE_SID=XE
 
 LD_LIBRARY_PATH=$ORACLE_HOME/lib
