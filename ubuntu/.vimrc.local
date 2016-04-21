@@ -1,4 +1,4 @@
-set path+=/usr/include/i386-linux-gnu
+set path+=/usr/include/x86_64-linux-gnu
 set path+=$JAVA_HOME/include
 set path+=$JAVA_HOME/include/linux
 set shell=bash\ --rcfile\ ~/.vimbashrc
