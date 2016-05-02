@@ -7,7 +7,7 @@
 	<array>
 		<string>/opt/bin/renew-ipv6-tunnel-ipv4.sh</string>
 	</array>
-	<key>StandardErrorPath</key><string>/var/log/local.net.ipv4to6.err</string>
+	<key>StandardErrorPath</key><string>/var/log/local.net.ipv4to6.log</string>
 	<key>StandardOutPath</key><string>/var/log/local.net.ipv4to6.log</string>
 	<key>KeepAlive</key>
 	<dict>
