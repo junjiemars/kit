@@ -26,7 +26,8 @@ function get_ip_addr() {
 
 function post_ip_addr() {
     local _ip=$1
-    echo `curl -s4 ${DNS_RENEW} \
+    local _v=$2
+    echo `curl -s${_v} ${DNS_RENEW} \
         -d "hostname=${HOST_NAME}" \
         -d "password=${HOST_PASS}" \
         -d "myip=${_ip}"`
@@ -38,11 +39,11 @@ if [[ 0 -lt `ping6 -q -c3 ${IPV6_TEST} 2>&1 >/dev/null;echo $?` ]]; then
             echo $(basename $0)[$$] ipv6 tunnel is ok
             if [[ 0 -eq `curl -s4 ${IP_CHECK} 2>&1 >${IPV4_FILE};echo $?` ]]; then
                 IPV4_ADDR="$(get_ip_addr ${IPV4_FILE})"
-                post_ip_addr ${IPV4_ADDR}
+                post_ip_addr ${IPV4_ADDR} 4
             fi
             if [[ 0 -eq `curl -s6 ${IP_CHECK} 2>&1 >${IPV6_FILE};echo $?` ]]; then
                 IPV6_ADDR="$(get_ip_addr ${IPV6_FILE})"
-                post_ip_addr ${IPV6_ADDR}
+                post_ip_addr ${IPV6_ADDR} 6
             fi
             break
         fi
