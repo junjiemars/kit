@@ -3,8 +3,15 @@ alias ..2='cd ../../'
 alias ..3='cd ../../../'
 alias ..4='cd ../../../../'
 
-alias ll='ls -lh --color=auto'
-alias l='ls -CF --color=auto'
+if [ 'Darwin' = `uname -s` ]; then
+    alias ls='ls -G'
+    alias ll='ls -lh -G'
+    alias l='ls -CF -G'
+else
+    alias ls='ls --color=auto'
+    alias ll='ls -lh --color=auto'
+    alias l='ls -CF --color=auto'
+fi
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
