@@ -4,6 +4,7 @@ alias ..3='cd ../../../'
 alias ..4='cd ../../../../'
 
 alias ll='ls -lh --color=auto'
+alias l='ls -CF --color=auto'
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
