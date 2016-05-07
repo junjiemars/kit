@@ -9,14 +9,14 @@ IPV6_FILE=${IPV6_FILE:-/tmp/ipv6.addr}
 IPV4_ADDR=
 IPV6_ADDR=
 HOST_NAME=${HOST_NAME:-"<host-name>"}
-HOST_PASS=${HOST_PASS:-"<host-password>"}
+HOST_PASS=${HOST_PASS:-"<host-passwd"}
 DNS_RENEW=${DNS_RENEW:-"http://dyn.dns.he.net/nic/update"}
 SSH_LOGGER=${SSH_LOGGER:-"<ssh-logger>"}
 SLEEP_S=10s
 
-function get_ip_addr() {
+get_ip_addr() {
     local _addr=$1
-    if [[ -f ${_addr} ]]; then
+    if [ -f ${_addr} ]; then
         echo `cat ${_addr} \
             | tr '\n' '|' \
             | grep -o '<body>|.*</body>' \
@@ -24,13 +24,22 @@ function get_ip_addr() {
     fi
 }
 
-function post_ip_addr() {
+post_ip_addr() {
     local _ip=$1
     local _v=$2
     echo `curl -s${_v} ${DNS_RENEW} \
         -d "hostname=${HOST_NAME}" \
         -d "password=${HOST_PASS}" \
         -d "myip=${_ip}"`
+}
+
+good_ipv6() {
+    local _stat=$1
+    if [ -f ${_stat} ]; then
+        echo `cat ${_stat} | grep -o '\(nochg\|good\)' 2>&1 >/dev/null;echo $?`
+    else
+        echo 1
+    fi
 }
 
 if [[ 0 -lt `ping6 -q -c3 ${IPV6_TEST} 2>&1 >/dev/null;echo $?` ]]; then
@@ -49,7 +58,7 @@ if [[ 0 -lt `ping6 -q -c3 ${IPV6_TEST} 2>&1 >/dev/null;echo $?` ]]; then
         fi
         sleep $SLEEP_S
     done
-    if [[ -f ${IPV6_STAT} ]] && [[ 0 -eq `cat ${IPV6_STAT} | grep -o '\(nochg\|good\)' 2>&1 >/dev/null;echo $?` ]]; then
+    if [[ 0 -eq `good_ipv6 ${IPV6_STAT}` ]]; then
         echo $(basename $0)[$$] $(cat ${IPV6_STAT})
     else
         echo $(basename $0)[$$] ipv6 tunnel is failed
