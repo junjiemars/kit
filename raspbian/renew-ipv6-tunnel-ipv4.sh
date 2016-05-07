@@ -42,7 +42,7 @@ good_ipv6() {
     fi
 }
 
-if [[ 0 -lt `ping6 -q -c3 ${IPV6_TEST} 2>&1 >/dev/null;echo $?` ]]; then
+if [[ "0" != `ping6 -q -c3 ${IPV6_TEST} 2>&1 >/dev/null;echo $?` ]]; then
     for i in $(seq 1 10); do
         if [[ 0 -eq `curl -s4 ${IPV6_TUNNEL} 2>&1 >${IPV6_STAT};echo $?` ]]; then
             echo $(basename $0)[$$] ipv6 tunnel is ok
