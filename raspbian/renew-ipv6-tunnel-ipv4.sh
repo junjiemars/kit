@@ -9,7 +9,7 @@ IPV6_FILE=${IPV6_FILE:-/tmp/ipv6.addr}
 IPV4_ADDR=
 IPV6_ADDR=
 HOST_NAME=${HOST_NAME:-"<host-name>"}
-HOST_PASS=${HOST_PASS:-"<host-passwd"}
+HOST_PASS=${HOST_PASS:-"<host-passwd>"}
 DNS_RENEW=${DNS_RENEW:-"http://dyn.dns.he.net/nic/update"}
 SSH_LOGGER=${SSH_LOGGER:-"<ssh-logger>"}
 SLEEP_S=10s
@@ -36,13 +36,24 @@ post_ip_addr() {
 good_ipv6() {
     local _stat=$1
     if [ -f ${_stat} ]; then
-        echo `cat ${_stat} | grep -o '\(nochg\|good\)' 2>&1 >/dev/null;echo $?`
+        echo `cat ${_stat} | grep -o '\(nochg\|good\)' 2>&1 >/dev/null; echo $?`
     else
         echo 1
     fi
 }
 
-if [[ "0" != `ping6 -q -c3 ${IPV6_TEST} 2>&1 >/dev/null;echo $?` ]]; then
+ping6_check() {
+    local _v6=$1
+    ping6 -q -c3 ${_v6} 2>&1 >/dev/null; echo $? 
+}
+
+ipv4_rot() {
+    local _d4=`dig ${HOST_NAME} +short`
+    local _r4=`curl -s4 ${IPV4_ISP} | sed 's/\({"ip":"\|"}\)//g'`
+    [ ".${_d4}" = ".${_r4}" ]; echo $?
+}
+
+if [ "0" != `ping6_check ${IPV6_TEST}` ] || [ "0" != `ipv4_rot` ]; then
     for i in $(seq 1 10); do
         if [[ 0 -eq `curl -s4 ${IPV6_TUNNEL} 2>&1 >${IPV6_STAT};echo $?` ]]; then
             echo $(basename $0)[$$] ipv6 tunnel is ok
