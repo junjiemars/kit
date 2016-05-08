@@ -17,3 +17,7 @@ set undolevels=1000
 "set encoding=utf8
 set fileencoding=utf8
 
+" line number
+" set number
+" highlight LineNr ctermfg=grey
+
