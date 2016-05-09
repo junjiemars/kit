@@ -18,7 +18,7 @@ alias egrep='egrep --color=auto'
 
 function exist_p() {
     local _p=$1
-    which ${_p} 2>&1 >/dev/null; echo $?
+    which ${_p} >/dev/null 2>&1; echo $?
 }
 
 p_rlwrap=$(exist_p 'rlwrap')
