@@ -41,3 +41,9 @@ sudo mount -t vboxsf -o uid=1000,gid=50 <vbox-folder-label-name> /home/docker/<d
 ```
 docker run -d -v <vbox-folder-label-name>:<docker-host-mount-dir> <image>
 ```
+
+### tty mode
+If you got *** cannot enable tty mode on non tty input***, so
+```sh
+docker-machine ssh <default>
+```
