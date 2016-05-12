@@ -21,6 +21,12 @@ function exist_p() {
     which ${_p} >/dev/null 2>&1; echo $?
 }
 
+function diff_p() {
+    local _l=$1
+    local _r=$2
+    diff ${_l} ${_r} >/dev/null 2>&1; echo $?
+}
+
 p_rlwrap=$(exist_p 'rlwrap')
 if [[ 0 -eq p_rlwrap ]]; then
     p_racket=$(exist_p 'racket')
@@ -32,4 +38,12 @@ fi
 p_emacs=$(exist_p 'emacs')
 if [[ 0 -eq p_emacs ]]; then
     alias emacs='emacs -nw'
+fi
+
+p_vi=$(exist_p 'vi')
+p_vim=$(exist_p 'vim')
+if [[ 0 -eq p_vi ]] && [[ 0 -eq p_vim ]]; then
+    if [[ 0 -ne $(diff_p `which vi` `which vim`) ]]; then
+        alias vi=vim
+    fi
 fi
