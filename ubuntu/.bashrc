@@ -104,6 +104,7 @@ if [ -f ~/.bash_aliases ]; then
 fi
 
 # enable programmable completion features (you don't need to enable
+export PATH
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
 if ! shopt -oq posix; then
@@ -121,5 +122,7 @@ export JAVA_HOME=$(readlink -f `which java` | sed "s:/bin/java::")
 export OPT_RUN=/opt/run
 
 PATH=$PATH:$JAVA_HOME/bin:$OPT_RUN/bin:$OPT_RUN/sbin
-
 export PATH
+
+#LD_LIBRARY_PATH=${OPT_RUN}/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+#export LD_LIBRARY_PATH
