@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function exist_p() {
     local _p=$1
     which ${_p} >/dev/null 2>&1; echo $?
