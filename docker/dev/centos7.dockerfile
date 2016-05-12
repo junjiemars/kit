@@ -1,40 +1,58 @@
-FROM centos:centos7
+FROM centos:latest
 
 MAINTAINER Junjie Mars <junjiemars@gmail.com>
 
 # pre-requirements
 #...
 
-RUN yum install -y deltarpm
+RUN yum -y update && \
+    yum -y install deltarpm
 
-RUN yum install -y \
-    sudo \
-    openssh-server \
-    net-tools \
-    git \
-    bc \
-    initscripts \
-    vim-enhanced \
-    coreutils
+RUN yum -y install \
+        sudo \
+        openssh-server \
+        net-tools \
+        git \
+        bc \
+        initscripts \
+        vim-enhanced \
+        coreutils \
+        emacs && \
+    yum -y group install 'Development Tools' && \
+    yum clean all
 
-RUN yum group install -y \
-    'Development Tools'
+
+ENV SUDOUSER=u
+ENV HOME_DIR=/home/${SUDOUSER}
 
 # create sudo user
-ENV SUDOUSER=u
 RUN useradd -m -s/bin/bash ${SUDOUSER}
 RUN echo 'Hell0' | passwd ${SUDOUSER} --stdin
 RUN gpasswd -a ${SUDOUSER} wheel
 
 # cofigure bash env
-RUN cd /home/${SUDOUSER} ;\
-    curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc ;\
-    curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bash_aliases ;\
-    curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps ;\
-    chown -R ${SUDOUSER}:${SUDOUSER} /home/${SUDOUSER}
+RUN cd ${HOME_DIR} ; \
+    curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc ; \
+    curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bash_aliases ; \
+    curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps
+
+# configure vim
+RUN cd ${HOME_DIR} ; \
+    echo -e 'set tabstop=2' >> .vimrc && \
+    echo -e 'set shiftwidth=2' >> .vimrc && \
+    echo -e 'set encoding=utf8' >> .vimrc && \
+    echo -e 'set fileencoding=utf8' >> .vimrc
+
+# configure emacs
+RUN cd ${HOME_DIR} ; \
+    git clone https://github.com/junjiemars/.emacs.d.git  && \
+    chown -R ${SUDOUSER}:${SUDOUSER} .emacs.d
+RUN test -f ${HOME_DIR}/.emacs && rm ${HOME_DIR}/.emacs
 
 # configure java
 #ENV PATH        $ORACLE_HOME/bin:$PATH
+
+RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
 
 # start sshd service
 CMD ["/usr/sbin/sshd", "-D"]
