@@ -44,7 +44,7 @@ good_ipv6() {
 
 ping6_check() {
     local _v6=$1
-    ping6 -q -c3 ${_v6} 2>&1 >/dev/null; echo $? 
+    ping6 -q -c3 ${_v6} >/dev/null 2>&1; echo $? 
 }
 
 ipv4_rot() {
