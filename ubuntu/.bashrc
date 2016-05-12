@@ -115,8 +115,9 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# java env
-export JAVA_HOME=$(readlink -f `which java` | sed "s:/bin/java::")
+if [ -f ~/.bash_apps ]; then
+    . ~/.bash_apps
+fi
 
 # open source env
 export OPT_RUN=/opt/run
