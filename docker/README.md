@@ -47,3 +47,26 @@ If you got *** cannot enable tty mode on non tty input***, so
 ```sh
 docker-machine ssh <default>
 ```
+
+## Basic Centos Development Environment
+Include basic building/networking tools, emacs/vim editors for c/c++/python/lua development.
+
+You can use root or default sudoer: u/Hell0 to login and play.
+
+### Build from Dockerfile
+```sh
+mkdir centos7-dev; cd centos7-dev
+curl -O https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos7.dockerfile
+docker build -t centos7-dev -f ./centos7.dockerfile ./
+```
+
+### Play with centos7-dev
+* one time
+```sh
+docker run -w /home/u -h centos7 -u u -it --rm centos7-dev /bin/bash
+```
+* as daemon
+```sh
+docker run --name centos7-dev -w /home/u -h centos7 -d centos7-dev
+docker exec -it -u u centos7-dev /bin/bash
+```

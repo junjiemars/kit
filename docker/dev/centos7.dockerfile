@@ -6,9 +6,9 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 #...
 
 RUN yum -y update && \
-    yum -y install deltarpm
-
-RUN yum -y install \
+    yum -y install deltarpm && \
+    echo '# enable deltarpm' >> /etc/yum.conf ; \
+    yum -y install \
         sudo \
         openssh-server \
         net-tools \
@@ -50,8 +50,8 @@ RUN cd ${HOME_DIR} ; \
 RUN test -f ${HOME_DIR}/.emacs && rm ${HOME_DIR}/.emacs
 
 # configure java
-#ENV PATH        $ORACLE_HOME/bin:$PATH
-
+#...
+#
 RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
 
 # start sshd service
