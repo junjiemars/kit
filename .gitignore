@@ -6,3 +6,4 @@ ul/oracle/.tables-trimed
 exp-*.log
 exp-*.sql
 
+*.buf
