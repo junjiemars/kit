@@ -60,13 +60,14 @@ curl -O https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/cento
 docker build -t centos7-dev -f ./centos7.dockerfile ./
 ```
 
+
 ### Play with centos7-dev
 * one time
 ```sh
-docker run -w /home/u -h centos7 -u u -it --rm centos7-dev /bin/bash
+docker run -w /home/u -h centos7 -u u -it --rm junjiemars/centos7-dev /bin/bash
 ```
 * as daemon
 ```sh
-docker run --name centos7-dev -w /home/u -h centos7 -d centos7-dev
+docker run --name centos7-dev -w /home/u -h centos7 -d junjiemars/centos7-dev
 docker exec -it -u u centos7-dev /bin/bash
 ```
