@@ -56,7 +56,7 @@ RUN cd ${HOME_DIR} ; \
 RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
 
 # start sshd service
-CMD ["/usr/sbin/sshd", "-D"]
+RUN service ssh restart
 
 # Run script
 #
