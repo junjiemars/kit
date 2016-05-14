@@ -49,7 +49,6 @@ RUN cd ${HOME_DIR} ; \
     git clone https://github.com/junjiemars/.emacs.d.git  && \
     echo 'export TERM=xterm' >> .bashrc && \
     chown -R ${SUDOUSER}:${SUDOUSER} .emacs.d
-RUN test -f ${HOME_DIR}/.emacs && rm ${HOME_DIR}/.emacs
 
 # configure java
 #...
