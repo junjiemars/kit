@@ -55,10 +55,11 @@ You can use root or default sudoer: u/Hell0 to login and play.
 
 ### Build from Dockerfile
 ```sh
-mkdir centos7-dev; cd centos7-dev
-curl -O https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos7.dockerfile
-docker build -t centos7-dev -f ./centos7.dockerfile ./
+docker build -t centos7-dev https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos7.dockerfile
 ```
+
+or You can download [centos7.dockefile](https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos7.dockerfile) then build it 
+from it.
 
 
 ### Play with centos7-dev
