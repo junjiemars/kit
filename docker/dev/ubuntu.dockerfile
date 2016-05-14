@@ -56,7 +56,9 @@ RUN cd ${HOME_DIR} ; \
 RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
 
 # start sshd service
-RUN service ssh restart
+RUN mkdir /var/run/sshd && \
+		sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
+CMD ["/usr/sbin/sshd", "-D"]
 
 # Run script
 #
