@@ -12,6 +12,7 @@ RUN apt-get -y update && \
 				build-essential \
         net-tools \
         git \
+				curl \
         bc \
         initscripts \
         coreutils \
