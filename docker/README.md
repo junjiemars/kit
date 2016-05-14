@@ -58,8 +58,7 @@ You can use root or default sudoer: u/Hell0 to login and play.
 docker build -t centos-dev https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos.dockerfile
 ```
 
-or You can download [centos.dockefile](https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos.dockerfile) then build it 
-from it.
+or you can download [centos.dockefile](https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos.dockerfile) then build from it.
 
 
 ### Play with centos-dev
@@ -83,8 +82,7 @@ You can use root or default sudoer: u/Hell0 to login and play.
 docker build -t ubuntu-dev https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/ubuntu.dockerfile
 ```
 
-or You can download [ubuntu.dockefile](https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/ubuntu.dockerfile) then build it 
-from it.
+or you can download [ubuntu.dockefile](https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/ubuntu.dockerfile) then build from it.
 
 
 ### Play with ubuntu-dev
