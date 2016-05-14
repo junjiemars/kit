@@ -7,7 +7,7 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 
 RUN yum -y update && \
     yum -y install deltarpm && \
-    echo '# enable deltarpm' >> /etc/yum.conf ; \
+    echo '# enable deltarpm' >> /etc/yum.conf && \
     yum -y install \
         sudo \
         openssh-server \
@@ -17,6 +17,7 @@ RUN yum -y update && \
         initscripts \
         vim-enhanced \
         coreutils \
+        bind-utils \
         emacs && \
     yum -y group install 'Development Tools' && \
     yum clean all
@@ -30,6 +31,10 @@ RUN useradd -m -s/bin/bash ${SUDOUSER}
 RUN echo 'Hell0' | passwd ${SUDOUSER} --stdin
 RUN gpasswd -a ${SUDOUSER} wheel
 
+# configure chmod
+RUN chmod u+s `which ping` && \
+    chmod u+s `which ping6` &&  \
+
 # cofigure bash env
 RUN cd ${HOME_DIR} ; \
     curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc ; \
@@ -38,10 +43,10 @@ RUN cd ${HOME_DIR} ; \
 
 # configure vim
 RUN cd ${HOME_DIR} ; \
-    echo -e 'set tabstop=2' >> .vimrc && \
-    echo -e 'set shiftwidth=2' >> .vimrc && \
-    echo -e 'set encoding=utf8' >> .vimrc && \
-    echo -e 'set fileencoding=utf8' >> .vimrc
+    echo 'set tabstop=2' >> .vimrc && \
+    echo 'set shiftwidth=2' >> .vimrc && \
+    echo 'set encoding=utf8' >> .vimrc && \
+    echo 'set fileencoding=utf8' >> .vimrc
 
 # configure emacs
 RUN cd ${HOME_DIR} ; \
