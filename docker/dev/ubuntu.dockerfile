@@ -14,6 +14,7 @@ RUN apt-get -y update && \
         git \
 				curl \
         bc \
+				netcat \
         initscripts \
         coreutils \
 				dnsutils \
