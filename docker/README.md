@@ -55,20 +55,47 @@ You can use root or default sudoer: u/Hell0 to login and play.
 
 ### Build from Dockerfile
 ```sh
-docker build -t centos7-dev https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos7.dockerfile
+docker build -t centos-dev https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos.dockerfile
 ```
 
-or You can download [centos7.dockefile](https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos7.dockerfile) then build it 
+or You can download [centos.dockefile](https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos.dockerfile) then build it 
 from it.
 
 
-### Play with centos7-dev
+### Play with centos-dev
 * one time
 ```sh
-docker run -w /home/u -h centos7 -u u -it --rm junjiemars/centos7-dev /bin/bash
+docker run -w /home/u -h centos -u u -it --rm junjiemars/centos-dev /bin/bash
 ```
 * as daemon
 ```sh
-docker run --name centos7-dev -w /home/u -h centos7 -d junjiemars/centos7-dev
-docker exec -it -u u centos7-dev /bin/bash
+docker run --name centos-dev -w /home/u -h centos -d junjiemars/centos-dev
+docker exec -it -u u centos-dev /bin/bash
 ```
+
+## Basic Ubuntu Development Environment
+Include basic building/networking tools, emacs/vim editors for c/c++/python/lua development.
+
+You can use root or default sudoer: u/Hell0 to login and play.
+
+### Build from Dockerfile
+```sh
+docker build -t ubuntu-dev https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/ubuntu.dockerfile
+```
+
+or You can download [ubuntu.dockefile](https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/ubuntu.dockerfile) then build it 
+from it.
+
+
+### Play with ubuntu-dev
+* one time
+```sh
+docker run -w /home/u -h ubuntu -u u -it --rm junjiemars/ubuntu-dev /bin/bash
+```
+* as daemon
+```sh
+docker run --name ubuntu-dev -w /home/u -h ubuntu -d junjiemars/ubuntu-dev
+docker exec -it -u u ubuntu-dev /bin/bash
+```
+
+

@@ -16,6 +16,8 @@ RUN apt-get -y update && \
         initscripts \
         coreutils \
 				dnsutils \
+				inetutils-ping \
+				inetutils-traceroute \
         emacs \
         vim && \
     apt-get -y autoclean 
