@@ -30,7 +30,7 @@ ENV HOME_DIR=/home/${SUDOUSER}
 
 # create sudo user
 RUN useradd -m -s/bin/bash ${SUDOUSER} && \
-		echo ${SUDOUSER}:Hell0 | chpasswd 
+		echo ${SUDOUSER}:Hell0 | chpasswd
 
 # cofigure bash env
 RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc ; \
