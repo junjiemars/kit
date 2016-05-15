@@ -22,7 +22,7 @@ RUN apt-get -y update && \
 				inetutils-traceroute \
         emacs \
         vim && \
-    apt-get -y autoclean 
+    apt-get -y autoremove
 
 
 ENV SUDOUSER=u
@@ -33,10 +33,9 @@ RUN useradd -m -s/bin/bash ${SUDOUSER} && \
 		echo ${SUDOUSER}:Hell0 | chpasswd 
 
 # cofigure bash env
-RUN cd ${HOME_DIR} ; \
-    curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc ; \
-    curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bash_aliases ; \
-    curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc ; \
+    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bash_aliases -o ${HOME_DIR}/.bash_aliases ; \
+    curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps -o ${HOME_DIR}/.bash_app
 
 # configure vim
 RUN cd ${HOME_DIR} ; \

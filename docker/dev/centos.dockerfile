@@ -36,13 +36,12 @@ RUN chmod u+s `which ping` && \
     chmod u+s `which ping6` &&  \
 
 # cofigure bash env
-RUN cd ${HOME_DIR} ; \
-    curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc ; \
-    curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bash_aliases ; \
-    curl -O https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc ; \
+    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bash_aliases -o ${HOME_DIR}/.bash_aliases ; \
+    curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps -o ${HOME_DIR}/.bash_apps
 
 # configure vim
-RUN cd ${HOME_DIR} ; \
+RUN cd ${HOME_DIR} && \
     echo 'set tabstop=2' >> .vimrc && \
     echo 'set shiftwidth=2' >> .vimrc && \
     echo 'set encoding=utf8' >> .vimrc && \
@@ -50,7 +49,7 @@ RUN cd ${HOME_DIR} ; \
 
 # configure emacs
 RUN cd ${HOME_DIR} ; \
-    git clone https://github.com/junjiemars/.emacs.d.git  && \
+    git clone https://github.com/junjiemars/.emacs.d.git && \
     echo 'export TERM=xterm' >> .bashrc && \
     chown -R ${SUDOUSER}:${SUDOUSER} .emacs.d
 RUN test -f ${HOME_DIR}/.emacs && rm ${HOME_DIR}/.emacs
