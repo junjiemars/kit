@@ -33,7 +33,7 @@ RUN gpasswd -a ${SUDOUSER} wheel
 
 # configure chmod
 RUN chmod u+s `which ping` && \
-    chmod u+s `which ping6` &&  \
+    chmod u+s `which ping6`
 
 # cofigure bash env
 RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc ; \
