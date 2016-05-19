@@ -24,7 +24,8 @@ get_ip_addr() {
         echo `cat ${_addr} \
             | tr '\n' '|' \
             | grep -o '<body>|.*</body>' \
-            | sed 's/\(<body>|Your IP address is : \|<\/body>\)//g'`
+            | sed -e 's/<body>|Your IP address is ://g' \
+                  -e 's/<\/body>//g'`
     fi
 }
 
@@ -86,5 +87,5 @@ if [[ 0 -eq ${DEBUG} ]]; then
     fi
 
 else
-    curl -v4 ${IPV6_TUNNEL}
+    curl -v4 --ssl ${IPV6_TUNNEL}
 fi
