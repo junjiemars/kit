@@ -31,7 +31,8 @@ ENV HOME_DIR=/home/${SUDOUSER}
 # create sudo user
 RUN useradd -m -s/bin/bash ${SUDOUSER} && \
 		echo ${SUDOUSER}:Hell0 | chpasswd && \
-		echo "${SUDOUSERS} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+		echo -e "\n##allow user:${SUDOUSER} to sudo" >> /etc/sudoers && \
+		echo -e "${SUDOUSER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # cofigure bash env
 RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc ; \
