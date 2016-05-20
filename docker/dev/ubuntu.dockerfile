@@ -24,6 +24,7 @@ RUN apt-get -y update && \
         vim && \
 				manpages && \
 				man-db && \
+				gdb && \
     apt-get -y autoremove
 
 
