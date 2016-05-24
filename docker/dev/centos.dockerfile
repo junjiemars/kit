@@ -8,6 +8,7 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 RUN yum -y update && \
     yum -y install deltarpm && \
     echo '# enable deltarpm' >> /etc/yum.conf && \
+    sed -i 's/tsflags=nodocs/#tsflags=nodocs/g' && \
     yum -y install \
         sudo \
         openssh-server \
