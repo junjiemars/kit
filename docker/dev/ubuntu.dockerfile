@@ -21,8 +21,9 @@ RUN apt-get -y update && \
 				inetutils-ping \
 				inetutils-traceroute \
         emacs \
-        vim && \
-				man-db && \
+        vim \
+				man-db \
+        manpages-dev && \
     apt-get -y autoremove
 
 
