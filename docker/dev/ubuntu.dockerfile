@@ -22,7 +22,6 @@ RUN apt-get -y update && \
 				inetutils-traceroute \
         emacs \
         vim && \
-				manpages && \
 				man-db && \
     apt-get -y autoremove
 
