@@ -18,7 +18,8 @@ RUN yum -y update && \
         vim-enhanced \
         coreutils \
         bind-utils \
-        emacs && \
+        emacs \
+        man-db && \
     yum -y group install 'Development Tools' && \
     yum clean all
 
@@ -66,3 +67,4 @@ CMD ["/usr/sbin/sshd", "-D"]
 #
 
 EXPOSE 22
+EXPOSE 9000
