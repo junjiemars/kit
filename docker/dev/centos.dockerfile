@@ -20,7 +20,8 @@ RUN yum -y update && \
         coreutils \
         bind-utils \
         emacs \
-        man-db && \
+        man-db \
+        man-pages && \
     yum -y group install 'Development Tools' && \
     yum clean all
 
