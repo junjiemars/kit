@@ -8,6 +8,7 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 RUN yum -y update && \
     yum -y install deltarpm && \
     echo '# enable deltarpm' >> /etc/yum.conf && \
+    sed -i 's/tsflags=nodocs/#tsflags=nodocs/g' /etc/yum.conf && \
     yum -y install \
         sudo \
         openssh-server \
@@ -18,7 +19,9 @@ RUN yum -y update && \
         vim-enhanced \
         coreutils \
         bind-utils \
-        emacs && \
+        emacs \
+        man-db \
+        man-pages && \
     yum -y group install 'Development Tools' && \
     yum clean all
 
@@ -66,3 +69,4 @@ CMD ["/usr/sbin/sshd", "-D"]
 #
 
 EXPOSE 22
+EXPOSE 9000

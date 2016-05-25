@@ -9,22 +9,24 @@ RUN apt-get -y update && \
     apt-get -y install \
         sudo \
         openssh-server \
-				build-essential \
+	build-essential \
         net-tools \
         git \
-				curl \
+	curl \
         bc \
-				netcat \
+	netcat \
         initscripts \
         coreutils \
-				dnsutils \
-				inetutils-ping \
-				inetutils-traceroute \
+	dnsutils \
+	inetutils-ping \
+	inetutils-traceroute \
         emacs \
-        vim && \
-				manpages && \
-				man-db && \
-				gdb && \
+	vim \
+	manpages \
+	man-db \
+	gdb \
+	man-db \
+        manpages-dev && \
     apt-get -y autoremove
 
 
@@ -69,3 +71,4 @@ CMD ["/usr/sbin/sshd", "-D"]
 #
 
 EXPOSE 22
+EXPOSE 9000
