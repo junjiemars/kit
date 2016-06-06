@@ -7,27 +7,29 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 
 RUN apt-get -y update && \
     apt-get -y install \
-        sudo \
-        openssh-server \
-	build-essential \
-        net-tools \
-        git \
-	curl \
-        bc \
-	netcat \
-        initscripts \
-        coreutils \
-	dnsutils \
-	inetutils-ping \
-	inetutils-traceroute \
-        emacs \
-	vim \
-	manpages \
-	man-db \
-	gdb \
-	man-db \
-        manpages-dev && \
-    apt-get -y autoremove
+			sudo \
+			openssh-server \
+			build-essential \
+			net-tools \
+			git \
+			curl \
+			bc \
+			netcat \
+			initscripts \
+			coreutils \
+			dnsutils \
+			inetutils-ping \
+			inetutils-traceroute \
+			emacs \
+			vim \
+			nmap \
+			mtr-tiny \
+			manpages \
+			man-db \
+			gdb \
+			man-db \
+			manpages-dev && \
+		apt-get -y autoremove
 
 
 ENV SUDOUSER=u
