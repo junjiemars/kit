@@ -19,6 +19,8 @@ RUN yum -y update && \
         vim-enhanced \
         coreutils \
         bind-utils \
+				mtr \
+				nmap \
         emacs \
         man-db \
         man-pages && \
