@@ -31,8 +31,7 @@ RUN apt-get -y update && \
 			openssh-server \
 			sudo \
 			vim-nox && \
-		rm -rf /var/lib/apt/lists/* && \
-		echo "\nexport TERM=xterm" >> /etc/bash.bashrc
+		rm -rf /var/lib/apt/lists/* 
 
 
 ENV SUDOUSER=u

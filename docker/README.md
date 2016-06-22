@@ -92,7 +92,7 @@ docker run -w /home/u -h ubuntu -u u -it --rm junjiemars/ubuntu-dev /bin/bash
 ```
 * as daemon
 ```sh
-docker run --name ubuntu-dev -w /home/u -h ubuntu -d junjiemars/ubuntu-dev
+docker run --name ubuntu-dev -w /home/u -h ubuntu --privileged -d junjiemars/ubuntu-dev 
 docker exec -it -u u ubuntu-dev /bin/bash
 ```
 
