@@ -31,7 +31,7 @@ RUN apt-get -y update && \
 			openssh-server \
 			sudo \
 			vim-nox && \
-		apt-get -y autoremove
+		rm -rf /var/lib/apt/lists/*
 
 
 ENV SUDOUSER=u
