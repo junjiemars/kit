@@ -7,7 +7,9 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 #
 
 RUN apt-get -y update && \
+    DEBIAN_FRONTEND=noninteractive \
     apt-get -y install \
+		  apt-utils \
 			bc \
 			build-essential \
 			coreutils \
@@ -31,7 +33,8 @@ RUN apt-get -y update && \
 			openssh-server \
 			sudo \
 			vim-nox && \
-		rm -rf /var/lib/apt/lists/*
+		rm -rf /var/lib/apt/lists/* && \
+		echo "\nexport TERM=xterm" >> /etc/bash.bashrc
 
 
 ENV SUDOUSER=u
