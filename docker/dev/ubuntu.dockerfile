@@ -3,32 +3,34 @@ FROM ubuntu:latest
 MAINTAINER Junjie Mars <junjiemars@gmail.com>
 
 # pre-requirements
-#...
+# ...
+#
 
 RUN apt-get -y update && \
     apt-get -y install \
-			sudo \
-			openssh-server \
-			build-essential \
-			net-tools \
-			git \
-			curl \
 			bc \
-			netcat \
-			initscripts \
+			build-essential \
 			coreutils \
+			curl \
 			dnsutils \
+			emacs-nox \
+			gdb \
+			git \
 			inetutils-ping \
 			inetutils-traceroute \
-			emacs \
-			vim \
-			nmap \
-			mtr-tiny \
+			info \
+			initscripts \
+			install-info \
+			man-db \
 			manpages \
-			man-db \
-			gdb \
-			man-db \
-			manpages-dev && \
+			manpages-dev \
+			mtr-tiny \
+			netcat \
+			net-tools \
+			nmap \
+			openssh-server \
+			sudo \
+			vim-nox && \
 		apt-get -y autoremove
 
 
@@ -44,7 +46,7 @@ RUN useradd -m -s/bin/bash ${SUDOUSER} && \
 # cofigure bash env
 RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc ; \
     curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bash_aliases -o ${HOME_DIR}/.bash_aliases ; \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps -o ${HOME_DIR}/.bash_app
+    curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps -o ${HOME_DIR}/.bash_app 
 
 # configure vim
 RUN cd ${HOME_DIR} ; \
@@ -59,9 +61,7 @@ RUN cd ${HOME_DIR} ; \
     echo 'export TERM=xterm' >> .bashrc && \
     chown -R ${SUDOUSER}:${SUDOUSER} .emacs.d
 
-# configure java
-#...
-#
+# chown ${HOME_DIR}
 RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
 
 # start sshd service
@@ -70,7 +70,14 @@ RUN mkdir /var/run/sshd && \
 CMD ["/usr/sbin/sshd", "-D"]
 
 # Run script
+# ...
 #
+
+# set locale
+#RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+#ENV LANGUAGE en_US:en
+#ENV LC_ALL en_US.UTF-8
 
 EXPOSE 22
 EXPOSE 9000
