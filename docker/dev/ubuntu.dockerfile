@@ -7,9 +7,7 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 #
 
 RUN apt-get -y update && \
-    DEBIAN_FRONTEND=noninteractive \
     apt-get -y install \
-		  apt-utils \
 			bc \
 			build-essential \
 			coreutils \
@@ -55,6 +53,7 @@ RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc 
 RUN cd ${HOME_DIR} ; \
     echo 'set tabstop=2' >> .vimrc && \
     echo 'set shiftwidth=2' >> .vimrc && \
+		echo 'set expandtab' >> .vimrc && \
     echo 'set encoding=utf8' >> .vimrc && \
     echo 'set fileencoding=utf8' >> .vimrc
 
@@ -63,6 +62,10 @@ RUN cd ${HOME_DIR} ; \
     git clone https://github.com/junjiemars/.emacs.d.git  && \
     echo 'export TERM=xterm' >> .bashrc && \
     chown -R ${SUDOUSER}:${SUDOUSER} .emacs.d
+
+# configure gdb
+RUN cd ${HOME_DIR} ; \
+	  echo 'set disable-randomization off' >> .gdbinit
 
 # chown ${HOME_DIR}
 RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
