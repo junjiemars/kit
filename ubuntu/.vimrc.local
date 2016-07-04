@@ -6,3 +6,5 @@ set shell=bash\ --rcfile\ ~/.bashrc
 set tabstop=2
 set shiftwidth=2
 set number
+
+let g:neocomplete#enable_at_startup=0
