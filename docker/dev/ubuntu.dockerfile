@@ -8,30 +8,30 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 
 RUN apt-get -y update && \
     apt-get -y install \
-			bc \
-			build-essential \
-			coreutils \
-			curl \
-			dnsutils \
-			emacs-nox \
-			gdb \
-			git \
-			inetutils-ping \
-			inetutils-traceroute \
-			info \
-			initscripts \
-			install-info \
-			man-db \
-			manpages \
-			manpages-dev \
-			mtr-tiny \
-			netcat \
-			net-tools \
-			nmap \
-			openssh-server \
-			sudo \
-			vim-nox && \
-		rm -rf /var/lib/apt/lists/* 
+	    bc \
+	    build-essential \
+	    coreutils \
+	    curl \
+	    dnsutils \
+	    emacs-nox \
+	    gdb \
+	    git \
+	    inetutils-ping \
+	    inetutils-traceroute \
+	    info \
+	    initscripts \
+	    install-info \
+	    man-db \
+	    manpages \
+	    manpages-dev \
+	    mtr-tiny \
+	    netcat \
+	    net-tools \
+	    nmap \
+	    openssh-server \
+	    sudo \
+	    vim-nox && \
+	    rm -rf /var/lib/apt/lists/* 
 
 
 ENV SUDOUSER=u
@@ -39,9 +39,9 @@ ENV HOME_DIR=/home/${SUDOUSER}
 
 # create sudo user
 RUN useradd -m -s/bin/bash ${SUDOUSER} && \
-		echo ${SUDOUSER}:Hell0 | chpasswd && \
-		echo "\n\n##allow user:${SUDOUSER} to sudo" >> /etc/sudoers && \
-		echo "${SUDOUSER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+    echo ${SUDOUSER}:Hell0 | chpasswd && \
+    echo "\n\n##allow user:${SUDOUSER} to sudo" >> /etc/sudoers && \
+    echo "${SUDOUSER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # cofigure bash env
 RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc ; \
@@ -52,7 +52,7 @@ RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc 
 RUN cd ${HOME_DIR} ; \
     echo 'set tabstop=2' >> .vimrc && \
     echo 'set shiftwidth=2' >> .vimrc && \
-		echo 'set expandtab' >> .vimrc && \
+    echo 'set expandtab' >> .vimrc && \
     echo 'set encoding=utf8' >> .vimrc && \
     echo 'set fileencoding=utf8' >> .vimrc
 
@@ -64,14 +64,14 @@ RUN cd ${HOME_DIR} ; \
 
 # configure gdb
 RUN cd ${HOME_DIR} ; \
-	  echo 'set disable-randomization off' >> .gdbinit
+    echo 'set disable-randomization off' >> .gdbinit
 
 # chown ${HOME_DIR}
 RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
 
 # start sshd service
 RUN mkdir /var/run/sshd && \
-		sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
+    sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 CMD ["/usr/sbin/sshd", "-D"]
 
 # Run script
