@@ -77,10 +77,10 @@ CMD ["/usr/sbin/sshd", "-D"]
 #
 
 # set locale
-RUN locale-gen en_US.UTF-8
+# RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 EXPOSE 22
-EXPOSE 9000
+EXPOSE 8000-9000
