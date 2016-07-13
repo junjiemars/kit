@@ -1,0 +1,10 @@
+# Prefered MSYS_NT env on Windows
+
+echo='/usr/bin/echo'
+tr='/usr/bin/tr'
+rsort='/usr/bin/sort -r'
+
+if [ "_${PATH}" != '_' ]; then
+  PATH_SORTED=`${echo} ${PATH} | ${tr} ':' '\n' | ${rsort} | ${tr} '\n' ':'`
+  export PATH=${PATH_SORTED}
+fi
