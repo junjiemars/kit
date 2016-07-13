@@ -15,12 +15,12 @@ save_as() {
   curl ${GITHUB_H}/win/.bash_paths > $HOME/.bash_paths
 
 `save_as '.bashrc'` && \
-  curl -O ${GITHUB_H}/win/.bashrc > $HOME/.bashrc
+  curl ${GITHUB_H}/win/.bashrc > $HOME/.bashrc
 
 `save_as '.bash_profile'` && \
-  curl -O ${GITHUB_H}/win/.bash_profile > $HOME/.bash_profile
+  curl ${GITHUB_H}/win/.bash_profile > $HOME/.bash_profile
 
 `save_as '_vimrc'` && \
-  curl -O ${GITHUB_H}/win/_vimrc > $HOME/_vimrc
+  curl ${GITHUB_H}/win/_vimrc > $HOME/_vimrc
 
 echo "setup `uname -s` shell env on Windows successed"
