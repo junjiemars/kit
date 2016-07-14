@@ -1,5 +1,6 @@
 #!/bin/bash
-# usage: sh <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh)
+# usage: bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh)
+# if ur `sh' is not dash use `sh' indeed
 
 GITHUB_H='https://raw.githubusercontent.com/junjiemars/kit/master'
 PLATFORM=`uname -s 2>/dev/null`
