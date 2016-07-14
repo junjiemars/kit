@@ -19,7 +19,9 @@ set fileencoding=utf8
 
 " line number
 set number
-" highlight LineNr ctermfg=grey
+set cursorline
+hi cursorline cterm=none
+hi cursorlinenr term=bold ctermfg=yellow gui=bold guifg=yellow
 
 " set internal shell
 set shell=bash\ --rcfile\ ~/.bashrc
