@@ -1,4 +1,3 @@
-# PS1="\h:\W \u\$ "
 PS1="\u@\h:\w\$ "
 
 ## lang
@@ -20,7 +19,7 @@ DB_PATH=/opt/local/lib/postgresql94/bin
 PATH=$PATH:$DB_PATH
 
 ## racket
-RACKET_HOME='/Applications/Racket v6.3'
+RACKET_HOME='/Applications/Racket v6.5'
 PATH=$PATH:"$RACKET_HOME/bin"
 
 export PATH
