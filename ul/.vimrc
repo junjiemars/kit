@@ -1,11 +1,11 @@
-" Tabs are 2 characters
+" tabs are 2 characters
 set tabstop=2
 
-" (Auto)indent uses 2 characters
+" (auto)indent uses 2 characters
 set shiftwidth=2
 
 " spaces instead of tabs
-" @ set expandtab
+set expandtab
 
 " history
 set history=50
@@ -21,3 +21,5 @@ set fileencoding=utf8
 set number
 " highlight LineNr ctermfg=grey
 
+" set internal shell
+set shell=bash\ --rcfile\ ~/.bashrc
