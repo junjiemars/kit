@@ -18,7 +18,7 @@ alias egrep='egrep --color=auto'
 
 function exist_p() {
     local _p=$1
-    which ${_p} >/dev/null 2>&1; echo $?
+    type -p ${_p} >/dev/null 2>&1; echo $?
 }
 
 function diff_p() {
@@ -43,7 +43,7 @@ fi
 p_vi=$(exist_p 'vi')
 p_vim=$(exist_p 'vim')
 if [[ 0 -eq p_vi ]] && [[ 0 -eq p_vim ]]; then
-    if [[ 0 -ne $(diff_p `which vi` `which vim`) ]]; then
+    if [[ 0 -ne $(diff_p `type -p vi` `type -p vim`) ]]; then
         alias vi=vim
     fi
 fi
