@@ -19,7 +19,7 @@ declare -a BASH_S=(\
 save_as() {
   local f="$HOME/$1"
   if [ -f ${f} ]; then
-    local l=`find $HOME -type f -maxdepth 1 -mindepth 1 -name "$1.b?" \
+    local l=`find $HOME -maxdepth 1 -mindepth 1 -type f -name "$1.b?" \
             |sort -r|head -n1`
     if [ "_${l}" == "_" ]; then
       local n=0
