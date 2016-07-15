@@ -41,18 +41,18 @@ for i in ${BASH_S[@]}; do
   `save_as $i`
 done
 
-${curl} ${GITHUB_H}/ul/.bash_aliases > $HOME/.bash_aliases
-${curl} ${GITHUB_H}/ul/.bash_profile > $HOME/.bash_profile
+${curl} ${GITHUB_H}/ul/.bash_aliases -o $HOME/.bash_aliases
+${curl} ${GITHUB_H}/ul/.bash_profile -o $HOME/.bash_profile
 
 case ${PLATFORM} in
   MSYS_NT*)
-    ${curl} ${GITHUB_H}/win/.bash_paths > $HOME/.bash_paths
-    ${curl} ${GITHUB_H}/win/.bashrc > $HOME/.bashrc
-    ${curl} ${GITHUB_H}/ul/.vimrc > $HOME/_vimrc
+    ${curl} ${GITHUB_H}/win/.bash_paths -o $HOME/.bash_paths
+    ${curl} ${GITHUB_H}/win/.bashrc -o $HOME/.bashrc
+    ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/_vimrc
     ;;
   *)
-    ${curl} ${GITHUB_H}/ul/.bash_logout > $HOME/.bash_logout
-    ${curl} ${GITHUB_H}/ul/.vimrc > $HOME/.vimrc
+    ${curl} ${GITHUB_H}/ul/.bash_logout -o $HOME/.bash_logout
+    ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/.vimrc
     ;;
 esac
 

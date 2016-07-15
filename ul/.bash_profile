@@ -1,2 +1,2 @@
-[ -r $HOME/.profile ] && source $HOME/.profile
-[ -r $HOME/.bashrc ] && source $HOME/.bashrc
+[ -r $HOME/.profile ] && . $HOME/.profile
+[ -r $HOME/.bashrc ] && . $HOME/.bashrc
