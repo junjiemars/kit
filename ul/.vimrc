@@ -26,5 +26,9 @@ hi cursorlinenr term=bold ctermfg=yellow gui=bold guifg=yellow
 " syntax highlight
 syntax on
 
+" status bar
+set ruler
+"set laststatus=2
+
 " set internal shell
 set shell=bash\ --rcfile\ ~/.bashrc
