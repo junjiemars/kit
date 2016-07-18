@@ -2,14 +2,14 @@
 
 NGX_DIR=${NGX_DIR:-"/opt/open/nginx"}
 PREFIX_DIR=${PREFIX_DIR:-"/opt/run"}
-
+CFLAGS=${CFLAGS:-""}
 TO_MAKE=${TO_MAKE:-"0"}
 TO_INSTALL=${TO_INSTALL:-"0"}
 
 
 pushd $NGX_DIR
 
-CFLAGS=' -g -O0 ' ./auto/configure \
+CFLAGS=${CFLAGS} ./auto/configure \
   --prefix=/opt/run \
   --without-http \
   --without-http-cache \
