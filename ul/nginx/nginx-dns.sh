@@ -2,12 +2,12 @@
 
 NGX_DIR=${NGX_DIR:-"/opt/open/nginx"}
 PREFIX_DIR=${PREFIX_DIR:-"/opt/run"}
-CFLAGS=${CFLAGS:-""}
+CFLAGS=${CFLAGS:-"-g -O0"}
 TO_MAKE=${TO_MAKE:-"0"}
 TO_INSTALL=${TO_INSTALL:-"0"}
 
 
-pushd $NGX_DIR
+cd $NGX_DIR 
 
 CFLAGS=${CFLAGS} ./auto/configure \
   --prefix=/opt/run \
@@ -21,5 +21,3 @@ CFLAGS=${CFLAGS} ./auto/configure \
 
 [ 0 -lt ${TO_MAKE} ] && make
 [ 0 -lt ${TO_INSTALL} ] && make install
-
-popd
