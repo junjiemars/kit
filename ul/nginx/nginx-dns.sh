@@ -17,6 +17,10 @@ CFLAGS=${CFLAGS} ./auto/configure \
   --without-mail_imap_module \
   --without-mail_smtp_module \
   --with-stream \
+  --without-stream_geo_module \
+  --without-stream_map_module \
+  --without-stream_limit_conn_module \
+  --without-pcre \
   --with-debug 
 
 [ 0 -lt ${TO_MAKE} ] && make
