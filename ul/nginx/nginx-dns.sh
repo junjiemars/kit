@@ -19,6 +19,7 @@ CFLAGS=${CFLAGS} ./auto/configure \
   --with-stream \
   --without-stream_geo_module \
   --without-stream_map_module \
+  --without-stream_split_clients_module \
   --without-stream_limit_conn_module \
   --without-pcre \
   --with-debug 
