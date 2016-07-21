@@ -25,4 +25,31 @@ CFLAGS=${CFLAGS} ./auto/configure \
   --with-debug 
 
 [ 0 -lt ${TO_MAKE} ] && make
-[ 0 -lt ${TO_INSTALL} ] && make install
+[ 0 -lt ${TO_INSTALL} ] && make install && \
+cat << END > ${PREFIX_DIR}/conf/nginx.conf
+#user  nobody;
+worker_processes  1;
+
+#error_log  logs/nginx.log;
+#error_log  logs/nginx.log  notice;
+#error_log  logs/nginx.log  info;
+error_log  logs/nginx.log  debug;
+#error_log  memory:32m  debug;
+
+pid        logs/nginx.pid;
+
+events {
+    worker_connections  64;
+}
+
+stream {
+    upstream dns {
+        server 8.8.4.4:53;
+    }
+
+    server {
+        listen 127.0.0.1:5353 udp;
+        proxy_pass dns;
+    }
+}
+END
