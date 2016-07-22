@@ -2,6 +2,7 @@
 #=====================================================
 # Author: https://github.com/junjiemars
 # Git: git clone https://github.com/junjiemars/kit.git
+# eoo: Export Oracle Objects
 #=====================================================
 # NOTE:
 # If u want to export all objects owned by u
