@@ -34,6 +34,30 @@ save_as() {
   fi
 }
 
+set_vim_paths() {
+  if [[ 0 -eq `type -p cc >/dev/null; echo $?` ]]; then
+    cc_out="`echo '' | cc -v -E 2>&1 >/dev/null - \
+            | awk '/#include <...> search starts here:/,/End of search list./'`"
+    if [ -n "$cc_out" ]; then
+      inc_lns=()
+      IFS=$'\n'
+      for l in `echo -e "$cc_out"`; do
+        inc_lns+=($(echo -e "$l" | sed 's/^ //'))
+      done
+      unset IFS
+      inc_ln="${#inc_lns[@]}"
+      if [[ 2 -lt "$inc_ln" ]]; then
+        inc_paths=("${inc_lns[@]:1:$(( inc_ln-2  ))}")
+        echo -e "${#inc_paths[@]}"
+        echo -e "\n\" cc include path" >> $1
+        for i in "${inc_paths[@]}"; do
+          echo -e "set path+=${i}" >> $1
+        done
+      fi
+    fi
+  fi
+}
+
 BEGIN=`date +%s`
 echo "setup $PLATFORM bash env ..."
 
@@ -56,8 +80,17 @@ case ${PLATFORM} in
     ;;
 esac
 
+. $HOME/.bashrc
+
+case ${PLATFORM} in
+  Linux)
+    set_vim_paths $HOME/.vimrc
+    ;;
+  *)
+    ;;
+esac
+
 END=`date +%s`
 echo 
 echo "... elpased $(( ${END}-${BEGIN} )) seconds, successed."
 
-. $HOME/.bashrc
