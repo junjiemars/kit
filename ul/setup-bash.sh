@@ -48,7 +48,6 @@ set_vim_paths() {
       inc_ln="${#inc_lns[@]}"
       if [[ 2 -lt "$inc_ln" ]]; then
         inc_paths=("${inc_lns[@]:1:$(( inc_ln-2  ))}")
-        echo -e "${#inc_paths[@]}"
         echo -e "\n\" cc include path" >> $1
         for i in "${inc_paths[@]}"; do
           echo -e "set path+=${i}" >> $1
