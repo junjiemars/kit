@@ -1,5 +1,5 @@
 #!/bin/bash
-# usage: sudo bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/setup-emacs-desktop.sh)
+# usage: curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/setup-emacs-desktop.sh|sudo bash
 
 [ 0 -ne `type -p emacs >/dev/null;echo $?` ] && exit 1
 
