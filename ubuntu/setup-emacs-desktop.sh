@@ -1,14 +1,15 @@
 #!/bin/bash
+# usage: sudo bash <(curl https://raw.githubusercontent.com/junjiemars/master/ubuntu/setup-emacs-desktop.sh)
 
-[ 0 -ne `type -p emacs;echo $?` ] && exit 1
+[ 0 -ne `type -p emacs >/dev/null;echo $?` ] && exit 1
 
 EMACS_VS=${EMACS_VS:-`emacs -nw --version|head -n1`}
-if [ -z ${EMACS_VS} ]; then
+if [ -z "${EMACS_VS}" ]; then
   exit 1
 fi 
 
 EMACS_VN="`echo ${EMACS_VS}|cut -d' ' -f3`"
-if [ -z ${EMACS_VN} ]; then
+if [ -z "${EMACS_VN}" ]; then
   exit 1
 fi
 
