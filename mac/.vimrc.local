@@ -1,7 +1,0 @@
-set shell=bash\ --login
-set path+=$JAVA_HOME/include
-set path+=/usr/include
-set path+=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1
-set path=/System/Library/Frameworks/Python.framework/Versions/Current/Headers
-let g:neocomplete#enable_at_startup=0
-
