@@ -36,10 +36,13 @@ worker_processes  1;
 error_log  logs/nginx.log  debug;
 #error_log  memory:32m  debug;
 
-pid        logs/nginx.pid;
+pid logs/nginx.pid;
+daemon on;
+debug_points abort;
 
 events {
     worker_connections  64;
+    debug_connection 127.0.0.1;
 }
 
 stream {
