@@ -32,4 +32,4 @@ Terminal=false
 Categories=Utility;Development;TextEditor;
 StartupWMClass=Emacs${EMACS_VA[0]}
 END
-chmod u+x ${EMACS_DESKTOP}
+chmod 644 ${EMACS_DESKTOP}
