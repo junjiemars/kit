@@ -1,6 +1,4 @@
 #!/bin/bash
-# usage: bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh)
-# if ur `sh' is not `dash' use `sh' instead.
 
 GITHUB_H='https://raw.githubusercontent.com/junjiemars/kit/master'
 PLATFORM=`uname -s 2>/dev/null`
@@ -16,7 +14,7 @@ declare -a BASH_S=(\
   '_vimrc' \
   )
 
-save_as() {
+function save_as() {
   local f="$HOME/$1"
   if [ -f ${f} ]; then
     local l=`find $HOME -maxdepth 1 -mindepth 1 -type f -name "$1.b?" \
@@ -34,7 +32,7 @@ save_as() {
   fi
 }
 
-set_vim_paths() {
+function set_vim_paths() {
   if [[ 0 -eq `type -p cc >/dev/null; echo $?` ]]; then
     cc_out="`echo '' | cc -v -E 2>&1 >/dev/null - \
             | awk '/#include <...> search starts here:/,/End of search list./'`"

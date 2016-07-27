@@ -5,7 +5,8 @@ PREFIX_DIR=${PREFIX_DIR:-"/opt/run"}
 CFLAGS=${CFLAGS:-"-g -O0"}
 TO_MAKE=${TO_MAKE:-"0"}
 TO_INSTALL=${TO_INSTALL:-"0"}
-
+LISTEN_ADDR=${LISTEN_ADDR:-"127.0.0.1:5533"}
+FORWARD_ADDR=${FORWARD_ADDR:-"8.8.4.4:53"}
 
 cd $NGX_DIR 
 
@@ -47,11 +48,11 @@ events {
 
 stream {
     upstream dns {
-        server 8.8.4.4:53;
+        server ${FORWARD_ADDR};
     }
 
     server {
-        listen 127.0.0.1:5353 udp;
+        listen ${LISTEN_ADDR} udp;
         proxy_pass dns;
     }
 }
