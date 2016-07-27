@@ -47,6 +47,9 @@ RUN cd ${HOME_DIR} ; \
     chown -R ${SUDOUSER}:${SUDOUSER} .emacs.d
 RUN test -f ${HOME_DIR}/.emacs && rm ${HOME_DIR}/.emacs
 
+# configure vim 
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/.vimrc -o ${HOME_DIR}/.vimrc 
+ 
 # configure java
 ENV JDK='jdk-8u91-linux-x64.rpm'
 RUN curl -vkL -H'Cookie: oraclelicense=accept-securebackup-cookie' -O "http://download.oracle.com/otn-pub/java/jdk/8u91-b14/${JDK}" && \
