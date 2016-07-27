@@ -103,6 +103,10 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
+if [ -f ~/.bash_apps ]; then
+    . ~/.bash_apps
+fi
+
 # enable programmable completion features (you don't need to enable
 export PATH
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -113,10 +117,6 @@ if ! shopt -oq posix; then
   elif [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
   fi
-fi
-
-if [ -f ~/.bash_apps ]; then
-    . ~/.bash_apps
 fi
 
 # open source env

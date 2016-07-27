@@ -17,14 +17,11 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 function exist_p() {
-    local _p=$1
-    type -p ${_p} >/dev/null 2>&1; echo $?
+    type -p ${1} &>/dev/null; echo $?
 }
 
 function diff_p() {
-    local _l=$1
-    local _r=$2
-    diff ${_l} ${_r} >/dev/null 2>&1; echo $?
+    diff ${1} ${2} &>/dev/null; echo $?
 }
 
 p_rlwrap=$(exist_p 'rlwrap')

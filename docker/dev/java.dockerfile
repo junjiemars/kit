@@ -40,19 +40,6 @@ RUN useradd -m -s/bin/bash ${SUDOUSER} && \
 RUN chmod u+s `which ping` && \
     chmod u+s `which ping6`
 
-# cofigure bash env
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc ; \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bash_aliases -o ${HOME_DIR}/.bash_aliases ; \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps -o ${HOME_DIR}/.bash_apps
-
-# configure vim
-RUN cd ${HOME_DIR} && \
-    echo 'set tabstop=2' >> .vimrc && \
-    echo 'set shiftwidth=2' >> .vimrc && \
-    echo 'set expandtab' >> .vimrc && \
-    echo 'set encoding=utf8' >> .vimrc && \
-    echo 'set fileencoding=utf8' >> .vimrc
-
 # configure emacs
 RUN cd ${HOME_DIR} ; \
     git clone https://github.com/junjiemars/.emacs.d.git && \
@@ -66,6 +53,11 @@ RUN curl -vkL -H'Cookie: oraclelicense=accept-securebackup-cookie' -O "http://do
     rpm -ivh ${JDK} && \
     rm ${JDK}
     
+# cofigure bash env
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc ; \
+    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bash_aliases -o ${HOME_DIR}/.bash_aliases ; \
+    curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps -o ${HOME_DIR}/.bash_apps
+
 # chown home dir
 RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
 
