@@ -61,8 +61,13 @@ RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc 
     curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bash_aliases -o ${HOME_DIR}/.bash_aliases ; \
     curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps -o ${HOME_DIR}/.bash_apps
 
-# chown home dir
-RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
+# chown home opt dirs
+RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR} && \
+    mkdir -p /opt/run/{bin,sbin,conf} && \
+    chown -R ${SUDOUSER}:${SUDOUSER} /opt/run && \
+    mkdir -p /opt/open && chown -R ${SUDOUSER}:${SUDOUSER} /opt/open && \
+    mkdir -p /opt/apps && chown -R ${SUDOUSER}:${SUDOUSER} /opt/apps && \
+    mkdir -p /opt/lab  && chown -R ${SUDOUSER}:${SUDOUSER} /opt/lab
 
 # start sshd service
 CMD ["/usr/sbin/sshd", "-D"]
