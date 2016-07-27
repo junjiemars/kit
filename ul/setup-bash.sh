@@ -6,6 +6,7 @@ curl='curl -s '
 declare -a BASH_S=(\
   '.bash_aliases' \
   '.bash_paths' \
+  '.bash_apps' \
   '.bashrc' \
   '.profile' \
   '.bash_profile' \
@@ -72,6 +73,7 @@ case ${PLATFORM} in
     ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/_vimrc
     ;;
   *)
+    ${curl} ${GITHUB_H}/ul/.bash_apps -o $HOME/.bash_apps
     ${curl} ${GITHUB_H}/ul/.bash_logout -o $HOME/.bash_logout
     ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/.vimrc
     ;;
