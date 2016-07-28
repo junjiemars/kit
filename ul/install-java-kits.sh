@@ -69,8 +69,8 @@ install_gradle() {
   local gradle_url='https://github.com/gradle/gradle.git'
   local gradle_home="${OPEN_DIR}/gradle"
 
-  [ -f "${gradle_home}" ] || \
-    git clone -b master --depth=1 ${gradle_url}
+  cd "${OPEN_DIR}"
+  [ -f "${gradle_home}/gradlew" ] || git clone --depth=1 ${gradle_url}
 
 }
 
