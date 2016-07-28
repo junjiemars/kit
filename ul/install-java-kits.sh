@@ -14,7 +14,7 @@ declare -a KITS=()
 
 append_path() {
   [ `echo $PATH | tr ':' '\n' | grep "^$1$" &>/dev/null; echo $?` ] && \
-  echo -e "PATH=$PATH:$1" >> $HOME/.bash_paths
+    echo -e "PATH=$PATH:$1" >> $HOME/.bash_paths
 }
 
 install_ant() {
@@ -23,7 +23,7 @@ install_ant() {
 
   cd "${OPEN_DIR}"
   [ -f "${ant_home}/bootstrap.sh" ] || git clone --depth=1 ${ant_url} 
-  [ ! `type -p ant &>/dev/null; echo $?` ] && cd "${ant_home}" && \
+  [ 0 -ne `type -p ant &>/dev/null; echo $?` ] && cd "${ant_home}" && \
   bootstrap.sh && append_path "$ant_home/bootstrap/bin"
 }
 
