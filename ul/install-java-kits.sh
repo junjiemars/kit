@@ -42,7 +42,9 @@ install_maven() {
   local bin_dir="${PREFIX}/m2"
   
   [ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
+  . $HOME/.bash_vars
   append_vars "M2_HOME=${bin_dir}"
+
   cd "${OPEN_DIR}"
   [ -f "${maven_home}/build.xml" ] || \
     git clone -b ${maven_ver} --depth=1 ${maven_url} 
