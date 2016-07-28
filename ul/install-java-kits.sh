@@ -41,13 +41,13 @@ install_maven() {
   local maven_ver='maven-3.2.6'
   local bin_dir="${PREFIX}/m2"
   
-  [ -d "" ] || mkdir -p "${bin_dir}"
+  [ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
+  append_vars "M2_HOME=${bin_dir}"
   cd "${OPEN_DIR}"
   [ -f "${maven_home}/build.xml" ] || \
     git clone -b ${maven_ver} --depth=1 ${maven_url} 
   [ 0 -ne `type -p mvn &>/dev/null; echo $?` ] && \
   [ 0 -eq `type -p ant &>/dev/null; echo $?` ] && \
-  append_vars "M2_HOME=${bin_dir}"
   cd "${maven_home}" && \ ant clean-bootstrap && \
   ant -DskipText=true -Dmaven.test.skip=true && \
   append_paths "${bin_dir}/bin"
