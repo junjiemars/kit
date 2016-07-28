@@ -37,8 +37,12 @@ install_maven() {
   cd "${OPEN_DIR}"
   [ -f "${maven_home}/build.xml" ] || \
     git clone -b ${maven_ver} --depth=1 ${maven_url} 
+  [ 0 -ne `type -p mvn &>/dev/null; echo $?` ] && \
   [ 0 -eq `type -p ant &>/dev/null; echo $?` ] && \
-  cd "${maven_home}" && M2_HOME="$HOME/.m2" ant -f build.xml 
+  cd "${maven_home}" && \
+  M2_HOME="$HOME/.m2" \
+  JAVA_OPTS='-DskipTest=true -Dmaven.test.skip=true' \
+  ant -f build.xml 
 }
 
 install_boot() {
@@ -59,5 +63,5 @@ install_boot() {
 for i in "${KITS[@]}"; do
   echo -e "# ${i} ..." 
   ${i}  
-  echo -e "# ${i} completed.\n"
+  echo -e "# ${i} completed."
 done
