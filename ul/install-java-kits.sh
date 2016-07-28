@@ -30,5 +30,5 @@ install_boot() {
 }
 
 for i in "${KITS[@]}"; do
-  echo -e "install ${i} ...\n" && `${i}` && echo -e "\n${i} installed."
+  echo -e "install ${i} ...\n" && ${i} && echo -e "\n${i} installed."
 done
