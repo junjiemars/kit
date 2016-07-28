@@ -32,19 +32,20 @@ install_ant() {
 install_maven() {
   local maven_home="${OPEN_DIR}/maven"
   local maven_url='https://github.com/apache/maven.git'
+  local maven_ver='maven-3.2.6'
   
   cd "${OPEN_DIR}"
   [ -f "${maven_home}/build.xml" ] || \
-    git clone -b 'maven-3.2.6' --depth=1 ${maven_url} 
+    git clone -b ${maven_ver} --depth=1 ${maven_url} 
   [ 0 -eq `type -p ant &>/dev/null; echo $?` ] && \
-  cd "${maven_home}" && ant -f build.xml 
+  cd "${maven_home}" && M2_HOME="$HOME/.m2" ant -f build.xml 
 }
 
 install_boot() {
-  BOOT_URL=${BOOT_URL:-'https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh '}
+  local boot_url=${boot_url:-'https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh '}
 
   cd "${PREFIX}" && \
-  curl -fsSLo boot ${BOOT_URL} && chmod 755 boot
+  curl -fsSLo boot ${boot_url} && chmod 755 boot
 }
 
 [ 0 -lt "${HAS_ANT}" ]      && KITS+=('install_ant')
@@ -56,7 +57,7 @@ install_boot() {
 
 
 for i in "${KITS[@]}"; do
-  echo -e "# ${i} ..." && \
-  ${i} && \
+  echo -e "# ${i} ..." 
+  ${i}  
   echo -e "# ${i} completed.\n"
 done
