@@ -64,11 +64,11 @@ for i in ${BASH_S[@]}; do
 done
 
 ${curl} ${GITHUB_H}/ul/.bash_aliases -o $HOME/.bash_aliases
+${curl} ${GITHUB_H}/win/.bash_paths -o $HOME/.bash_paths
 ${curl} ${GITHUB_H}/ul/.bash_profile -o $HOME/.bash_profile
 
 case ${PLATFORM} in
   MSYS_NT*)
-    ${curl} ${GITHUB_H}/win/.bash_paths -o $HOME/.bash_paths
     ${curl} ${GITHUB_H}/win/.bashrc -o $HOME/.bashrc
     ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/_vimrc
     ;;
