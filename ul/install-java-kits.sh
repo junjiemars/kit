@@ -72,6 +72,9 @@ install_gradle() {
   cd "${OPEN_DIR}"
   [ -f "${gradle_home}/gradlew" ] || git clone --depth=1 ${gradle_url}
 
+  . $HOME/.bashrc
+  [ 0 -ne `type -p gradlew &>/dev/null; echo $?` ] && \
+    append_paths "${gradle_home}"
 }
 
 [ 0 -lt "${HAS_ANT}" ]      && KITS+=('install_ant')
