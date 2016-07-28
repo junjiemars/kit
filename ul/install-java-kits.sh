@@ -19,6 +19,7 @@ append_paths() {
 }
 
 append_vars() {
+  . $HOME/.bash_vars
   [ `env | grep "^${1}$" &>/dev/null; echo $?` ] && \
     echo -e "export $1" >> $HOME/.bash_vars && \
     . $HOME/.bash_vars
@@ -43,7 +44,6 @@ install_maven() {
   
   [ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
   rm -r "${bin_dir}/*"
-  . $HOME/.bash_vars
 
   append_vars "M2_HOME=${bin_dir}"
 
