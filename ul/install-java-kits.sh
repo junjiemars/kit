@@ -14,7 +14,8 @@ declare -a KITS=()
 
 append_path() {
   [ `echo $PATH | tr ':' '\n' | grep "^$1$" &>/dev/null; echo $?` ] && \
-    echo -e "PATH=$PATH:$1" >> $HOME/.bash_paths
+    echo -e "PATH=$PATH:$1" >> $HOME/.bash_paths && \
+    . $HOME/.bashrc
 }
 
 install_ant() {
@@ -23,8 +24,9 @@ install_ant() {
 
   cd "${OPEN_DIR}"
   [ -f "${ant_home}/bootstrap.sh" ] || git clone --depth=1 ${ant_url} 
-  [ 0 -ne `type -p ant &>/dev/null; echo $?` ] && cd "${ant_home}" && \
-  bootstrap.sh && append_path "$ant_home/bootstrap/bin"
+  [ 0 -ne `type -p ant &>/dev/null; echo $?` ] && \
+  cd "${ant_home}" && bootstrap.sh && \
+  append_path "$ant_home/bootstrap/bin"
 }
 
 install_maven() {
@@ -54,7 +56,6 @@ install_boot() {
 
 
 for i in "${KITS[@]}"; do
-  . $HOME/.bashrc
   echo -e "# ${i} ..." && \
   ${i} && \
   echo -e "# ${i} completed.\n"
