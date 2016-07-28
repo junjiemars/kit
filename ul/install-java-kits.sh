@@ -53,16 +53,25 @@ install_maven() {
   [ 0 -ne `type -p mvn &>/dev/null; echo $?` ] && \
   [ 0 -eq `type -p ant &>/dev/null; echo $?` ] && \
   cd "${maven_home}" && ant clean-bootstrap && \
-  ant -DskipText=true -Dmaven.test.skip=true && \
+  ant -DskipTest=true -Dmaven.test.skip=true && \
   append_paths "${bin_dir}/bin"
 }
 
 install_boot() {
-  local boot_url=${boot_url:-'https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh '}
+  local boot_url='https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh '
   local bin_dir="${PREFIX}/bin"
 
   cd "${bin_dir}" && \
   curl -fsSLo boot ${boot_url} && chmod 755 boot
+}
+
+install_gradle() {
+  local gradle_url='https://github.com/gradle/gradle.git'
+  local gradle_home="${OPEN_DIR}/gradle"
+
+  [ -f "${gradle_home}" ] || \
+    git clone -b master --depth=1 ${gradle_url}
+
 }
 
 [ 0 -lt "${HAS_ANT}" ]      && KITS+=('install_ant')
