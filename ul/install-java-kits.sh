@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PREFIX=${PREFIX:-'/opt/run/bin'}
-OPEN_DIR=${OPEN_DIR:-'/opt/open'}
+open_dir=${open_dir:-'/opt/open'}
 
 HAS_ANT=${HAS_ANT:-0}
 HAS_MAVEN=${HAS_MAVEN:-0}
@@ -12,15 +12,18 @@ HAS_SCALA=${HAS_SCALA:-0}
 
 declare -a KITS=()
 
+append_path() {
+  [ `echo $PATH | tr ':' '\n' | grep "^$1$" &>/dev/null; echo $?` ] && \
+  echo -e "PATH=$PATH:$1" >> $HOME/.bash_paths
+}
 
 install_ant() {
-  ANT_HOME="${OPEN_DIR}/ant"
-  ANT_URL=${ANT_URL:-'https://github.com/apache/ant.git'}
+  local ant_home="${open_dir}/ant"
+  local ant_url=${ant_url:-'https://github.com/apache/ant.git'}
 
-  cd "${OPEN_DIR}"
-  [ -f "${ANT_HOME}/bootstrap.sh" ] || git clone --depth=1 ${ANT_URL} 
-  cd "${ANT_HOME}" && bootstrap.sh && \
-  echo -e "PATH=$PATH:$ANT_HOME" >> $HOME/.bash_paths
+  cd "${open_dir}"
+  [ -f "${ant_home}/bootstrap.sh" ] || git clone --depth=1 ${ant_url} 
+  cd "${ant_home}" && bootstrap.sh && append_path "$ant_home/bin"
 }
 
 install_boot() {
