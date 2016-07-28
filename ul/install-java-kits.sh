@@ -2,14 +2,15 @@
 
 PREFIX=${PREFIX:-'/opt/run/bin'}
 OPEN_DIR=${OPEN_DIR:-'/opt/open'}
-KITS=(
-      'install_ant'
-      #'install_maven'
-      #'install_boot'
-      #'install_gradle'
-      #'install_groovy'
-      #'install_scala'
-)
+
+HAS_ANT=${HAS_ANT:-0}
+HAS_MAVEN=${HAS_MAVEN:-0}
+HAS_BOOT=${HAS_BOOT:-0}
+HAS_GRADLE=${HAS_GRADLE:-0}
+HAS_GROOVY=${HAS_GROOVY:-0}
+HAS_SCALA=${HAS_SCALA:-0}
+
+declare -a KITS=()
 
 
 install_ant() {
@@ -29,6 +30,16 @@ install_boot() {
   curl -fsSLo boot ${BOOT_URL} && chmod 755 boot
 }
 
+[ 0 -lt "${HAS_ANT}" ]      && KITS+=('install_ant')
+[ 0 -lt "${HAS_MAVEN}" ]    && KITS+=('install_maven')
+[ 0 -lt "${HAS_BOOT}" ]     && KITS+=('install_boot')
+[ 0 -lt "${HAS_GRADLE}" ]   && KITS+=('install_gradle')
+[ 0 -lt "${HAS_GROOVY}" ]   && KITS+=('install_groovy')
+[ 0 -lt "${HAS_SCALA}" ]    && KITS+=('install_scala')
+
+
 for i in "${KITS[@]}"; do
-  echo -e "call ${i} ..." && ${i} && echo -e "\n${i} installed."
+  echo -e "call ${i} ..." && \
+  $(${i}) && \
+  echo -e "${i} installed.\n"
 done
