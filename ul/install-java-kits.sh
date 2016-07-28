@@ -39,7 +39,7 @@ install_boot() {
 
 
 for i in "${KITS[@]}"; do
-  echo -e "call ${i} ..." && \
+  echo -e "# ${i} ..." && \
   $(${i}) && \
-  echo -e "${i} installed.\n"
+  echo -e "# ${i} completed.\n"
 done
