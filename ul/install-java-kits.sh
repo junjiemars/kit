@@ -19,7 +19,7 @@ install_ant() {
 
   cd "${OPEN_DIR}"
   [ -f "${ANT_HOME}/bootstrap.sh" ] || git clone --depth=1 ${ANT_URL} 
-  cd "${ANT_HOME}" && bash ./bootstrap.sh && \
+  cd "${ANT_HOME}" && bootstrap.sh && \
   echo -e "PATH=$PATH:$ANT_HOME" >> $HOME/.bash_paths
 }
 
@@ -40,6 +40,6 @@ install_boot() {
 
 for i in "${KITS[@]}"; do
   echo -e "# ${i} ..." && \
-  $(${i}) && \
+  ${i} && \
   echo -e "# ${i} completed.\n"
 done
