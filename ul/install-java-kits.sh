@@ -59,8 +59,9 @@ install_maven() {
 
 install_boot() {
   local boot_url=${boot_url:-'https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh '}
+  local bin_dir="${PREFIX}/bin"
 
-  cd "${PREFIX}" && \
+  cd "${bin_dir}" && \
   curl -fsSLo boot ${boot_url} && chmod 755 boot
 }
 
