@@ -7,5 +7,5 @@ function exist_p() {
 
 p_java=$(exist_p 'java')
 if [[ 0 -eq p_java ]]; then
-    export JAVA_HOME=$(readlink -f `which java` | sed 's:/bin/java::')
+    export JAVA_HOME=$(readlink -f `type -p javac` | sed 's:/bin/javac::')
 fi
