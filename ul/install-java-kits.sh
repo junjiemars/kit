@@ -48,7 +48,7 @@ install_maven() {
     git clone -b ${maven_ver} --depth=1 ${maven_url} 
   [ 0 -ne `type -p mvn &>/dev/null; echo $?` ] && \
   [ 0 -eq `type -p ant &>/dev/null; echo $?` ] && \
-  cd "${maven_home}" && \ ant clean-bootstrap && \
+  cd "${maven_home}" && ant clean-bootstrap && \
   ant -DskipText=true -Dmaven.test.skip=true && \
   append_paths "${bin_dir}/bin"
 }
