@@ -14,6 +14,7 @@ declare -a KITS=()
 
 append_path() {
   [ `echo $PATH | tr ':' '\n' | grep "^$1$" &>/dev/null; echo $?` ] && \
+  . $HOME/.bashrc && \
   echo -e "PATH=$PATH:$1" >> $HOME/.bash_paths
 }
 
