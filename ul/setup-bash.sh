@@ -6,6 +6,7 @@ curl='curl -s '
 declare -a BASH_S=(\
   '.bash_aliases' \
   '.bash_paths' \
+  '.bash_vars' \
   '.bash_apps' \
   '.bashrc' \
   '.profile' \
@@ -64,6 +65,7 @@ for i in ${BASH_S[@]}; do
 done
 
 ${curl} ${GITHUB_H}/ul/.bash_aliases -o $HOME/.bash_aliases
+${curl} ${GITHUB_H}/ul/.bash_vars -o $HOME/.bash_vars
 ${curl} ${GITHUB_H}/win/.bash_paths -o $HOME/.bash_paths
 ${curl} ${GITHUB_H}/ul/.bash_profile -o $HOME/.bash_profile
 

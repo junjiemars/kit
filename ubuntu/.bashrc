@@ -111,6 +111,8 @@ if ! shopt -oq posix; then
   fi
 fi
 
+[ -f ~/.bash_vars ] && . ~/.bash_vars
+
 [ -f ~/.bash_paths ] && . ~/.bash_paths
 export PATH
 
