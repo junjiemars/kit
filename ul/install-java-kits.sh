@@ -61,8 +61,8 @@ install_boot() {
   local boot_url='https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh '
   local bin_dir="${PREFIX}/bin"
 
-  cd "${bin_dir}" && \
-  curl -fsSLo boot ${boot_url} && chmod 755 boot
+  [ -f "${bin_dir}/boot" ] || \
+  curl -fsSLo ${bin_dir}/boot ${boot_url} && chmod 755 ${bin_dir}/boot
 }
 
 install_gradle() {
