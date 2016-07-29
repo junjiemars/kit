@@ -72,7 +72,7 @@ install_boot() {
 install_gradle() {
   local gradle_url='https://github.com/gradle/gradle.git'
   local gradle_home="${OPEN_DIR}/gradle"
-  local bin_ln="${PREFIX}/bin/gradle"
+  local bin_ln="${PREFIX}/bin/gradlew"
 
   cd "${OPEN_DIR}"
   [ -f "${gradle_home}/gradlew" ] || git clone --depth=1 ${gradle_url}
@@ -80,7 +80,7 @@ install_gradle() {
   [ -L "${bin_ln}" ] && rm "${bin_ln}"
   . $HOME/.bashrc
   [ 0 -ne `type -p gradlew &>/dev/null; echo $?` ] && \
-    ln -s "${gradle_home/gradlew}" "${bin_ln}"
+    ln -s "${gradle_home}/gradlew" "${bin_ln}"
 }
 
 install_groovy() {
