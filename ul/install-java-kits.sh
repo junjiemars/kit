@@ -40,7 +40,7 @@ install_maven() {
   local maven_home="${OPEN_DIR}/maven"
   local maven_url='https://github.com/apache/maven.git'
   local maven_ver='maven-3.2.6'
-  local bin_dir="${PREFIX}/m2"
+  local bin_dir="${PREFIX}/bin/m2"
   
   [ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
   rm -r "${bin_dir}/*"
@@ -68,12 +68,18 @@ install_boot() {
 install_gradle() {
   local gradle_url='https://github.com/gradle/gradle.git'
   local gradle_home="${OPEN_DIR}/gradle"
+  local bin_dir="${PREFIX}/bin/gradle"
+
+  [ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
+  rm -r "${bin_dir}/*"
 
   cd "${OPEN_DIR}"
   [ -f "${gradle_home}/gradlew" ] || git clone --depth=1 ${gradle_url}
 
   . $HOME/.bashrc
   [ 0 -ne `type -p gradlew &>/dev/null; echo $?` ] && \
+    cd "${gradle_home}" && gradlew install \
+      -Pgradle_installPath=${bin_dir} && \
     append_paths "${gradle_home}"
 }
 
