@@ -1,9 +1,12 @@
 #!/bin/bash
 
-OPT_RUN=/opt/run
+# load .bash_vars first
+[ -r "$HOME/.bash_vars" ] && . "$HOME/.bash_vars"
 
-# chain basis paths
-PATH=$PATH:$OPT_RUN/bin:$OPT_RUN/sbin
+# chain basis PREFIX/opt/{run} paths
+[ -n "${OPT_RUN}" ] && PATH=$PATH:$OPT_RUN/bin:$OPT_RUN/sbin
+
+# java home
 [ -n "$JAVA_HOME" ] && PATH=$PATH:$JAVA_HOME/bin
 
 # other paths

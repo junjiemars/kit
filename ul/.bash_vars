@@ -1,3 +1,36 @@
 #!/bin/bash
 
+PREFIX=${PREFIX:-"/opt"}
+OPT_RUN="${PREFIX}/run"
+OPT_OPEN="${PREFIX}/open"
+
+PLATFORM=`uname -s 2>/dev/null`
+
+opt_basis_dirs() {
+  [ -d "${OPT_RUN}" ] && export OPT_RUN=${OPT_RUN}
+  [ -d "${OPT_OPEN}" ] && export OPT_OPEN=${OPT_OPEN}
+}
+
+check_java() {
+  case ${PLATFORM} in
+    Darwin)
+      local java_home='/usr/libexec/java_home'
+      [ -L ${java_home} ] && export JAVA_HOME=${java_home}
+      ;;
+    Linux)
+      [ -L `type -p javac` ] && \
+        local java_home=$(readlink -f `type -p javac` | sed 's:/bin/javac::')
+      [ -n "${java_home}" ] && export JAVA_HOME="${java_home}"
+      ;; 
+    MSYS_NT*)
+      ;;
+    *)
+      ;;
+  esac
+}
+
+opt_basis_dirs
+
+check_java
+
 # declare vars

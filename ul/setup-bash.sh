@@ -7,7 +7,6 @@ declare -a BASH_S=(\
   '.bash_aliases' \
   '.bash_paths' \
   '.bash_vars' \
-  '.bash_apps' \
   '.bashrc' \
   '.profile' \
   '.bash_profile' \
@@ -16,7 +15,7 @@ declare -a BASH_S=(\
   '_vimrc' \
   )
 
-function save_as() {
+save_as() {
   local f="$HOME/$1"
   if [ -f ${f} ]; then
     local l=`find $HOME -maxdepth 1 -mindepth 1 -type f -name "$1.b?" \
@@ -28,13 +27,15 @@ function save_as() {
       local n=$(( ${c}+1 ))
       if [[ ${n} -gt 2 ]]; then
         let n=0
+        [ -f "${f}.b1" ] && mv "${f}.b1" "${f}.b2"
+        [ -f "${f}.b0" ] && mv "${f}.b0" "${f}.b1"
       fi
     fi
     cp "${f}" "${f}.b${n}"
   fi
 }
 
-function set_vim_paths() {
+set_vim_paths() {
   if [[ 0 -eq `type -p cc >/dev/null; echo $?` ]]; then
     cc_out="`echo '' | cc -v -E 2>&1 >/dev/null - \
             | awk '/#include <...> search starts here:/,/End of search list./'`"
@@ -75,7 +76,6 @@ case ${PLATFORM} in
     ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/_vimrc
     ;;
   *)
-    ${curl} ${GITHUB_H}/ul/.bash_apps -o $HOME/.bash_apps
     ${curl} ${GITHUB_H}/ul/.bash_logout -o $HOME/.bash_logout
     ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/.vimrc
     ;;
