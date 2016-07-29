@@ -68,19 +68,16 @@ install_boot() {
 install_gradle() {
   local gradle_url='https://github.com/gradle/gradle.git'
   local gradle_home="${OPEN_DIR}/gradle"
-  local bin_dir="${PREFIX}/bin/gradle"
+  local bin_ln="${PREFIX}/bin/gradle"
 
-  [ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
-  rm -r "${bin_dir}/*"
+  [ -L "${bin_ln}" ] && rm "${bin_ln}"
 
   cd "${OPEN_DIR}"
   [ -f "${gradle_home}/gradlew" ] || git clone --depth=1 ${gradle_url}
 
   . $HOME/.bashrc
   [ 0 -ne `type -p gradlew &>/dev/null; echo $?` ] && \
-    cd "${gradle_home}" && gradlew install \
-      -Pgradle_installPath=${bin_dir} && \
-    append_paths "${gradle_home}"
+    ln -s "${gradle_home/gradlew}" "${bin_ln}"
 }
 
 [ 0 -lt "${HAS_ANT}" ]      && KITS+=('install_ant')
