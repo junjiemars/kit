@@ -99,6 +99,19 @@ install_groovy() {
     gradlew clean dist
 }
 
+install_scala() {
+  local scala_url='https://github.com/scala/scala.git'
+  local scala_home="${OPEN_DIR}/scala"
+
+  [ -f "${scala_home}/build.xml" ] && \
+    git clone --depth=1 ${scala_url} ${scala_home}
+
+  . $HOME/.bashrc
+  [ 0 -ne `type -p scala &>/dev/null; echo $?` ] && \
+    cd ${scala_home} && \
+    ant 
+}
+
 [ 0 -lt "${HAS_ANT}" ]      && KITS+=('install_ant')
 [ 0 -lt "${HAS_MAVEN}" ]    && KITS+=('install_maven')
 [ 0 -lt "${HAS_BOOT}" ]     && KITS+=('install_boot')
