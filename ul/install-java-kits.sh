@@ -25,6 +25,10 @@ append_vars() {
     . $HOME/.bash_vars
 }
 
+git_repo_exists() {
+  git branch &>/dev/null; echo $?
+}
+
 install_ant() {
   local ant_home="${OPEN_DIR}/ant"
   local ant_url='https://github.com/apache/ant.git'
@@ -70,14 +74,20 @@ install_gradle() {
   local gradle_home="${OPEN_DIR}/gradle"
   local bin_ln="${PREFIX}/bin/gradle"
 
-  [ -L "${bin_ln}" ] && rm "${bin_ln}"
-
   cd "${OPEN_DIR}"
   [ -f "${gradle_home}/gradlew" ] || git clone --depth=1 ${gradle_url}
 
+  [ -L "${bin_ln}" ] && rm "${bin_ln}"
   . $HOME/.bashrc
   [ 0 -ne `type -p gradlew &>/dev/null; echo $?` ] && \
     ln -s "${gradle_home/gradlew}" "${bin_ln}"
+}
+
+install_groovy() {
+  local groovy_url='https://bintray.com/artifact/download/groovy/maven/apache-groovy-binary-2.4.7.zip'
+  local groovy_home="${OPEN_DIR}/groovy"
+
+  [ 0
 }
 
 [ 0 -lt "${HAS_ANT}" ]      && KITS+=('install_ant')
