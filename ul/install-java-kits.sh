@@ -84,10 +84,11 @@ install_gradle() {
 }
 
 install_groovy() {
-  local groovy_url='https://bintray.com/artifact/download/groovy/maven/apache-groovy-binary-2.4.7.zip'
+  local groovy_url='https://github.com/apache/groovy.git'
   local groovy_home="${OPEN_DIR}/groovy"
 
-  [ 0
+  [ -f "${groovy_home}/gradlew" ] || git clone --depth=1 ${groovy_url} 
+
 }
 
 [ 0 -lt "${HAS_ANT}" ]      && KITS+=('install_ant')
