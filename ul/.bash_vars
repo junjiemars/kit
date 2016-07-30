@@ -15,7 +15,7 @@ check_java() {
   case ${PLATFORM} in
     Darwin)
       local java_home='/usr/libexec/java_home'
-      [ -L ${java_home} ] && export JAVA_HOME=${java_home}
+      [ -L ${java_home} ] && export JAVA_HOME=$(${java_home})
       ;;
     Linux)
       [ -L `type -p javac` ] && \
