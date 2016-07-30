@@ -1,13 +1,36 @@
 #!/bin/bash
 
+set_bin_paths() {
+  local paths=(
+    '/usr/local/bin'
+    '/usr/bin'
+    '/bin'
+    '/usr/sbin'
+    '/sbin'
+  )
+  
+  for d in ${paths[@]}; do
+    if [ -d "${d}" ]; then
+      PATH="${PATH:-}${PATH:+:}${d}"
+    fi
+  done
+
+  export PATH="`echo -n "${PATH}" | \
+              awk -v RS=':' -v ORS=':' '!a[$1]++' | \
+              sed -e 's_^:__' -e 's_:\.:$__' -e 's_:$__'`"
+}
+
+# set default bin paths
+set_bin_paths
+
 # load .bash_vars first
 [ -r "$HOME/.bash_vars" ] && . "$HOME/.bash_vars"
 
 # chain basis PREFIX/opt/{run} paths
-[ -n "${OPT_RUN}" ] && PATH=$PATH:$OPT_RUN/bin:$OPT_RUN/sbin
+[ -n "${OPT_RUN}" ] && PATH="${PATH:-}${PATH:+:}$OPT_RUN/bin:$OPT_RUN/sbin"
 
 # java home
-[ -n "$JAVA_HOME" ] && PATH=$PATH:$JAVA_HOME/bin
+[ -n "$JAVA_HOME" ] && PATH="${PATH:-}${PATH:+:}$JAVA_HOME/bin"
 
 # other paths
 

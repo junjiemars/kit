@@ -5,8 +5,8 @@ PLATFORM=`uname -s 2>/dev/null`
 curl='curl -s '
 declare -a BASH_S=(\
   '.bash_aliases' \
-  '.bash_paths' \
   '.bash_vars' \
+  '.bash_paths' \
   '.bashrc' \
   '.profile' \
   '.bash_profile' \
@@ -67,7 +67,7 @@ done
 
 ${curl} ${GITHUB_H}/ul/.bash_aliases -o $HOME/.bash_aliases
 ${curl} ${GITHUB_H}/ul/.bash_vars -o $HOME/.bash_vars
-${curl} ${GITHUB_H}/win/.bash_paths -o $HOME/.bash_paths
+${curl} ${GITHUB_H}/ul/.bash_paths -o $HOME/.bash_paths
 ${curl} ${GITHUB_H}/ul/.bash_profile -o $HOME/.bash_profile
 
 case ${PLATFORM} in
