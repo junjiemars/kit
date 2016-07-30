@@ -18,7 +18,8 @@ set_bin_paths() {
   export PATH="`echo -n "${PATH}" | \
     awk -v RS=':' -v ORS=':' '!a[$1]++' | \
     awk '!/^$/' | \
-    sed -e 's_^:__' -e 's_:\.:$__' -e 's_:$__'`"
+    sed -e 's_^:__' -e 's_:\.:$__' -e 's_::__' -e 's_:$__'`"
+  echo "###:$PATH###"
 }
 
 # set bin paths
