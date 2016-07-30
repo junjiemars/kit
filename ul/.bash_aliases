@@ -1,20 +1,12 @@
 #!/bin/bash
 
+PLATFORM=`uname -s 2>/dev/null`
+
 alias ..1='cd ../'
 alias ..2='cd ../../'
 alias ..3='cd ../../../'
 alias ..4='cd ../../../../'
 
-if [ 'Darwin' = `uname -s` ]; then
-  alias ls='ls -G'
-  alias ll='ls -lh -G'
-  alias l='ls -CF -G'
-  alias tailf='tail -f'
-else
-  alias ls='ls --color=auto'
-  alias ll='ls -lh --color=auto'
-  alias l='ls -CF --color=auto'
-fi
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
@@ -30,6 +22,20 @@ function diff_p() {
 function diff_p() {
   diff ${1} ${2} >/dev/null 2>&1; echo $?
 }
+
+case "${PLATFORM}" in
+  Darwin)
+    alias ls='ls -G'
+    alias ll='ls -lh -G'
+    alias l='ls -CF -G'
+    alias tailf='tail -f'
+    ;;
+  *)
+    alias ls='ls --color=auto'
+    alias ll='ls -lh --color=auto'
+    alias l='ls -CF --color=auto'
+    ;;
+esac
 
 p_rlwrap=$(exist_p 'rlwrap')
 if [[ 0 -eq p_rlwrap ]]; then
