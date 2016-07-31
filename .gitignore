@@ -7,3 +7,4 @@ exp-*.log
 exp-*.sql
 
 *.buf
+*.swp
