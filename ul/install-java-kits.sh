@@ -23,7 +23,7 @@ append_paths() {
   local f_paths="$HOME/.bash_paths"
   if [ 0 -ne `echo "$PATH" | tr ':' '\n' | grep "^$1$" &>/dev/null; echo $?` ]; then 
     if [ 0 -eq `grep "^PATH='.*'" ${f_paths} &>/dev/null; echo $?` ]; then
-      sed -i 's#^PATH='.*'#PATH=$PATH:$1#g' "${f_paths}"
+      sed -i "s#^PATH='.*'#PATH=$PATH:$1#g" "${f_paths}"
     else
       echo -e "PATH='$PATH:$1'" >> "${f_paths}"
     fi
@@ -33,13 +33,14 @@ append_paths() {
 
 append_vars() {
   local f_vars="$HOME/.bash_vars"
-  local var="export '$1'"
-  [ 0 -eq `grep "${var}" "${f_vars}" &>/dev/null; echo $?` ] || \
+  local name="$1"
+  local val="$2"
+  local var="export ${name}='${val}'"
+  if [ 0 -eq `grep "^export ${name}='.*'" "${f_vars}" &>/dev/null; echo $?` ]; then
+    sed -i "s#^export ${name}='.*'#${var}#g" "${f_vars}"
+  else
     echo -e "${var}" >> "${f_vars}"
-}
-
-git_repo_exists() {
-  git branch &>/dev/null; echo $?
+  fi
 }
 
 install_ant() {
@@ -63,7 +64,7 @@ install_maven() {
   [ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
   rm -r "${bin_dir}/*"
 
-  append_vars "M2_HOME=${bin_dir}"
+  append_vars "M2_HOME" "${bin_dir}"
 
   [ -f "${maven_home}/build.xml" ] || \
     git clone --depth=1 --branch=${maven_ver} ${maven_url} ${maven_home}
@@ -110,7 +111,8 @@ install_groovy() {
   cd "${groovy_home}" && \
   ./gradlew -DskipTest=true installGroovy 
 
-  append_vars "GROOVY_HOME=${bin_dir}" && \
+  [ -d "${bin_dir}/bin" ] && \
+  append_vars "GROOVY_HOME" "${bin_dir}" && \
   append_paths "${bin_dir}/bin"
 }
 
@@ -127,7 +129,8 @@ install_scala() {
   [ -d "${RUN_DIR}/share/man/man1" ] || mkdir -p "${RUN_DIR}/share/man/man1" 
   cp -R "${scala_home}/man/man1/." "${RUN_DIR}/share/man/man1/"
  
-  append_vars "SCALA_HOME=${scala_home}"
+  [ -d "${scala_home}/bin" ] && \
+  append_vars "SCALA_HOME" "${scala_home}" && \
   append_paths "${scala_home}/bin"
 }
 
