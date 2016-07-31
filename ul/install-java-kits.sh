@@ -33,7 +33,7 @@ append_paths() {
 
 append_vars() {
   local f_vars="$HOME/.bash_vars"
-  local var="export $1"
+  local var="export '$1'"
   [ 0 -eq `grep "${var}" "${f_vars}" &>/dev/null; echo $?` ] || \
     echo -e "${var}" >> "${f_vars}"
 }
@@ -102,15 +102,16 @@ install_groovy() {
   local groovy_tag="GROOVY_${GROOVY_VER}"
   local groovy_url="https://github.com/apache/groovy.git"
   local groovy_home="${OPEN_DIR}/groovy"
+  local bin_dir="${groovy_home}/target/install"
 
   [ -f "${groovy_home}/gradlew" ] || \
     git clone --depth=1 --branch=${groovy_tag} ${groovy_url} ${groovy_home}
 
   cd "${groovy_home}" && \
-  ./gradlew clean dist 
+  ./gradlew -DskipTest=true installGroovy 
 
-  append_vars "GROOVY_HOME=${groovy_home}"
-  append_paths "${groovy_home}/bin"
+  append_vars "GROOVY_HOME=${bin_dir}" && \
+  append_paths "${bin_dir}/bin"
 }
 
 install_scala() {
