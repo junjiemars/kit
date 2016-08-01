@@ -61,8 +61,8 @@ set_vim_paths() {
 BEGIN=`date +%s`
 echo "setup $PLATFORM bash env ..."
 
-for i in ${BASH_S[@]}; do
-  `save_as $i`
+for i in "${BASH_S[@]}"; do
+  `save_as "$i"`
 done
 
 ${curl} ${GITHUB_H}/ul/.bash_aliases -o $HOME/.bash_aliases
