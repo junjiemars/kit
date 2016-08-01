@@ -1,10 +1,19 @@
 #!/bin/bash
 
-PREFIX=${PREFIX:-"/opt"}
+PLATFORM=`uname -s 2>/dev/null`
+
+case "${PLATFORM}" in
+  MSYS_NT*)
+    PREFIX=${PREFIX:-"/d/opt"}
+    ;;
+  *)
+    PREFIX=${PREFIX:-"/opt"}
+    ;;
+esac
+
 OPT_RUN="${PREFIX}/run"
 OPT_OPEN="${PREFIX}/open"
 
-PLATFORM=`uname -s 2>/dev/null`
 
 opt_basis_dirs() {
   [ -d "${OPT_RUN}" ] && export OPT_RUN=${OPT_RUN}
@@ -12,7 +21,7 @@ opt_basis_dirs() {
 }
 
 check_java() {
-  case ${PLATFORM} in
+  case "${PLATFORM}" in
     Darwin)
       local java_home='/usr/libexec/java_home'
       [ -L ${java_home} ] && export JAVA_HOME=`${java_home}`
