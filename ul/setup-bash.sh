@@ -18,8 +18,14 @@ declare -a BASH_S=(\
 save_as() {
   local f="$HOME/$1"
   case "${PLATFORM}" in
-    MSYS_NT*) local find='/usr/bin/find' ;;
-    *) local find='find' ;;
+    MSYS_NT*) 
+      local find='/usr/bin/find' 
+      local sort='/usr/bin/sort'
+      ;;
+    *) 
+      local find='find' 
+      local sort='sort'
+      ;;
   esac
 
   if [ -f ${f} ]; then
