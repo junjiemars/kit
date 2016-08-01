@@ -51,7 +51,7 @@ install_ant() {
     git clone --depth=1 --branch=${ANT_VER} ${ant_url} "${ant_home}"
 
   [ 0 -ne `type -p ant &>/dev/null; echo $?` ] && \
-    ${ant_home}/bootstrap.sh && \
+    cd ${ant_home} && ./bootstrap.sh && \
     append_paths "${ant_home}/bootstrap/bin"
 }
 
