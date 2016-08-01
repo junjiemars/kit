@@ -62,7 +62,7 @@ install_maven() {
   local maven_ver="maven-${MAVEN_VER}"
   local bin_dir="${RUN_DIR}/bin/m2"
   
-  [ -d "${bin_dir}" ] || mkdir -p "${bin_dir}" && rm -r "${bin_dir}/*"
+  [ -d "${bin_dir}" ] && rm -r "${bin_dir}"
 
   [ -f "${maven_home}/build.xml" ] || \
     git clone --depth=1 --branch=${maven_ver} ${maven_url} ${maven_home}
