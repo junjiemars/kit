@@ -41,6 +41,7 @@ append_vars() {
   else
     echo -e "${var}" >> "${f_vars}"
   fi
+  . "${f_vars}"
 }
 
 install_ant() {
@@ -64,16 +65,16 @@ install_maven() {
   [ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
   rm -r "${bin_dir}/*"
 
-  append_vars "M2_HOME" "${bin_dir}"
-
   [ -f "${maven_home}/build.xml" ] || \
     git clone --depth=1 --branch=${maven_ver} ${maven_url} ${maven_home}
 
   [ 0 -ne `type -p mvn &>/dev/null; echo $?` ] && \
   [ 0 -eq `type -p ant &>/dev/null; echo $?` ] && \
-    cd ${maven_home} && \
-    ant clean-bootstrap && \
-    ant -DskipTest=true -Dmaven.test.skip=true && \
+    cd ${maven_home} && ant clean-bootstrap && \
+    ant -Dmaven.home="${bin_dir}" \
+        -DskipTest=true 
+        -Dmaven.test.skip=true && \
+    append_vars "M2_HOME" "${bin_dir}" && \
     append_paths "${bin_dir}/bin"
 }
 
