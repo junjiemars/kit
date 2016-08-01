@@ -65,7 +65,7 @@ install_maven() {
   [ -f "${maven_home}/build.xml" ] || \
     git clone --depth=1 --branch=${maven_ver} ${maven_url} ${maven_home}
 
-  [ -d "${bin_dir}" ] || rm -r "${bin_dir}"
+  [ -d "${bin_dir}" ] && rm -r "${bin_dir}"
 
   [ 0 -ne `type -p mvn &>/dev/null; echo $?` ] && \
   [ 0 -eq `type -p ant &>/dev/null; echo $?` ] && \
