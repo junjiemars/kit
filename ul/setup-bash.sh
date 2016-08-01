@@ -17,8 +17,13 @@ declare -a BASH_S=(\
 
 save_as() {
   local f="$HOME/$1"
+  case "${PLATFORM}" in
+    MSYS_NT*) local find='/usr/bin/find' ;;
+    *) local find='find' ;;
+  esac
+
   if [ -f ${f} ]; then
-    local l=`find $HOME -maxdepth 1 -mindepth 1 -type f -name "$1.b?" \
+    local l=`$find $HOME -maxdepth 1 -mindepth 1 -type f -name "$1.b?" \
             |sort -r|head -n1`
     if [ "_${l}" == "_" ]; then
       local n=0
