@@ -30,8 +30,16 @@ check_java() {
   esac
 }
 
+check_term() {
+  if [ -z "$TERM" || "dumb" == "$TERM" ]; then
+    export TERM="xterm"
+  fi
+}
+
 opt_basis_dirs
 
 check_java
+
+check_term
 
 # declare vars
