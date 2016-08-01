@@ -49,7 +49,7 @@ install_ant() {
   local ant_url='https://github.com/apache/ant.git'
 
   [ -f "${ant_home}/bootstrap.sh" ] || \
-    git clone --depth=1 --branch=${ANT_VER} ${ant_url} "${ant_home}"
+    git clone --depth=1 --branch="${ANT_VER}" "${ant_url}" "${ant_home}"
 
   [ 0 -ne `type -p ant &>/dev/null; echo $?` ] && \
     cd ${ant_home} && ./bootstrap.sh && \
@@ -63,13 +63,14 @@ install_maven() {
   local bin_dir="${maven_home}/m2"
   
   [ -f "${maven_home}/build.xml" ] || \
-    git clone --depth=1 --branch=${maven_ver} ${maven_url} ${maven_home}
+    git clone --depth=1 --branch="${maven_ver}" \
+      "${maven_url}" "${maven_home}"
 
   [ -d "${bin_dir}" ] && rm -r "${bin_dir}"
 
   [ 0 -ne `type -p mvn &>/dev/null; echo $?` ] && \
   [ 0 -eq `type -p ant &>/dev/null; echo $?` ] && \
-    cd ${maven_home} && ant clean-bootstrap && \
+    cd "${maven_home}" && ant clean-bootstrap && \
     M2_HOME="${bin_dir}"            \
     ant -D"maven.home=${bin_dir}"   \
         -D"skipTest=true"           \
@@ -84,7 +85,7 @@ install_boot() {
 
   [ -f "${bin_dir}/boot" ] || \
     curl -fsSLo ${bin_dir}/boot ${boot_url} && \
-    chmod 755 ${bin_dir}/boot
+    chmod 755 "${bin_dir}/boot"
 }
 
 install_gradle() {
@@ -93,11 +94,12 @@ install_gradle() {
   local bin_ln="${RUN_DIR}/bin/gradlew"
 
   [ -f "${gradle_home}/gradlew" ] || \
-    git clone --depth=1 --branch=${GRADLE_VER} ${gradle_url} ${gradle_home}
+    git clone --depth=1 --branch="${GRADLE_VER}" \
+      "${gradle_url}" "${gradle_home}"
 
   [ -L "${bin_ln}" ] && rm "${bin_ln}"
   [ 0 -ne `type -p gradlew &>/dev/null; echo $?` ] && \
-    ln -s ${gradle_home}/gradlew ${bin_ln}
+    ln -s "${gradle_home}/gradlew" "${bin_ln}"
 }
 
 install_groovy() {
@@ -107,10 +109,11 @@ install_groovy() {
   local bin_dir="${groovy_home}/target/install"
 
   [ -f "${groovy_home}/gradlew" ] || \
-    git clone --depth=1 --branch=${groovy_tag} ${groovy_url} ${groovy_home}
+    git clone --depth=1 --branch="${groovy_tag}" \
+      "${groovy_url}" "${groovy_home}"
 
   cd "${groovy_home}" && \
-  ./gradlew -DskipTest=true installGroovy 
+  ./gradlew -D"skipTest=true" installGroovy 
 
   [ -d "${bin_dir}/bin" ] && \
   append_vars "GROOVY_HOME" "${bin_dir}" && \
