@@ -60,12 +60,12 @@ install_maven() {
   local maven_home="${OPEN_DIR}/maven"
   local maven_url='https://github.com/apache/maven.git'
   local maven_ver="maven-${MAVEN_VER}"
-  local bin_dir="${RUN_DIR}/bin/m2"
+  local bin_dir="${maven_home}/m2"
   
-  [ -d "${bin_dir}" ] || mkdir -p "${bin_dir}" && rm -r "${bin_dir}/*"
-
   [ -f "${maven_home}/build.xml" ] || \
     git clone --depth=1 --branch=${maven_ver} ${maven_url} ${maven_home}
+
+  [ -d "${bin_dir}" ] || rm -r "${bin_dir}"
 
   [ 0 -ne `type -p mvn &>/dev/null; echo $?` ] && \
   [ 0 -eq `type -p ant &>/dev/null; echo $?` ] && \
