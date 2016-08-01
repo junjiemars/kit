@@ -70,6 +70,18 @@ Now, the good news is Docker has native stable version for Windows 10 since 7/29
 
 If you need __Docker Machine__ you can check [Docker Machine on Windows 10](#docker-machine-on-windows-10)
 
+### Hyper-V Default Locations
+* Control Panel > Administrative Tools > Hyper-V Manager
+* Change __Virtual Machines__ location
+* Change __Virtual Hard Disks__ location
+
+### TTY Issue
+* Mintty does not provide full TTY support;
+* Use __CMD__ + __Bash__:
+```cmd
+REM run into command prompt, then
+bash --login -i 
+```
 
 ## Docker Machine on Windows 10
 * Install Docker Toolbox
@@ -86,6 +98,7 @@ If you need __Docker Machine__ you can check [Docker Machine on Windows 10](#doc
 ```
 "C:\Program Files\Git\usr\bin\mintty.exe" -i "c:\Program Files\Docker Toolbox\docker-quickstart-terminal.ico" /usr/bin/bash --login -i  "c:\Program Files\Docker Toolbox\start.sh"
 ```
+* __MACHINE_STORAGE_PATH__: Environment variable points to docker's image location.
 
 ### Access Windows' dir in Docker Host
 * Configure __Shared folders__ on VirtualBox: 
