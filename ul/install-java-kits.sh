@@ -71,7 +71,7 @@ install_maven() {
   [ 0 -eq `type -p ant &>/dev/null; echo $?` ] && \
     cd ${maven_home} && ant clean-bootstrap && \
     ant -Dmaven.home="${bin_dir}" \
-        -DskipTest=true 
+        -DskipTest=true           \
         -Dmaven.test.skip=true && \
     append_vars "M2_HOME" "${bin_dir}" && \
     append_paths "${bin_dir}/bin"
