@@ -31,7 +31,7 @@ check_java() {
 }
 
 check_term() {
-  if [ -z "$TERM" || "dumb" == "$TERM" ]; then
+  if [ -z "$TERM" ] || [ "dumb" == "$TERM" ]; then
     export TERM="xterm"
   fi
 }
