@@ -8,8 +8,11 @@ test -f ~/.bash_paths && . ~/.bash_paths
 
 
 sort_path() {
-  local car="`echo -n "$1"|tr ':' '\n'|sort|grep -v '^/c/'|tr '\n' ':'|sed -e 's#:*$##'`"
-  local cdr="`echo -n "$1"|tr ':' '\n'|sort|grep    '^/c/'|tr '\n' ':'`|sed -e 's#:$##'"
+  local sort='/usr/bin/sort'
+  local car="`echo -n "$1" | \
+    tr ':' '\n' | $sort | grep -v '^/c/' | tr '\n' ':' `"
+  local cdr="`echo -n "$1" | \
+    tr ':' '\n' | $sort | grep    '^/c/' | tr '\n' ':' `"
   local new="${car}${cdr}"
   echo -n "${new}" | sed -e 's#:$##'
 }
