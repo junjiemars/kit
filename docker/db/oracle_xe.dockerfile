@@ -13,7 +13,8 @@ RUN mkdir -p /run/lock/subsys && \
         bc \
         libaio \
         initscripts \
-        net-tools && \
+        net-tools \
+        unzip && \
     yum clean all
 
 # install oracle xe 11g2
