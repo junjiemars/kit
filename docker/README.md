@@ -86,6 +86,13 @@ bash --login -i
 ### Internal Virtual Switch
 * 
 
+## Basic Java Development Environment
+
+### Build from Dockerfile
+```sh
+docker build -t java-dev https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/java.dockerfile
+```
+
 ## Docker for Database
 You can pull it from [Docker Hub](https://hub.docker.com/), 
 
