@@ -16,14 +16,15 @@ RUN yum -y update && \
         emacs \
         git \
         initscripts \
+	    nmap \
         man-db \
         man-pages \
+        mtr \
         net-tools \
         openssh-server \
         sudo \
-        vim-enhanced \
-        mtr \
-	    nmap && \
+        unzip \
+        vim-enhanced && \
     yum -y group install 'Development Tools' && \
     yum clean all
 
