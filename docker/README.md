@@ -83,6 +83,10 @@ REM run into command prompt, then
 bash --login -i 
 ```
 
+### Internal Virtual Switch
+* 
+
+
 ## Docker Machine on Windows 10
 * Install Docker Toolbox
 * Run Docker Quickstart Terminal

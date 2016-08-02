@@ -19,8 +19,8 @@ RUN yum -y update && \
         vim-enhanced \
         coreutils \
         bind-utils \
-				mtr \
-				nmap \
+        mtr \
+        nmap \
         emacs \
         man-db \
         man-pages && \
@@ -67,7 +67,7 @@ RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
 # start sshd service
 CMD ["/usr/sbin/sshd", "-D"]
 
-# Run script
+# run script
 #
 
 EXPOSE 22

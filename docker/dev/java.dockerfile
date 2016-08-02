@@ -23,7 +23,7 @@ RUN yum -y update && \
         sudo \
         vim-enhanced \
         mtr \
-	nmap && \
+	    nmap && \
     yum -y group install 'Development Tools' && \
     yum clean all
 
