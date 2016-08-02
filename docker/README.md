@@ -87,10 +87,11 @@ bash --login -i
 * 
 
 ## Docker for Database
+You can pull it from [Docker Hub](https://hub.docker.com/), 
 
-### Docker for Oracle XE
+or build it from [oracle_xe.dockerfile](https://raw.githubusercontent.com/junjiemars/kit/master/docker/db/oracle_xe.dockerfile)
 
-### Docker for PostgreSQL
+__Issue__: Oracle XE 11g2 could not be downloaded via curl, there needs some hack way to do it.
 
 
 ## Docker Machine on Windows 10
