@@ -94,11 +94,11 @@ docker build -t java-dev https://raw.githubusercontent.com/junjiemars/kit/master
 ### Play with java-dev Docker Container
 * one time
 ```sh
-docker run -w /home/u -h centos -u u -it --rm junjiemars/java-dev /bin/bash
+docker run -w /home/u -h centos -u u -it --rm java-dev /bin/bash
 ```
 * as daemon
 ```sh
-docker run --name java-dev -w /home/u -h centos --privileged -d junjiemars/java-dev 
+docker run --name java-dev -w /home/u -h centos --privileged -d java-dev 
 docker exec -it -u u java-dev /bin/bash
 ```
 
