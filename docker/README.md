@@ -77,11 +77,7 @@ If you need __Docker Machine__ you can check [Docker Machine on Windows 10](#doc
 
 ### TTY Issue
 * Mintty does not provide full TTY support;
-* Use __CMD__ + __Bash__:
-```cmd
-REM run into command prompt, then
-bash --login -i 
-```
+* Use __cmd__ or __PowerShell__;
 
 ### Internal Virtual Switch
 * 
