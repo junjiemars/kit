@@ -41,16 +41,8 @@ RUN chmod u+s `which ping` && \
     chmod u+s `which ping6`
 
 # cofigure bash env
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc ; \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bash_aliases -o ${HOME_DIR}/.bash_aliases ; \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps -o ${HOME_DIR}/.bash_apps
-
-# configure vim
-RUN cd ${HOME_DIR} && \
-    echo 'set tabstop=2' >> .vimrc && \
-    echo 'set shiftwidth=2' >> .vimrc && \
-    echo 'set encoding=utf8' >> .vimrc && \
-    echo 'set fileencoding=utf8' >> .vimrc
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc && \
+    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${HOME_DIR} bash 
 
 # configure emacs
 RUN cd ${HOME_DIR} ; \
@@ -59,9 +51,7 @@ RUN cd ${HOME_DIR} ; \
     chown -R ${SUDOUSER}:${SUDOUSER} .emacs.d
 RUN test -f ${HOME_DIR}/.emacs && rm ${HOME_DIR}/.emacs
 
-# configure java
-#...
-#
+# chown ${HOME_DIR} 
 RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
 
 # start sshd service

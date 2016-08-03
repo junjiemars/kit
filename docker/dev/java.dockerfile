@@ -47,9 +47,6 @@ RUN cd ${HOME_DIR} ; \
     chown -R ${SUDOUSER}:${SUDOUSER} .emacs.d
 RUN test -f ${HOME_DIR}/.emacs && rm ${HOME_DIR}/.emacs
 
-# configure vim 
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/.vimrc -o ${HOME_DIR}/.vimrc 
- 
 # configure java
 ENV JDK='jdk-8u91-linux-x64.rpm'
 ENV JAVA_HOME='/usr/java/jdk1.8.0_91'
@@ -81,7 +78,7 @@ RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java
 # start sshd service
 CMD ["/usr/sbin/sshd", "-D"]
 
-# Run script
+# run script
 # ...
 #
 

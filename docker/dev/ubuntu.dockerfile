@@ -44,17 +44,8 @@ RUN useradd -m -s/bin/bash ${SUDOUSER} && \
     echo "${SUDOUSER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # cofigure bash env
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc ; \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bash_aliases -o ${HOME_DIR}/.bash_aliases ; \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bash_apps -o ${HOME_DIR}/.bash_app 
-
-# configure vim
-RUN cd ${HOME_DIR} ; \
-    echo 'set tabstop=2' >> .vimrc && \
-    echo 'set shiftwidth=2' >> .vimrc && \
-    echo 'set expandtab' >> .vimrc && \
-    echo 'set encoding=utf8' >> .vimrc && \
-    echo 'set fileencoding=utf8' >> .vimrc
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc && \
+    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${HOME_DIR} bash 
 
 # configure emacs
 RUN cd ${HOME_DIR} ; \
@@ -74,7 +65,7 @@ RUN mkdir /var/run/sshd && \
     sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 CMD ["/usr/sbin/sshd", "-D"]
 
-# Run script
+# run script
 # ...
 #
 
