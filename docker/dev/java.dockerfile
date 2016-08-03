@@ -57,7 +57,7 @@ RUN curl -vkL -H'Cookie: oraclelicense=accept-securebackup-cookie' -O "http://do
     rm ${JDK}
     
 # cofigure bash env
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc && \
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/.bashrc -o ${HOME_DIR}/.bashrc && \
     curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${HOME_DIR} bash 
 
 # chown home opt dirs

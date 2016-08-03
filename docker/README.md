@@ -83,10 +83,23 @@ If you need __Docker Machine__ you can check [Docker Machine on Windows 10](#doc
 * 
 
 ## Basic Java Development Environment
+* Building tools: [ant](http://ant.apache.org), [maven](https://maven.apache.org), [boot](http://boot-clj.com), [gradle](https://gradle.org);
+* Java programming lanuage: [clojure](https://clojure.org), [groovy](http://www.groovy-lang.org), [scala](http://www.scala-lang.org);
 
 ### Build from Dockerfile
 ```sh
 docker build -t java-dev https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/java.dockerfile
+```
+
+### Play with java-dev Docker Container
+* one time
+```sh
+docker run -w /home/u -h centos -u u -it --rm junjiemars/java-dev /bin/bash
+```
+* as daemon
+```sh
+docker run --name java-dev -w /home/u -h centos --privileged -d junjiemars/java-dev 
+docker exec -it -u u java-dev /bin/bash
 ```
 
 ## Docker for Database
