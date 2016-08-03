@@ -68,6 +68,15 @@ RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR} && \
     mkdir -p /opt/apps && chown -R ${SUDOUSER}:${SUDOUSER} /opt/apps && \
     mkdir -p /opt/lab  && chown -R ${SUDOUSER}:${SUDOUSER} /opt/lab
 
+# install and setup building tools and programming environment 
+RUN HAS_ANT=1 \
+    HAS_MAVEN=1 \
+    HAS_BOOT=1 \
+    HAS_GRADLE=1 \
+    HAS_GROOVY=1 \
+    HAS_SCALA=1 \
+    bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh)
+
 # start sshd service
 CMD ["/usr/sbin/sshd", "-D"]
 

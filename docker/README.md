@@ -156,4 +156,4 @@ docker cp <container-path> <machine-path>
 # copy from machine to host
 docker-machine scp <machine>:<machine-path> <host-path>
 ```
-host -> container is verse versa.
+host -> container vice versa.
