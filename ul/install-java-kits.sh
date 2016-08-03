@@ -145,6 +145,8 @@ install_scala() {
 [ 0 -lt "${HAS_GROOVY}" ]   && KITS+=('install_groovy')
 [ 0 -lt "${HAS_SCALA}" ]    && KITS+=('install_scala')
 
+[ -r "$HOME/.bashrc"] && . "$HOME/.bashrc"
+
 for i in "${KITS[@]}"; do
   echo -e "# ${i} ..." 
   [ -d "${OPEN_DIR}" ] || mkdir "${OPEN_DIR}" && ${i}  
