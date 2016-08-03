@@ -52,6 +52,7 @@ RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/.vimrc -o ${
  
 # configure java
 ENV JDK='jdk-8u91-linux-x64.rpm'
+ENV JAVA_HOME='/usr/java/jdk1.8.0_91'
 RUN curl -vkL -H'Cookie: oraclelicense=accept-securebackup-cookie' -O "http://download.oracle.com/otn-pub/java/jdk/8u91-b14/${JDK}" && \
     rpm -ivh ${JDK} && \
     rm ${JDK}
@@ -75,8 +76,7 @@ ENV HAS_BOOT=1
 ENV HAS_GRADLE=1
 ENV HAS_GROOVY=1
 ENV HAS_SCALA=1
-RUN HOME=${HOME_DIR} . ${HOME_DIR}/.bashrc && \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh | HOME=${HOME_DIR} bash
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh | HOME=${HOME_DIR} bash
 
 # start sshd service
 CMD ["/usr/sbin/sshd", "-D"]
