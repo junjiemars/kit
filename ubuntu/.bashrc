@@ -97,8 +97,6 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 
 [ -f ~/.bash_aliases ] && . ~/.bash_aliases
 
-[ -f ~/.bash_apps ] && . ~/.bash_apps
-
 # enable programmable completion features (you don't need to enable
 export PATH
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -112,7 +110,6 @@ if ! shopt -oq posix; then
 fi
 
 [ -f ~/.bash_vars ] && . ~/.bash_vars
-
 [ -f ~/.bash_paths ] && . ~/.bash_paths
 export PATH
 
