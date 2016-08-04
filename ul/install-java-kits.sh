@@ -122,12 +122,10 @@ install_gradle() {
     git clone --depth=1 --branch="${GRADLE_VER}" \
       "${gradle_url}" "${gradle_home}"
 
-  if [ -f "${gradle_home}/gradlew" ]; then
-    if [ 0 -eq `${gradle_home}/gradlew -version $>/dev/null; echo $?` ]; then
-      [ -L "${bin_ln}" ] && rm "${bin_ln}"
+  if [ 0 -eq `${gradle_home}/gradlew -version $>/dev/null; echo $?` ]; then
+    [ -L "${bin_ln}" ] && rm "${bin_ln}"
       ln -s "${gradle_home}/gradlew" "${bin_ln}"
-      return 0
-    fi
+    return 0
   fi
   return 1
 }
@@ -149,12 +147,10 @@ install_groovy() {
       ./gradlew -D"skipTest=true" installGroovy 
   fi
 
-  if [ -f "${bin_dir}/bin/groovysh" ]; then
-     if [ 0 -eq `${bin_dir}/bin/groovysh -version $>/dev/null; echo $?` ]; then
-       append_vars "GROOVY_HOME" "${bin_dir}" 
-       append_paths "${bin_dir}/bin"
-       return 0
-     fi
+  if [ 0 -eq `${bin_dir}/bin/groovysh -version $>/dev/null; echo $?` ]; then
+    append_vars "GROOVY_HOME" "${bin_dir}" 
+    append_paths "${bin_dir}/bin"
+    return 0
   fi
   return 1 
 }
@@ -171,14 +167,12 @@ install_scala() {
   curl -L -o "${scala_home}/${scala_tgz}" -C - "${scala_url}" && \
     tar xf "${scala_home}/${scala_tgz}" -C "${scala_home}" --strip-components=1
   
-  if [ -f "${bin_dir}/scala" ]; then
-    if [ 0 -eq `${bin_dir}/scala -version &>/dev/null; echo $?` ]; then
-      [ -d "${RUN_DIR}/share/man/man1" ] || mkdir -p "${RUN_DIR}/share/man/man1" 
-      cp -R "${scala_home}/man/man1/." "${RUN_DIR}/share/man/man1/"
-      append_vars "SCALA_HOME" "${scala_home}"
-      append_paths "${bin_dir}" 
-      return 0
-    fi
+  if [ 0 -eq `${bin_dir}/scala -version &>/dev/null; echo $?` ]; then
+    [ -d "${RUN_DIR}/share/man/man1" ] || mkdir -p "${RUN_DIR}/share/man/man1" 
+    cp -R "${scala_home}/man/man1/." "${RUN_DIR}/share/man/man1/"
+    append_vars "SCALA_HOME" "${scala_home}"
+    append_paths "${bin_dir}" 
+    return 0
   fi
   return 1
 }
