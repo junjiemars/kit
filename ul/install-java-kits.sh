@@ -48,13 +48,20 @@ append_vars() {
 install_ant() {
   local ant_home="${OPEN_DIR}/ant"
   local ant_url='https://github.com/apache/ant.git'
+  local bin_dir="${ant_home}/bootstrap"
+
+  [ -f `ant -version $>/dev/null; echo $?` ] && return 0
 
   [ -f "${ant_home}/bootstrap.sh" ] || \
     git clone --depth=1 --branch="${ANT_VER}" "${ant_url}" "${ant_home}"
 
-  [ 0 -ne `type -p ant &>/dev/null; echo $?` ] && \
-    cd ${ant_home} && ./bootstrap.sh && \
-    append_paths "${ant_home}/bootstrap/bin"
+  [ -f "${bin_dir}/bin/ant" ] || cd ${ant_home} && ./bootstrap.sh 
+    
+  if [ 0 -eq `${bin_dir}/bin/ant -version &>/dev/null; echo $?` ]; then
+    append_paths "${bin_dir}/bin"
+    return 0
+  fi
+  return 1
 }
 
 install_maven() {
@@ -89,9 +96,7 @@ install_boot() {
   curl -fsSLo "${bin_dir}/boot" -C - "${boot_url}" && \
     chmod 755 "${bin_dir}/boot"
   
-  if [ 0 -eq `${bin_dir}/boot -v &>/dev/null; echo $?` ]; then
-    return 0
-  fi
+  [ 0 -eq `${bin_dir}/boot -v &>/dev/null; echo $?` ] && return 0
   return 1
 }
 
@@ -100,13 +105,20 @@ install_gradle() {
   local gradle_home="${OPEN_DIR}/gradle"
   local bin_ln="${RUN_DIR}/bin/gradlew"
 
+  [ 0 -eq `gradlew -version $>/dev/null; echo $?` ] && return 0
+
   [ -f "${gradle_home}/gradlew" ] || \
     git clone --depth=1 --branch="${GRADLE_VER}" \
       "${gradle_url}" "${gradle_home}"
 
-  [ -L "${bin_ln}" ] && rm "${bin_ln}"
-  [ 0 -ne `type -p gradlew &>/dev/null; echo $?` ] && \
-    ln -s "${gradle_home}/gradlew" "${bin_ln}"
+  if [ -f "${gradle_home}/gradlew" ]; then
+    if [ 0 -eq `${gradle_home}/gradlew -version $>/dev/null; echo $?` ]; then
+      [ -L "${bin_ln}" ] && rm "${bin_ln}"
+      ln -s "${gradle_home}/gradlew" "${bin_ln}"
+      return 0
+    fi
+  fi
+  return 1
 }
 
 install_groovy() {
