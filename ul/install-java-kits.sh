@@ -4,6 +4,7 @@ PREFIX=${PREFIX:-'/opt'}
 RUN_DIR=${RUN_DIR:-"${PREFIX}/run"}
 OPEN_DIR=${OPEN_DIR:-"${PREFIX}/open"}
 
+HAS_ALL=${HAS_ALL:-"NO"}
 HAS_ANT=${HAS_ANT:-0}
 HAS_MAVEN=${HAS_MAVEN:-0}
 HAS_BOOT=${HAS_BOOT:-0}
@@ -125,6 +126,10 @@ install_scala() {
   local scala_url="http://downloads.lightbend.com/scala/${SCALA_VER}/${scala_tgz}"
   local scala_home="${OPEN_DIR}/scala"
 
+  if [ 0 -eq `scala -version &>/dev/null; echo $?` ]; then
+    return 0
+  fi
+
   [ -d "${scala_home}" ] || mkdir -p "${scala_home}"
   [ -f "${scala_home}/${scala_tgz}" ] || \
     curl -L ${scala_url} -o "${scala_home}/${scala_tgz}" && \
@@ -135,8 +140,19 @@ install_scala() {
  
   [ -d "${scala_home}/bin" ] && \
   append_vars "SCALA_HOME" "${scala_home}" && \
-  append_paths "${scala_home}/bin"
+  append_paths "${scala_home}/bin" && return 0
+
+  return 1
 }
+
+if [ "YES" == "${HAS_ALL}" ]; then
+  HAS_ANT=1
+  HAS_MAVEN=1
+  HAS_BOOT=1
+  HAS_GRADLE=1
+  HAS_GROOVY=1
+  HAS_SCALA=1
+fi
 
 [ 0 -lt "${HAS_ANT}" ]      && KITS+=('install_ant')
 [ 0 -lt "${HAS_MAVEN}" ]    && KITS+=('install_maven')
@@ -148,5 +164,9 @@ install_scala() {
 for i in "${KITS[@]}"; do
   echo -e "# ${i} ..." 
   [ -d "${OPEN_DIR}" ] || mkdir "${OPEN_DIR}" && ${i}  
-  echo -e "# ${i} completed."
+  if [ 0 -eq `${i} &>/dev/null; echo $?` ]; then
+    echo -e "# ${i} completed ok."
+  else
+    echo -e "# ${i} failed"
+  fi
 done

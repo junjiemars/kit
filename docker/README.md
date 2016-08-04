@@ -1,4 +1,4 @@
-# Docker for You 
+# Kit for Docker
 
 ## Docker on Linux
 

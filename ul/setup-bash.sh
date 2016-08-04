@@ -1,7 +1,11 @@
 #!/bin/bash
+#------------------------------------------------
+# setup-bash.sh: bash env setup script	
+# author: junjiemars@gmail.com
+#------------------------------------------------
 
-GITHUB_H='https://raw.githubusercontent.com/junjiemars/kit/master'
 PLATFORM=`uname -s 2>/dev/null`
+GITHUB_H=${GITHUB_H:-"https://raw.githubusercontent.com/junjiemars/kit/master"}
 curl='curl -s '
 declare -a BASH_S=(\
   '.bash_aliases' \
