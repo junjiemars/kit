@@ -70,21 +70,32 @@ install_maven() {
   local maven_ver="maven-${MAVEN_VER}"
   local bin_dir="${maven_home}/m2"
   
+  [ 0 -eq `mvn -version $>/dev/null; echo $?` ] && return 0
+
   [ -f "${maven_home}/build.xml" ] || \
     git clone --depth=1 --branch="${maven_ver}" \
       "${maven_url}" "${maven_home}"
 
-  [ -d "${bin_dir}" ] && rm -r "${bin_dir}"
-
-  [ 0 -ne `type -p mvn &>/dev/null; echo $?` ] && \
-  [ 0 -eq `type -p ant &>/dev/null; echo $?` ] && \
-    cd "${maven_home}" && ant clean-bootstrap && \
-    M2_HOME="${bin_dir}"            \
-    ant -D"maven.home=${bin_dir}"   \
-        -D"skipTest=true"           \
-        -D"maven.test.skip=true" && \
-    append_vars "M2_HOME" "${bin_dir}" && \
+  if [ 0 -ne `${bin_dir}/bin/mvn -version &>/dev/null; echo $?` ]; then
+    if [ 0 -eq `ant -version &>/dev/null; echo $?` ]; then
+      [ -d "${bin_dir}" ] && rm -r "${bin_dir}"
+      cd "${maven_home}" && ant clean-bootstrap && \
+        M2_HOME="${bin_dir}"            \
+        ant -D"maven.home=${bin_dir}"   \
+            -D"skipTest=true"           \
+            -D"maven.test.skip=true" 
+    else
+      echo -e "# need ant to build maven, panic!"
+      return 1
+    fi
+  fi
+  
+  if [ 0 -eq `${bin_dir}/bin/mvn -version &>/dev/null; echo $?` ]; then 
+    append_vars "M2_HOME" "${bin_dir}" 
     append_paths "${bin_dir}/bin"
+    return 0
+  fi
+  return 1
 }
 
 install_boot() {
