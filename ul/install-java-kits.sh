@@ -125,23 +125,26 @@ install_scala() {
   local scala_tgz="scala-${SCALA_VER}.tgz"
   local scala_url="http://downloads.lightbend.com/scala/${SCALA_VER}/${scala_tgz}"
   local scala_home="${OPEN_DIR}/scala"
+  local bin_dir="${scala_home}/bin"
 
   if [ 0 -eq `scala -version &>/dev/null; echo $?` ]; then
     return 0
   fi
 
   [ -d "${scala_home}" ] || mkdir -p "${scala_home}"
-  [ -f "${scala_home}/${scala_tgz}" ] || \
-    curl -L ${scala_url} -o "${scala_home}/${scala_tgz}" && \
+  #[ -f "${scala_home}/${scala_tgz}" ] && rm "${scala_home}/${scala_tgz}" 
+  curl -L -o "${scala_home}/${scala_tgz}" -C - "${scala_url}" && \
     tar xf "${scala_home}/${scala_tgz}" -C "${scala_home}" --strip-components=1
-
-  [ -d "${RUN_DIR}/share/man/man1" ] || mkdir -p "${RUN_DIR}/share/man/man1" 
-  cp -R "${scala_home}/man/man1/." "${RUN_DIR}/share/man/man1/"
- 
-  [ -d "${scala_home}/bin" ] && \
-  append_vars "SCALA_HOME" "${scala_home}" && \
-  append_paths "${scala_home}/bin" && return 0
-
+  
+  if [ -f "${bin_dir}/scala" ]; then
+    if [ 0 -eq `${bin_dir}/scala -version &>/dev/null; echo $?` ]; then
+      [ -d "${RUN_DIR}/share/man/man1" ] || mkdir -p "${RUN_DIR}/share/man/man1" 
+      cp -R "${scala_home}/man/man1/." "${RUN_DIR}/share/man/man1/"
+      append_vars "SCALA_HOME" "${scala_home}"
+      append_paths "${bin_dir}" 
+      return 0
+    fi
+  fi
   return 1
 }
 
@@ -165,8 +168,10 @@ for i in "${KITS[@]}"; do
   echo -e "# ${i} ..." 
   [ -d "${OPEN_DIR}" ] || mkdir "${OPEN_DIR}" && ${i}  
   if [ 0 -eq `${i} &>/dev/null; echo $?` ]; then
-    echo -e "# ${i} completed ok."
+    echo -e "# ${i} good."
   else
-    echo -e "# ${i} failed"
+    echo -e "# ${i} panic!"
   fi
 done
+
+[ 0 -lt "${#KITS[@]}" ] && . "$HOME/.bashrc"
