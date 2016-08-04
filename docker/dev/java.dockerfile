@@ -30,7 +30,7 @@ RUN yum -y update && \
 
 
 ENV SUDOUSER=u
-ENV HOME_DIR=/home/${SUDOUSER}
+ENV UR_HOME=/home/${SUDOUSER}
 
 # create sudo user
 RUN useradd -m -s/bin/bash ${SUDOUSER} && \
@@ -41,12 +41,6 @@ RUN useradd -m -s/bin/bash ${SUDOUSER} && \
 RUN chmod u+s `which ping` && \
     chmod u+s `which ping6`
 
-# configure emacs
-RUN cd ${HOME_DIR} ; \
-    git clone --depth=1 https://github.com/junjiemars/.emacs.d.git && \
-    chown -R ${SUDOUSER}:${SUDOUSER} .emacs.d
-RUN test -f ${HOME_DIR}/.emacs && rm ${HOME_DIR}/.emacs
-
 # configure java
 ENV JDK='jdk-8u91-linux-x64.rpm'
 ENV JAVA_HOME='/usr/java/jdk1.8.0_91'
@@ -54,24 +48,33 @@ RUN curl -vkL -H'Cookie: oraclelicense=accept-securebackup-cookie' -O "http://do
     rpm -ivh ${JDK} && \
     rm ${JDK}
     
-# cofigure bash env
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc && \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${HOME_DIR} bash 
-
 # chown home opt dirs
-RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR} && \
+RUN chown -R ${SUDOUSER}:${SUDOUSER} ${UR_HOME} && \
     mkdir -p /opt/run/{bin,sbin,conf} && \
     chown -R ${SUDOUSER}:${SUDOUSER} /opt/run && \
     mkdir -p /opt/open && chown -R ${SUDOUSER}:${SUDOUSER} /opt/open && \
     mkdir -p /opt/apps && chown -R ${SUDOUSER}:${SUDOUSER} /opt/apps && \
     mkdir -p /opt/lab  && chown -R ${SUDOUSER}:${SUDOUSER} /opt/lab
 
-# install building and programming environment 
+# switch to ${SUDOUSER}
 USER ${SUDOUSER}
+
+# configure emacs
+RUN cd ${UR_HOME} ; \
+    git clone --depth=1 --branch=master https://github.com/junjiemars/.emacs.d.git
+RUN test -f ${UR_HOME}/.emacs && rm ${UR_HOME}/.emacs
+
+# cofigure bash env
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${UR_HOME}/.bashrc && \
+    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${UR_HOME} bash 
+
+# install building and programming environment 
 RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh | \
-    HOME=${HOME_DIR} \
+    HOME=${UR_HOME} \
     HAS_ALL="YES" \
     bash
+
+# switch back to root
 USER root
 
 # start sshd service
