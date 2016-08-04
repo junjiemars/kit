@@ -1,4 +1,8 @@
 #!/bin/bash
+#------------------------------------------------
+# target: aliases on bash environment
+# author: junjiemars@gmail.com
+#------------------------------------------------
 
 PLATFORM=`uname -s 2>/dev/null`
 

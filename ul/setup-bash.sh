@@ -1,6 +1,6 @@
 #!/bin/bash
 #------------------------------------------------
-# setup-bash.sh: bash env setup script	
+# target: bash env setup script	
 # author: junjiemars@gmail.com
 #------------------------------------------------
 

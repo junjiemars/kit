@@ -1,4 +1,8 @@
 #!/bin/bash
+#------------------------------------------------
+# target: paths on bash environment
+# author: junjiemars@gmail.com
+#------------------------------------------------
 
 PLATFORM=`uname -s 2>/dev/null`
 

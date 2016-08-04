@@ -1,4 +1,8 @@
 #!/bin/bash
+#------------------------------------------------
+# target: install java programming environment
+# author: junjiemars@gmail.com
+#------------------------------------------------
 
 PREFIX=${PREFIX:-'/opt'}
 RUN_DIR=${RUN_DIR:-"${PREFIX}/run"}
