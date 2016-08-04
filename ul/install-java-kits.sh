@@ -84,9 +84,15 @@ install_boot() {
   local boot_url='https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh '
   local bin_dir="${RUN_DIR}/bin"
 
-  [ -f "${bin_dir}/boot" ] || \
-    curl -fsSLo ${bin_dir}/boot ${boot_url} && \
+  [ 0 -eq `boot -v $>/dev/null; echo $?` ] && return 0
+
+  curl -fsSLo "${bin_dir}/boot" -C - "${boot_url}" && \
     chmod 755 "${bin_dir}/boot"
+  
+  if [ 0 -eq `${bin_dir}/boot -v &>/dev/null; echo $?` ]; then
+    return 0
+  fi
+  return 1
 }
 
 install_gradle() {
@@ -109,16 +115,25 @@ install_groovy() {
   local groovy_home="${OPEN_DIR}/groovy"
   local bin_dir="${groovy_home}/target/install"
 
+  [ 0 -eq `groovysh -version $>/dev/null; echo $?`] && return 0
+
   [ -f "${groovy_home}/gradlew" ] || \
     git clone --depth=1 --branch="${groovy_tag}" \
       "${groovy_url}" "${groovy_home}"
 
-  cd "${groovy_home}" && \
-  ./gradlew -D"skipTest=true" installGroovy 
+  if [ ! -f "${bin_dir}/bin/groovysh" ]; then
+    cd "${groovy_home}" && \
+      ./gradlew -D"skipTest=true" installGroovy 
+  fi
 
-  [ -d "${bin_dir}/bin" ] && \
-  append_vars "GROOVY_HOME" "${bin_dir}" && \
-  append_paths "${bin_dir}/bin"
+  if [ -f "${bin_dir}/bin/groovysh" ]; then
+     if [ 0 -eq `${bin_dir}/bin/groovysh -version $>/dev/null; echo $?` ]; then
+       append_vars "GROOVY_HOME" "${bin_dir}" 
+       append_paths "${bin_dir}/bin"
+       return 0
+     fi
+  fi
+  return 1 
 }
 
 install_scala() {
@@ -127,12 +142,9 @@ install_scala() {
   local scala_home="${OPEN_DIR}/scala"
   local bin_dir="${scala_home}/bin"
 
-  if [ 0 -eq `scala -version &>/dev/null; echo $?` ]; then
-    return 0
-  fi
+  [ 0 -eq `scala -version &>/dev/null; echo $?` ] && return 0
 
   [ -d "${scala_home}" ] || mkdir -p "${scala_home}"
-  #[ -f "${scala_home}/${scala_tgz}" ] && rm "${scala_home}/${scala_tgz}" 
   curl -L -o "${scala_home}/${scala_tgz}" -C - "${scala_url}" && \
     tar xf "${scala_home}/${scala_tgz}" -C "${scala_home}" --strip-components=1
   
