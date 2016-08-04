@@ -83,7 +83,8 @@ install_maven() {
         M2_HOME="${bin_dir}"            \
         ant -D"maven.home=${bin_dir}"   \
             -D"skipTest=true"           \
-            -D"maven.test.skip=true" 
+            -D"maven.test.skip=true"    \
+            -D"timeout=1200000"
     else
       echo -e "# need ant to build maven, panic!"
       return 1
