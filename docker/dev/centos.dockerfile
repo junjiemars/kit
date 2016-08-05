@@ -29,7 +29,7 @@ RUN yum -y update && \
 
 
 ENV SUDOUSER=u
-ENV HOME_DIR=/home/${SUDOUSER}
+ENV UR_HOME=/home/${SUDOUSER}
 
 # create sudo user
 RUN useradd -m -s/bin/bash ${SUDOUSER}
@@ -40,19 +40,21 @@ RUN gpasswd -a ${SUDOUSER} wheel
 RUN chmod u+s `which ping` && \
     chmod u+s `which ping6`
 
+# switch to ${SUDOUSER}
+RUN ${SUDOUSER}
+
 # cofigure bash env
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc && \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${HOME_DIR} bash 
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${UR_HOME}/.bashrc && \
+    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${UR_HOME} bash 
 
 # configure emacs
-RUN cd ${HOME_DIR} ; \
+RUN cd ${UR_HOME} ; \
     git clone https://github.com/junjiemars/.emacs.d.git && \
-    echo 'export TERM=xterm' >> .bashrc && \
-    chown -R ${SUDOUSER}:${SUDOUSER} .emacs.d
-RUN test -f ${HOME_DIR}/.emacs && rm ${HOME_DIR}/.emacs
+    echo 'export TERM=xterm' >> .bashrc 
+RUN test -f ${UR_HOME}/.emacs && rm ${UR_HOME}/.emacs
 
-# chown ${HOME_DIR} 
-RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
+# switch back to root
+USER root
 
 # start sshd service
 CMD ["/usr/sbin/sshd", "-D"]
