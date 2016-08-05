@@ -28,7 +28,7 @@ or you can download [centos.dockefile](https://raw.githubusercontent.com/junjiem
 
 
 ### Play with centos-dev Docker Container
-* one time
+* onece a time
 ```sh
 docker run -w /home/u -h centos --privileged -u u -it --rm junjiemars/centos-dev /bin/bash
 ```
@@ -40,7 +40,7 @@ docker exec -it -u u centos-dev /bin/bash
 __gdb__ or __lldb__ needs privileged permission.
 
 ## Basic Ubuntu Development Environment
-Include basic building/networking tools, emacs/vim editors for c/c++/python/lua development.
+Include basic building/networking tools, emacs/vim editors for c/c++/llvm/python/lua development.
 
 You can use root or default sudoer: u/Hell0 to login and play.
 
@@ -57,7 +57,7 @@ or you can download [ubuntu.dockefile](https://raw.githubusercontent.com/junjiem
 ### Play with ubuntu-dev Docker Container
 * one time
 ```sh
-docker run -w /home/u -h ubuntu -u u -it --rm junjiemars/ubuntu-dev /bin/bash
+docker run -w /home/u -h ubuntu --privileged -u u -it --rm junjiemars/ubuntu-dev /bin/bash
 ```
 * as daemon
 ```sh

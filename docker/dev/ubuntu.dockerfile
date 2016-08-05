@@ -35,7 +35,7 @@ RUN apt-get -y update && \
 
 
 ENV SUDOUSER=u
-ENV HOME_DIR=/home/${SUDOUSER}
+ENV UR_HOME=/home/${SUDOUSER}
 
 # create sudo user
 RUN useradd -m -s/bin/bash ${SUDOUSER} && \
@@ -43,22 +43,25 @@ RUN useradd -m -s/bin/bash ${SUDOUSER} && \
     echo "\n\n##allow user:${SUDOUSER} to sudo" >> /etc/sudoers && \
     echo "${SUDOUSER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# cofigure bash env
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${HOME_DIR}/.bashrc && \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${HOME_DIR} bash 
-
-# configure emacs
-RUN cd ${HOME_DIR} ; \
-    git clone https://github.com/junjiemars/.emacs.d.git  && \
-    echo 'export TERM=xterm' >> .bashrc && \
-    chown -R ${SUDOUSER}:${SUDOUSER} .emacs.d
-
 # configure gdb
-RUN cd ${HOME_DIR} ; \
+RUN cd ${UR_HOME} ; \
     echo 'set disable-randomization off' >> .gdbinit
 
-# chown ${HOME_DIR}
-RUN chown -R ${SUDOUSER}:${SUDOUSER} ${HOME_DIR}
+# switch to ${SUDOUSER}
+USER ${SUDOUSER}
+
+# cofigure bash env
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${UR_HOME}/.bashrc && \
+    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${UR_HOME} bash 
+
+# configure emacs
+RUN cd ${UR_HOME} ; \
+    git clone https://github.com/junjiemars/.emacs.d.git  && \
+    echo 'export TERM=xterm' >> .bashrc
+RUN test -f ${UR_HOME}/.emacs && rm ${UR_HOME}/.emacs
+
+# switch back to ${SUDOUSER}
+USER root
 
 # start sshd service
 RUN mkdir /var/run/sshd && \
@@ -76,4 +79,4 @@ ENV LANG en_US.UTF-8
 #ENV LC_ALL en_US.UTF-8
 
 EXPOSE 22
-EXPOSE 9000
+EXPOSE 8000-9000

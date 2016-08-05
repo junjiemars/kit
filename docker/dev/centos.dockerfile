@@ -66,4 +66,4 @@ CMD ["/usr/sbin/sshd", "-D"]
 #
 
 EXPOSE 22
-EXPOSE 9000
+EXPOSE 8000-9000
