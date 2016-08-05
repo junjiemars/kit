@@ -8,9 +8,9 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 
 # disable ipv6 for slow internet connection to ubuntu repo
 RUN cp /etc/sysctl.conf /etc/sysctl.conf.ori && \
-    echo -e "Net.ipv6.conf.all.disable_ipv6 = 1" >>/etc/sysctl.conf && \
-    echo -e "net.ipv6.conf.default.disable_ipv6 = 1" >>/etc/sysctl.conf && \
-    echo -e "net.ipv6.conf.lo.disable_ipv6 = 1" >>/etc/sysctl.conf; \
+    echo -e 'Net.ipv6.conf.all.disable_ipv6 = 1' >>/etc/sysctl.conf && \
+    echo -e 'net.ipv6.conf.default.disable_ipv6 = 1' >>/etc/sysctl.conf && \
+    echo -e 'net.ipv6.conf.lo.disable_ipv6 = 1' >>/etc/sysctl.conf; \
     sysctl -p
 
 RUN apt-get -y update && \
