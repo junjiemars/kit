@@ -21,7 +21,7 @@ RUN yum -y update && \
         lldb \
         lldb-devel \
         man-db \
-        man-pages && \
+        man-pages \
         mtr \
         net-tools \
         nmap \

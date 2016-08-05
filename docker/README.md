@@ -15,7 +15,7 @@ The final thing: reboot computer.
 * Container linking
 
 ## Basic CentOS Development Environment
-Include basic building/networking tools, emacs/vim editors for c/c++/python/lua development.
+Include basic building/networking tools, emacs/vim editors for c/c++/clang/python/lua development.
 
 You can use root or default sudoer: u/Hell0 to login and play.
 
