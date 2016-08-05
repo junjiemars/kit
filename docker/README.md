@@ -28,7 +28,7 @@ or you can download [centos.dockefile](https://raw.githubusercontent.com/junjiem
 
 
 ### Play with centos-dev Docker Container
-* onece a time
+* once a time
 ```sh
 docker run -w /home/u -h centos --privileged -u u -it --rm junjiemars/centos-dev /bin/bash
 ```
@@ -55,7 +55,7 @@ or you can download [ubuntu.dockefile](https://raw.githubusercontent.com/junjiem
 
 
 ### Play with ubuntu-dev Docker Container
-* one time
+* once a time
 ```sh
 docker run -w /home/u -h ubuntu --privileged -u u -it --rm junjiemars/ubuntu-dev /bin/bash
 ```
