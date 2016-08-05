@@ -25,7 +25,8 @@ RUN yum -y update && \
         mtr \
         net-tools \
         nmap \
-        openssh-server && \
+        openssh-server \
+        vim-enhanced && \
     yum -y group install 'Development Tools' && \
     yum clean all
 

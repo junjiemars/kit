@@ -30,7 +30,7 @@ or you can download [centos.dockefile](https://raw.githubusercontent.com/junjiem
 ### Play with centos-dev Docker Container
 * one time
 ```sh
-docker run -w /home/u -h centos -u u -it --rm junjiemars/centos-dev /bin/bash
+docker run -w /home/u -h centos --privileged -u u -it --rm junjiemars/centos-dev /bin/bash
 ```
 * as daemon
 ```sh
