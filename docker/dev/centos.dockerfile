@@ -41,7 +41,7 @@ RUN chmod u+s `which ping` && \
     chmod u+s `which ping6`
 
 # switch to ${SUDOUSER}
-RUN ${SUDOUSER}
+USER ${SUDOUSER}
 
 # cofigure bash env
 RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${UR_HOME}/.bashrc && \
