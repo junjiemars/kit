@@ -6,7 +6,7 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 # ...
 #
 
-RUN apt-get -y update && \
+RUN apt-get -y -o Acquire::ForceIPv4=true update && \
     apt-get -y install \
 	    bc \
 	    build-essential \
