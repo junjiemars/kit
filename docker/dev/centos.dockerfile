@@ -39,8 +39,8 @@ RUN echo 'Hell0' | passwd ${SUDOUSER} --stdin
 RUN gpasswd -a ${SUDOUSER} wheel
 
 # configure chmod
-RUN chmod u+s `which ping` && \
-    chmod u+s `which ping6`
+RUN chmod u+s `type -p ping` && \
+    chmod u+s `type -p ping6`
 
 # switch to ${SUDOUSER}
 USER ${SUDOUSER}
