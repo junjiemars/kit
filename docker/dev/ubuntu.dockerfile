@@ -43,6 +43,14 @@ RUN useradd -m -s/bin/bash ${SUDOUSER} && \
     echo "\n\n##allow user:${SUDOUSER} to sudo" >> /etc/sudoers && \
     echo "${SUDOUSER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
+# chown home opt dirs
+RUN chown -R ${SUDOUSER}:${SUDOUSER} ${UR_HOME} && \
+    mkdir -p /opt/run/{bin,sbin,conf} && \
+    chown -R ${SUDOUSER}:${SUDOUSER} /opt/run && \
+    mkdir -p /opt/open && chown -R ${SUDOUSER}:${SUDOUSER} /opt/open && \
+    mkdir -p /opt/apps && chown -R ${SUDOUSER}:${SUDOUSER} /opt/apps && \
+    mkdir -p /opt/lab  && chown -R ${SUDOUSER}:${SUDOUSER} /opt/lab
+
 # configure gdb
 RUN cd ${UR_HOME} ; \
     echo 'set disable-randomization off' >> .gdbinit

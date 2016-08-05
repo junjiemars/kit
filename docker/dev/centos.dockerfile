@@ -43,6 +43,14 @@ RUN gpasswd -a ${SUDOUSER} wheel
 RUN chmod u+s `type -p ping` && \
     chmod u+s `type -p ping6`
 
+# chown home opt dirs
+RUN chown -R ${SUDOUSER}:${SUDOUSER} ${UR_HOME} && \
+    mkdir -p /opt/run/{bin,sbin,conf} && \
+    chown -R ${SUDOUSER}:${SUDOUSER} /opt/run && \
+    mkdir -p /opt/open && chown -R ${SUDOUSER}:${SUDOUSER} /opt/open && \
+    mkdir -p /opt/apps && chown -R ${SUDOUSER}:${SUDOUSER} /opt/apps && \
+    mkdir -p /opt/lab  && chown -R ${SUDOUSER}:${SUDOUSER} /opt/lab
+
 # switch to ${SUDOUSER}
 USER ${SUDOUSER}
 

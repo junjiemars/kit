@@ -16,7 +16,7 @@ RUN yum -y update && \
         emacs \
         git \
         initscripts \
-	    nmap \
+        nmap \
         man-db \
         man-pages \
         mtr \
@@ -38,8 +38,8 @@ RUN useradd -m -s/bin/bash ${SUDOUSER} && \
     gpasswd -a ${SUDOUSER} wheel
 
 # configure chmod
-RUN chmod u+s `which ping` && \
-    chmod u+s `which ping6`
+RUN chmod u+s `type -p ping` && \
+    chmod u+s `type -p ping6`
 
 # configure java
 ENV JDK='jdk-8u91-linux-x64.rpm'
