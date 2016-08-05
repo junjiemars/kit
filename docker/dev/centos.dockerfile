@@ -10,20 +10,22 @@ RUN yum -y update && \
     echo '# enable deltarpm' >> /etc/yum.conf && \
     sed -i 's/tsflags=nodocs/#tsflags=nodocs/g' /etc/yum.conf && \
     yum -y install \
-        sudo \
-        openssh-server \
-        net-tools \
-        git \
         bc \
-        initscripts \
-        vim-enhanced \
-        coreutils \
         bind-utils \
-        mtr \
-        nmap \
+        clang \
+        clang-devel \
+        coreutils \
         emacs \
+        git \
+        initscripts \
+        lldb \
+        lldb-devel \
         man-db \
         man-pages && \
+        mtr \
+        net-tools \
+        nmap \
+        openssh-server && \
     yum -y group install 'Development Tools' && \
     yum clean all
 
