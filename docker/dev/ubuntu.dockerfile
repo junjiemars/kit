@@ -10,8 +10,8 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 RUN cp /etc/sysctl.conf /etc/sysctl.conf.ori && \
     echo -e 'Net.ipv6.conf.all.disable_ipv6 = 1' >>/etc/sysctl.conf && \
     echo -e 'net.ipv6.conf.default.disable_ipv6 = 1' >>/etc/sysctl.conf && \
-    echo -e 'net.ipv6.conf.lo.disable_ipv6 = 1' >>/etc/sysctl.conf; \
-    sysctl -p
+    echo -e 'net.ipv6.conf.lo.disable_ipv6 = 1' >>/etc/sysctl.conf
+RUN sysctl -p
 
 RUN apt-get -y update && \
     apt-get -y install \
