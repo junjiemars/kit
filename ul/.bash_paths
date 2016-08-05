@@ -61,6 +61,7 @@ case "${PLATFORM}" in
     ;;
   *)
     append_paths "${JAVA_HOME}"
+    append_paths "${JAVA_HOME}/bin"
     ;;
 esac
 
