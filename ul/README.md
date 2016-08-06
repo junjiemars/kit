@@ -1,6 +1,6 @@
 # Kit for Unix-like
 
-## Setup Bash Environement 
+## Bash Environement 
 Setup bash, aliases, paths and vars etc., just one line code to get things done:
 ```sh
 bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh)
@@ -16,7 +16,7 @@ git clone https://github.com/junjiemars/kit.git <kit-local-dir>
 GITHUB_H=<file://kit-local-dir> <kit-local-dir>/ul/setup-bash.sh  
 ```
 
-## Setup Java Programming Environement
+## Java Programming Environement
 A tone of building and programming tools for Java, but you just need one line code to boot up.
 
 * Install JDK, ant, maven, gradle, boot, groovy and scala via one line code
@@ -52,4 +52,5 @@ HAS_GROOVY=1 bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master
 HAS_SCALA=1 bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh)
 ```
 
+# Tomcat Web Server
 
