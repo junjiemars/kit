@@ -6,14 +6,22 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 # ...
 #
 
-RUN sed -i 's#http:\/\/archive.ubuntu.com\/ubuntu\/#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#' /etc/apt/sources.list && \
-    apt-get -y -o Acquire::ForceIPv4=true update && \
-    apt-get -y -o Acquire::ForceIPv4=true update --fix-missing && \
+ENV TERM=xterm
+
+# choose mirror based on geo
+RUN sed -i.ori 's#http:\/\/archive.ubuntu.com\/ubuntu\/#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#' /etc/apt/sources.list && \
+    apt-get -y update  && \
+    apt-get -y install \
+            curl
+
+RUN curl -s ipinfo.io | grep '"country": "CN",' && \
+    sed -i 's#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#http:\/\/jp.archive.ubuntu.com\/ubuntu\/#' /etc/apt/sources.list 
+
+RUN apt-get -y update --fix-missing && \
     apt-get -y install \
 	    bc \
 	    build-essential \
 	    coreutils \
-	    curl \
 	    dnsutils \
 	    emacs-nox \
 	    gdb \

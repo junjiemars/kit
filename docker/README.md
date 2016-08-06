@@ -65,6 +65,24 @@ docker run --name ubuntu-dev -w /home/u -h ubuntu --privileged -d junjiemars/ubu
 docker exec -it -u u ubuntu-dev /bin/bash
 ```
 
+### Slow apt-get update and install
+* Avoid IPv6 if you use a slow tunnel
+```sh
+apt-get -o Acquire::ForceIPv4=true
+```
+* Use mirrors which is based on your geo location
+```sh
+# use mirror automatically
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.ori
+sudo sed -i 's#http:\/\/archive.ubuntu.com\/ubuntu\/#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#' /etc/apt/sources.list
+
+# check mirrors list that based on your geo
+curl -sL mirrors.ubuntu.com/mirrors.txt
+```
+* Aovid posioning mirrors: select another country
+```sh
+```
+
 ## Docker for Windows 10
 Now, the good news is Docker has native stable version for Windows 10 since 7/29/2016.
 

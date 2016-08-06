@@ -1,0 +1,21 @@
+# de.archive.ubuntu.com
+
+http://ftp.halifax.rwth-aachen.de/ubuntu/
+http://ubuntu.mirror.lrz.de/ubuntu/
+http://ftp.stw-bonn.de/ubuntu/# jp.archive.ubuntu.com
+
+# jp.archive.ubuntu.com
+http://mirror.fairway.ne.jp/ubuntu/
+http://www.ftp.ne.jp/Linux/packages/ubuntu/archive/
+http://ftp.jaist.ac.jp/pub/Linux/ubuntu/
+http://ubuntutym.u-toyama.ac.jp/ubuntu/
+http://ftp.tsukuba.wide.ad.jp/Linux/ubuntu/
+http://ubuntu-ashisuto.ubuntulinux.jp/ubuntu/
+http://ftp.riken.jp/Linux/ubuntu/
+http://archive.ubuntu.com/ubuntu/
+rsync://ftp.jaist.ac.jp/pub/Linux/ubuntu/# kr.archive.ubuntu.com
+
+# kr.archive.ubuntu.com
+http://kr.archive.ubuntu.com/ubuntu/
+http://ftp.neowiz.com/ubuntu/
+http://mirror.premi.st/ubuntu/
