@@ -67,7 +67,7 @@ install_jdk() {
         local jdk_file="jdk-${JDK_VER[0]}-linux-i586.tar.gz"
       fi
       local jdk_url="${ora_url}/${JDK_VER[0]}-${JDK_VER[1]}/${jdk_file}"
-      local jdk_home="${RUN_DIR}/jdk${JDK_VER[0]}"
+      local jdk_home="${RUN_DIR}/jdk/${JDK_VER[0]}"
       [ -d "${jdk_home}" ] || mkdir -p "${jdk_home}"
       curl -skL -H"${ora_cookie}" -O -C - "${jdk_url}" && \
         tar xf "${jdk_file}" -C "${jdk_home}" --strip-components=1
