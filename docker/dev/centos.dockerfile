@@ -26,6 +26,7 @@ RUN yum -y update && \
         net-tools \
         nmap \
         openssh-server \
+        sudo \
         vim-enhanced && \
     yum -y group install 'Development Tools' && \
     yum clean all
@@ -35,9 +36,9 @@ ENV SUDOUSER=u
 ENV UR_HOME=/home/${SUDOUSER}
 
 # create sudo user
-RUN useradd -m -s/bin/bash ${SUDOUSER}
-RUN echo 'Hell0' | passwd ${SUDOUSER} --stdin
-RUN gpasswd -a ${SUDOUSER} wheel
+RUN useradd -m -s/bin/bash ${SUDOUSER} && \
+    echo 'Hell0' | passwd ${SUDOUSER} --stdin && \
+    gpasswd -a ${SUDOUSER} wheel
 
 # configure chmod
 RUN chmod u+s `type -p ping` && \
