@@ -9,6 +9,7 @@ RUN_DIR=${RUN_DIR:-"${PREFIX}/run"}
 OPEN_DIR=${OPEN_DIR:-"${PREFIX}/open"}
 
 HAS_ALL=${HAS_ALL:-"NO"}
+HAS_JDK=${HAS_JDK:-0}
 HAS_ANT=${HAS_ANT:-0}
 HAS_MAVEN=${HAS_MAVEN:-0}
 HAS_BOOT=${HAS_BOOT:-0}
@@ -16,6 +17,7 @@ HAS_GRADLE=${HAS_GRADLE:-0}
 HAS_GROOVY=${HAS_GROOVY:-0}
 HAS_SCALA=${HAS_SCALA:-0}
 
+JDK_VER=(${JDK_VU:-"8u91"} ${JDK_B:-"b14"})
 ANT_VER=${ANT_VER:-"1.9.x"}
 MAVEN_VER=${MAVEN_VER:-"3.2.6"}
 GRADLE_VER=${GRADLE_VER:-"2.14.x"}
@@ -47,6 +49,40 @@ append_vars() {
     echo -e "${var}" >> "${f_vars}"
   fi
   . "${f_vars}"
+}
+
+install_jdk() {
+  [ 0 -eq `javac -version &>/dev/null; echo $?` ] && return 0
+
+  local platform=`uname -s 2>/dev/null`
+  local machine=`uname -m 2>/dev/null`
+  local ora_cookie='Cookie: oraclelicense=accept-securebackup-cookie'
+  local ora_url='http://download.oracle.com/otn-pub/java/jdk'
+
+  case "${platform}" in 
+    Linux)
+      if [ "x86_64" == "${machine}" ]; then
+        local jdk_file="jdk-${JDK_VER}-linux-x64.tar.gz"
+      else
+        local jdk_file="jdk-${JDK_VER[0]}-linux-i586.tar.gz"
+      fi
+      local jdk_url="${ora_url}/${JDK_VER[0]}-${JDK_VER[1]}/${jdk_file}"
+      local jdk_home="${RUN_DIR}/jdk${JDK_VER[0]}"
+      [ -d "${jdk_home}" ] || mkdir -p "${jdk_home}"
+      curl -skL -H"${ora_cookie}" -O -C - "${jdk_url}" && \
+        tar xf "${jdk_file}" -C "${jdk_home}" --strip-components=1
+      if [ 0 -eq `${jdk_home}/bin/javac -version &>/dev/null; echo $?` ]; then
+        append_vars "JAVA_HOME" "${jdk_home}"
+        append_paths "${jdk_home}/bin"
+        return 0
+      fi
+      ;;
+    *)
+      echo -e "not implemented on ${platform} yet!"
+      ;;
+  esac
+  
+  return 1
 }
 
 install_ant() {
@@ -183,6 +219,7 @@ install_scala() {
 }
 
 if [ "YES" == "${HAS_ALL}" ]; then
+  HAS_JDK=1
   HAS_ANT=1
   HAS_MAVEN=1
   HAS_BOOT=1
@@ -191,6 +228,7 @@ if [ "YES" == "${HAS_ALL}" ]; then
   HAS_SCALA=1
 fi
 
+[ 0 -lt "${HAS_JDK}" ]      && KITS+=('install_jdk')
 [ 0 -lt "${HAS_ANT}" ]      && KITS+=('install_ant')
 [ 0 -lt "${HAS_MAVEN}" ]    && KITS+=('install_maven')
 [ 0 -lt "${HAS_BOOT}" ]     && KITS+=('install_boot')
