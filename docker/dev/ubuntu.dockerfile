@@ -8,6 +8,7 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 
 RUN sed -i 's#http:\/\/archive.ubuntu.com\/ubuntu\/#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#' /etc/apt/sources.list && \
     apt-get -y -o Acquire::ForceIPv4=true update && \
+    apt-get -y -o Acquire::ForceIPv4=true update --fix-missing && \
     apt-get -y install \
 	    bc \
 	    build-essential \
