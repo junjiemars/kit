@@ -7,6 +7,7 @@
 PREFIX=${PREFIX:-"/opt/run/www/tomcat"}
 VER=${VER:-"8.5.4"}
 CATALINA_BASE=${CATALINA_BASE:-"${PREFIX%/}/${VER}"}
+export CATALINA_PID=${CATALINA_PID:-"${CATALINA_BASE%/}/logs/pid"}
 
 PLATFORM=`uname -s 2>/dev/null`
 case "${PLATFORM}" in
@@ -21,6 +22,9 @@ case "${PLATFORM}" in
     SHUTDOWN_BIN="${CATALINA_BASE}/bin/shutdown.sh"
   ;;
 esac
+
+KILL_TIMEOUT=${KILL_TIMEOUT:-10}
+KILL_RETRY=${KILL_RETRY:-3}
 
 RUN=${RUN:-"stop"}
 DEBUG="${DEBUG:=0}"
@@ -80,7 +84,48 @@ show_version() {
   [ -x "${VERSION_BIN}" ] && "${VERSION_BIN}"
 }
 
+pid_exists() {
+  ps -p"$1" &>/dev/null; echo $?
+}
+
+kill_tomcat() {
+  local pid="$1"
+  local cnt="${KILL_RETRY}"
+  
+  if [ -z "${pid}"]; then
+    echo -e "kill tomcat failed, [pid:${pid}] no found, panic!"
+    return 1
+  fi
+
+  while [ 0 -eq `pid_exists ${pid}` ]; do
+    sleep "${KILL_TIMEOUT}"
+    let cnt-=1
+    [ 0 -ge "${cnt}" ] && break;
+  done
+
+  local signal=15
+  while [ 0 -eq `pid_exists ${pid}` ]; do
+    kill -${signal} "${pid}"
+    sleep $(( 3*"${KILL_TIMEOUT}" ))
+    let signal=9
+  done
+}
+
+stop_tomcat() {
+  local pid=`cat ${CATALINA_PID} 2>/dev/null`
+  if [ -x "${SHUTDOWN_BIN}" ]; then
+    "${SHUTDOWN_BIN}" || kill_tomcat "${pid}"
+  else
+    echo -e "shutdown tomcat failed, ${SHUTDOWN_BIN} no found, panic!"
+  fi
+}
+
 start_tomcat() {
+  if [ -x "${START_BIN}" ]; then
+    "${START_BIN}"
+  else
+    echo -e "$start tomcat failed, ${START_BIN} no found, panic! "
+  fi
 }
 
 #export CATALINA_BASE="${CATALINA_BASE:=${BASE}/${VER}}"
@@ -113,6 +158,9 @@ case ".$@" in
   .start)
     start_tomcat
   ;;
+  .stop)
+    stop_tomcat
+  ;;
     #.stop) $BIN stop ;;
     #.start) $BIN start ;;
     #.run) $BIN run ;;
@@ -130,7 +178,7 @@ case ".$@" in
   .--help)
     usage
   ;;
-  *) 
+  .*) 
     usage
   ;;
 esac
