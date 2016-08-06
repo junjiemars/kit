@@ -6,7 +6,8 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 # ...
 #
 
-RUN apt-get -y -o Acquire::ForceIPv4=true update && \
+RUN sed -i 's#http:\/\/archive.ubuntu.com\/ubuntu\/#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#' /etc/apt/sources.list && \
+    apt-get -y -o Acquire::ForceIPv4=true update && \
     apt-get -y install \
 	    bc \
 	    build-essential \
@@ -56,6 +57,11 @@ RUN cd ${UR_HOME} ; \
     echo 'set disable-randomization off' >> .gdbinit
 
 # switch to ${SUDOUSER}
+
+
+
+
+
 USER ${SUDOUSER}
 
 # cofigure bash env
