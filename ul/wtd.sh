@@ -25,7 +25,7 @@ STOP_FORCE=${STOP_FORCE:-"-force"}
 CATALINA_OPTS=${CATALINA_OPTS}
 JAVA_OPTS=${JAVA_OPTS}
 
-HTTP_PORT=${HTTP_PORT:=8080}
+START_PORT=${START_PORT:=8080}
 STOP_PORT=${STOP_PORT:=8005}
 
 usage() {
@@ -49,11 +49,36 @@ export_catalina_opts() {
   fi
 }
 
-export_java_opts() {
-  JAVA_OPTS="${1}${JAVA_OPTS}"
-  if [ -n "${JAVA_OPTS}" ]; then
-    export JAVA_OPTS=`echo "${JAVA_OPTS}" | tr -s " "`
+artified_ports() {
+  local server_xml="${CATALINA_BASE}/conf/server.xml"
+  if [ -r "${server_xml}" ]; then
+    local stop_soft='<Server port="\${stop\.port}" shutdown="SHUTDOWN">'
+    local start_soft='<Connector port="\${start\.port}" protocol="HTTP'
+    local stop_old='<Server port="\([0-9]*\)" shutdown="SHUTDOWN">'
+    local stop_new='<Server port="\${stop\.port}" shutdown="SHUTDOWN">'
+    local start_old='<Connector port="\([0-9]*\)" protocol="HTTP'
+    local start_new='<Connector port="\${start\.port}" protocol="HTTP'
+
+    [ -f "${server_xml}.ori" ] || cp "${server_xml}" "${server_xml}.ori"
+    
+    if [ 0 -ne `grep "${stop_soft}" "${server_xml}" &>/dev/null; echo $?` ]; then
+       sed -i -e "s/${stop_old}/${stop_new}/" "${server_xml}"
+    fi
+
+    if [ 0 -ne `grep "${start_soft}" "${server_xml}" &>/dev/null; echo $?` ]; then
+      sed -i -e "s/${start_old}/${start_new}/" "${server_xml}"
+    fi
+  else
+    echo -e "artified ports failed, ${server_xml} no found, panic!"
   fi
+}
+
+export_java_opts() {
+  artified_ports
+  JAVA_OPTS="-Dstart.port=${START_PORT} \
+             -Dstop.port=${STOP_PORT} \
+             ${JAVA_OPTS}"
+  export JAVA_OPTS=`echo "${JAVA_OPTS}" | tr -s " "`
 }
 
 show_env() {
@@ -114,19 +139,24 @@ show_version() {
 
 stop_tomcat() {
   local pid=`check_pid`
-  [ 0 -eq `check_catalina_bin stop; echo $?` ] && \
+  if [ 0 -eq `check_catalina_bin stop; echo $?` ]; then
+    export_java_opts
     "${CATALINA_BIN}" stop "${STOP_TIMEOUT}" "${STOP_FORCE}"
+  fi
   show_env "${pid}"
 }
 
 start_tomcat() {
-  [ 0 -eq `check_catalina_bin start; echo $?` ] && \
+  if [ 0 -eq `check_catalina_bin start; echo $?` ]; then
+    export_java_opts
     "${CATALINA_BIN}" start
+  fi
   show_env "`check_pid`"
 }
 
 debug_tomcat() {
   if [ 0 -eq `check_catalina_bin debug; echo $?` ]; then
+    export_java_opts
     export_catalina_opts "-XX:+HeapDumpOnOutOfMemoryError \
                           -XX:HeapDumpPath=${CATALINA_BASE}/logs"
     "${CATALINA_BIN}" jpda start
@@ -135,36 +165,14 @@ debug_tomcat() {
 }
 
 case ".$@" in
-  .install)
-    install_tomcat
-  ;;
-  .start)
-    start_tomcat
-  ;;
-  .stop)
-    stop_tomcat
-  ;;
-  .debug)
-    debug_tomcat
-  ;;
-  .-v)
-    show_version
-  ;;
-  .--version)
-    show_version
-  ;;
-  .-h)
-    usage
-  ;;
-  .--help)
-    usage
-  ;;
-  .*) 
-    usage
-  ;;
+  .install) install_tomcat ;;
+  .start) start_tomcat ;;
+  .stop) stop_tomcat ;;
+  .debug) debug_tomcat ;;
+  .-v) show_version ;;
+  .--version) show_version ;;
+  .-h) usage ;;
+  .--help) usage ;;
+  .*) usage ;;
 esac
 
-#echo "---------------------------------"
-#echo "JAVA_OPTS=$JAVA_OPTS"
-#echo "CATALINA_OPTS=$CATALINA_OPTS"
-#echo "Tomcat {$RUN-${VER}} in $MODE mode"
