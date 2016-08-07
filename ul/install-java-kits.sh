@@ -219,7 +219,7 @@ install_scala() {
 }
 
 if [ "YES" == "${HAS_ALL}" ]; then
-  HAS_JDK=1
+  #HAS_JDK=1  # exclude JDK
   HAS_ANT=1
   HAS_MAVEN=1
   HAS_BOOT=1

@@ -120,6 +120,12 @@ docker run --name java-dev -w /home/u -h centos --privileged -d java-dev
 docker exec -it -u u java-dev /bin/bash
 ```
 
+### Install Java Programming Environment
+Run into java-dev container and then run [install-java-kits.sh](https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh)
+```sh
+HAS_ALL=YES install-java-kits.sh
+```
+
 ## Docker for Database
 You can pull it from [Docker Hub](https://hub.docker.com/), 
 

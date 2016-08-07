@@ -21,7 +21,7 @@ A tone of building and programming tools for Java, but you just need one line co
 
 * Install JDK, ant, maven, gradle, boot, groovy and scala via one line code
 ```sh
-HAS_ALL=YES bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh)
+HAS_ALL=YES HAS_JDK=1 bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh)
 ```
 * Just install [JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 ```sh

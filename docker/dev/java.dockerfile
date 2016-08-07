@@ -60,7 +60,7 @@ RUN chown -R ${SUDOUSER}:${SUDOUSER} ${UR_HOME} && \
 USER ${SUDOUSER}
 
 # configure emacs
-RUN cd ${UR_HOME} ; \
+RUN cd ${UR_HOME} && \
     git clone --depth=1 --branch=master https://github.com/junjiemars/.emacs.d.git
 RUN test -f ${UR_HOME}/.emacs && rm ${UR_HOME}/.emacs
 
@@ -68,11 +68,10 @@ RUN test -f ${UR_HOME}/.emacs && rm ${UR_HOME}/.emacs
 RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${UR_HOME}/.bashrc && \
     curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${UR_HOME} bash 
 
-# install building and programming environment 
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh | \
-    HOME=${UR_HOME} \
-    HAS_ALL="YES" \
-    bash
+# download install-java-kits script
+# HAS_ALL=YES install-java-kits.sh
+RUN cd /opt/run/bin/ && \
+    curl -vkL -O -C - https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh
 
 # switch back to root
 USER root
@@ -91,4 +90,6 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 EXPOSE 22
-EXPOSE 8000-9000
+EXPOSE 53
+EXPOSE 80
+EXPOSE 8080-8090
