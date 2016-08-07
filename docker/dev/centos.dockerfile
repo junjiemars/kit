@@ -60,8 +60,8 @@ RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc 
     curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${UR_HOME} bash 
 
 # configure emacs
-RUN cd ${UR_HOME} ; \
-    git clone https://github.com/junjiemars/.emacs.d.git && \
+RUN cd ${UR_HOME} && \
+    git clone --depth=1 --branch=master https://github.com/junjiemars/.emacs.d.git && \
     echo 'export TERM=xterm' >> .bashrc 
 RUN test -f ${UR_HOME}/.emacs && rm ${UR_HOME}/.emacs
 
