@@ -90,7 +90,7 @@ show_env() {
 }
 
 install_tomcat() {
-  if [ 0 -eq `${VERSION_BIN} &>/dev/null; echo $?` ]; then
+  if [ 0 -eq `${CATALINA_BIN} &>/dev/null; echo $?` ]; then
     echo -e "tomcat is good."
     return 0
   fi
@@ -111,7 +111,7 @@ install_tomcat() {
     tar -xf "${tgz}" -C "${CATALINA_BASE}" --strip-components=1
   fi
    
-  if [ 0 -eq `${VERSION_BIN} &>/dev/null; echo $?` ]; then
+  if [ 0 -eq `${CATALINA_BIN} &>/dev/null; echo $?` ]; then
     echo -e "install tomcat successed."
     return 0
   fi
