@@ -125,6 +125,7 @@ check_catalina_bin() {
     return 0
   else
     echo -e "$1 failed, "${CATALINA_BIN}" no found, panic!"
+    return 1
   fi
 }
 
