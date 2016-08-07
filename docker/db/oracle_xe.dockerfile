@@ -23,7 +23,7 @@ ENV XE_ZIP="${XE_RPM}.zip"
 COPY $XE_ZIP /tmp/ 
 RUN unzip -d/tmp/xe /tmp/$XE_ZIP && \
     yum localinstall -y /tmp/xe/Disk1/${XE_RPM} && \
-    rm -rf /tmp/xe ${XE_ZIP}
+    rm -rf ${XE_ZIP}
 
 # configure xe 
 ENV ORACLE_HOME='/u01/app/oracle/product/11.2.0/xe'
