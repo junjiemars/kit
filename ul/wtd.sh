@@ -12,28 +12,21 @@ export CATALINA_PID=${CATALINA_PID:-"${CATALINA_BASE%/}/logs/pid"}
 PLATFORM=`uname -s 2>/dev/null`
 case "${PLATFORM}" in
   MSYS_NT*)
-    VERSION_BIN="${CATALINA_BASE}/bin/version.bat"
-    START_BIN="${CATALINA_BASE}/bin/startup.bat"
-    SHUTDOWN_BIN="${CATALINA_BASE}/bin/shutdown.bat"
+    CATALINA_BIN="${CATALINA_BASE}/bin/catalina.bat"
   ;;
   *)
-    VERSION_BIN="${CATALINA_BASE}/bin/version.sh"
-    START_BIN="${CATALINA_BASE}/bin/startup.sh"
-    SHUTDOWN_BIN="${CATALINA_BASE}/bin/shutdown.sh"
+    CATALINA_BIN="${CATALINA_BASE}/bin/catalina.sh"
   ;;
 esac
 
-KILL_TIMEOUT=${KILL_TIMEOUT:-10}
-KILL_RETRY=${KILL_RETRY:-3}
+STOP_TIMEOUT=${STOP_TIMEOUT:-10}
+STOP_FORCE=${STOP_FORCE:-"-force"}
 
-RUN=${RUN:-"stop"}
-DEBUG="${DEBUG:=0}"
-MODE="NORMAL"
-CATALINA_OPTS="${CATALINA_OPTS}"
-JPDA=""
+CATALINA_OPTS=${CATALINA_OPTS}
+JAVA_OPTS=${JAVA_OPTS}
+
 HTTP_PORT=${HTTP_PORT:=8080}
 STOP_PORT=${STOP_PORT:=8005}
-BASE=${BASE:="/opt/bin/tomcat"}
 
 usage() {
   echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
@@ -47,6 +40,28 @@ usage() {
   echo -e "\tstop\t\tStop a tomcat instance"
   echo -e "\tdebug\t\tStart a tomcat instance in debug mode"
   echo -e "\tinstall\t\tInstall tomcat"
+}
+
+export_catalina_opts() {
+  CATALINA_OPTS="${1}${CATALINA_OPTS}"
+  if [ -n "${CATALINA_OPTS}" ]; then
+    export CATALINA_OPTS=`echo "${CATALINA_OPTS}" | tr -s " "`
+  fi
+}
+
+export_java_opts() {
+  JAVA_OPTS="${1}${JAVA_OPTS}"
+  if [ -n "${JAVA_OPTS}" ]; then
+    export JAVA_OPTS=`echo "${JAVA_OPTS}" | tr -s " "`
+  fi
+}
+
+show_env() {
+  echo -e "---------------------------------"
+  echo -e "CATALINA_PID[${1}]=${CATALINA_PID}"
+  echo -e "JAVA_OPTS=${JAVA_OPTS}"
+  echo -e "CATALINA_OPTS=${CATALINA_OPTS}"
+  echo -e "CATALINA_BASE=${CATALINA_BASE}"
 }
 
 install_tomcat() {
@@ -80,77 +95,45 @@ install_tomcat() {
   return 1
 }
 
-show_version() {
-  [ -x "${VERSION_BIN}" ] && "${VERSION_BIN}"
-}
-
-pid_exists() {
-  ps -p"$1" &>/dev/null; echo $?
-}
-
-kill_tomcat() {
-  local pid="$1"
-  local cnt="${KILL_RETRY}"
-  
-  if [ -z "${pid}"]; then
-    echo -e "kill tomcat failed, [pid:${pid}] no found, panic!"
-    return 1
+check_catalina_bin() {
+  if [ -x "${CATALINA_BIN}" ]; then
+    return 0
+  else
+    echo -e "$1 failed, "${CATALINA_BIN}" no found, panic!"
   fi
+}
 
-  while [ 0 -eq `pid_exists ${pid}` ]; do
-    sleep "${KILL_TIMEOUT}"
-    let cnt-=1
-    [ 0 -ge "${cnt}" ] && break;
-  done
+check_pid() {
+  cat "${CATALINA_PID}" 2>/dev/null
+}
 
-  local signal=15
-  while [ 0 -eq `pid_exists ${pid}` ]; do
-    kill -${signal} "${pid}"
-    sleep $(( 3*"${KILL_TIMEOUT}" ))
-    let signal=9
-  done
+show_version() {
+  [ 0 -eq `check_catalina_bin version; echo $?` ] && \
+    "${CATALINA_BIN}" version
 }
 
 stop_tomcat() {
-  local pid=`cat ${CATALINA_PID} 2>/dev/null`
-  if [ -x "${SHUTDOWN_BIN}" ]; then
-    "${SHUTDOWN_BIN}" || kill_tomcat "${pid}"
-  else
-    echo -e "shutdown tomcat failed, ${SHUTDOWN_BIN} no found, panic!"
-  fi
+  local pid=`check_pid`
+  [ 0 -eq `check_catalina_bin stop; echo $?` ] && \
+    "${CATALINA_BIN}" stop "${STOP_TIMEOUT}" "${STOP_FORCE}"
+  show_env "${pid}"
 }
 
 start_tomcat() {
-  if [ -x "${START_BIN}" ]; then
-    "${START_BIN}"
-  else
-    echo -e "$start tomcat failed, ${START_BIN} no found, panic! "
-  fi
+  [ 0 -eq `check_catalina_bin start; echo $?` ] && \
+    "${CATALINA_BIN}" start
+  show_env "`check_pid`"
 }
 
-#export CATALINA_BASE="${CATALINA_BASE:=${BASE}/${VER}}"
-#export CATALINA_PID="${CATALINA_BASE}/pid"
-#
-#if [ "$DEBUG" -gt 0 ]; then
-#    MODE="DEBUG"
-#    JPDA=jpda
-#    CATALINA_OPTS="${CATALINA_OPTS}             \
-#        -XX:+HeapDumpOnOutOfMemoryError         \
-#        -XX:HeapDumpPath=${CATALINA_BASE}/logs"
-#fi
-#export CATALINA_OPTS=$(echo $CATALINA_OPTS | tr -s " ")
-#
-#JAVA_OPTS="${JAVA_OPTS}                      \
-#    -Dhttp.port=${HTTP_PORT}                 \
-#    -Dshutdown.port=${STOP_PORT}             \
-#    -Dcom.sun.management.jmxremote"
-#export JAVA_OPTS=$(echo $JAVA_OPTS | tr -s " ")
-#
-#BIN="$CATALINA_BASE/bin/catalina.sh $JPDA"
-#
-#if [ "$#" -gt 0 ];then
-#    RUN=$1
-#fi
+debug_tomcat() {
+  if [ 0 -eq `check_catalina_bin debug; echo $?` ]; then
+    export_catalina_opts "-XX:+HeapDumpOnOutOfMemoryError \
+                          -XX:HeapDumpPath=${CATALINA_BASE}/logs"
+    "${CATALINA_BIN}" jpda start
+  fi
+  show_env "`check_pid`"
+}
+
 case ".$@" in
   .install)
     install_tomcat
@@ -161,11 +144,9 @@ case ".$@" in
   .stop)
     stop_tomcat
   ;;
-    #.stop) $BIN stop ;;
-    #.start) $BIN start ;;
-    #.run) $BIN run ;;
-    #.debug) $BIN debug ;;
-    #.version) $BIN version ;;
+  .debug)
+    debug_tomcat
+  ;;
   .-v)
     show_version
   ;;
