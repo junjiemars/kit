@@ -34,10 +34,10 @@ docker run -w /home/u -h centos --privileged -u u -it --rm junjiemars/centos-dev
 ```
 * as daemon
 ```sh
+# gdb or lldb needs privileged permission
 docker run --name centos-dev -w /home/u -h centos --privileged -d junjiemars/centos-dev
 docker exec -it -u u centos-dev /bin/bash
 ```
-__gdb__ or __lldb__ needs privileged permission.
 
 ## Basic Ubuntu Development Environment
 Include basic building/networking tools, emacs/vim editors for c/c++/llvm/python/lua development.
