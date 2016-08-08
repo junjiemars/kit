@@ -77,9 +77,8 @@ xterm*|rxvt*)
 esac
 
 [ -r $HOME/.bash_aliases ] && source $HOME/.bash_aliases
-
-OPT_PATH=/opt/run
-PATH=$PATH:$OPT_PATH/bin:$OPT_PATH/sbin
+[ -r $HOME/.bash_vars ] && source $HOME/.bash_vars
+[ -r $HOME/.bash_paths ] && source $HOME/.bash_paths
 
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
