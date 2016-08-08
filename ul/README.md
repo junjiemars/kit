@@ -53,39 +53,39 @@ HAS_SCALA=1 bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/
 ```
 
 # Tomcat Web Server
-Control the [Tomcat](http://tomcat.apache.org) via just one [wtd.sh](https://raw.githubusercontent.com/junjiemars/kit/master/ul/wtd.sh) Bash script.
+Control the [Tomcat](http://tomcat.apache.org) via just one [Tomcat Console](https://raw.githubusercontent.com/junjiemars/kit/master/ul/tc.sh) Bash script.
 
 * Level 0
 ```sh
 # show usage
-wtd.sh
+tc.sh
 
 # show Tomcat's version
-wtd.sh -v
+tc.sh -v
 ```
 * Install Tomcat on the Fly
 ```sh
 # simple case
-wtd.sh install
+tc.sh install
 
 # specify install directory
-PREFIX='/opt/run/www/tomcat' wtd.sh install
+PREFIX='/opt/run/www/tomcat' tc.sh install
 
 # specify Tomcat's version to install
-VER='8.5.4' wtd.sh install
+VER='8.5.4' tc.sh install
 ```
 * Control Tomcat
 ```sh
 # start 
-wtd.sh start
+tc.sh start
 
 # stop
-wtd.sh stop
+tc.sh stop
 
 # start into jpda debug mode
-wtd.sh debug
+tc.sh debug
 
 # specify Tomcat's start or stop ports
-START_PORT='8080' STOP_PORT='8005' wtd.sh start
-START_PORT='8080' STOP_PORT='8005' wtd.sh stop 
+START_PORT='8080' STOP_PORT='8005' tc.sh start
+START_PORT='8080' STOP_PORT='8005' tc.sh stop 
 ```

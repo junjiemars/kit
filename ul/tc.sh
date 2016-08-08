@@ -1,6 +1,6 @@
 #!/bin/bash
 #------------------------------------------------
-# target: tomcat install/start/stop/debug
+# target: tomcat console
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
@@ -35,7 +35,7 @@ usage() {
   echo -e "Options:"
   echo -e "  -h, --help\t\tPrint usage"
   echo -e "  -v, --version\t\tPrint version information and quit\n"
-  echo -e "A tiny-handy tool for tomcat.\n"
+  echo -e "A tiny-handy console for tomcat.\n"
   echo -e "Commands:"
   echo -e "\tstart\t\tStart a tomcat instance"
   echo -e "\tstop\t\tStop a tomcat instance"
@@ -85,6 +85,7 @@ export_java_opts() {
 show_env() {
   echo -e "---------------------------------"
   echo -e "CATALINA_PID[${1}]=${CATALINA_PID}"
+  echo -e "JPDA_PORT=${JPDA_PORT}"
   echo -e "JAVA_OPTS=${JAVA_OPTS}"
   echo -e "CATALINA_OPTS=${CATALINA_OPTS}"
   echo -e "CATALINA_BASE=${CATALINA_BASE}"
