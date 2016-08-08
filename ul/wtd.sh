@@ -25,8 +25,9 @@ STOP_FORCE=${STOP_FORCE:-"-force"}
 CATALINA_OPTS=${CATALINA_OPTS}
 JAVA_OPTS=${JAVA_OPTS}
 
-START_PORT=${START_PORT:=8080}
-STOP_PORT=${STOP_PORT:=8005}
+START_PORT=${START_PORT:-8080}
+STOP_PORT=${STOP_PORT:-8005}
+JPDA_PORT=${JPDA_PORT:-8000}
 
 usage() {
   echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
@@ -160,7 +161,7 @@ debug_tomcat() {
     export_java_opts
     export_catalina_opts "-XX:+HeapDumpOnOutOfMemoryError \
                           -XX:HeapDumpPath=${CATALINA_BASE}/logs"
-    "${CATALINA_BIN}" jpda start
+    JPDA_ADDRESS="${JPDA_PORT}" "${CATALINA_BIN}" jpda start
   fi
   show_env "`check_pid`"
 }
