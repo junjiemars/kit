@@ -1,5 +1,9 @@
 # Kit for Unix-like
 
+* [Bash Environement](#bash-environement)
+* [Java Programming Environement](#java-programming-environement)
+* [Tomcat Console](#tomcat-console)
+
 ## Bash Environement 
 Setup bash, aliases, paths and vars etc., just one line code to get things done:
 ```sh
@@ -52,7 +56,7 @@ HAS_GROOVY=1 bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master
 HAS_SCALA=1 bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh)
 ```
 
-# Tomcat Web Server
+# Tomcat Console 
 Control the [Tomcat](http://tomcat.apache.org) via just one [Tomcat Console](https://raw.githubusercontent.com/junjiemars/kit/master/ul/tc.sh) Bash script.
 
 * Level 0

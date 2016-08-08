@@ -1,5 +1,30 @@
 # Kit for Docker
 
+* [Docker on Linux](#docker-on-linux)
+  * [Run docker client via non root](#run-docker-client-via-non-root)
+* [Basic CentOS Development Environment](#basic-centos-development-environment)
+  * [Build from Dockerfile](#build-from-dockerfile)
+  * [Play with centos-dev Docker Container](#play-with-centos-dev-docker-container)
+* [Basic Ubuntu Development Environment](#basic-ubuntu-development-environment)
+  * [Build from Dockerfile](#build-from-dockerfile)
+  * [Play with ubuntu-dev Docker Container](#play-with-ubuntu-dev-docker-container)
+  * [Avoid slow apt-get update and install](#avoid-slow-apt-get-update-and-install)
+* [Docker on Windows 10](#docker-on-windows-10)
+  * [Hyper-V Default Locations](#hyper-v-default-locations)
+  * [tty Issue](#tty-issue)
+  * [Internal Virtual Switch](#internal-virtual-switch)
+* [Basic Java Development Environment](#basic-java-development-environement)
+  * [Build from Dockerfile](#build-from-dockerfile)
+  * [Play with java-dev Docker Container](#play-with-java-dev-docker-container)
+  * [Install Java Programming Environment](#install-java-programming-environment)
+* [Docker for Database](#docker-for-database)
+* [Docker Machine on Windows 10](#docker-machine-on-windows-10)
+  * [Install Docker Toolbox](#install-docker-toolbox)
+  * [Configure Docker Quickstart Terminal](#configure-docker-quickstart-terminal)
+  * [Access Windows dir in Docker Host](#access-windows-dir-in-docker-host)
+  * [tty mode](#tty-mode)
+  * [Sharing Files](#sharing-files)
+
 ## Docker on Linux
 
 ### Run docker client via non root
@@ -65,7 +90,7 @@ docker run --name ubuntu-dev -w /home/u -h ubuntu --privileged -d junjiemars/ubu
 docker exec -it -u u ubuntu-dev /bin/bash
 ```
 
-### Slow apt-get update and install
+### Avoid slow apt-get update and install
 * Avoid IPv6 if you use a slow tunnel
 ```sh
 apt-get -o Acquire::ForceIPv4=true
@@ -83,7 +108,7 @@ curl -sL mirrors.ubuntu.com/mirrors.txt
 ```sh
 ```
 
-## Docker for Windows 10
+## Docker on Windows 10
 Now, the good news is Docker has native stable version for Windows 10 since 7/29/2016.
 
 If you need __Docker Machine__ you can check [Docker Machine on Windows 10](#docker-machine-on-windows-10)
@@ -93,7 +118,7 @@ If you need __Docker Machine__ you can check [Docker Machine on Windows 10](#doc
 * Change __Virtual Machines__ location
 * Change __Virtual Hard Disks__ location
 
-### TTY Issue
+### tty Issue
 * Mintty does not provide full TTY support;
 * Use __cmd__ or __PowerShell__;
 
@@ -151,7 +176,7 @@ __Issue__: Oracle XE 11g2 could not be downloaded via curl, there needs some hac
 ```
 * __MACHINE_STORAGE_PATH__: Environment variable points to docker's image location.
 
-### Access Windows' dir in Docker Host
+### Access Windows dir in Docker Host
 * Configure __Shared folders__ on VirtualBox: 
 ```
 <vbox-folder-label-name> -> <windows-local-dir>
