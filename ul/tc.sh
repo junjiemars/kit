@@ -172,10 +172,7 @@ case ".$@" in
   .start) start_tomcat ;;
   .stop) stop_tomcat ;;
   .debug) debug_tomcat ;;
-  .-v) show_version ;;
-  .--version) show_version ;;
-  .-h) usage ;;
-  .--help) usage ;;
+  .-v|.--version) show_version ;;
+  .-h|.--help) usage ;;
   .*) usage ;;
 esac
-
