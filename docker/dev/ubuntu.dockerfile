@@ -10,14 +10,13 @@ ENV TERM=xterm
 
 # choose mirror based on geo
 RUN sed -i.ori 's#http:\/\/archive.ubuntu.com\/ubuntu\/#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#' /etc/apt/sources.list && \
-    apt-get -y update  && \
-    apt-get -y install \
-            curl
+    apt-get -y update && \
+    apt-get -y install curl
 
 RUN curl -s ipinfo.io | grep '"country": "CN",' && \
     sed -i 's#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#http:\/\/jp.archive.ubuntu.com\/ubuntu\/#' /etc/apt/sources.list 
 
-RUN apt-get -y update --fix-missing && \
+RUN apt-get -y update && \
     apt-get -y install \
 	    bc \
 	    build-essential \
@@ -62,15 +61,10 @@ RUN chown -R ${SUDOUSER}:${SUDOUSER} ${UR_HOME} && \
     mkdir -p /opt/lab  && chown -R ${SUDOUSER}:${SUDOUSER} /opt/lab
 
 # configure gdb
-RUN cd ${UR_HOME} ; \
+RUN cd ${UR_HOME} && \
     echo 'set disable-randomization off' >> .gdbinit
 
 # switch to ${SUDOUSER}
-
-
-
-
-
 USER ${SUDOUSER}
 
 # cofigure bash env
@@ -79,7 +73,7 @@ RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc 
 
 # configure emacs
 RUN cd ${UR_HOME} ; \
-    git clone https://github.com/junjiemars/.emacs.d.git  && \
+    git clone --depth=1 --branch=master https://github.com/junjiemars/.emacs.d.git  && \
     echo 'export TERM=xterm' >> .bashrc
 RUN test -f ${UR_HOME}/.emacs && rm ${UR_HOME}/.emacs
 
@@ -102,4 +96,6 @@ ENV LANG en_US.UTF-8
 #ENV LC_ALL en_US.UTF-8
 
 EXPOSE 22
-EXPOSE 8000-9000
+EXPOSE 53
+EXPOSE 80
+EXPOSE 8080-8090
