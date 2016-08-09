@@ -72,7 +72,7 @@ RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc 
 # HAS_ALL=YES install-java-kits.sh
 RUN cd /opt/run/bin/ && \
     curl -vkL -O -C - https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh &&  \
-    chown u+x install-java-kits.sh
+    chmod u+x install-java-kits.sh
 
 # switch back to root
 USER root
