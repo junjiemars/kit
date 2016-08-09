@@ -26,9 +26,7 @@ RUN unzip -d/tmp/xe /tmp/$XE_ZIP && \
     rm -rf ${XE_ZIP}
 
 # configure xe 
-ENV ORACLE_HOME='/u01/app/oracle/product/11.2.0/xe'
-ENV ORACLE_SID='XE'
-ENV PATH="${ORACLE_HOME}/bin:${PATH}"
+ENV INS_ORA_PATH='/u01/app/oracle/product/11.2.0/xe'
 
 # make xe.rsp
 RUN echo -e '\
@@ -37,70 +35,23 @@ ORACLE_LISTENER_PORT=1521\n\
 ORACLE_PASSWORD=oracle\n\
 ORACLE_CONFIRM_PASSWORD=oracle\n\
 ORACLE_DBENABLE=y\n'\
->> ${ORACLE_HOME}/config/scripts/xe.rsp
-
-# make xe.ora
-RUN echo -e '\
-open_cursors=300\n\
-db_name=XE\n\
-control_files=("/u01/app/oracle/oradata/XE/control.dbf")\n\
-DB_RECOVERY_FILE_DEST=/u01/app/oracle/fast_recovery_area\n\
-DB_RECOVERY_FILE_DEST_SIZE=10G\n\
-job_queue_processes=4\n\
-compatible=11.2.0.0.0\n\
-diagnostic_dest=/u01/app/oracle\n\
-sessions=20\n\
-audit_file_dest=/u01/app/oracle/admin/XE/adump\n\
-remote_login_passwordfile=EXCLUSIVE\n\
-dispatchers="(PROTOCOL=TCP) (SERVICE=XEXDB)"\n\
-shared_servers=4\n\
-undo_management=AUTO\n\
-undo_tablespace=UNDOTBS1\n'\
->> ${ORACLE_HOME}/config/scripts/init.ora
-
-# make initXETemp.ora
-RUN echo -e '\
-open_cursors=300\n\
-db_name=XE\n\
-control_files=("/u01/app/oracle/oradata/XE/control.dbf")\n\
-DB_RECOVERY_FILE_DEST_SIZE=10G\n\
-DB_RECOVERY_FILE_DEST=/u01/app/oracle/fast_recovery_area\n\
-compatible=11.2.0.0.0\n\
-diagnostic_dest=/u01/app/oracle\n\
-sessions=20\n\
-audit_file_dest=/u01/app/oracle/admin/XE/adump\n\
-remote_login_passwordfile=EXCLUSIVE\n\
-dispatchers="(PROTOCOL=TCP) (SERVICE=XEXDB)"\n\
-undo_management=AUTO\n\
-undo_tablespace=UNDOTBS1\n\
-_no_recovery_through_resetlogs=true\n'\
->> ${ORACLE_HOME}/config/scripts/initXETemp.ora
+> xe.rsp
 
 # setup instance
-RUN chown oracle:dba ${ORACLE_HOME}/config/scripts/*.ora ${ORACLE_HOME}/config/scripts/xe.rsp
-RUN chmod 755 ${ORACLE_HOME}/config/scripts/*.ora ${ORACLE_HOME}/config/scripts/xe.rsp 
-RUN /etc/init.d/oracle-xe configure responseFile="${ORACLE_HOME}/config/scripts/xe.rsp"
+RUN sed -i.ori 's,/var/lock/subsys,/var/lock,' /etc/init.d/oracle-xe && \
+    /etc/init.d/oracle-xe configure responseFile=xe.rsp &> ins_xe.log || \
+    echo -e "configure oracle-xe failed, panic!"
 
-# make start.sh
-RUN echo -e '\
-#!/bin/bash\n\
-sed -i.ori -E "s/HOST = [^)]+/HOST = $HOSTNAME/g" $ORACLE_HOME/network/admin/listener.ora\n\
-sed -i.ori -E "s/HOST = [^)]+/HOST = $HOSTNAME/g" $ORACLE_HOME/network/admin/tnsnames.ora\n\
-while true; do\n\
-    pmon=`ps -ef | grep [p]mon_$ORACLE_SID`\n\
-    if [ "$pmon" == "" ]; then\n\
-        date\n\
-        /etc/init.d/oracle-xe start\n\
-    fi\n\
-    sleep 5m\n\
-done\n'\
->> /start.sh
+RUN source ${INS_ORA_PATH}/bin/oracle_env.sh
+
+# start xe
+CMD ["/etc/init.d/oracle-xe", "start"]
 
 # start sshd service
 CMD ["/usr/sbin/sshd", "-D"]
 
 # run script
-CMD ["/start.sh"]
+# ...
 
 EXPOSE 22
 EXPOSE 1521
