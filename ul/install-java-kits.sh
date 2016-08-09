@@ -177,7 +177,7 @@ install_groovy() {
   local groovy_home="${OPEN_DIR}/groovy"
   local bin_dir="${groovy_home}/target/install"
 
-  [ 0 -eq `groovysh -version $>/dev/null; echo $?`] && return 0
+  [ 0 -eq `groovysh -version $>/dev/null; echo $?` ] && return 0
 
   [ -f "${groovy_home}/gradlew" ] || \
     git clone --depth=1 --branch="${groovy_tag}" \
