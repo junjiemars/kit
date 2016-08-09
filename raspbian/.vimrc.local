@@ -1,2 +1,0 @@
-set path+=/usr/include/arm-linux-gnueabihf
-set shell=bash\ --rcfile\ ~/.bashrc
