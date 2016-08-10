@@ -1,10 +1,12 @@
-# Kit Oracle
+# Kit for Oracle
 
-## Export ORACLE_HOME or not?
+* [SQL*Plus Toolbox](#sql*plus-toolbox)
 
-## Where are imp/exp or sqlplus?
-If you just want to use sqlplus, just download instantclient then use sqlplu.sh is ok. 
-But if you will do imp/exp tasks and don't want to install Oracle, the follwing is for you.
+## SQL*Plus Toolbox
+If you just want to use [sqlplus](https://docs.oracle.com/cd/B19306_01/server.102/b14357/toc.htm), 
+just download instantclient then use [sqlplu.sh](https://raw.githubusercontent.com/junjiemars/kit/master/oracle/sqlplus.sh) indeed. 
+But what? if you will do imp/exp tasks and don't want to install Oracle, 
+the follwing is for you.
 
 ### On Windows
 * Download the Oracle installer.
