@@ -1,8 +1,8 @@
 # Kit for Oracle
 
-* [SQL*Plus Toolbox](#sql*plus-toolbox)
+* [SQL*Plus Kits](#sql*plus-kits)
 
-## SQL*Plus Toolbox
+## SQL*Plus Kits 
 If you just want to use [sqlplus](https://docs.oracle.com/cd/B19306_01/server.102/b14357/toc.htm), 
 just download instantclient then use [sqlplu.sh](https://raw.githubusercontent.com/junjiemars/kit/master/oracle/sqlplus.sh) indeed. 
 But what? if you will do imp/exp tasks and don't want to install Oracle, 

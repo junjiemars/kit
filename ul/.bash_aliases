@@ -33,6 +33,7 @@ case "${PLATFORM}" in
     alias ll='ls -lh -G'
     alias l='ls -CF -G'
     alias tailf='tail -f'
+    alias stat='stat -x'
     ;;
   *)
     alias ls='ls --color=auto'

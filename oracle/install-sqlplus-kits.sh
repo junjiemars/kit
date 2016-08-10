@@ -19,7 +19,7 @@ check_env() {
   return 0
 }
 
-recent_dir() {
+bin_dir() {
   local pwd="$1"
   local name="$2"
 
@@ -38,6 +38,7 @@ recent_dir() {
   BIN_DIR='?'
   return 0
 }
+
 check_bag() {
 
 }
