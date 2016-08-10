@@ -3,8 +3,8 @@
 kit more than the code
 
 
-* [Unix-like](https://raw.githubusercontent.com/junjiemars/kit/master/ul/README.md)
-* [Drawin](https://raw.githubusercontent.com/junjiemars/kit/master/darwin/README.md)
-* [Ubuntu](https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/README.md)
-* [Raspbian](https://raw.githubusercontent.com/junjiemars/kit/master/raspbian/README.md)
-* [Windows](https://raw.githubusercontent.com/junjiemars/kit/master/win/README.md)
+* [Unix-like](https://github.com/junjiemars/kit/tree/master/ul)
+* [Drawin](https://github.com/junjiemars/kit/tree/master/darwin)
+* [Ubuntu](https://github.com/junjiemars/kit/tree/master/ubuntu)
+* [Raspbian](https://github.com/junjiemars/kit/tree/master/raspbian)
+* [Windows](https://github.com/junjiemars/kit/tree/master/win)
