@@ -1,19 +1,24 @@
 #!/bin/bash
 #------------------------------------------------
-# target: SQL*Plus Toolbox 
 # author: junjiemars@gmail.com
+# target: SQL*Plus Kits
+# note: do not specify $ORACLE_HOME if you have 
+# > multiple Oracle products running, 
+# > use $ORACLE_HOME indeed.
 #------------------------------------------------
 
-ORACLE_HOME=${ORACLE_HOME:-}
-export SQLPLUS_HOME=${SQLPLUS_HOME:-'/opt/oracle/instantclient_12_1/'}
+export ORACLE_HOME=${ORACLE_HOME:-'/opt/oracle/instantclient_12_1/'}
 export SQLPATH=${SQLPATH:-'/opt/oracle/sql'}
 export NLS_LANG=${NLS_LANG:-'AMERICAN_AMERICA.UTF8'}
-export LD_LIBRARY_PATH=$SQLPLUS_HOME${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-export PATH=$SQLPLUS_HOME:${PATH:+:$PATH}
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+export PATH=$ORACLE_HOME/bin:${PATH:+:$PATH}
 
 USERNAME=${USERNAME:-'system'}
 PASSWORD=${PASSWORD:-'oracle'}
-CONNECT_IDENTIFIER=${CONNECT_IDENTIFIER:-'localhost:1521/XE'}
+HOST=${HOST:-'localhost'}
+PORT=${PORT:-'1521'}
+SID=${SID:-'XE'}
+CONNECT_IDENTIFIER=${CONNECT_IDENTIFIER:-"${HOST}:${PORT}/${SID}"}
 
 if [ 0 -eq `type -p rlwrap &>/dev/null; echo $?` ]; then
 	RLWRAP='rlwrap'
