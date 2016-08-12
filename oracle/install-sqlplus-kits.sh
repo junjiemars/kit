@@ -40,13 +40,33 @@ bin_dir() {
 }
 
 check_bag() {
-
+  return 0
 }
 
-install_client() {
+install_client_kit() {
+  [ 0 -eq `` ] && printf "%s\n" "sqlplus kits exists, good."
+  
   return 0 
 }
 
-install_server() {
+install_server_kit() {
   return 0  
 }
+
+usage() {
+  echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
+  echo -e "       $(basename $0) [ -h | --help ]\n"
+  echo -e "A tiny-handy install for sqlplus client/server kits.\n"
+  echo -e "Options:"
+  echo -e "  -h, --help\t\tPrint usage\n"
+  echo -e "Commands:"
+  echo -e "\t-c | --install-client-kit\t\tinstall sqlplus's client kit"
+  echo -e "\t-s | --install-server-kit\t\tinstall sqlplus's server kit"
+}
+
+case ".$@" in
+  .-c|.--install-client-kit) install_client_kit ;;
+  .-s|.--install-server-kit) install_server_kit ;;
+  .-h|.--help) usage ;;
+  .*) usage ;;
+esac
