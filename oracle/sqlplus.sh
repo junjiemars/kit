@@ -27,6 +27,6 @@ fi
 if [ 0 -eq $# ] ; then
 	"${RLWRAP}" sqlplus ${USERNAME}/${PASSWORD}@${CONNECT_IDENTIFIER}
 else 
-	"${RLWRAP}" sqlplus $@
+	"${RLWRAP}" sqlplus "$@"
 fi
 
