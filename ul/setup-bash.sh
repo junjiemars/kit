@@ -91,6 +91,7 @@ case ${PLATFORM} in
     ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/_vimrc
     ;;
   *)
+    [ -f $HOME/.bashrc ] || ${curl} ${GITHUB_H}/ul/.bashrc -o $HOME/.bashrc
     ${curl} ${GITHUB_H}/ul/.bash_logout -o $HOME/.bash_logout
     ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/.vimrc
     ;;
