@@ -13,6 +13,7 @@ HAS_JDK=${HAS_JDK:-0}
 HAS_ANT=${HAS_ANT:-0}
 HAS_MAVEN=${HAS_MAVEN:-0}
 HAS_BOOT=${HAS_BOOT:-0}
+HAS_CLOJURE=${HAS_CLOJURE:-0}
 HAS_GRADLE=${HAS_GRADLE:-0}
 HAS_GROOVY=${HAS_GROOVY:-0}
 HAS_SCALA=${HAS_SCALA:-0}
@@ -20,6 +21,7 @@ HAS_SCALA=${HAS_SCALA:-0}
 JDK_VER=(${JDK_U:-"8u91"} ${JDK_B:-"b14"})
 ANT_VER=${ANT_VER:-"1.9.x"}
 MAVEN_VER=${MAVEN_VER:-"3.2.6"}
+CLOJURE_VER=${CLOJURE_VER:-"1.8.0"}
 GRADLE_VER=${GRADLE_VER:-"2.14.x"}
 GROOVY_VER=${GROOVY_VER:-"2_4_X"}
 SCALA_VER=${SCALA_VER:-"2.11.8"}
@@ -152,6 +154,31 @@ install_boot() {
   return 1
 }
 
+install_clojure() {
+  local clojure_zip="clojure-${CLOJURE_VER}.zip"
+  local clojure_jar="clojure-${CLOJURE_VER}.jar"
+  local clojure_url="http://repo1.maven.org/maven2/org/clojure/clojure/${CLOJURE_VER}/${clojure_zip}"
+  local clojure_home="${OPEN_DIR}/clojure"
+  local bin_dir="${clojure_home}/clojure-${CLOJURE_VER}"
+  local clojure_bin="${RUN_DIR}/bin/clojure"
+
+  [ -x "${clojure_bin}" ] && return 0
+
+  [ -d "${clojure_home}" ] || mkdir -p "${clojure_home}"
+  if [ ! -f "${bin_dir}/${clojure_jar}" ]; then
+    curl -L -o "${clojure_home}/${clojure_zip}" -C - "${clojure_url}" && \
+      unzip "${clojure_home}/${clojure_zip}"
+  fi
+
+  if [ -f "${bin_dir}/${clojure_jar}" ]; then
+    echo -e "#!/bin/bash\njava -cp ${bin_dir}/${clojure_jar} clojure.main" > "${clojure_bin}" && \
+      chmod u+x "${clojure_bin}"
+    return 0
+  fi
+
+  return 1
+}
+
 install_gradle() {
   local gradle_url='https://github.com/gradle/gradle.git'
   local gradle_home="${OPEN_DIR}/gradle"
@@ -223,6 +250,7 @@ if [ "YES" == "${HAS_ALL}" ]; then
   HAS_ANT=1
   HAS_MAVEN=1
   HAS_BOOT=1
+  HAS_CLOJURE=1
   HAS_GRADLE=1
   HAS_GROOVY=1
   HAS_SCALA=1
@@ -232,6 +260,7 @@ fi
 [ 0 -lt "${HAS_ANT}" ]      && KITS+=('install_ant')
 [ 0 -lt "${HAS_MAVEN}" ]    && KITS+=('install_maven')
 [ 0 -lt "${HAS_BOOT}" ]     && KITS+=('install_boot')
+[ 0 -lt "${HAS_CLOJURE}" ]  && KITS+=('install_clojure')
 [ 0 -lt "${HAS_GRADLE}" ]   && KITS+=('install_gradle')
 [ 0 -lt "${HAS_GROOVY}" ]   && KITS+=('install_groovy')
 [ 0 -lt "${HAS_SCALA}" ]    && KITS+=('install_scala')
