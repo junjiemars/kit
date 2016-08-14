@@ -29,19 +29,6 @@ START_PORT=${START_PORT:-8080}
 STOP_PORT=${STOP_PORT:-8005}
 JPDA_PORT=${JPDA_PORT:-8000}
 
-usage() {
-  echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
-  echo -e "       $(basename $0) [ -h | --help | -v | --version ]\n"
-  echo -e "Options:"
-  echo -e "  -h, --help\t\tPrint usage"
-  echo -e "  -v, --version\t\tPrint version information and quit\n"
-  echo -e "A tiny-handy console for tomcat.\n"
-  echo -e "Commands:"
-  echo -e "\tstart\t\tStart a tomcat instance"
-  echo -e "\tstop\t\tStop a tomcat instance"
-  echo -e "\tdebug\t\tStart a tomcat instance in debug mode"
-  echo -e "\tinstall\t\tInstall tomcat"
-}
 
 export_catalina_opts() {
   CATALINA_OPTS="${1}${CATALINA_OPTS}"
@@ -165,6 +152,20 @@ debug_tomcat() {
     JPDA_ADDRESS="${JPDA_PORT}" "${CATALINA_BIN}" jpda start
   fi
   show_env "`check_pid`"
+}
+
+usage() {
+  echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
+  echo -e "       $(basename $0) [ -h | --help | -v | --version ]\n"
+  echo -e "Options:"
+  echo -e "  -h, --help\t\tPrint usage"
+  echo -e "  -v, --version\t\tPrint version information and quit\n"
+  echo -e "A tiny-handy console for tomcat.\n"
+  echo -e "Commands:"
+  echo -e "\tstart\t\tStart a tomcat instance"
+  echo -e "\tstop\t\tStop a tomcat instance"
+  echo -e "\tdebug\t\tStart a tomcat instance in debug mode"
+  echo -e "\tinstall\t\tInstall tomcat"
 }
 
 case ".$@" in
