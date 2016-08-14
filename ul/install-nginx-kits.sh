@@ -1,6 +1,11 @@
 #!/bin/bash
+#------------------------------------------------
+# author: junjiemars@gmail.com
+# target: Nginx Kits
+# 
+#------------------------------------------------
 
-NGX_DIR=${NGX_DIR:-"/opt/open/nginx"}
+oNGX_DIR=${NGX_DIR:-"/opt/open/nginx"}
 PREFIX_DIR=${PREFIX_DIR:-"/opt/run"}
 
 DEBUG=${DEBUG:-"0"}
