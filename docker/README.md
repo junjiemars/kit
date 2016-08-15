@@ -129,6 +129,9 @@ If you need __Docker Machine__ you can check [Docker Machine on Windows 10](#doc
 ### Internal Virtual Switch
 * 
 
+### Failed to Start
+* Hyper-V Manager: keep only one MobiLinuxVM and delete all the others
+
 ## Basic Java Development Environment
 * Building tools: [ant](http://ant.apache.org), [maven](https://maven.apache.org), [boot](http://boot-clj.com), [gradle](https://gradle.org);
 * Java programming lanuage: [clojure](https://clojure.org), [groovy](http://www.groovy-lang.org), [scala](http://www.scala-lang.org);
