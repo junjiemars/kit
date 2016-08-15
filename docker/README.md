@@ -24,6 +24,10 @@
   * [Access Windows dir in Docker Host](#access-windows-dir-in-docker-host)
   * [tty mode](#tty-mode)
   * [Sharing Files](#sharing-files)
+* [Docker Networking](#docker-networking)
+  * [Bridge](#bridge)
+  * [Overlay](#overlay)
+  * [Tips](#tips)
 
 ## Docker on Linux
 
@@ -215,3 +219,24 @@ docker cp <container-path> <machine-path>
 docker-machine scp <machine>:<machine-path> <host-path>
 ```
 host -> container vice versa.
+
+## Docker networking
+
+### Bridge
+The default **docker0** virtual bridge interface let communications:
+* container -> container
+* container -> host
+* host -> container 
+very easy.
+
+### Overlay
+
+### Tips
+* Container's IP address
+```sh
+# on default bridge network
+$ docker inspect --format "{{.NetworkSettings.IPAddress}}" <container-id|container-name>
+
+# on specified network
+docker inspect --format "{{.NetworkSettings.Networks.<your-network>.IPAddress}}" <container-id|container-name>
+```
