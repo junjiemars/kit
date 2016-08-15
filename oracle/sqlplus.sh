@@ -9,7 +9,7 @@ export ORACLE_HOME=${ORACLE_HOME:-"/opt/oracle/instantclient_12_1"}
 export SQLPATH=${SQLPATH:-"/opt/oracle/sql"}
 export NLS_LANG=${NLS_LANG:-"AMERICAN_AMERICA.UTF8"}
 export LD_LIBRARY_PATH=${ORACLE_HOME%/}/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-export PATH=${ORACLE_HOME%/}/bin:${PATH:+:$PATH}
+export PATH=${ORACLE_HOME%/}/bin${PATH:+:$PATH}
 
 USERNAME=${USERNAME:-'system'}
 PASSWORD=${PASSWORD:-'oracle'}
@@ -24,9 +24,18 @@ else
 	RLWRAP=''	
 fi	
 
+case `uname -s` in
+	MSYS_NT*)
+		sqlplus='sqlplus.exe'
+		;;
+  *)
+		sqlplus='sqlplus'
+		;;
+esac
+
 if [ 0 -eq $# ] ; then
-	"${RLWRAP}" sqlplus ${USERNAME}/${PASSWORD}@${CONNECT_IDENTIFIER}
+	${RLWRAP} ${sqlplus} ${USERNAME}/${PASSWORD}@${CONNECT_IDENTIFIER}
 else 
-	"${RLWRAP}" sqlplus "$@"
+	${RLWRAP} ${sqlplus} $@
 fi
 
