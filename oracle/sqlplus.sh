@@ -12,8 +12,8 @@ export NLS_CHARACTERSET=${NLS_CHARACTERSET:-"AL32UTF8"}
 export LD_LIBRARY_PATH=${ORACLE_HOME%/}/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 export PATH=${ORACLE_HOME%/}/bin${PATH:+:$PATH}
 
-USERNAME=${USERNAME:-'system'}
-PASSWORD=${PASSWORD:-'oracle'}
+ORA_USER=${ORA_USER:-'system'}
+ORA_PASSWD=${ORA_PASSWD:-'oracle'}
 HOST=${HOST:-'localhost'}
 PORT=${PORT:-'1521'}
 SID=${SID:-'XE'}
@@ -24,7 +24,7 @@ if [ 0 -eq `type -p rlwrap &>/dev/null; echo $?` ]; then
 fi	
 
 if [ 0 -eq $# ] ; then
-	${RLWRAP} sqlplus ${USERNAME}/${PASSWORD}@${CONNECT_IDENTIFIER}
+	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${CONNECT_IDENTIFIER}
 else 
 	${RLWRAP} sqlplus $@
 fi
