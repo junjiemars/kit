@@ -171,7 +171,7 @@ install_clojure() {
   fi
 
   if [ -f "${bin_dir}/${clojure_jar}" ]; then
-    echo -e "#!/bin/bash\njava -cp ${bin_dir}/${clojure_jar} clojure.main" > "${clojure_bin}" && \
+    echo -e "#!/bin/bash\njava -jar ${bin_dir}/${clojure_jar}" > "${clojure_bin}" && \
       chmod u+x "${clojure_bin}"
     return 0
   fi
