@@ -1,0 +1,8 @@
+define ts_name=xws
+
+
+DROP TABLESPACE TS_&&ts_name
+  INCLUDING CONTENTS 
+  AND DATAFILES
+  CASCADE CONSTRAINTS
+;
