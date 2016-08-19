@@ -4,12 +4,11 @@
 -- show top CPU-consumming SQL processes
 --------------------------------------------------
 
-column sql_text format a20
-column buffer_gets a10
-column disk_reads a10
-column sorts a4
-column cpu_time a4
-column executions a6
+column sql_text format a14
+column buffer_gets heading BUFFER|GETS
+column disk_reads heading DISK|READS
+column cpu_sec heading CPU|SEC
+column rows_processed heading ROWS|PROCESSED
 
 select * from(
   select
