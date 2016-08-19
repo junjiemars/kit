@@ -117,6 +117,8 @@ function summary() {
 
 function run_sqlplus() {
 export NLS_LANG=${NLS_LANG:-"AMERICAN_AMERICA.UTF8"}
+export NLS_CHARACTERSET=${NLS_CHARACTERSET:-"AL32UTF8"} # AL16UTF8
+export NLS_LENGTH_SEMANTICS=${NLS_LENGTH_SEMANTICS:-"CHAR"} # BYTE
 ##set termout on;
 ##SQLPLUS_TERMOUT="ON"
 ${CMD_SQLPLUS} ${PASSCODE} <<!
