@@ -3,8 +3,9 @@
 * [SQL*Plus Kits](#sql*plus-kits)
   * [On Windows](#on-windows)
   * [On Unix-like](#on-unix-like) 
+  * [How to Use](#how-to-use)
 * [Import and Export](#import-and-export)
-* [Users](#users)
+* [Schema](#schema)
 * [Tablespaces](#tablespaces)
 
 ## SQL*Plus Kits 
@@ -41,9 +42,32 @@ sudo apt-get install rpm2cpio
 rpm2cpio <x.rpm> | cpio -i --make-directories
 ```
 
+### How to Use
+The critical script is [sqlplus.sh](https://raw.githubusercontent.com/junjiemars/kit/master/oracle/sqlplus.sh).
+[oracle.sh](https://raw.githubusercontent.com/junjiemars/kit/master/oracle/oracle.sh) is a general wrapper 
+for all of Oracle's commands.
+
+* Interactive Mode
+```sh
+sqlplus.sh username/password@host:port/sid
+
+# parameterized 
+ORACLE_HOME=<ur-oracle-home> sqlplus.sh username/password@host:port/sid
+
+# general style via oracle.sh
+CMD=sqlplus.sh oracle.sh username/password@host:port/sid
+```
+* Command Line Mode
+```sh
+cat nls-parameters.sql | sqlplus.sh username/password@host:port/sid
+
+# parameterized 
+cat nls-parameters.sql | sqlplus.sh username/password@host:port/sid
+```
+
 ## Import and Export
 
-## Users
+## Schema
 
 
 ## Tablespaces
