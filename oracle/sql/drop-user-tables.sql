@@ -1,15 +1,18 @@
 set serveroutput on size 1000000;
 
-BEGIN
-  FOR t IN (select * from user_tables) LOOP
-    BEGIN
-      EXECUTE IMMEDIATE 'drop table '||t.table_name||' cascade constraints';
-      dbms_output.put_line('# '||t.table_name||' -> dropped');
-    EXCEPTION
-      WHEN OTHERS THEN
-        dbms_output.put_line('# '||sqlcode||'@'||t.table_name||' -> '||sqlerrm);
-    END;
-  END LOOP;
+begin
 
-END;
+  for t in (select * from user_tables) loop
+
+    begin
+      execute immediate 'drop table '||t.table_name||' cascade constraints';
+      dbms_output.put_line('# '||t.table_name||' -> dropped');
+    exception
+      when others then
+        dbms_output.put_line('# '||sqlcode||'@'||t.table_name||' -> '||sqlerrm);
+    end;
+
+  end loop;
+
+end;
 /

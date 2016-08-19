@@ -1,3 +1,6 @@
 define user_name=xws
 
-DROP USER &&user_name CASCADE;
+drop user &&user_name cascade
+;
+
+/

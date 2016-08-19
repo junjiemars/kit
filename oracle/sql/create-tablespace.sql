@@ -5,11 +5,11 @@ define ts_autoextend=ON --OFF
 define ts_next=512K
 define ts_maxsize=500M
 
-CREATE TABLESPACE &&ts_name
-  DATAFILE '&&ts_dbf'
-  SIZE &&ts_size
-  AUTOEXTEND &&ts_autoextend
-  NEXT &&ts_next
-  MAXSIZE &&ts_maxsize
+create tablespace &&ts_name
+  datafile '&&ts_dbf'
+  size &&ts_size
+  autoextend &&ts_autoextend
+  next &&ts_next
+  maxsize &&ts_maxsize
 ;
 

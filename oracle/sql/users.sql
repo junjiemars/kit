@@ -1,13 +1,19 @@
 --------------------------------------------------
 -- author: junjiemars@gmail.com
--- target: view users when created, locked, status
+-- target: users when created, locked, status
 --------------------------------------------------
 
-SELECT
-	username
-	,account_status
-	,lock_date
-	,created
-FROM dba_users
-ORDER BY username;
+column username format a20
+column account_status format a24
+
+select
+	  username
+	, account_status
+	, lock_date
+	, created
+from dba_users
+order by username
+;
+
+/
 

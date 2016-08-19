@@ -7,6 +7,8 @@
 * [Import and Export](#import-and-export)
 * [Schema](#schema)
 * [Tablespaces](#tablespaces)
+* [Tables](#tables)
+  * [Drop](#drop)
 
 ## SQL*Plus Kits 
 If you just want to use [sqlplus](https://docs.oracle.com/cd/B19306_01/server.102/b14357/toc.htm), 
@@ -69,5 +71,8 @@ cat nls-parameters.sql | sqlplus.sh username/password@host:port/sid
 
 ## Schema
 
-
 ## Tablespaces
+
+## Tables
+
+### Drop
