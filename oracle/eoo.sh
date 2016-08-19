@@ -15,7 +15,8 @@
 #         where ([-s] or [-n]) and ([-x] not in)
 #=====================================================
 
-CMD_EXP=exp.sh
+[ 0 -eq `type -p exp.sh &>/dev/null;echo $?` ] && CMD_EXP=exp.sh
+CMD_EXP=${CMD_EXP:-"exp"}
 CMD_SQLPLUS=sqlplus.sh
 PASSCODE=${PASSCODE:-'hr/hr@localhost:1521/XE'}
 EXP_OPTS=${EXP_OPTS:='FEEDBACK=1'}

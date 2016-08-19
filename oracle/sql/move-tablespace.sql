@@ -25,7 +25,7 @@ DECLARE
 
 BEGIN
   dbms_output.put_line('------------------------');
-  dbms_output.put_line('! MIGRATING TABLES TABLESPACE FROM &&ts_old_name TO &&ts_new_name...');
+  dbms_output.put_line('! MOVING TABLES TABLESPACE FROM &&ts_old_name TO &&ts_new_name...');
   FOR t IN i_tables LOOP
     BEGIN
       EXECUTE IMMEDIATE 'alter table ' || t.table_name || ' move tablespace &&ts_new_name';
@@ -37,7 +37,7 @@ BEGIN
   END LOOP;
 
   dbms_output.put_line('------------------------');
-  dbms_output.put_line('! MIGRATING INDEXES TABLESPACE FROM &&ts_old_iname TO &&ts_new_iname...');
+  dbms_output.put_line('! MOVING INDEXES TABLESPACE FROM &&ts_old_iname TO &&ts_new_iname...');
   FOR i IN i_indexes LOOP
     BEGIN
       EXECUTE IMMEDIATE 'alter index ' || i.index_name || ' rebuild tablespace &&ts_new_iname';
@@ -49,7 +49,7 @@ BEGIN
   END LOOP;
 
   dbms_output.put_line('------------------------');
-  dbms_output.put_line('! MIGRATING LOBS TABLESPACE FROM &&ts_old_name TO &&ts_new_name...');
+  dbms_output.put_line('! MOVING LOBS TABLESPACE FROM &&ts_old_name TO &&ts_new_name...');
   FOR l IN i_lob LOOP
     BEGIN
       EXECUTE IMMEDIATE 'alter table ' || l.table_name || ' move lob(' || l.column_name || ') store as (tablespace &&ts_new_name)';
