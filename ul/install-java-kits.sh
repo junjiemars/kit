@@ -175,7 +175,7 @@ install_clojure() {
 
   if [ -f "${bin_dir}/${clojure_jar}" ]; then
     curl -L -o "${clojure_bin}" -C - "${clojure_sh}" && \
-      sed -i.b0 -e "s#CLOJURE_JAR=#CLOJURE_JAR=${bin_dir}/${clojure_jar}#" \
+      sed -i.b0 -e "s#CLOJURE_JAR=#CLOJURE_JAR=\"${bin_dir}/${clojure_jar}\"#" \
         "${clojure_bin}"
     return 0
   fi
