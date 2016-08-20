@@ -9,8 +9,10 @@ PLATFORM=`uname -s 2>/dev/null`
 case "${PLATFORM}" in
   MSYS_NT*)
     if [ -d "/d/" ]; then
+      [ -d "/d/opt" ] || mkdir -p "/d/opt"
       PREFIX=${PREFIX:-"/d/opt"}
     else
+      [ -d "/c/opt" ] || mkdir -p "/c/opt"
       PREFIX=${PREFIX:-"/c/opt"}
     fi
     ;;
