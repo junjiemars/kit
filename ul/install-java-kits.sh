@@ -161,18 +161,21 @@ install_clojure() {
   local clojure_home="${OPEN_DIR}/clojure"
   local bin_dir="${clojure_home}/clojure-${CLOJURE_VER}"
   local clojure_bin="${RUN_DIR}/bin/clojure"
+  local clojure_sh="https://raw.githubusercontent.com/junjiemars/kit/master/clojure/clojure.sh"
 
   [ -x "${clojure_bin}" ] && return 0
 
   [ -d "${clojure_home}" ] || mkdir -p "${clojure_home}"
   if [ ! -f "${bin_dir}/${clojure_jar}" ]; then
-    curl -L -o "${clojure_home}/${clojure_zip}" -C - "${clojure_url}" && \
-      unzip "${clojure_home}/${clojure_zip}"
+    curl -L -o "${clojure_home}/${clojure_zip}" -C - "${clojure_url}"
+    if [ -f "${clojure_home}/${clojure_zip}" ]; then
+      cd "${clojure_home}" && unzip "${clojure_home}/${clojure_zip}"
+    fi
   fi
 
   if [ -f "${bin_dir}/${clojure_jar}" ]; then
-    echo -e "#!/bin/bash\njava -jar ${bin_dir}/${clojure_jar}" > "${clojure_bin}" && \
-      chmod u+x "${clojure_bin}"
+    curl -L -o "${clojure_bin}" -C - "${clojure_sh}" && \
+      sed -i.b0 "s/CLOJURE_JAR=/CLOJURE_JAR=${bin_dir}/${clojure_jar}"
     return 0
   fi
 
