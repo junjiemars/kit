@@ -88,7 +88,8 @@ ${curl} ${GITHUB_H}/ul/.bash_profile -o $HOME/.bash_profile
 case ${PLATFORM} in
   MSYS_NT*)
     ${curl} ${GITHUB_H}/win/.bashrc -o $HOME/.bashrc
-    ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/_vimrc
+    ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/_vimrc && \
+      cp $HOME/_vimrc $HOME/.vimrc
     ;;
   *)
     [ -f $HOME/.bashrc ] || ${curl} ${GITHUB_H}/ul/.bashrc -o $HOME/.bashrc

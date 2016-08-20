@@ -8,7 +8,11 @@ PLATFORM=`uname -s 2>/dev/null`
 
 case "${PLATFORM}" in
   MSYS_NT*)
-    PREFIX=${PREFIX:-"/d/opt"}
+    if [ -d "/d/" ]; then
+      PREFIX=${PREFIX:-"/d/opt"}
+    else
+      PREFIX=${PREFIX:-"/c/opt"}
+    fi
     ;;
   *)
     PREFIX=${PREFIX:-"/opt"}
