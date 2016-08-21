@@ -4,7 +4,20 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
-PREFIX=${PREFIX:-'/opt'}
+PLATFORM=`uname -s 2>/dev/null`
+case "${PLATFORM}" in
+  MSYS_NT*)
+    if [ -d "/d/" ]; then
+      PREFIX=${PREFIX:-"/d/opt"}
+    else
+      PREFIX=${PREFIX:-"/c/opt"}
+    fi
+    ;;
+  *)
+    PREFIX=${PREFIX:-"/opt"}
+    ;;
+esac
+
 RUN_DIR=${RUN_DIR:-"${PREFIX}/run"}
 OPEN_DIR=${OPEN_DIR:-"${PREFIX}/open"}
 
@@ -13,6 +26,7 @@ HAS_JDK=${HAS_JDK:-0}
 HAS_ANT=${HAS_ANT:-0}
 HAS_MAVEN=${HAS_MAVEN:-0}
 HAS_BOOT=${HAS_BOOT:-0}
+HAS_LEIN=${HAS_LEIN:-0}
 HAS_CLOJURE=${HAS_CLOJURE:-0}
 HAS_GRADLE=${HAS_GRADLE:-0}
 HAS_GROOVY=${HAS_GROOVY:-0}
@@ -154,6 +168,25 @@ install_boot() {
   return 1
 }
 
+install_lein() {
+  local lein_url="https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein"
+  local bin_dir="${RUN_DIR}/bin"
+  
+  if [ ! -f "${bin_dir}/lein" ]; then
+    curl -fsSLo "${bin_dir}/lein" -C - "${lein_url}" && \
+      chmod u+x "${bin_dir}/lein"
+  fi
+
+  case "${PLATFORM}" in
+    MSYS_NT*)
+      if [ ! -f "${bin_dir}/lein.bat" ]; then
+        curl -fsSLo "${bin_dir}/lein.bat" -C - "${lein_url}.bat" && \
+          chmod u+x "${bin_dir}/lein.bat"
+      fi
+      ;;
+  esac
+}
+
 install_clojure() {
   local clojure_zip="clojure-${CLOJURE_VER}.zip"
   local clojure_jar="clojure-${CLOJURE_VER}.jar"
@@ -254,6 +287,7 @@ if [ "YES" == "${HAS_ALL}" ]; then
   HAS_ANT=1
   HAS_MAVEN=1
   HAS_BOOT=1
+  HAS_LEIN=1
   HAS_CLOJURE=1
   HAS_GRADLE=1
   HAS_GROOVY=1
@@ -264,6 +298,7 @@ fi
 [ 0 -lt "${HAS_ANT}" ]      && KITS+=('install_ant')
 [ 0 -lt "${HAS_MAVEN}" ]    && KITS+=('install_maven')
 [ 0 -lt "${HAS_BOOT}" ]     && KITS+=('install_boot')
+[ 0 -lt "${HAS_LEIN}" ]     && KITS+=('install_lein')
 [ 0 -lt "${HAS_CLOJURE}" ]  && KITS+=('install_clojure')
 [ 0 -lt "${HAS_GRADLE}" ]   && KITS+=('install_gradle')
 [ 0 -lt "${HAS_GROOVY}" ]   && KITS+=('install_groovy')
