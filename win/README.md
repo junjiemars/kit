@@ -5,6 +5,7 @@
   * [Bash in Docker](#bash-in-docker)
 * [Encoding](#encoding)
 * [Emacs](#emacs)
+* [PsTools](#pstools)
 
 
 ## Bash Environment
@@ -58,4 +59,14 @@ $ cd && git clone --depth=1 --branch=master https://github.com/junjiemars/.emacs
 $ bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh)
 $ . ~/.bashrc
 $ HAS_EMACS=1 bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/win/install-win-kits.sh)
+```
+
+## PsTools
+[PsTools](https://technet.microsoft.com/en-us/sysinternals/pstools.aspx) is very handy and powerful tools on Windows written 
+by [Mark Russinovich](https://en.wikipedia.org/wiki/Mark_Russinovich) since in [Sysinternals](https://en.wikipedia.org/wiki/Sysinternals).
+And it very easy to use:
+```sh
+$ HAS_PSTOOL=1 bash <(curl https:/raw.githubusercontent.com/junjiemars/kit/master/win/install-win-kits.sh)
+$ . ~/.bashrc
+$ pslist
 ```

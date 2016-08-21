@@ -6,6 +6,7 @@
 
 HAS_ALL=${HAS_ALL:-"NO"}
 HAS_EMACS=${HAS_EMACS:-0}
+HAS_PSTOOLS=${HAS_PSTOOLS:-0}
 
 EMACS_VER=${EMACS_VER:-"24.5"}
 
@@ -20,7 +21,7 @@ to_win_var() {
 }
 
 #set_path() {
-#
+# can not get user specific PATH vars
 #}
 
 download_winport() {
@@ -36,10 +37,9 @@ install_emacs() {
   local emacs_url="http://ftp.gnu.org/gnu/emacs/windows/${emacs_zip}"
   local emacs_home="${OPT_RUN}/emacs"
   local bin_dir="${emacs_home}/bin"
-  local lib_dir="${emacs_home}/lib"
-  local tmp_dir="${emacs_home}/tmp"
 
   [ -d "${emacs_home}" ] || mkdir -p "${emacs_home}"
+
   if [ ! -x "${bin_dir}/runemacs.exe" ]; then
     curl -Lo "${emacs_home}/${emacs_zip}" -C - "${emacs_url}"
     if [ -f "${emacs_home}/${emacs_zip}" ]; then
@@ -47,8 +47,6 @@ install_emacs() {
     fi
     cd "${emacs_home}" && unzip -qo "${emacs_home}/${emacs_zip}"
   fi
-
-  [ -d "${lib_dir}" ] || mkdir -p "${lib_dir}"
 
   if [ ! -x "${bin_dir}/gnutls-cli.exe" ]; then
     local gnutls_zip="gnutls-3.3.11-w32-bin.zip"
@@ -63,11 +61,29 @@ install_emacs() {
   return 0
 }
 
+install_pstools() {
+  local pstools_zip="PSTools.zip"  
+  local pstools_url="https://download.sysinternals.com/files/${pstools_zip}"
+  local pstools_home="${OPT_RUN}/pstools"
+
+  [ 0 -eq `pslist &>/dev/null;echo $?` ] && return 0
+  [ -d "${pstools_home}" ] || mkdir -p "${pstools_home}"
+
+  curl -Lo "${pstools_home}/${pstools_zip}" -C - "${pstools_url}" 
+  if [ ! -x "${pstools_home}/pslist" ]; then
+    unzip -qo "${pstools_home}/${pstools_zip}" -d"${pstools_home}"
+  fi
+
+  return 0
+}
+
 if [ "YES" == "${HAS_ALL}" ]; then
   HAS_EMACS=1
+  HAS_PSTOOLS=1
 fi
 
 [ 0 -lt "${HAS_EMACS}" ]      && KITS+=('install_emacs')
+[ 0 -lt "${HAS_PSTOOLS}" ]      && KITS+=('install_pstools')
 
 # check OPT_* env vars
 if [ -z "$OPT_RUN" ]; then
