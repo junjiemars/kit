@@ -1,12 +1,17 @@
-# git-bash shortcut
-# target: "<path-to-git-bash.exe>" -cd-to-home
-# start in: %HOMEDRIVER%%HOMEPATH%
+#------------------------------------------------
+# target: git-bash env on Windows 
+# author: junjiemars@gmail.com
+# Note:
+# > mintty.exe instead 
+# > start in %USERPROFILE%
+#------------------------------------------------
+
 
 test -f ~/.bash_aliases && . ~/.bash_aliases 
 test -f ~/.bash_vars && . ~/.bash_vars
 test -f ~/.bash_paths && . ~/.bash_paths
 
-
+# let MSYS_NT and user defined commands first
 sort_path() {
   local sort='/usr/bin/sort'
   local car="`echo -n "$1" | \
