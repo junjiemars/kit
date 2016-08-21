@@ -9,6 +9,20 @@ HAS_EMACS=${HAS_EMACS:-0}
 
 EMACS_VER=${EMACS_VER:-"24.5"}
 
+to_win_path() {
+  echo "$1" | \
+    sed -e 's#^\/\([a-zA-Z]\)\/#\u\1:\/#' | \
+    sed -e 's#\/#\\#g'
+}
+
+to_win_var() {
+  setx "$1=$2" 
+}
+
+#set_path() {
+#
+#}
+
 download_winport() {
   local ezwinports="https://sourceforge.net/projects/ezwinports"
   local dest_dir=$1

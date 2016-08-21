@@ -37,8 +37,8 @@ append_paths() {
 }
 
 to_posix_path() {
-  echo "/$1" | \
-    sed -e 's#^\/\([A-Z]\):\\#\/\l\1\/#' | \
+  echo "\\$1" | \
+    sed -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' | \
     sed -e 's#\\#\/#g' 
 }
 
