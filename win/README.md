@@ -61,6 +61,12 @@ $ . ~/.bashrc
 $ HAS_EMACS=1 bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/win/install-win-kits.sh)
 ```
 
+I'd not found a effective way to get/set user specific PATH environment in Bash, sadly we need 
+set the PATH for Emacs by hand via **Advanced System Settings > Environment Variables > User Variables**
+* Set EMACS_HOME to $OPT_RUN/emacs
+* Append %EMACS_HOME%\bin to PATH
+* Append %EMACS_HOME%\lib to PATH
+
 ## PsTools
 [PsTools](https://technet.microsoft.com/en-us/sysinternals/pstools.aspx) is very handy and powerful tools on Windows written 
 by [Mark Russinovich](https://en.wikipedia.org/wiki/Mark_Russinovich) since in [Sysinternals](https://en.wikipedia.org/wiki/Sysinternals).
@@ -70,3 +76,7 @@ $ HAS_PSTOOL=1 bash <(curl https:/raw.githubusercontent.com/junjiemars/kit/maste
 $ . ~/.bashrc
 $ pslist
 ```
+
+Set PsTools environment variables by hand, the reason is samed with [Emacs](#emacs):
+* Set PSTOOLS_HOME to $OPT_RUN/pstools
+* Append %PSTOOLS_HOME% to PATH
