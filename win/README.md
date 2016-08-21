@@ -4,6 +4,8 @@
   * [Git-Bash](#git-bash)
   * [Bash in Docker](#bash-in-docker)
 * [Encoding](#encoding)
+* [Emacs](#emacs)
+
 
 ## Bash Environment
 Bash is awsome tool for Windows, but let it works perfectly and as 
@@ -44,4 +46,16 @@ REM change value from:
 HKEY_LOCAL_MACHINE\Software\Microsoft\Command Processor\Autorun
 REM to:
 @chcp 65001>nul
+```
+
+## Emacs
+Install and setup [Emacs](https://www.gnu.org/software/emacs/) on Windows needs some tricks: the samed behaviors, keybindings, styles on Windows just like on Linux or Darwin.
+On Windows, Emacs always missing some libraries, such zlib, gnutls, etc.
+
+But the following handy kits do it all for you:
+```sh
+$ cd && git clone --depth=1 --branch=master https://github.com/junjiemars/.emacs.d.git
+$ bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh)
+$ . ~/.bashrc
+$ HAS_EMACS=1 bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/win/install-win-kits.sh)
 ```
