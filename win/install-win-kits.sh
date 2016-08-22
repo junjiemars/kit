@@ -42,7 +42,7 @@ install_emacs() {
 
   if [ ! -x "${bin_dir}/runemacs.exe" ]; then
     curl -Lo "${emacs_home}/${emacs_zip}" -C - "${emacs_url}"
-    if [ -f "${emacs_home}/${emacs_zip}" ]; then
+    if [ ! -f "${emacs_home}/${emacs_zip}" ]; then
       return 1
     fi
     cd "${emacs_home}" && unzip -qo "${emacs_home}/${emacs_zip}"
