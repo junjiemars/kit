@@ -7,6 +7,7 @@
 HAS_ALL=${HAS_ALL:-"NO"}
 HAS_EMACS=${HAS_EMACS:-0}
 HAS_PSTOOLS=${HAS_PSTOOLS:-0}
+HAS_NETCAT=${HAS_NETCAT:-0}
 
 EMACS_VER=${EMACS_VER:-"24.5"}
 
@@ -77,13 +78,37 @@ install_pstools() {
   return 0
 }
 
+install_netcat() {
+  local nc_zip="netcat-win32-1.12.zip"
+  local nc_url="https://eternallybored.org/misc/netcat/${nc_zip}"
+  local bin_dir="${OPT_RUN}/bin"
+  local nc_tmp="$HOME/Downloads"
+  
+  [ 0 -eq `nc -h &>/dev/null;echo $?` ] && return 0
+
+  if [ ! -f "${bin_dir}/nc" ]; then
+    curl -Lo "${nc_tmp}/${nc_zip}" -C - "${nc_url}"
+  fi
+
+  if [ -f "${nc_tmp}/${nc_zip}" ]; then
+    unzip -qo "${nc_tmp}/${nc_zip}" 'nc.exe' -d"${bin_dir}"
+    unzip -qo "${nc_tmp}/${nc_zip}" 'nc64.exe' -d"${bin_dir}"
+  else
+    return 1
+  fi
+
+  return 0
+}
+
 if [ "YES" == "${HAS_ALL}" ]; then
   HAS_EMACS=1
   HAS_PSTOOLS=1
+  HAS_NETCAT=1
 fi
 
-[ 0 -lt "${HAS_EMACS}" ]      && KITS+=('install_emacs')
+[ 0 -lt "${HAS_EMACS}" ]        && KITS+=('install_emacs')
 [ 0 -lt "${HAS_PSTOOLS}" ]      && KITS+=('install_pstools')
+[ 0 -lt "${HAS_NETCAT}" ]       && KITS+=('install_netcat')
 
 # check OPT_* env vars
 if [ -z "$OPT_RUN" ]; then
