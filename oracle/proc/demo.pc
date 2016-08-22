@@ -1,0 +1,141 @@
+/* 
+** standard include files for Pro*C application 
+** from: http://oradim.blogspot.jp/2009/09/getting-started-with-oracle-proc-on.html
+*/ 
+#include <stdio.h> 
+#include <string.h> 
+#include <stdlib.h> 
+#include <sqlca.h> 
+#include <sqlda.h> 
+#include <sqlcpr.h>
+
+#define NAME_LEN 30 
+#define ERR_LEN 512
+
+VARCHAR username[NAME_LEN]; 
+VARCHAR password[NAME_LEN]; 
+VARCHAR database[NAME_LEN];
+
+/* 
+** host variables to hold results of query 
+*/ 
+int     dept; 
+VARCHAR fname[NAME_LEN]; 
+VARCHAR lname[NAME_LEN]; 
+int     sal; 
+int     rn;
+
+/* 
+** indicator variables used to determine null-ness 
+*/ 
+short dept_ind; 
+short fname_ind; 
+short lname_ind; 
+short sal_ind; 
+short rn_ind;
+
+/* 
+** standard Pro*C error handler function 
+*/ 
+void sql_error(char *msg) 
+{ 
+  char err_msg[ERR_LEN]; 
+  size_t buf_len, msg_len;
+
+  EXEC SQL WHENEVER SQLERROR CONTINUE;
+
+  printf("\n");
+
+  if (msg) 
+  { 
+    printf("%s\n", msg); 
+  }
+
+  buf_len = sizeof (err_msg); 
+  sqlglm(err_msg, &buf_len, &msg_len); 
+  printf("%.*s", msg_len, err_msg);
+
+  EXEC SQL ROLLBACK RELEASE;
+
+  exit(EXIT_FAILURE); 
+}
+
+int main(int argc, char *argv[]) 
+{ 
+  /* 
+  ** setup username, password and database (ezconnect format) 
+  */ 
+  strncpy((char *) username.arr, "hr", NAME_LEN); 
+  username.len = (unsigned short) strlen((char *) username.arr);
+
+  strncpy((char *) password.arr, "hr", NAME_LEN); 
+  password.len = (unsigned short) strlen((char *) password.arr);
+
+  strncpy((char *) database.arr, "oel02:1521/XE", NAME_LEN); 
+  database.len = (unsigned short) strlen((char *) database.arr);
+
+  /* 
+  ** register the error handler function 
+  */ 
+  EXEC SQL WHENEVER SQLERROR DO sql_error("ORACLE error: \n");
+
+  /* 
+  ** attempt to connect to the database 
+  */ 
+  EXEC SQL CONNECT :username IDENTIFIED BY :password USING :database;
+
+  /* 
+  ** indicate we want to break out of the loop when we get a no data 
+  ** found message (i.e. at end of fetch) 
+  */ 
+  EXEC SQL WHENEVER NOT FOUND DO break;
+
+  /* 
+  ** declare and open cursor using analytic function 
+  ** to get "top 3" in department by highest salary 
+  */ 
+  EXEC SQL DECLARE emp_cursor CURSOR FOR 
+    select   * 
+    from 
+    ( 
+      select   department_id, 
+               first_name, 
+               last_name, 
+               salary, 
+               row_number() over (partition by department_id 
+                                  order by salary desc) rn 
+      from     employees 
+      where    department_id is not null 
+    ) 
+    where   rn <= 3;
+
+  EXEC SQL OPEN emp_cursor;
+
+  /* 
+  ** loop through cursor fetching results 
+  ** and printing as we go 
+  */ 
+  for (;;) 
+  { 
+    EXEC SQL FETCH emp_cursor 
+      INTO :dept:dept_ind, 
+           :fname:fname_ind, 
+           :lname:lname_ind, 
+           :sal:sal_ind, 
+           :rn:rn_ind;
+
+    fname.arr[fname.len] = '\0'; 
+    lname.arr[lname.len] = '\0';
+
+    printf("%d, %s %s, %d, %d\n", dept, fname.arr, lname.arr, sal, rn); 
+  }
+
+  /* 
+  ** clean-up and exit 
+  */ 
+  EXEC SQL CLOSE emp_cursor;
+
+  EXEC SQL COMMIT RELEASE;
+
+  return EXIT_SUCCESS; 
+} 
