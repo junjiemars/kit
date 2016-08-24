@@ -8,3 +8,4 @@ exp-*.sql
 
 *.buf
 *.swp
+*.reg
