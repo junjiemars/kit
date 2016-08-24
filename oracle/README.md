@@ -71,6 +71,17 @@ cat nls-parameters.sql | sqlplus.sh username/password@host:port/sid
 
 ## Schema
 
+### Login
+* As SYSDBA Role
+
+Must on the machine which Oracle instance running on.
+```sh
+$ sqlplus system/passwd
+SQL> alter user sys identified by passwd;
+SQL> connect sys/passwd as sysdba;
+```
+* As SYSTEM User
+
 ## Tablespaces
 
 ## Tables
