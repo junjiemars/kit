@@ -1,19 +1,26 @@
+
+--------------------------------------------------
+-- author: junjiemars@gmail.com
+-- target: create/grant user
+--------------------------------------------------
+
 define user_name=xws
 define user_password=xws
-define user_tablespace=USERS
+define user_tablespace=ts_xws
 
-CREATE USER &&user_name IDENTIFIED BY &&user_password
-DEFAULT TABLESPACE &&user_tablespace
-ACCOUNT UNLOCK;
 
-GRANT CONNECT, RESOURCE TO &&user_name;
+create user &&user_name identified by &&user_password
+  default tablespace &&user_tablespace
+  account unlock;
 
-GRANT CREATE TABLE TO &&user_name;
-GRANT CREATE DATABASE LINK TO &&user_name;
-GRANT CREATE VIEW TO &&user_name;
-GRANT CREATE SEQUENCE TO &&user_name;
-GRANT CREATE PROCEDURE TO &&user_name;
-GRANT CREATE MATERIALIZED VIEW TO &&user_name;
-GRANT CREATE SYNONYM TO &&user_name;
-GRANT IMP_FULL_DATABASE to &&user_name;
-GRANT DEBUG CONNECT SESSION TO &&user_name;
+grant connect, resource to &&user_name;
+
+grant create table to &&user_name;
+grant create database link to &&user_name;
+grant create view to &&user_name;
+grant create sequence to &&user_name;
+grant create procedure to &&user_name;
+grant create materialized view to &&user_name;
+grant create synonym to &&user_name;
+grant imp_full_database to &&user_name;
+grant debug connect session to &&user_name;

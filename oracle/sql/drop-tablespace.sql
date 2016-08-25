@@ -1,3 +1,9 @@
+
+--------------------------------------------------
+-- author: junjiemars@gmail.com
+-- target: drop tablespace by name
+--------------------------------------------------
+
 define ts_name=ts_xws
 
 
