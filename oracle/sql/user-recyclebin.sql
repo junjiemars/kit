@@ -11,4 +11,4 @@ SELECT
 FROM user_recyclebin
 ;
 
-/
+

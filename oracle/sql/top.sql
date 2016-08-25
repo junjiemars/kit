@@ -24,5 +24,5 @@ select * from(
 where rownum < 11
 ;
 
-/
+
 

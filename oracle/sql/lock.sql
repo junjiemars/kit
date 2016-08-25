@@ -1,4 +1,4 @@
-/*
+*
     This script displays sessions that have locks on tables that are preventing other sessions from completing work. The script shows details about the blocking and waiting sessions.
 */
 

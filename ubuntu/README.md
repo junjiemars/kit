@@ -2,6 +2,7 @@
 
 * [Desktop](#desktop)
   * [Setup desktop shortcuts](#setup-desktop-shortcuts)
+  * [Fonts](#fonts)
 * [DNS](#dns)
 * [Files](#files)
   * [Mount Windows directories](#mount-windows-directories)
@@ -16,6 +17,12 @@
 ```sh
 bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/setup-<application>-desktop.sh)
 ```
+
+### Fonts
+The default Ubuntu fonts is awesome, **DejaVu Sans Mono** be loved but if you want to try some sexy fonts: pls, follow the white rabbit
+* Download the white rabbit
+* Upcompress and copy it to /usr/share/fonts, take care of font's categories
+* Flash fonts cache ```fc-cache -fv```
 
 ## DNS
 Ubuntu 14.04+ adapt a useless dns component: [avahi-daemon](http://manpages.ubuntu.com/manpages/xenial/man8/avahi-daemon.8.html), 

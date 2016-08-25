@@ -12,4 +12,4 @@ select * from v$session
   where username=upper('&&user_name')
 ;
 
-/
+

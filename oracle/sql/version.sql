@@ -7,4 +7,4 @@
 select * from v$version
 ;
 
-/
+

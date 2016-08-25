@@ -19,4 +19,3 @@ from v$database
   order by name
 ;
 
-/

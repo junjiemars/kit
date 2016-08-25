@@ -11,4 +11,3 @@ select * from v$tablespace
   order by ts#
 ;
 
-/
