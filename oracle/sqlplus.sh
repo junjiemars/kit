@@ -24,7 +24,13 @@ fi
 
 if [ 0 -eq $# ] ; then
 	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${CONNECT_IDENTIFIER}
-else 
+elif [ 1 -le $# ]; then
+	if `echo $1|grep .*@.*[:/][0-9]*[:/].* &>/dev/null`; then
+		${RLWRAP} sqlplus $1 ${@:2}
+  else
+		${RLWRAP} sqlplus $1@${CONNECT_IDENTIFIER} ${@:2}
+  fi
+else
 	${RLWRAP} sqlplus $@
 fi
 

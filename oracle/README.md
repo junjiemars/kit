@@ -51,20 +51,26 @@ for all of Oracle's commands.
 
 * Interactive Mode
 ```sh
-sqlplus.sh username/password@host:port/sid
+# login
+$ sqlplus.sh
+$ sqlplus.sh username/passwword
+$ sqlplus.sh username/password@host:port/sid
 
 # parameterized 
-ORACLE_HOME=<ur-oracle-home> sqlplus.sh username/password@host:port/sid
+$ ORACLE_HOME=<ur-oracle-home> sqlplus.sh username/password@host:port/sid
 
 # general style via oracle.sh
-CMD=sqlplus.sh oracle.sh username/password@host:port/sid
+$ CMD=sqlplus.sh oracle.sh username/password@host:port/sid
 ```
+
 * Command Line Mode
 ```sh
-cat nls-parameters.sql | sqlplus.sh username/password@host:port/sid
+# run sql script
+$ cat users.sql | sqlplus.sh username/password@host:port/sid
+$ sqlplus.sh username/password@host:port/sid @users
 
 # parameterized 
-cat nls-parameters.sql | sqlplus.sh username/password@host:port/sid
+cat users.sql | sqlplus.sh username/password@host:port/sid
 ```
 
 ## Import and Export
