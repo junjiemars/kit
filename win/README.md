@@ -3,7 +3,9 @@
 * [Bash Environment](#bash-environment)
   * [Git-Bash](#git-bash)
   * [Bash in Docker](#bash-in-docker)
-* [Encoding](#encoding)
+* [Command Prompt](#command-prompt)
+  * [Encoding](#encoding)
+  * [Font](#font)
 * [Emacs](#emacs)
 * [PsTools](#pstools)
 
@@ -33,9 +35,9 @@ bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bas
 ### Bash in Docker 
 Pull docker images or build from dockerfile, see [Kit for Docker](https://raw.githubusercontent.com/junjiemars/kit/master/docker/README.md)
 
-## Encoding
+## Command Prompt
 
-### Command Prompt
+### Encoding
 * Mannually
 ```bat
 REM unicode:65001, OEM(US):437, OEM(GBK):936
@@ -47,6 +49,16 @@ REM change value from:
 HKEY_LOCAL_MACHINE\Software\Microsoft\Command Processor\Autorun
 REM to:
 @chcp 65001>nul
+```
+
+### Font
+It's depends on [Encoding](#encoding) and font settings. 
+To change **Font** needs some tricks and I wrote a [setup-cmd.bat](https://raw.githubusercontent.com/junjiemars/kit/master/win/setup-cmd.bat)
+ for doing that all for you.
+
+Run as Administractor into **Command Prompt** 
+```bat
+> setup-cmd.bat "White Rabbit"
 ```
 
 ## Emacs
