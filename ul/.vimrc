@@ -27,7 +27,7 @@ hi cursorlinenr term=bold ctermfg=yellow gui=bold guifg=yellow
 syntax on
 
 " background dark
-set background=dark
+set background=light
 
 " status bar
 set ruler
