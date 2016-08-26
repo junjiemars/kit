@@ -26,6 +26,9 @@ hi cursorlinenr term=bold ctermfg=yellow gui=bold guifg=yellow
 " syntax highlight
 syntax on
 
+" background dark
+set background=dark
+
 " status bar
 set ruler
 "set laststatus=2
