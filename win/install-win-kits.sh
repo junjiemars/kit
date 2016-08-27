@@ -115,7 +115,8 @@ install_netcat() {
   if [ -f "${nc_tmp}/${nc_zip}" ]; then
     case `uname -m 2>/dev/null` in
       x86_64) 
-        unzip -qo "${nc_tmp}/${nc_zip}" 'nc64.exe' -d"${bin_dir}"
+        unzip -qo "${nc_tmp}/${nc_zip}" 'nc64.exe' -d"${bin_dir}" && \
+          mv "${bin_dir}/nc64.exe" "${bin_dir}/nc.exe"
       ;;
       *)
         unzip -qo "${nc_tmp}/${nc_zip}" 'nc.exe' -d"${bin_dir}"
