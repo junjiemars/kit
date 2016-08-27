@@ -7,6 +7,7 @@
 HAS_ALL=${HAS_ALL:-"NO"}
 HAS_EMACS=${HAS_EMACS:-0}
 HAS_PSTOOLS=${HAS_PSTOOLS:-0}
+HAS_PROCEXP=${HAS_PROCEXP:-0}
 HAS_NETCAT=${HAS_NETCAT:-0}
 
 EMACS_VER=${EMACS_VER:-"24.5"}
@@ -78,6 +79,27 @@ install_pstools() {
   return 0
 }
 
+install_procexp() {
+  local procexp_zip="ProcessExplorer.zip"  
+  local procexp_url="https://download.sysinternals.com/files/${procexp_zip}"
+  local bin_dir="${OPT_RUN}/bin"
+  local procexp_tmp="$HOME/Downloads"
+
+  `type -p procexp &>/dev/null` && return 0
+
+  if [ ! -f "${bin_dir}/procexp" ]; then
+    curl -Lo "${procexp_tmp}/${procexp_zip}" -C - "${procexp_url}" 
+  fi
+
+  if [ -f "${procexp_tmp}/${procexp_zip}" ]; then
+    unzip -qo "${procexp_tmp}/${procexp_zip}" 'procexp.exe' -d"${bin_dir}"
+  else
+    return 1
+  fi
+
+  return 0
+}
+
 install_netcat() {
   local nc_zip="netcat-win32-1.12.zip"
   local nc_url="https://eternallybored.org/misc/netcat/${nc_zip}"
@@ -103,11 +125,13 @@ install_netcat() {
 if [ "YES" == "${HAS_ALL}" ]; then
   HAS_EMACS=1
   HAS_PSTOOLS=1
+  HAS_PROCEXP=1
   HAS_NETCAT=1
 fi
 
 [ 0 -lt "${HAS_EMACS}" ]        && KITS+=('install_emacs')
 [ 0 -lt "${HAS_PSTOOLS}" ]      && KITS+=('install_pstools')
+[ 0 -lt "${HAS_PROCEXP}" ]      && KITS+=('install_procexp')
 [ 0 -lt "${HAS_NETCAT}" ]       && KITS+=('install_netcat')
 
 # check OPT_* env vars
