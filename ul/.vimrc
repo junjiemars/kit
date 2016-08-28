@@ -5,7 +5,7 @@ set tabstop=2
 set shiftwidth=2
 
 " spaces instead of tabs
-set expandtab
+"set expandtab
 
 " history
 set history=50
