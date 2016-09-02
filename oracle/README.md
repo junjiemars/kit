@@ -5,6 +5,8 @@
   * [On Unix-like](#on-unix-like) 
   * [How to Use](#how-to-use)
 * [Import and Export](#import-and-export)
+  * [Export Objects](#export-objects)
+  * [Transform SQL File](#transform-sql-file)
 * [Schema](#schema)
 * [Tablespaces](#tablespaces)
 * [Tables](#tables)
@@ -74,6 +76,24 @@ cat users.sql | sqlplus.sh username/password@host:port/sid
 ```
 
 ## Import and Export
+
+### Export Objects
+
+### Transform SQL File
+Transform the tablespace and schema from file.
+
+* Transform Tablespace
+```sh
+$ eoo.sh -dsqlfile -f<sql-file> -t<from-tablespace:to-tablespace>
+```
+* Transform Schema
+```sh
+$ eoo.sh -dsqlfile -f<sql-file> -u<from-user:to-user>
+```
+* Or Both
+```sh
+$ eoo.sh -dsqlfile -f<sql-file> -t<from-tablespace:to-tablespace> -u<from-user:to-user>
+```
 
 ## Schema
 
