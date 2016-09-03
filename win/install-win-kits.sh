@@ -9,6 +9,7 @@ HAS_EMACS=${HAS_EMACS:-0}
 HAS_PSTOOLS=${HAS_PSTOOLS:-0}
 HAS_PROCEXP=${HAS_PROCEXP:-0}
 HAS_NETCAT=${HAS_NETCAT:-0}
+HAS_GMAKE=${HAS_GMAKE:-0}
 
 EMACS_VER=${EMACS_VER:-"24.5"}
 
@@ -18,7 +19,7 @@ to_win_path() {
     sed -e 's#\/#\\#g'
 }
 
-to_win_var() {
+set_win_var() {
   setx "$1=$2" 
 }
 
@@ -129,17 +130,55 @@ install_netcat() {
   return 0
 }
 
+install_gmake() {
+	local gm_bin_zip="make-3.81-bin.zip"
+  local gm_url="https://sourceforge.net/projects/gnuwin32/files/make/3.81"
+	local gm_bin_url="${gm_url}/${gm_bin_zip}/download"
+	local gm_dep_zip="make-3.81-dep.zip"
+	local gm_dep_url="${gm_url}/${gm_dep_zip}/download"
+	local bin_dir="${OPT_RUN}/gmake"
+	local gm_tmp="$HOME/Downloads"
+
+	#[ `make -v $>/dev/null` ] && return 0
+	[ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
+
+	if [ ! -f "${bin_dir}/make.exe" ]; then
+		curl -Lo "${gm_tmp}/${gm_bin_zip}" -C - "${gm_bin_url}"
+	fi
+	if [ -f "${gm_tmp}/${gm_bin_zip}" ]; then
+		unzip -qo "${gm_tmp}/${gm_bin_zip}" 'bin/make.exe' -d"${gm_tmp}/gm_bin" && \
+      cp "${gm_tmp}/gm_bin/bin/make.exe" "${bin_dir%/}/"
+	else
+		return 1
+	fi
+
+	if [ ! -f "${bin_dir}/libiconv2.dll" ]; then
+		curl -Lo "${gm_tmp}/${gm_dep_zip}" -C - "${gm_dep_url}"
+	fi
+	if [ -f "${gm_tmp}/${gm_dep_zip}" ]; then
+		unzip -qo "${gm_tmp}/${gm_dep_zip}" 'bin/*' -d"${gm_tmp}/gm_dep" 
+    [ -f "${gm_tmp}/gm_dep/bin/libiconv2.dll" ] && \
+      cp -r "${gm_tmp}/gm_dep/bin/" "${bin_dir%/}/"
+	else
+		return 1
+	fi
+	
+	return 0	
+}
+
 if [ "YES" == "${HAS_ALL}" ]; then
   HAS_EMACS=1
   HAS_PSTOOLS=1
   HAS_PROCEXP=1
   HAS_NETCAT=1
+	HAS_GMAKE=1
 fi
 
 [ 0 -lt "${HAS_EMACS}" ]        && KITS+=('install_emacs')
 [ 0 -lt "${HAS_PSTOOLS}" ]      && KITS+=('install_pstools')
 [ 0 -lt "${HAS_PROCEXP}" ]      && KITS+=('install_procexp')
 [ 0 -lt "${HAS_NETCAT}" ]       && KITS+=('install_netcat')
+[ 0 -lt "${HAS_GMAKE}" ]        && KITS+=('install_gmake')
 
 # check OPT_* env vars
 if [ -z "$OPT_RUN" ]; then
