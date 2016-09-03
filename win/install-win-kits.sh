@@ -162,6 +162,9 @@ install_gmake() {
 	else
 		return 1
 	fi
+
+	[ "function" = `type -t append_paths` ] && \
+		append_paths "${bin_dir}"
 	
 	return 0	
 }
