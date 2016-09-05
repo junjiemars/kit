@@ -163,7 +163,7 @@ install_gmake() {
 		return 1
 	fi
 
-	[ "function" = `type -t append_paths` ] && \
+	[ "function" = `type -t append_paths 2>/dev/null` ] && \
 		append_paths "${bin_dir}"
 	
 	return 0	
