@@ -158,7 +158,8 @@ install_gmake() {
 	if [ -f "${gm_tmp}/${gm_dep_zip}" ]; then
 		unzip -qo "${gm_tmp}/${gm_dep_zip}" 'bin/*' -d"${gm_tmp}/gm_dep" 
     [ -f "${gm_tmp}/gm_dep/bin/libiconv2.dll" ] && \
-      cp -r "${gm_tmp}/gm_dep/bin/" "${bin_dir%/}/"
+      find "${gm_tmp}/gm_dep/bin" -type f -name '*.dll' \
+				-exec cp -t "${bin_dir}" {} +
 	else
 		return 1
 	fi
