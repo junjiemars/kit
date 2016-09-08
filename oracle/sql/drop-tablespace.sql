@@ -4,7 +4,7 @@
 -- target: drop tablespace by name
 --------------------------------------------------
 
-define ts_name=ts_xws
+--define ts_name=which
 
 
 drop tablespace &&ts_name
