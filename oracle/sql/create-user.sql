@@ -4,9 +4,9 @@
 -- target: create/grant user
 --------------------------------------------------
 
-define user_name=xws
-define user_password=xws
-define user_tablespace=ts_xws
+--define user_name=who
+--define user_password=who
+--define user_tablespace=which
 
 
 create user &&user_name identified by &&user_password

@@ -4,7 +4,7 @@
 -- target: drop user by name
 --------------------------------------------------
 
-define user_name=xws
+--define user_name=who
 
 
 drop user &&user_name cascade
