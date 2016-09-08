@@ -69,7 +69,7 @@ install_pstools() {
   local pstools_url="https://download.sysinternals.com/files/${pstools_zip}"
   local pstools_home="${OPT_RUN}/pstools"
 
-  [ 0 -eq `pslist &>/dev/null;echo $?` ] && return 0
+  `pslist &>/dev/null` && return 0
   [ -d "${pstools_home}" ] || mkdir -p "${pstools_home}"
 
   curl -Lo "${pstools_home}/${pstools_zip}" -C - "${pstools_url}" 
@@ -107,7 +107,7 @@ install_netcat() {
   local bin_dir="${OPT_RUN}/bin"
   local nc_tmp="$HOME/Downloads"
   
-  [ 0 -eq `nc -h &>/dev/null;echo $?` ] && return 0
+  `nc -h &>/dev/null` && return 0
 
   if [ ! -f "${bin_dir}/nc" ]; then
     curl -Lo "${nc_tmp}/${nc_zip}" -C - "${nc_url}"
@@ -193,7 +193,7 @@ fi
 
 for i in "${KITS[@]}"; do
   echo -e "# ${i} ..." 
-  if [ 0 -eq `${i} &>/dev/null;echo $?` ]; then
+  if `${i} &>/dev/null`; then
     echo -e "# ${i} good."
   else
     echo -e "# ${i} panic!"

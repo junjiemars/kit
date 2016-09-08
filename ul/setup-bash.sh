@@ -51,7 +51,7 @@ save_as() {
 }
 
 set_vim_paths() {
-  if [[ 0 -eq `type -p cc >/dev/null; echo $?` ]]; then
+  if `type -p cc &>/dev/null`; then
     cc_out="`echo '' | cc -v -E 2>&1 >/dev/null - \
             | awk '/#include <...> search starts here:/,/End of search list./'`"
     if [ -n "$cc_out" ]; then
