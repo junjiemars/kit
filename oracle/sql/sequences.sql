@@ -13,4 +13,5 @@ column last_number heading LAST|NUMBER format 99
 
 select *
 	from user_sequences
+	order by sequence_name
 ;
