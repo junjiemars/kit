@@ -10,7 +10,7 @@
 
 PREFIX=${PREFIX:-"ein"}
 
-TABLE_LIST=${TABLE_LIST:-"${PREFIX%/}/table.lst"}
+TABLE_LIST=${TABLE_LIST:-"table.lst"}
 NUMBER=${NUMBER:-100}
 
 USERID=${USERID:-"system/oracle@localhost:1521/XE"}
@@ -28,45 +28,58 @@ check_list_file() {
 
 check_ei_dir() {
 	if [ ! -d $1 ]; then
-		echo "$1 no found, stop!"
+		echo "$1 no found, create ..."
+		mkdir -p $PREFIX
 	fi
 }
 
 nl2c() {
-	local c=`cat $1 | tr -d ' ' | tr '\n' ' '`
-	echo ${c[@]%,}
+	local c=`cat $1 | tr -d ' ' | tr '\n' "$2"`
+	echo ${c[@]%$2}
+}
+
+out_filename() {
+	echo "${PREFIX%/}/$1$2"
 }
 
 exp() {
 	check_list_file $TABLE_LIST
 	check_ei_dir $PREFIX	
 
-	local declare -a t_list=( $(nl2c $TABLE_LIST) )
+	local t_list=( $(nl2c $TABLE_LIST "\ ") )
 	
 	for t in ${t_list[@]};do 
 		exp.sh $USERID \
 			tables=$t \
-			file=${PREFIX%/}/${t}.dmp \
-			log=${PREFIX%/}/${t}.log\
+			file=$(out_filename $t '.dmp') \
+			log=$(out_filename $t '.log') \
 			indexes=y \
 			query=\"where rownum \<= $NUMBER\"
 	done	
+	
+	cp $TABLE_LIST $PREFIX
 }
 
 imp() {
-	check_list_file $TABLE_LIST
 	if [ ! -d $PREFIX ]; then
 		echo "$PREFIX no found, where are dmp files?"
 		exit 1
 	fi
 
-	for f in `find $PREFIX -maxdepth 1 -type f -name '*.dmp'`; do
-		imp.sh $USERID \
-			file=$f \
-			fromuser=$E_USER \
-			touser=$I_USER \
-			log=${f}_imp.log \
-			ignore=y
+	check_list_file ${PREFIX%/}/$TABLE_LIST
+
+	local t_list=( $(nl2c ${PREFIX%/}/$TABLE_LIST "\ ") )
+
+	for t in ${t_list[@]}; do
+		local dmp=$(out_filename $t '.dmp')	
+		if [ -f $dmp ]; then
+			imp.sh $USERID \
+				file=$dmp \
+				fromuser=$E_USER \
+				touser=$I_USER \
+				log=$(out_filename $t '_imp.log') \
+				ignore=y
+		fi
 	done
 }
 	
