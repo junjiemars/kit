@@ -21,14 +21,14 @@ SID=${SID:-'XE'}
 CONNECT_IDENTIFIER=${CONNECT_IDENTIFIER:-"${HOST}:${PORT}/${SID}"}
 
 if [ 0 -eq $# ] ; then
-	exp help=y
+	expdp help=y
 elif [ 1 -le $# ]; then
 	if `echo $1|grep .*@.*[:/][0-9]*[:/].* &>/dev/null`; then
-		exp $1 ${@:2} 
+		expdp $1 ${@:2} 
   else
-		exp ${ORA_USER}/${ORA_PASSWD}@${CONNECT_IDENTIFIER} $@
+		expdp ${ORA_USER}/${ORA_PASSWD}@${CONNECT_IDENTIFIER} $@
   fi
 else
-	exp $1@${CONNECT_IDENTIFIER} help=y
+	expdp $1@${CONNECT_IDENTIFIER} help=y
 fi
 
