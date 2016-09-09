@@ -65,6 +65,8 @@ $ CMD=sqlplus.sh oracle.sh username/password@host:port/sid
 
 SQL> help define
 SQL> define
+SQL> show pagesize
+SQL> show linesize
 ```
 
 * Command Line Mode
