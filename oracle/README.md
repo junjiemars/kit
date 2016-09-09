@@ -102,9 +102,9 @@ $ eoo.sh -dsqlfile -f<sql-file> -t<from-tablespace:to-tablespace> -u<from-user:t
 
 Must on the machine which Oracle instance running on.
 ```sh
-$ sqlplus system/passwd
+$ sqlplus system/<passwd>
 SQL> alter user sys identified by passwd;
-SQL> connect sys/passwd as sysdba;
+SQL> connect sys/<passwd> as sysdba;
 ```
 * As SYSTEM User
 
