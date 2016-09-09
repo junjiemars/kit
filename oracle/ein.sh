@@ -8,14 +8,16 @@
 
 
 
-TABLE_LIST=${TABLE_LIST:-"table_list"}
-NUMBER=${NUMBER:-100}
+PREFIX=${PREFIX:-"ein"}
 
-EI_PREFIX=${EI_PREFIX:-"ein"}
+TABLE_LIST=${TABLE_LIST:-"${PREFIX%/}/table.lst"}
+NUMBER=${NUMBER:-100}
 
 USERID=${USERID:-"system/oracle@localhost:1521/XE"}
 E_USER=${EUSER:-`echo $USERID | sed 's#\([_a-zA-Z0-9]*\)\/.*#\1#'`}
 I_USER=${IUSER:-$E_USER}
+
+
 
 check_list_file() {
 	if [ ! -f $1 ]; then
@@ -26,8 +28,7 @@ check_list_file() {
 
 check_ei_dir() {
 	if [ ! -d $1 ]; then
-		echo "$1 no found, create ..."
-		mkdir -p $1
+		echo "$1 no found, stop!"
 	fi
 }
 
@@ -38,15 +39,15 @@ nl2c() {
 
 exp() {
 	check_list_file $TABLE_LIST
-	check_ei_dir $EI_PREFIX	
+	check_ei_dir $PREFIX	
 
 	local declare -a t_list=( $(nl2c $TABLE_LIST) )
 	
 	for t in ${t_list[@]};do 
 		exp.sh $USERID \
 			tables=$t \
-			file=${EI_PREFIX%/}/${t}.dmp \
-			log=${EI_PREFIX%/}/${t}.log\
+			file=${PREFIX%/}/${t}.dmp \
+			log=${PREFIX%/}/${t}.log\
 			indexes=y \
 			query=\"where rownum \<= $NUMBER\"
 	done	
@@ -54,12 +55,12 @@ exp() {
 
 imp() {
 	check_list_file $TABLE_LIST
-	if [ ! -d $EI_PREFIX ]; then
-		echo "$EI_PREFIX no found, where are dmp files?"
+	if [ ! -d $PREFIX ]; then
+		echo "$PREFIX no found, where are dmp files?"
 		exit 1
 	fi
 
-	for f in `find $EI_PREFIX -maxdepth 1 -type f -name '*.dmp'`; do
+	for f in `find $PREFIX -maxdepth 1 -type f -name '*.dmp'`; do
 		imp.sh $USERID \
 			file=$f \
 			fromuser=$E_USER \
@@ -73,12 +74,13 @@ usage() {
   echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
   echo -e "       $(basename $0) [ -h | --help ]\n"
   echo -e "Options:"
-  echo -e "  -h, --help\t\tPrint usage\n"
+  echo -e "  -h, --help\t\tPrint usage"
   echo -e "Exp/Imp oracle tables with specified Number.\n"
   echo -e "Commands:"
   echo -e "\texp\t\tExport oracle objects"
-  echo -e "\timp\t\tImport oracle objects\n"
+  echo -e "\timp\t\tImport oracle objects"
   echo -e "Environemnt Variables:"
+	echo -e "\tPREFIX=$PREFIX"
 	echo -e "\tTABLE_LIST=$TABLE_LIST"
 	echo -e "\tNUMBER=$NUMBER"	
 	echo -e "\tUSERID=$USERID"
