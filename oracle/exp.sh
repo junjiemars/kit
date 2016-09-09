@@ -18,7 +18,7 @@ ORA_PASSWD=${ORA_PASSWD:-'oracle'}
 HOST=${HOST:-'localhost'}
 PORT=${PORT:-'1521'}
 SID=${SID:-'XE'}
-CONNECT_IDENTIFIER=${CONNECT_IDENTIFIER:-"${HOST}:${PORT}/${SID}"}
+USERID=${USERID:-"${HOST}:${PORT}/${SID}"}
 
 if [ 0 -eq $# ] ; then
 	exp help=y
@@ -26,9 +26,9 @@ elif [ 1 -le $# ]; then
 	if `echo $1|grep .*@.*[:/][0-9]*[:/].* &>/dev/null`; then
 		exp $1 ${@:2} 
   else
-		exp ${ORA_USER}/${ORA_PASSWD}@${CONNECT_IDENTIFIER} $@
+		exp $1@${USERID} ${@:2}
   fi
 else
-	exp $1@${CONNECT_IDENTIFIER} help=y
+	exp ${ORA_USER}/${ORA_PASSWD}@${USERID} $1
 fi
 
