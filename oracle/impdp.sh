@@ -23,14 +23,14 @@ USERID=${USERID:-"${HOST}:${PORT}/${SID}"}
 
 
 if [ 0 -eq $# ] ; then
-	imp help=y
+	impdp help=y
 elif [ 1 -le $# ]; then
 	if `echo $1|grep .*@.*[:/][0-9]*[:/].* &>/dev/null`; then
-		imp $1 ${@:2} 
+		impdp $1 ${@:2} 
   else
-		imp $1@${USERID} ${@:2}
+		impdp $1@${USERID} ${@:2}
   fi
 else
-	imp ${ORA_USER}/${ORA_PASSWD}@${USERID} $1
+	impdp ${ORA_USER}/${ORA_PASSWD}@${USERID} $1
 fi
 
