@@ -48,8 +48,7 @@ rpm2cpio <x.rpm> | cpio -i --make-directories
 
 ### How to Use
 The critical script is [sqlplus.sh](https://raw.githubusercontent.com/junjiemars/kit/master/oracle/sqlplus.sh).
-[oracle.sh](https://raw.githubusercontent.com/junjiemars/kit/master/oracle/oracle.sh) is a general wrapper 
-for all of Oracle's commands.
+[oracle.sh](https://raw.githubusercontent.com/junjiemars/kit/master/oracle/oracle.sh) is a general wrapper for all of Oracle's commands.
 
 * Interactive Mode
 ```sh
@@ -63,6 +62,9 @@ $ ORACLE_HOME=<ur-oracle-home> sqlplus.sh username/password@host:port/sid
 
 # general style via oracle.sh
 $ CMD=sqlplus.sh oracle.sh username/password@host:port/sid
+
+SQL> help define
+SQL> define
 ```
 
 * Command Line Mode

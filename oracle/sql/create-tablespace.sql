@@ -5,12 +5,12 @@
 
 
 --define ts_name=which
-define ts_dbf=/u01/app/oracle/oradata/XE/&&ts_name.dbf
+define ts_dbf=/u01/app/oracle/oradata/XE/&&ts_name
 
-define ts_size=50M
+define ts_size=64M
 define ts_autoextend=on --|off
-define ts_next=128M
-define ts_maxsize=10G
+define ts_next=16M
+define ts_maxsize=512M
 
 create tablespace &&ts_name
   datafile '&&ts_dbf'
