@@ -91,7 +91,7 @@ install_tomcat() {
 
   local tgz="apache-tomcat-${VER}.tar.gz"
   local major="${VER%%.*}"
-  local url="http://apache.fayea.com/tomcat/tomcat-${major}/v${VER}/bin/${tgz}"
+	local url="http://archive.apache.org/dist/tomcat/tomcat-${major}/v${VER}/bin/${tgz}"
 
   [ -d "${CATALINA_BASE}" ] || mkdir -p "${CATALINA_BASE}"
   if [ ! -f "${CATALINA_BASE}/build.xml" ]; then
