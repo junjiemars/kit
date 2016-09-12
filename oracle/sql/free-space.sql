@@ -19,5 +19,4 @@ select
 	,	relative_fno
 	from user_free_space
 	where tablespace_name=upper('&&ts_name')
-		or 1=1
 ;
