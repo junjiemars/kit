@@ -1,7 +1,7 @@
 
 --------------------------------------------------
 -- author: junjiemars@gmail.com
--- target: free space % by dba 
+-- target: free space of tablespace
 --------------------------------------------------
 
 
@@ -32,4 +32,5 @@ select df.tablespace_name tspace,
          group by tablespace_name, bytes_free, bytes_used) df
  where fs.tablespace_name (+)  = df.tablespace_name
  group by df.tablespace_name, fs.bytes, df.bytes_free, df.bytes_used
- order by 4 desc;
+ order by 4 desc
+;
