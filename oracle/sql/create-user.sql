@@ -24,3 +24,6 @@ grant create materialized view to &&user_name;
 grant create synonym to &&user_name;
 grant imp_full_database to &&user_name;
 grant debug connect session to &&user_name;
+
+--must sysdba does
+--grant execute on dbms_debug_jdwp to &&user_name;
