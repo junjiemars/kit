@@ -5,8 +5,9 @@
 # 
 #------------------------------------------------
 
-oNGX_DIR=${NGX_DIR:-"/opt/open/nginx"}
+NGX_DIR=${NGX_DIR:-"/opt/open/nginx"}
 PREFIX_DIR=${PREFIX_DIR:-"/opt/run"}
+NGX_GITHUB="https://github.com/nginx/nginx.git"
 
 DEBUG=${DEBUG:-"0"}
 DAEMON=${DAEMON:-"on"}
@@ -27,6 +28,12 @@ DNS_FEATURES=" \
   --without-stream_split_clients_module \
   --without-stream_limit_conn_module \
   --without-pcre"
+
+clone_nginx() {
+	if [ ! -d $PREFIX/.git ]; then
+		git -C `dirname $NGX_DIR` clone --depth=1 --branch=master $NGX_GITHUB 
+	fi
+}
 
 config() {
   local features="`echo ${1} | tr -d '\n' | tr -s ' '`"
@@ -105,8 +112,14 @@ usage() {
 }
 
 case ".$@" in
-  .dns) setup_dns ;;
-  .-h|.--help) usage ;;
-  .*) usage ;;
+  .dns)
+    clone_nginx
+    setup_dns
+    ;;
+  .-h|.--help)
+    usage
+    ;;
+  .*) usage
+    ;;
 esac
 
