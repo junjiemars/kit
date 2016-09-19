@@ -1,12 +1,19 @@
+@echo off
+set if_name="Local Area Connection"
 set dns0=218.4.4.4
 set dns1=74.82.42.42
 
-netsh interface ipv4 set address name="Local Area Connection" source=dhcp
+echo "set dhcp ..."
+netsh interface ipv4 set address name=%if_name% source=dhcp
 
-netsh interface ipv4 set dnsserver name="Local Area connection" static %dns0% primary
+echo "set dns server ..."
+netsh interface ipv4 set dnsserver name=%if_name% static %dns0% primary
+netsh interface ipv4 add dnsserver name=%if_name%  %dns1%
 
-netsh interface ipv4 add dnsserver name="Local Area Connection"  %dns1%
+echo "sleep 5s ..."
+ping 1.1.1.1 -n 1 -w 5000 > nul
 
-ping 1.1.1.1 -n 1 -w 5000 > nul REM sleep 5s
-
+echo "flush dns cache ..."
 ipconfig /flushdns
+
+@echo on
