@@ -3,6 +3,7 @@
 set face_name="Lucida Console"
 set code_page=65001
 set font_size=14
+rem set font_family=0x36 fix-width font
 set quick_edit=1
 
 set argc=0
@@ -20,6 +21,7 @@ reg export "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Console\TrueTypeFo
 
 echo "add hklm>console>ttf"
 reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Console\TrueTypeFont" /v 000 /t REG_SZ /d %face_name% /f
+reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Console\TrueTypeFont" /v %code_page% /t REG_SZ /d *%face_name% /f
 
 echo "backup to hkcu-console.reg"
 reg export "HKCU\Console" hkcu-console.reg /y >nul
