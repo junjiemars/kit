@@ -1,6 +1,6 @@
 @echo off
 set if_name="Local Area Connection"
-set dns0=218.4.4.4
+set dns0=8.8.4.4
 set dns1=74.82.42.42
 
 echo "set dhcp ..."
