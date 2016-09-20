@@ -7,8 +7,8 @@
 #------------------------------------------------
 
 
-test -f ~/.bash_aliases && . ~/.bash_aliases 
 test -f ~/.bash_vars && . ~/.bash_vars
+
 test -f ~/.bash_paths && . ~/.bash_paths
 
 # let MSYS_NT and user defined commands first
@@ -23,6 +23,8 @@ sort_path() {
 }
 
 export PATH=$(sort_path "$PATH")
+
+test -f ~/.bash_aliases && . ~/.bash_aliases 
 
 # change code page to unicode
 chcp.com 65001 &>/dev/null
