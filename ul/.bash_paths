@@ -6,6 +6,23 @@
 
 PLATFORM=`uname -s 2>/dev/null`
 
+append_path() {
+	if [ -z "$1" ]; then
+		return 1
+	else
+		PATH="${PATH:+$PATH:}$1"
+		return 0
+	fi
+}
+
+uniq_paths() {
+	PATH=`echo $PATH | tr ':' '\n' | uniq | tr '\n' ':'`
+	PATH="`echo -n "${PATH}" | \
+		awk -v RS=':' -v ORS=':' '!a[$1]++' | \
+		awk '!/^$/' | \
+		sed -e 's_^:__' -e 's_:\.:$__' -e 's_::__' -e 's_:$__'`"
+}
+
 set_bin_paths() {
   local paths=(
     '/usr/local/bin'
@@ -17,23 +34,9 @@ set_bin_paths() {
   
   for d in ${paths[@]}; do
     if [ -d "${d}" ]; then
-      PATH="${PATH:+$PATH }${d}"
+      append_path ${d}
     fi
   done
-
-  export PATH="`echo -n "${PATH}" | \
-    awk -v RS=':' -v ORS=':' '!a[$1]++' | \
-    awk '!/^$/' | \
-    sed -e 's_^:__' -e 's_:\.:$__' -e 's_::__' -e 's_:$__'`"
-}
-
-append_paths() {
-  if [ -n "$1" ] && [ -d "$1" ]; then
-    local in_path=`echo $PATH | \
-                  tr ':' '\n' | \
-                  grep "$1" &>/dev/null; echo $?`
-    [ 0 -ne "${in_path}" ] && PATH="${PATH:+$PATH }$1"
-  fi
 }
 
 to_posix_path() {
@@ -47,24 +50,31 @@ set_bin_paths
 
 
 # chain basis PREFIX/opt/run/{bin,sbin} paths
-[ -n "${OPT_RUN}" ] && append_paths "${OPT_RUN}/bin"
-[ -n "${OPT_RUN}" ] && append_paths "${OPT_RUN}/sbin"
+if [ -n "${OPT_RUN}" ]; then
+	append_path "${OPT_RUN}/bin"
+	append_path "${OPT_RUN}/sbin"
+fi
 
 # java home
 case "${PLATFORM}" in
   MSYS_NT*)
     if [ -n "${JAVA_HOME}" ]; then
       java_path=$(to_posix_path "${JAVA_HOME}")
-      [ -n "${java_path}" ] && \
-        append_paths "${java_path}" && \
-        append_paths "${java_path}/bin"
+      append_path "${java_path}"
+			append_path "${java_path}/bin"
     fi
     ;;
   *)
-    append_paths "${JAVA_HOME}"
-    append_paths "${JAVA_HOME}/bin"
+		if [ -n "${JAVA_HOME}" ]; then
+			append_path "${JAVA_HOME}"
+    	append_path "${JAVA_HOME}/bin"
+		fi
     ;;
 esac
+
+
+uniq_paths "$PATH"
+
 
 # other paths
 
