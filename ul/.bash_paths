@@ -6,8 +6,17 @@
 
 PLATFORM=`uname -s 2>/dev/null`
 
+is_uniq() {
+  local paths=`echo $PATH | tr ':' '\n'`
+  if `echo $paths | grep "^$1$" &>/dev/null`; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 append_path() {
-	if [ -z "$1" -o 0 -eq `echo $1 | grep "^$1$" &>/dev/null;echo $?` ]; then
+	if [ -z "$1" -o 0 -eq $(is_uniq "$1";echo $?) ]; then
 		return 1
 	else
 		PATH="${PATH:+$PATH:}$1"
