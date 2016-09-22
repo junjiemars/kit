@@ -7,7 +7,7 @@
 PLATFORM=`uname -s 2>/dev/null`
 
 append_path() {
-	if [ -z "$1" ]; then
+	if [ -z "$1" -o 0 -eq `echo $1 | grep "^$1$" &>/dev/null;echo $?` ]; then
 		return 1
 	else
 		PATH="${PATH:+$PATH:}$1"
@@ -15,13 +15,12 @@ append_path() {
 	fi
 }
 
-uniq_paths() {
-	PATH=`echo $PATH | tr ':' '\n' | uniq | tr '\n' ':'`
-	PATH="`echo -n "${PATH}" | \
-		awk -v RS=':' -v ORS=':' '!a[$1]++' | \
-		awk '!/^$/' | \
-		sed -e 's_^:__' -e 's_:\.:$__' -e 's_::__' -e 's_:$__'`"
-}
+#uniq_path() {
+#  # note:need refined
+#	local p=`echo "$1" | tr ':' '\n' | uniq`
+#	p=`echo "$p" | tr '\n' ':' | sed -e 's_:$__g'`
+#  PATH=$p
+#}
 
 set_bin_paths() {
   local paths=(
@@ -32,7 +31,7 @@ set_bin_paths() {
     '/sbin'
   )
   
-  for d in ${paths[@]}; do
+  for d in "${paths[@]}"; do
     if [ -d "${d}" ]; then
       append_path ${d}
     fi
@@ -73,7 +72,7 @@ case "${PLATFORM}" in
 esac
 
 
-uniq_paths "$PATH"
+#uniq_path "$PATH"
 
 
 # other paths
