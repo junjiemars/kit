@@ -24,12 +24,11 @@ append_path() {
 	fi
 }
 
-#uniq_path() {
-#  # note:need refined
-#	local p=`echo "$1" | tr ':' '\n' | uniq`
-#	p=`echo "$p" | tr '\n' ':' | sed -e 's_:$__g'`
-#  PATH=$p
-#}
+uniq_path() {
+	local paths=`echo "$1" | tr ':' '\n' | awk '!a[$0]++'`
+	paths=`echo "$paths" | tr '\n' ':' | sed -e 's_:$__g'`
+  PATH="$paths"
+}
 
 set_bin_paths() {
   local paths=(
@@ -81,7 +80,7 @@ case "${PLATFORM}" in
 esac
 
 
-#uniq_path "$PATH"
+uniq_path "$PATH"
 
 
 # other paths
