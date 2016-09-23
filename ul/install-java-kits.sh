@@ -228,11 +228,11 @@ install_clojurescript() {
 
   [ -d "${cljs_home}" ] || mkdir -p "${cljs_home}"
   if [ ! -f "${cljs_home}/cljs.jar" ]; then
-    curl -L -o "${cljs_home}/cljs.jar" -C - "${cljs_jar}"
+    curl -fsSLo "${cljs_home}/cljs.jar" -C - "${cljs_jar}"
   fi
 
   if [ -f "${cljs_home}/cljs.jar" ]; then
-    curl -L -o "${cljs_bin}" -C - "${cljs_sh}" && \
+    curl -fsSLo "${cljs_bin}" -C - "${cljs_sh}" && \
       sed -i.b0 -e "s#CLOJURESCRIPT_JAR=#CLOJURESCRIPT_JAR=\"${cljs_home}/cljs.jar\"#" \
           "${cljs_bin}"
     return 0
