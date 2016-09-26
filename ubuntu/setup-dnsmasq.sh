@@ -39,16 +39,16 @@ setup_dns() {
 cat << END > /tmp/dnsmasq.conf
 domain-needed
 bogus-priv
-no-resolv
-no-poll
+#no-resolv
+#no-poll
 
 server=8.8.4.4
 server=74.82.42.42
 
-listen-address=0.0.0.0
+#listen-address=0.0.0.0
 port=$DNS_PORT
 
-log-queries
+#log-queries
 END
 
 sudo cp /tmp/dnsmasq.conf $DNSMASQ_C
