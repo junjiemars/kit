@@ -7,6 +7,7 @@
 
 GITHUB_H="https://raw.githubusercontent.com/junjiemars/kit/master"
 DNSMASQ_C="/etc/dnsmasq.conf"
+RESOLV_C="/etc/resolv.conf"
 DNS_PORT=${DNS_PORT:-5533}
 
 check_dnsmasq() {
@@ -36,22 +37,33 @@ setup_dns() {
 		sudo cp $DNSMASQ_C $DNSMASQ_C.b0
 	fi
 
+	if [ ! -f "$RESOLV_C.ori" ]; then
+		sudo cp $RESOLV_C $RESOLV_C.ori
+		sudo echo "nameserver 8.8.4.4" >> $RESOLV_C
+	fi
+	
+	local ipv4=`ifconfig eth0 |grep 'inet addr'|cut -d: -f2|cut -d' ' -f1`
+
 cat << END > /tmp/dnsmasq.conf
 domain-needed
 bogus-priv
-#no-resolv
-#no-poll
+no-resolv
+no-poll
 
+server=172.31.0.2#53
 server=8.8.4.4
 server=74.82.42.42
 
-#listen-address=0.0.0.0
+#interface=eth0
+#listen-address=$ipv4
 port=$DNS_PORT
 
-#log-queries
+no-dhcp-interface=
+
+log-queries
 END
 
-sudo cp /tmp/dnsmasq.conf $DNSMASQ_C
+	sudo cp /tmp/dnsmasq.conf $DNSMASQ_C
 }
 
 op_dnsmasq() {
