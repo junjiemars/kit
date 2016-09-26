@@ -18,6 +18,20 @@ check_dnsmasq() {
 	fi
 }
 
+check_ip() {
+	local ipv4=`ifconfig eth0 |grep 'inet addr'|cut -d: -f2|cut -d' ' -f1`
+	echo $ipv4
+}
+
+is_ec2() {
+	local ipv4=`echo $(check_ip) | tr '.' '-'`
+	if `hostname | grep "ip-$ipv4" &>/dev/null`; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 install_dnsmasq() {
 	if `check_dnsmasq`; then
 		return 0
@@ -41,8 +55,11 @@ setup_dns() {
 		sudo cp $RESOLV_C $RESOLV_C.ori
 		sudo echo "nameserver 8.8.4.4" >> $RESOLV_C
 	fi
+
+	if `is_ec2`; then
+		local ec2_local_dns="server=172.31.0.2#53"
+	fi
 	
-	local ipv4=`ifconfig eth0 |grep 'inet addr'|cut -d: -f2|cut -d' ' -f1`
 
 cat << END > /tmp/dnsmasq.conf
 domain-needed
@@ -50,9 +67,11 @@ bogus-priv
 no-resolv
 no-poll
 
-server=172.31.0.2#53
+$ec2_local_dns
 server=8.8.4.4
 server=74.82.42.42
+
+rev-server=127.0.0.1/8,127.0.0.1#$DNS_PORT
 
 #interface=eth0
 #listen-address=$ipv4
