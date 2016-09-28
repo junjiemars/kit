@@ -234,8 +234,8 @@ install_clojurescript() {
   if [ -f "${cljs_home}/cljs.jar" ]; then
     curl -fsSLo "${cljs_bin}" -C - "${cljs_sh}" && \
       sed -i.b0 -e "s#CLOJURESCRIPT_JAR=#CLOJURESCRIPT_JAR=\"${cljs_home}/cljs.jar\"#" \
-          "${cljs_bin}" && \
-      chmod u+x "$cljs_bin"
+          "${cljs_bin}"
+    [ -f "${cljs_bin}" ] && chmod u+x "${cljs_bin}"
     return 0
   fi
   
