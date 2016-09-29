@@ -43,13 +43,13 @@ case "${PLATFORM}" in
 esac
 
 p_rlwrap=$(exist_p 'rlwrap')
-if [ 0 -eq p_rlwrap ]; then
+if [[ 0 -eq p_rlwrap ]]; then
   p_racket=$(exist_p 'racket')
-  if [ 0 -eq p_racket ]; then
+  if [[ 0 -eq p_racket ]]; then
     alias racket='rlwrap racket'
   fi
 	p_lein=$(exist_p 'lein')
-	if [ 0 -eq p_lein ]; then
+	if [[ 0 -eq p_lein ]]; then
 		alias lein='rlwrap lein'
 	fi	
 fi
