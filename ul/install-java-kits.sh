@@ -295,7 +295,7 @@ install_scala() {
   [ 0 -eq `scala -version &>/dev/null; echo $?` ] && return 0
 
   [ -d "${scala_home}" ] || mkdir -p "${scala_home}"
-  curl -L -o "${scala_home}/${scala_tgz}" -C - "${scala_url}" && \
+  curl -L -o "${scala_home}/${scala_tgz}" "${scala_url}" && \
     tar xf "${scala_home}/${scala_tgz}" -C "${scala_home}" --strip-components=1
   
   if [ 0 -eq `${bin_dir}/scala -version &>/dev/null; echo $?` ]; then
