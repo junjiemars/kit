@@ -69,6 +69,17 @@ append_vars() {
   . "${f_vars}"
 }
 
+chmod_file() {
+	local _f=$1
+	local _o=$2
+
+	if [ -n "$_f" ] && [ -n "$_o" ] && [ -f $_f ]; then
+		chmod $_o $_f
+	else
+		return 1
+	fi
+}
+
 install_jdk() {
   [ 0 -eq `javac -version &>/dev/null; echo $?` ] && return 0
 
@@ -212,7 +223,9 @@ install_clojure() {
     curl -L -o "${clojure_bin}" -C - "${clojure_sh}" && \
       sed -i.b0 -e "s#CLOJURE_JAR=#CLOJURE_JAR=\"${bin_dir}/${clojure_jar}\"#" \
         "${clojure_bin}"
-    return 0
+		if `chmod_file "${clojure_bin}" "u+x"`; then
+			return 0
+		fi
   fi
 
   return 1
@@ -235,8 +248,9 @@ install_clojurescript() {
     curl -fsSLo "${cljs_bin}" -C - "${cljs_sh}" && \
       sed -i.b0 -e "s#CLOJURESCRIPT_JAR=#CLOJURESCRIPT_JAR=\"${cljs_home}/cljs.jar\"#" \
           "${cljs_bin}"
-    [ -f "${cljs_bin}" ] && chmod u+x "${cljs_bin}"
-    return 0
+    if `chmod_file "${cljs_bin}" "u+x"`; then
+			return 0
+		fi
   fi
   
   return 1
