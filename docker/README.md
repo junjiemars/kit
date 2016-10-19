@@ -27,6 +27,7 @@
 * [Docker Networking](#docker-networking)
   * [Bridge](#bridge)
   * [Overlay](#overlay)
+  * [SSH between Containers](#ssh-between-containers)
   * [Tips](#tips)
 
 ## Docker on Linux
@@ -233,6 +234,13 @@ The default **docker0** virtual bridge interface let communications:
 very easy.
 
 ### Overlay
+
+### SSH between Containers
+* _Read from socket failed: Connection reset by peer_ :
+```sh
+$ sudo ssh-keygen -t rsa -f /etc/ssh/ssh_hosts_rsa_key
+$ sudo ssh-keygen -t dsa -f /etc/ssh/ssh_hosts_dsa_key
+```
 
 ### Tips
 * Container's IP address
