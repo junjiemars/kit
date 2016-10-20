@@ -24,11 +24,12 @@
   * [Access Windows dir in Docker Host](#access-windows-dir-in-docker-host)
   * [tty mode](#tty-mode)
   * [Sharing Files](#sharing-files)
-* [Docker Networking](#docker-networking)
+* [Networking](#networking)
   * [Bridge](#bridge)
   * [Overlay](#overlay)
   * [SSH between Containers](#ssh-between-containers)
   * [Tips](#tips)
+* [Storage](#storage)
 
 ## Docker on Linux
 
@@ -224,7 +225,7 @@ docker-machine scp <machine>:<machine-path> <host-path>
 ```
 host -> container vice versa.
 
-## Docker networking
+## Networking
 
 ### Bridge
 The default **docker0** virtual bridge interface let communications:
@@ -250,4 +251,21 @@ $ docker inspect --format "{{.NetworkSettings.IPAddress}}" <container-id|contain
 
 # on specified network
 docker inspect --format "{{.NetworkSettings.Networks.<your-network>.IPAddress}}" <container-id|container-name>
+```
+* Link to Another Containers (/etc/hosts)
+```sh
+$ docker run --name n2 --link=n0 --link=n1 -d <docker-image>
+```
+
+## Storage
+
+```sh
+# create mount the volume on /opt/vol
+$ docker run --name n0 -w /home/u -h n0 -v /opt/vol -d <docker-iamge>
+
+# mount a host volume on /opt/vol
+$ docker run --name n0 -w /home/u -h n0 -v <host-path>:/opt/vol -d <docker-image>
+
+# mount a host file
+$ docker run --name n0 -w /home/u -h n0 -v ~/.bash_history:/home/u/.bash_history -d <docker-image>
 ```
