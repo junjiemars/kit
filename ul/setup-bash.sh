@@ -95,7 +95,7 @@ case ${PLATFORM} in
     ;;
   *)
 		${curl} ${GITHUB_H}/ul/.bashrc -o $HOME/.bash_init
-		sed -i '/test -f \$HOME/\.bash_init/d' $HOME/.bashrc
+		sed -i '/test -f \$HOME\/\.bash_init/d' $HOME/.bashrc
 		cat << END >> $HOME/.bashrc
 test -f \$HOME/.bash_init && . \$HOME/.bash_init
 export PATH
