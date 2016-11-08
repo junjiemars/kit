@@ -95,9 +95,9 @@ case ${PLATFORM} in
     ;;
   *)
 		${curl} ${GITHUB_H}/ul/.bashrc -o $HOME/.bash_init
-		sed -i '/test -f \$HOME\/\.bash_init/d' $HOME/.bashrc
+		sed -i'' -e '/test -f \$HOME\/\.bash_init/d' $HOME/.bashrc
 		if `tail -n1 $HOME/.bashrc | grep 'export\ * PATH' &>/dev/null`; then
-			sed -i '$d' $HOME/.bashrc
+			sed -i'' -e '$d' $HOME/.bashrc
 		fi
 		cat << END >> $HOME/.bashrc
 test -f \$HOME/.bash_init && . \$HOME/.bash_init
