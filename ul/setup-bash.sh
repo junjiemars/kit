@@ -94,7 +94,12 @@ case ${PLATFORM} in
       cp $HOME/_vimrc $HOME/.vimrc
     ;;
   *)
-    [ -f $HOME/.bashrc ] || ${curl} ${GITHUB_H}/ul/.bashrc -o $HOME/.bashrc
+		${curl} ${GITHUB_H}/ul/.bashrc -o $HOME/.bash_init
+		sed -i '/test -f \$HOME/\.bash_init/d' $HOME/.bashrc
+		cat << END >> $HOME/.bashrc
+test -f \$HOME/.bash_init && . \$HOME/.bash_init
+export PATH
+END
     ${curl} ${GITHUB_H}/ul/.bash_logout -o $HOME/.bash_logout
     ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/.vimrc
     ;;
