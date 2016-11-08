@@ -21,6 +21,7 @@ declare -a BASH_S=(\
 
 save_as() {
   local f="$HOME/$1"
+	local ori=$f.ori
   case "${PLATFORM}" in
     MSYS_NT*) 
       local find='/usr/bin/find' 
@@ -33,6 +34,7 @@ save_as() {
   esac
 
   if [ -f ${f} ]; then
+		[ -f ${ori} ] || cp $f $ori
     local l=`$find $HOME -maxdepth 1 -mindepth 1 -type f -name "$1.b?" \
             |$sort -r|head -n1`
     if [ "_${l}" == "_" ]; then
