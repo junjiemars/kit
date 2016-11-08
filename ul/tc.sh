@@ -10,14 +10,7 @@ CATALINA_BASE=${CATALINA_BASE:-"${PREFIX%/}/${VER}"}
 export CATALINA_PID=${CATALINA_PID:-"${CATALINA_BASE%/}/logs/pid"}
 
 PLATFORM=`uname -s 2>/dev/null`
-case "${PLATFORM}" in
-  MSYS_NT*)
-    CATALINA_BIN="${CATALINA_BASE}/bin/catalina.bat"
-  ;;
-  *)
-    CATALINA_BIN="${CATALINA_BASE}/bin/catalina.sh"
-  ;;
-esac
+CATALINA_BIN="${CATALINA_BASE}/bin/catalina.sh"
 
 STOP_TIMEOUT=${STOP_TIMEOUT:-10}
 STOP_FORCE=${STOP_FORCE:-"-force"}
@@ -113,7 +106,7 @@ check_catalina_bin() {
   if [ -x "${CATALINA_BIN}" ]; then
     return 0
   else
-    echo -e "$1 failed, "${CATALINA_BIN}" no found, panic!"
+    echo -e "checking ${CATALINA_BIN} ...no found, panic!"
     return 1
   fi
 }
@@ -123,13 +116,14 @@ check_pid() {
 }
 
 show_version() {
-  [ 0 -eq `check_catalina_bin version; echo $?` ] && \
+  if `check_catalina_bin`; then
     "${CATALINA_BIN}" version
+	fi
 }
 
 stop_tomcat() {
   local pid=`check_pid`
-  if [ 0 -eq `check_catalina_bin stop; echo $?` ]; then
+  if `check_catalina_bin`; then
     export_java_opts
     "${CATALINA_BIN}" stop "${STOP_TIMEOUT}" "${STOP_FORCE}"
   fi
@@ -137,7 +131,7 @@ stop_tomcat() {
 }
 
 start_tomcat() {
-  if [ 0 -eq `check_catalina_bin start; echo $?` ]; then
+  if `check_catalina_bin`; then
     export_java_opts
     "${CATALINA_BIN}" start
   fi
@@ -145,7 +139,7 @@ start_tomcat() {
 }
 
 debug_tomcat() {
-  if [ 0 -eq `check_catalina_bin debug; echo $?` ]; then
+  if `check_catalina_bin`; then
     export_java_opts
     export_catalina_opts "-XX:+HeapDumpOnOutOfMemoryError \
                           -XX:HeapDumpPath=${CATALINA_BASE}/logs"
