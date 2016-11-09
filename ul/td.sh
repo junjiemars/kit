@@ -185,7 +185,7 @@ transport_war() {
 
 control_mark() {
 	if [ 0 -eq $HAS_SSH ]; then
-		echo -n "S[$SSH_USER@SSH_HOST]"
+		echo -n "S[$SSH_USER@$SSH_HOST]"
 	elif [ 0 -eq $HAS_DOCKER ]; then
 		echo -n "D[$DOCKER_USER@$DOCKER_CONTAINER]"
 	else
