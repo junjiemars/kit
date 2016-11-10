@@ -111,7 +111,11 @@ check_catalina_bin() {
 }
 
 check_pid() {
-  cat "${CATALINA_PID}" 2>/dev/null
+	if [ -f "${CATALINA_PID}" ]; then
+		cat "${CATALINA_PID}" 2>/dev/null
+	else
+		return 1
+	fi
 }
 
 show_version() {
