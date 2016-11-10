@@ -31,6 +31,7 @@ DOCKER_TC_SH=${DOCKER_TC_SH:-"${OPT_RUN}/bin/$TC_SH"}
 
 # war 
 BUILD=${BUILD:-1}
+BUILD_OPTS=${BUILD_OPTS:-}
 BUILD_DIR=${BUILD_DIR:-}
 BUILD_LOG=${BUILD_LOG:-"td-build.log"}
 WAR_TARGET=${WAR_TARGET:-"-Dwar.target=local"}
@@ -155,7 +156,7 @@ is_same_war() {
 build_war() {
 	if [ 0 -eq $BUILD ]; then
 		JAVA_OPTS="${WAR_TARGET}" \
-							 ./gradlew --stacktrace ${WAR_TASK} &> $BUILD_LOG
+							 ./gradlew ${BUILD_OPTS} ${WAR_TASK} &> $BUILD_LOG
 	fi
 }
 
@@ -192,6 +193,18 @@ control_mark() {
 		echo -n "L[$PREFIX]"
 	fi
 }
+
+
+case "$@" in
+	stop)
+		echo -n "# stop `control_mark` ..."	
+		control_tomcat stop
+		exit 0
+		;;
+	*)
+		;;
+esac
+
 
 echo -n "# building the L[$L_WAR_FILE] ..."
 if `build_war`; then
