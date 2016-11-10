@@ -106,7 +106,6 @@ check_catalina_bin() {
   if [ -x "${CATALINA_BIN}" ]; then
     return 0
   else
-    echo -e "checking ${CATALINA_BIN} ...no found, panic!"
     return 1
   fi
 }
@@ -123,27 +122,39 @@ show_version() {
 
 stop_tomcat() {
   local pid=`check_pid`
+  echo -n "# checking ${CATALINA_BIN} ..."
   if `check_catalina_bin`; then
+		echo "ok"
     export_java_opts
     "${CATALINA_BIN}" stop "${STOP_TIMEOUT}" "${STOP_FORCE}"
+	else
+    echo "failed, panic!"
   fi
   show_env "${pid}"
 }
 
 start_tomcat() {
+  echo -n "# checking ${CATALINA_BIN} ..."
   if `check_catalina_bin`; then
+		echo "ok"
     export_java_opts
     "${CATALINA_BIN}" start
+	else
+    echo "failed, panic!"
   fi
   show_env "`check_pid`"
 }
 
 debug_tomcat() {
+  echo -n "# checking ${CATALINA_BIN} ..."
   if `check_catalina_bin`; then
+		echo "ok"
     export_java_opts
     export_catalina_opts "-XX:+HeapDumpOnOutOfMemoryError \
                           -XX:HeapDumpPath=${CATALINA_BASE}/logs"
     JPDA_ADDRESS="${JPDA_PORT}" "${CATALINA_BIN}" jpda start
+	else
+    echo "failed, panic!"
   fi
   show_env "`check_pid`"
 }
