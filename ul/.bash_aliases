@@ -42,27 +42,45 @@ case "${PLATFORM}" in
     ;;
 esac
 
-p_rlwrap=$(exist_p 'rlwrap')
-if [[ 0 -eq p_rlwrap ]]; then
-  p_racket=$(exist_p 'racket')
-  if [[ 0 -eq p_racket ]]; then
-    alias racket='rlwrap racket'
-  fi
-	p_lein=$(exist_p 'lein')
-	if [[ 0 -eq p_lein ]]; then
+alias_racket() {
+	local p_rlwrap=$(exist_p 'rlwrap')
+	if [ 0 -eq $p_rlwrap ]; then
+		local p_racket=$(exist_p 'racket')
+		if [ 0 -eq $p_racket ]; then
+			local v
+			IFS='.' read -a v <<< "`racket -v|sed 's/.*v\([0-9].[0-9]\).*/\1/g'`"
+			if [ 67 -gt $(( ${v[0]}*10+${v[1]} )) ]; then
+				alias racket='rlwrap racket'
+			fi
+		fi
+	fi
+}
+
+alias_lein() {
+	local p_lein=$(exist_p 'lein')
+	if [ 0 -eq $p_lein ]; then
 		alias lein='rlwrap lein'
 	fi	
-fi
+}
 
-p_emacs=$(exist_p 'emacs')
-if [[ 0 -eq p_emacs ]]; then
-  alias emacs='emacs -nw'
-fi
+alias_emacs() {
+	local p_emacs=$(exist_p 'emacs')
+	if [ 0 -eq $p_emacs ]; then
+		alias emacs='emacs -nw'
+	fi
+}
 
-p_vi=$(exist_p 'vi')
-p_vim=$(exist_p 'vim')
-if [[ 0 -eq p_vi ]] && [[ 0 -eq p_vim ]]; then
-  if [[ 0 -ne $(diff_p `type -p vi` `type -p vim`) ]]; then
-    alias vi=vim
-  fi
-fi
+alias_vi() {
+	local p_vi=$(exist_p 'vi')
+	local p_vim=$(exist_p 'vim')
+	if [ 0 -eq $p_vi ] && [ 0 -eq $p_vim ]; then
+	  if [ 0 -ne $(diff_p `type -p vi` `type -p vim`) ]; then
+	    alias vi=vim
+	  fi
+	fi
+}
+
+alias_racket
+alias_lein
+alias_emacs
+alias_vi
