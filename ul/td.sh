@@ -163,7 +163,7 @@ is_same_war() {
 
 build_war() {
 	if [ 0 -eq $BUILD ]; then
-		JAVA_OPTS="${WAR_TARGET}" \
+		JAVA_OPTS="${WAR_TARGET} ${WAR_OPTS}" \
 							 ./gradlew ${BUILD_OPTS} ${WAR_TASK} &> $BUILD_LOG
 	fi
 }
