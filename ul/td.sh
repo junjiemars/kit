@@ -120,7 +120,7 @@ control_tomcat() {
 				./$TD_CTRL_BAT "$1"
 				;;
 			*)
-				docker exec -u $DOCKER_USER $DOCERK_CONTAINER $R_TD_CTRL_SH $1
+				docker exec -u $DOCKER_USER $DOCKER_CONTAINER $R_TD_CTRL_SH $1
 				;;
 		esac
 	elif [ 0 -eq $HAS_SSH ]; then
@@ -175,12 +175,13 @@ transport_war() {
 				./$TD_RM_BAT
 				;;
 			*)
-				docker exec -u $DOCKER_USER $DOCERK_CONTAINER \
+				docker exec -u $DOCKER_USER $DOCKER_CONTAINER \
 					rm -rf ${WAR_DIR}${WAR_NAME} $R_WAR_FILE
 				;;
 		esac
 
-		docker cp $L_WAR_FILE ${DOCKER_CONTAINER}:$R_WAR_FILE 
+		docker cp $L_WAR_FILE $DOCKER_CONTAINER:$R_WAR_FILE 
+		docker_chown $R_WAR_FILE
 
 	elif [ 0 -eq $HAS_SSH ]; then
 		ssh $SSH_USER@$SSH_HOST \
@@ -239,6 +240,7 @@ else
 		
 	echo -n "# stop `control_mark` ..."	
 	control_tomcat stop
+	
 
 	echo "---------------------------------"
 	echo -n "# transport L[$L_WAR_FILE] to `control_mark`|R[$R_WAR_FILE] ..."
