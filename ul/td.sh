@@ -107,9 +107,14 @@ END
 	esac
 }
 
+docker_chown() {
+	docker exec $DOCKER_CONTAINER chown $DOCKER_USER:$DOCKER_USER $1
+}
+
 control_tomcat() {
 	if [ 0 -eq $HAS_DOCKER ]; then
 		docker cp $TD_CTRL_SH $DOCKER_CONTAINER:$R_TD_CTRL_SH
+		docker_chown $R_TD_CTRL_SH
 		case $PLATFORM in
 			MSYS_NT*)
 				./$TD_CTRL_BAT "$1"
@@ -137,6 +142,7 @@ is_same_war() {
 		sha1sum $L_WAR_FILE | cut -d' ' -f1`
 	if [ 0 -eq $HAS_DOCKER ]; then
 		docker cp $TD_SHA1SUM_SH $DOCKER_CONTAINER:$R_TD_SHA1SUM_SH
+		docker_chown $R_TD_SHA1SUM_SH
 		case $PLATFORM in
 			MSYS_NT*)
 				_r=`./$TD_SHA1SUM_BAT`
