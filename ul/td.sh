@@ -52,10 +52,17 @@ R_TD_SHA1SUM_SH="$OPT_RUN/bin/$TD_SHA1SUM_SH"
 
 
 gen_platform_sh() {
-	case $PLATFORM in
-		MSYS_NT*)
-			if [ ! -f $TD_CTRL_SH ]; then
-				cat << END > $TD_CTRL_SH
+	if [ ! -f $TD_SHA1SUM_SH ]; then
+		cat << END > $TD_SHA1SUM_SH
+#!/bin/bash
+test -f $R_WAR_FILE && sha1sum $R_WAR_FILE | cut -d' ' -f1
+END
+		chmod u+x $TD_SHA1SUM_SH
+	fi
+
+
+	if [ ! -f $TD_CTRL_SH ]; then
+		cat << END > $TD_CTRL_SH
 #!/bin/bash
 export PREFIX=$PREFIX 
 export VER=$VER
@@ -66,8 +73,11 @@ export JAVA_OPTS=$JAVA_OPTS
 
 $DOCKER_TC_SH \$@
 END
-			fi
+		chmod u+x $TD_CTRL_SH
+	fi
 
+	case $PLATFORM in
+		MSYS_NT*)
 			if [ ! -f $TD_CTRL_BAT ]; then
 				cat << END > $TD_CTRL_BAT
 @echo off
@@ -82,13 +92,6 @@ END
 docker exec -u $DOCKER_USER $DOCKER_CONTAINER $R_TD_SHA1SUM_SH 
 END
 				chmod u+x $TD_SHA1SUM_BAT
-			fi
-
-			if [ ! -f $TD_SHA1SUM_SH ]; then
-				cat << END > $TD_SHA1SUM_SH
-#!/bin/bash
-test -f $R_WAR_FILE && sha1sum $R_WAR_FILE | cut -d' ' -f1
-END
 			fi
 
 			if [ ! -f $TD_RM_BAT ]; then
@@ -106,14 +109,13 @@ END
 
 control_tomcat() {
 	if [ 0 -eq $HAS_DOCKER ]; then
+		docker cp $TD_CTRL_SH $DOCKER_CONTAINER:$R_TD_CTRL_SH
 		case $PLATFORM in
 			MSYS_NT*)
-				docker cp $TD_CTRL_SH $DOCKER_CONTAINER:$R_TD_CTRL_SH
 				./$TD_CTRL_BAT "$1"
 				;;
 			*)
-				docker exec -u $DOCKER_USER $DOCERK_CONTAINER \
-					$TC_SH_ENV $DOCKER_TC_SH $1
+				docker exec -u $DOCKER_USER $DOCERK_CONTAINER $R_TD_CTRL_SH $1
 				;;
 		esac
 	elif [ 0 -eq $HAS_SSH ]; then
@@ -134,13 +136,13 @@ is_same_war() {
 	local _l=`test -f $L_WAR_FILE && \
 		sha1sum $L_WAR_FILE | cut -d' ' -f1`
 	if [ 0 -eq $HAS_DOCKER ]; then
+		docker cp $TD_SHA1SUM_SH $DOCKER_CONTAINER:$R_TD_SHA1SUM_SH
 		case $PLATFORM in
 			MSYS_NT*)
 				_r=`./$TD_SHA1SUM_BAT`
 				;;
 			*)
-				_r=`docker exec -u $DOCKER_USER $DOCKER_CONTAINER \
-					test -f $WAR_FILE && sha1sum $WAR_FILE | cut -d' ' -f1`
+				_r=`docker exec -u $DOCKER_USER $DOCKER_CONTAINER $R_TD_SHA1SUM_SH`
 				;;
 		esac 
 	elif [ 0 -eq $HAS_SSH ]; then
@@ -223,7 +225,6 @@ else
 fi
 
 echo -n "# checking the L/R wars ..."
-
 if `is_same_war`; then
 	echo "ok, skip process."
 else
