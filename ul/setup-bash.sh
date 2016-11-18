@@ -52,28 +52,78 @@ save_as() {
   fi
 }
 
-set_vim_paths() {
+set_vim_path_var() {
+  local f=$1
+  shift
+  local inc_lns=("${@}")
+  local inc_ln="${#inc_lns[@]}"
+
+  echo -e "\n\" cc include path" >> $f
+  for i in "${inc_lns[@]}"; do
+    echo -e "set path+=${i}" >> $f
+  done
+}
+
+check_linux_cc_include() {
   if `type -p cc &>/dev/null`; then
-    cc_out="`echo '' | cc -v -E 2>&1 >/dev/null - \
+    local cc_out="`echo '' | cc -v -E 2>&1 >/dev/null - \
             | awk '/#include <...> search starts here:/,/End of search list./'`"
     if [ -n "$cc_out" ]; then
-      inc_lns=()
+      local inc_lns=()
       IFS=$'\n'
       for l in `echo -e "$cc_out"`; do
         inc_lns+=($(echo -e "$l" | sed 's/^ //'))
       done
       unset IFS
-      inc_ln="${#inc_lns[@]}"
+      local inc_ln="${#inc_lns[@]}"
       if [[ 2 -lt "$inc_ln" ]]; then
-        inc_paths=("${inc_lns[@]:1:$(( inc_ln-2  ))}")
-        echo -e "\n\" cc include path" >> $1
-        for i in "${inc_paths[@]}"; do
-          echo -e "set path+=${i}" >> $1
-        done
+        local inc_paths=("${inc_lns[@]:1:$(( inc_ln-2  ))}")
+        set_vim_path_var "$1" "${inc_paths[@]}"
       fi
     fi
   fi
 }
+
+to_posix_path() {
+	echo "\\$1" | \
+	  sed \
+      -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' \
+      -e 's#\\#\/#g'  \
+      -e 's# #\\\\ #g'  \
+      -e 's#(#\\\\(#g'  \
+      -e 's#)#\\\\)#g'
+}
+
+check_win_cc_include() {
+  local vimrc="$1"
+  local inc_bat="$2"
+
+  [ -f "$vimrc" ] || return 1
+  [ -f "$inc_bat" ] || return 1
+
+  local include=$($inc_bat "`env|grep 'VS[0-9][0-9]*COMNTOOLS'|sed 's#^VS[0-9]*COMNTOOLS=\(.*\)$#\1#g'`")
+  [ -n "$include" ] || return 1
+
+  include=$(echo $include | sed 's#\"##g')
+  #echo $include
+  local inc_lns=()
+  IFS=$';'
+  for l in `echo -e "$include"`; do
+    inc_lns+=(`to_posix_path $(echo -e "${l}" | sed 's/^ //')`)
+  done
+  unset IFS
+
+  echo "${inc_lns[@]}"
+  set_vim_path_var "${vimrc}" "${inc_lns[@]}"
+  ##for l in "${inc_lns[@]}"; do
+  ##  echo "$l"
+  ##done
+
+  
+}
+
+#check_win_cc_include "$HOME/.vimrc" "./win/vs-inc.bat"
+#to_posix_path "C:\Program Files (x86)\Windows Kits\10\include\10.0.10586.0\winrt"
 
 BEGIN=`date +%s`
 echo "setup $PLATFORM bash env ..."
@@ -92,6 +142,7 @@ case ${PLATFORM} in
     ${curl} ${GITHUB_H}/win/.bashrc -o $HOME/.bashrc
     ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/_vimrc && \
       cp $HOME/_vimrc $HOME/.vimrc
+    ${curl} ${GITHUB_H}/win/vs-inc.bat -o $HOME/vs-inc.bat
     ;;
   *)
 		${curl} ${GITHUB_H}/ul/.bashrc -o $HOME/.bash_init
@@ -112,7 +163,10 @@ esac
 
 case ${PLATFORM} in
   Linux)
-    set_vim_paths $HOME/.vimrc
+    check_linux_cc_include $HOME/.vimrc
+    ;;
+  MSYS_NT*)
+    #check_win_cc_include $HOME/.vimrc
     ;;
   *)
     ;;
