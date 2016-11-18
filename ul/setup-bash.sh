@@ -89,10 +89,8 @@ to_posix_path() {
 	echo "\\$1" | \
 	  sed \
       -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' \
-      -e 's#\\#\/#g'      \
-      -e 's# #\\\\\\ #g'  \
-      -e 's#(#\\\\\\(#g'  \
-      -e 's#)#\\\\\\)#g'
+      -e 's#\\#\/#g'       \
+      -e 's# #\\\\\\ #g'
 }
 
 check_win_cc_include() {
@@ -115,9 +113,6 @@ check_win_cc_include() {
   set_vim_path_var "${vimrc}" "${inc_lns[@]}"
 }
 
-#check_win_cc_include "$HOME/.vimrc" "./win/vs-inc.bat"
-#check_linux_cc_include "$HOME/.vimrc"
-#to_posix_path "C:\Program Files (x86)\Windows Kits\10\include\10.0.10586.0\winrt"
 
 BEGIN=`date +%s`
 echo "setup $PLATFORM bash env ..."
