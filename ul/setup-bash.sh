@@ -58,9 +58,10 @@ set_vim_path_var() {
   local inc_lns=("${@}")
   local inc_ln="${#inc_lns[@]}"
 
-  echo -e "\n\" cc include path" >> $f
+  echo -e "\n\" cc include path :checkpath" >> $f
   for i in "${inc_lns[@]}"; do
-    echo "set path+=${i}" >> $f
+		local ln=$(echo "$i" | sed 's_ _\\\\\\ _g')
+    echo "set path+=${ln}" >> $f
   done
 }
 
@@ -87,10 +88,8 @@ check_linux_cc_include() {
 
 to_posix_path() {
 	echo "\\$1" | \
-	  sed \
-      -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' \
-      -e 's#\\#\/#g' \
-      -e 's# #\\\\\\ #g'
+	  sed -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' \
+			  -e 's#\\#\/#g'
 }
 
 check_win_cc_include() {
@@ -106,7 +105,7 @@ check_win_cc_include() {
   local inc_lns=()
   IFS=$';'
   for l in `echo "$include"`; do
-		inc_lns+=(`to_posix_path $(echo "$l" | sed 's/^ //')`)
+		inc_lns+=( $(to_posix_path $(echo "$l" | sed 's/^ //')) )
   done
   unset IFS
 
