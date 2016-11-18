@@ -89,7 +89,7 @@ to_posix_path() {
 	echo "\\$1" | \
 	  sed \
       -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' \
-      -e 's#\\#\/#g'       \
+      -e 's#\\#\/#g' \
       -e 's# #\\\\\\ #g'
 }
 
@@ -106,7 +106,7 @@ check_win_cc_include() {
   local inc_lns=()
   IFS=$';'
   for l in `echo "$include"`; do
-    inc_lns+=(`to_posix_path $(echo "${l}" | sed 's/^ //')`)
+		inc_lns+=(`to_posix_path $(echo "$l" | sed 's/^ //')`)
   done
   unset IFS
 
