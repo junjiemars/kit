@@ -86,12 +86,6 @@ check_linux_cc_include() {
   fi
 }
 
-to_posix_path() {
-	echo "\\$1" | \
-	  sed -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' \
-			  -e 's#\\#\/#g'
-}
-
 check_win_cc_include() {
   local vimrc="$1"
   local inc_bat="$2"
@@ -105,7 +99,11 @@ check_win_cc_include() {
   local inc_lns=()
   IFS=$';'
   for l in `echo "$include"`; do
-		inc_lns+=( $(to_posix_path $(echo "$l" | sed 's/^ //')) )
+		local ln="`echo "\\$1" | \
+							sed -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' \
+								  -e 's/^ //' \
+							    -e 's#\\#\/#g'`"
+		inc_lns+=( "$ln" )
   done
   unset IFS
 
