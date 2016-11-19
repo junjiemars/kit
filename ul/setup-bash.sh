@@ -6,7 +6,7 @@
 
 PLATFORM=`uname -s 2>/dev/null`
 GITHUB_H=${GITHUB_H:-"https://raw.githubusercontent.com/junjiemars/kit/master"}
-curl='curl -s '
+curl='curl -sL '
 declare -a BASH_S=(\
   '.bash_aliases' \
   '.bash_vars' \
@@ -98,11 +98,8 @@ check_win_cc_include() {
   include=$(echo $include | sed 's#\"##g')
   local inc_lns=()
   IFS=$';'
-  for l in `echo "$include"`; do
-		local ln="`echo "\\$1" | \
-							sed -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' \
-								  -e 's/^ //' \
-							    -e 's#\\#\/#g'`"
+  for i in `echo "${include}"`; do
+		local ln=$(echo "\\${i}"|sed -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' -e 's#\\#\/#g')
 		inc_lns+=( "$ln" )
   done
   unset IFS
