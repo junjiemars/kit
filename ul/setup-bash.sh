@@ -112,7 +112,7 @@ END
 			cat << END > "$inc_bat"
 @echo off
 set vs="$vstools" 
-cd "%vs%"
+cd /d "%vs%"
 call vsvars32.bat
 echo "%INCLUDE%"
 END
