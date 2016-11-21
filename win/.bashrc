@@ -14,15 +14,23 @@ test -f ~/.bash_paths && . ~/.bash_paths
 
 # let MSYS_NT and user defined commands first
 sort_path() {
-  local sort='/usr/bin/sort'
-  local uniq='/usr/bin/uniq'
+	local awk='/bin/awk'
+	local tr='/usr/bin/tr'
+	local grep='/usr/bin/grep'
+	local paths="$1"
+	local opt_p="`/usr/bin/dirname $OPT_RUN`"
+	local opt=
+	local win_p="^/c/"
 
-  local car="`echo -n "$1" | \
-    tr ':' '\n' | $sort | grep -v '^/c/' | $uniq | tr '\n' ':' `"
-  local cdr="`echo -n "$1" | \
-    tr ':' '\n' | $sort | grep    '^/c/' | $uniq | tr '\n' ':' `"
-  local new="${car}${cdr}"
-  echo -n "${new}" | sed -e 's#:$##'
+	opt="`echo -n "$paths" | $tr ':' '\n' | \
+		$grep "$opt_p" | $tr '\n' ':' `"
+  local car="`echo -n "$paths" | $tr ':' '\n' | \
+		$grep -v "$opt_p" | $grep -v "$win_p" | $tr '\n' ':' `"
+  local cdr="`echo -n "$paths" | $tr ':' '\n' | \
+    $grep "$win_p" | $tr '\n' ':' `"
+  local new="`echo -n "${car}${opt:+$opt }${cdr}" | \
+		$awk '!xxx[$0]++' | sed -e 's#:$##' -e 's#:\  *\/#:\/#g' `"
+  echo -n "${new}" 
 }
 
 export PATH=$(sort_path "$PATH")
