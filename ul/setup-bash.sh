@@ -90,21 +90,52 @@ check_win_cc_include() {
   local vimrc="$1"
   local inc_bat="$2"
 
-  [ -f "$inc_bat" ] || return 1
+	local vstools="`env|grep 'VS[0-9][0-9]*COMNTOOLS'|sed 's#^VS[0-9]*COMNTOOLS=\(.*\)$#\1#g'`"
+	[ -n "$vstools" ] || return 0
+	[ -d "$vstools" ] || return 1
 
-  local include=$($inc_bat "`env|grep 'VS[0-9][0-9]*COMNTOOLS'|sed 's#^VS[0-9]*COMNTOOLS=\(.*\)$#\1#g'`")
-  [ -n "$include" ] || return 1
+	local arch=`uname -m 2>/dev/null`
+	case "$arch" in
+#		x86_64)
+#			vstools="`( cd "$vstools/../../VC" && pwd )`"
+#			vstools="`echo "$vstools" | \
+#				sed -e 's#^\/\([a-z]\)#\u\1:#' -e 's#\/#\\\#g'`"
+#			cat << END > "$inc_bat"
+#@echo off
+#set vc="$vstools"
+#cd "%vs%"
+#call vcvarsall.bat x86_amd64
+#echo "%INCLUDE%"
+#END
+			
+#			;;
+		*)
+			cat << END > "$inc_bat"
+@echo off
+set vs="$vstools" 
+cd "%vs%"
+call vsvars32.bat
+echo "%INCLUDE%"
+END
+			;;
+	esac
 
-  include=$(echo $include | sed 's#\"##g')
-  local inc_lns=()
-  IFS=$';'
-  for i in `echo "${include}"`; do
+	[ -f "$inc_bat" ] || return 1
+	chmod u+x "$inc_bat"
+
+ 	local include=$($inc_bat) 
+	[ -n "$include" ] || return 1
+
+ 	include=$(echo $include | sed 's#\"##g')
+ 	local inc_lns=()
+ 	IFS=$';'
+ 	for i in `echo "${include}"`; do
 		local ln=$(echo "\\${i}"|sed -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' -e 's#\\#\/#g')
 		inc_lns+=( "$ln" )
-  done
-  unset IFS
+ 	done
+ 	unset IFS
 
-  set_vim_path_var "${vimrc}" "${inc_lns[@]}"
+ 	set_vim_path_var "${vimrc}" "${inc_lns[@]}"
 }
 
 
@@ -125,7 +156,6 @@ case ${PLATFORM} in
     ${curl} ${GITHUB_H}/win/.bashrc -o $HOME/.bashrc
     ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/_vimrc && \
       cp $HOME/_vimrc $HOME/.vimrc
-    ${curl} ${GITHUB_H}/win/vs-inc.bat -o $HOME/.vs-inc.bat
     ;;
   *)
 		${curl} ${GITHUB_H}/ul/.bashrc -o $HOME/.bash_init
