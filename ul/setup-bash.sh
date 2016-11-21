@@ -96,19 +96,18 @@ check_win_cc_include() {
 
 	local arch=`uname -m 2>/dev/null`
 	case "$arch" in
-#		x86_64)
-#			vstools="`( cd "$vstools/../../VC" && pwd )`"
-#			vstools="`echo "$vstools" | \
-#				sed -e 's#^\/\([a-z]\)#\u\1:#' -e 's#\/#\\\#g'`"
-#			cat << END > "$inc_bat"
-#@echo off
-#set vc="$vstools"
-#cd "%vs%"
-#call vcvarsall.bat x86_amd64
-#echo "%INCLUDE%"
-#END
-			
-#			;;
+		x86_64)
+			vstools="`( cd "$vstools/../../VC" && pwd )`"
+			vstools="`echo "$vstools" | \
+				sed -e 's#^\/\([a-z]\)#\u\1:#' -e 's#\/#\\\#g'`"
+			cat << END > "$inc_bat"
+@echo off
+set vc="$vstools"
+cd "%vs%"
+call vcvarsall.bat x86_amd64
+echo "%INCLUDE%"
+END
+			;;
 		*)
 			cat << END > "$inc_bat"
 @echo off
