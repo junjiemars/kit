@@ -5,10 +5,22 @@
 # note: suit for multiple Oracle coexisting env
 #------------------------------------------------
 
+PLATFORM=`uname -s 2>/dev/null`
+
 export ORACLE_HOME=${ORACLE_HOME:-"/opt/oracle/u01/app/oracle/product/11.2.0/xe"}
 export SQLPATH=${SQLPATH:-"/opt/oracle/sql"}
 export NLS_LANG=${NLS_LANG:-"AMERICAN_AMERICA.UTF8"}
-export LD_LIBRARY_PATH=${ORACLE_HOME%/}/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+
+LD_LIBRARY_PATH=${ORACLE_HOME%/}/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+case $PLATFORM in
+	Darwin)
+		export DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH
+		;;
+	*)
+		export LD_LIBRARY_PATH
+		;;
+esac
+
 export PATH=${ORACLE_HOME%/}/bin${PATH:+:$PATH}
 
 ORA_USER=${ORA_USER:-'system'}
