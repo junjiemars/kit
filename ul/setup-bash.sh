@@ -102,18 +102,18 @@ check_win_cc_include() {
 				#-e 's#\/#\\\#g'`"
 			cat << END > "$inc_bat"
 @echo off
-set vc="$vstools"
-cd /d "%vc%"
+cd /d "$vstools"
 call vcvarsall.bat x86_amd64
+set CC cl
 echo "%INCLUDE%"
 END
 			;;
 		*)
 			cat << END > "$inc_bat"
 @echo off
-set vs="$vstools" 
-cd /d "%vs%"
+cd /d "$vstools"
 call vsvars32.bat
+set CC cl
 echo "%INCLUDE%"
 END
 			;;
