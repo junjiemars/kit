@@ -109,6 +109,15 @@ Must on the machine which Oracle instance running on.
 $ sqlplus system/<passwd>
 SQL> alter user sys identified by passwd;
 SQL> connect sys/<passwd> as sysdba;
+
+# fix issues
+SQL> shutdown immediate
+SQL> startup restrict
+SQL> @?/rdbms/admin/catalog.sql
+SQL> @?/rdbms/admin/catproc.sql
+SQL> @?/rdbms/admin/utlrp.sql
+SQL> shutdown
+SQL> startup
 ```
 * As SYSTEM User
 
