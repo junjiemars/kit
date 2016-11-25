@@ -41,7 +41,7 @@ WAR_NAME=${WAR_NAME:-}
 R_WAR_FILE="${WAR_DIR}${WAR_NAME}.war"
 L_WAR_FILE="${BUILD_DIR%/}/${WAR_NAME}.war"
 
-# platform 
+# platform
 TD_CTRL_BAT="td-ctrl.bat"
 TD_CTRL_SH="${TD_CTRL_BAT%.*}.sh"
 TD_SHA1SUM_BAT="td-sha1sum.bat"
@@ -81,7 +81,7 @@ END
 			if [ ! -f $TD_CTRL_BAT ]; then
 				cat << END > $TD_CTRL_BAT
 @echo off
-docker exec -u $DOCKER_USER $DOCKER_CONTAINER $R_TD_CTRL_SH %1 
+docker exec $DOCKER_CONTAINER $R_TD_CTRL_SH %1 
 END
 				chmod u+x $TD_CTRL_BAT
 			fi
@@ -89,7 +89,7 @@ END
 			if [ ! -f $TD_SHA1SUM_BAT ]; then
 				cat << END > $TD_SHA1SUM_BAT
 @echo off
-docker exec -u $DOCKER_USER $DOCKER_CONTAINER $R_TD_SHA1SUM_SH 
+docker exec $DOCKER_CONTAINER $R_TD_SHA1SUM_SH 
 END
 				chmod u+x $TD_SHA1SUM_BAT
 			fi
@@ -97,7 +97,7 @@ END
 			if [ ! -f $TD_RM_BAT ]; then
 				cat << END > $TD_RM_BAT
 @echo off
-docker exec -u $DOCKER_USER $DOCKER_CONTAINER rm -rf ${WAR_DIR}${WAR_NAME} $R_WAR_FILE
+docker exec $DOCKER_CONTAINER rm -rf ${WAR_DIR}${WAR_NAME} $R_WAR_FILE
 END
 				chmod u+x $TD_RM_BAT
 			fi
@@ -107,20 +107,16 @@ END
 	esac
 }
 
-docker_chown() {
-	docker exec $DOCKER_CONTAINER chown $DOCKER_USER:$DOCKER_USER $1
-}
 
 control_tomcat() {
 	if [ 0 -eq $HAS_DOCKER ]; then
 		docker cp $TD_CTRL_SH $DOCKER_CONTAINER:$R_TD_CTRL_SH
-		docker_chown $R_TD_CTRL_SH
 		case $PLATFORM in
 			MSYS_NT*)
 				./$TD_CTRL_BAT "$1"
 				;;
 			*)
-				docker exec -u $DOCKER_USER $DOCKER_CONTAINER $R_TD_CTRL_SH $1
+				docker exec $DOCKER_CONTAINER $R_TD_CTRL_SH $1
 				;;
 		esac
 	elif [ 0 -eq $HAS_SSH ]; then
@@ -142,13 +138,12 @@ is_same_war() {
 		sha1sum $L_WAR_FILE | cut -d' ' -f1`
 	if [ 0 -eq $HAS_DOCKER ]; then
 		docker cp $TD_SHA1SUM_SH $DOCKER_CONTAINER:$R_TD_SHA1SUM_SH
-		docker_chown $R_TD_SHA1SUM_SH
 		case $PLATFORM in
 			MSYS_NT*)
 				_r=`./$TD_SHA1SUM_BAT`
 				;;
 			*)
-				_r=`docker exec -u $DOCKER_USER $DOCKER_CONTAINER $R_TD_SHA1SUM_SH`
+				_r=`docker exec $DOCKER_CONTAINER $R_TD_SHA1SUM_SH`
 				;;
 		esac 
 	elif [ 0 -eq $HAS_SSH ]; then
@@ -175,13 +170,13 @@ transport_war() {
 				./$TD_RM_BAT
 				;;
 			*)
-				docker exec -u $DOCKER_USER $DOCKER_CONTAINER \
+				docker exec $DOCKER_USER $DOCKER_CONTAINER \
 					rm -rf ${WAR_DIR}${WAR_NAME} $R_WAR_FILE
 				;;
 		esac
 
 		docker cp $L_WAR_FILE $DOCKER_CONTAINER:$R_WAR_FILE 
-		docker_chown $R_WAR_FILE
+		#docker_chown $R_WAR_FILE
 
 	elif [ 0 -eq $HAS_SSH ]; then
 		ssh $SSH_USER@$SSH_HOST \
