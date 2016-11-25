@@ -4,7 +4,8 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
-PREFIX=${PREFIX:-"/opt/run/www/tomcat"}
+OPT_RUN=${OPT_RUN:-"/opt/run"}
+PREFIX=${PREFIX:-"${OPT_RUN%/}/www/tomcat"}
 VER=${VER:-"8.5.4"}
 CATALINA_BASE=${CATALINA_BASE:-"${PREFIX%/}/${VER}"}
 export CATALINA_PID=${CATALINA_PID:-"${CATALINA_BASE%/}/logs/pid"}
