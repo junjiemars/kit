@@ -122,6 +122,8 @@ check_pid() {
 show_version() {
   if `check_catalina_bin`; then
     "${CATALINA_BIN}" version
+  else
+    echo "checking ${CATALINA_BIN} ...failed, panic!"
 	fi
 }
 

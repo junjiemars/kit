@@ -9,7 +9,7 @@
 # env 
 PLATFORM=${PLATFORM:-`uname -s`}
 OPT_RUN=${OPT_RUN:-"/opt/run"}
-PREFIX=${PREFIX:-"${OPT_RUN}/www/tomcat"}
+PREFIX=${PREFIX:-"${OPT_RUN%/}/www/tomcat"}
 VER=${VER:-"8.5.4"}
 START_PORT=${START_PORT:-8080}
 STOP_PORT=${STOP_PORT:-8005}
@@ -68,7 +68,7 @@ export PREFIX=$PREFIX
 export VER=$VER
 export START_PORT=$START_PORT
 export STOP_PORT=$STOP_PORT
-export JPDA_PORT=$JDPA_PORT
+export JPDA_PORT=$JPDA_PORT
 export JAVA_OPTS=$JAVA_OPTS
 
 $DOCKER_TC_SH \$@
@@ -130,7 +130,7 @@ control_tomcat() {
 		 VER="$VER" \
 		 START_PORT=$START_PORT \
 		 STOP_PORT=$STOP_PORT \
-		 JPDA_PORT=$JDPA_PORT \
+		 JPDA_PORT=$JPDA_PORT \
 		 JAVA_OPTS="$JAVA_OPTS" \
 		 ./$TC_SH $1
 	fi
