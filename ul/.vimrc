@@ -5,7 +5,7 @@ set tabstop=2
 set shiftwidth=2
 
 " spaces instead of tabs
-if expand("%:t")==#Makefile
+if expand("%:t")==#"Makefile"
   set noexpandtab
 else
   set expandtab
