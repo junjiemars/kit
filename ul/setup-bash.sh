@@ -94,30 +94,30 @@ check_win_cc_include() {
 	[ -n "$vstools" ] || return 0
 	[ -d "$vstools" ] || return 1
 
-	local arch=`uname -m 2>/dev/null`
-	case "$arch" in
-		x86_64)
-			vstools="`( cd "$vstools/../../VC" && pwd )`"
-			vstools="`echo "$vstools" | sed -e 's#^\/\([a-z]\)#\u\1:#'`"
-				#-e 's#\/#\\\#g'`"
-			cat << END > "$inc_bat"
+  vstools="`( cd "$vstools/../../VC" && pwd )`"
+	vstools="`echo "$vstools" | sed -e 's#^\/\([a-z]\)#\u\1:#'`"
+
+  cat <<END > "$inc_bat"
 @echo off
 cd /d "$vstools"
-call vcvarsall.bat x86_amd64
-set CC cl
-echo "%INCLUDE%"
+if "%1" == "" goto x86
+if /i "%2" == "x86_64" goto x86_64
+
+:x86
+call vcvarsall.bat
+set CC=cl
+set AS=ml
+goto :echo_inc
+
+:x86_64
+call vsvarsall.bat x86_amd64
+set CC=cl
+set AS=ml64
+goto :echo_inc
+
+:echo_inc
+echo "%INCLUDE%" 
 END
-			;;
-		*)
-			cat << END > "$inc_bat"
-@echo off
-cd /d "$vstools"
-call vsvars32.bat
-set CC cl
-echo "%INCLUDE%"
-END
-			;;
-	esac
 
 	[ -f "$inc_bat" ] || return 1
 	chmod u+x "$inc_bat"
