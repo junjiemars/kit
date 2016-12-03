@@ -6,11 +6,6 @@ set shiftwidth=2
 
 " spaces instead of tabs
 set noexpandtab
-"if expand("%:t")==#"Makefile"
-"  set noexpandtab
-"else
-"  set expandtab
-"endif
 
 " history
 set history=50
@@ -30,6 +25,9 @@ hi cursorlinenr term=bold ctermfg=yellow gui=bold guifg=yellow
 
 " syntax highlight
 syntax on
+
+" highlight search
+set hlsearch " :nohl
 
 " background dark
 set background=light
