@@ -1,7 +1,8 @@
 #!/bin/bash
-# usage: sudo bash <(curl https://raw.githubusercontent.com/junjiemars/unbuntu/master/setup-idea-desktop.sh)
+# usage: sudo bash <(curl https://raw.githubusercontent.com/junjiemars/kit/unbuntu/master/setup-idea-desktop.sh)
 
-IDEA_HOME=${IDEA_HOME:-/opt/open/idea/idea-IC-162.1121.32}
+PREFIX=${PREFIX:-"$OPT_RUN"}
+IDEA_HOME=${IDEA_HOME:-"${PREFIX%/}/idea/idea-IC-163.7743.44"}
 
 # make idea run from terminal
 IDEA_TTY='/usr/local/bin/idea'
