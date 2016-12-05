@@ -27,6 +27,8 @@ function diff_p() {
   diff ${1} ${2} >/dev/null 2>&1; echo $?
 }
 
+has_rlwrap=$(exist_p 'rlwrap')
+
 case "${PLATFORM}" in
   Darwin)
     alias ls='ls -G'
@@ -43,8 +45,7 @@ case "${PLATFORM}" in
 esac
 
 alias_racket() {
-	local p_rlwrap=$(exist_p 'rlwrap')
-	if [ 0 -eq $p_rlwrap ]; then
+	if [ 0 -eq $has_rlwrap ]; then
 		local p_racket=$(exist_p 'racket')
 		if [ 0 -eq $p_racket ]; then
 			local v
@@ -80,7 +81,17 @@ alias_vi() {
 	fi
 }
 
+alias_sbcl() {
+	if [ 0 -eq $has_rlwrap ]; then
+		local p_sbcl=$(exist_p 'sbcl')
+		if [ 0 -eq $p_sbcl ]; then
+			alias sbcl='rlwrap sbcl'
+		fi
+	fi
+}
+
+alias_vi
+alias_emacs
 alias_racket
 alias_lein
-alias_emacs
-alias_vi
+alias_sbcl
