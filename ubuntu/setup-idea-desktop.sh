@@ -1,9 +1,11 @@
 #!/bin/bash
 # sudo bash <(curl https://raw.githubusercontent.com/junjiemars/kit/ubuntu/setup-idea-desktop.sh)
 
-PREFIX=${PREFIX:-"$OPT_RUN"}
-IDEA_VER=${IDEA_VER:-"idea-IC-163.7743.44"}
-IDEA_HOME=${IDEA_HOME:-"${PREFIX%/}/idea/${IDEA_VER}"}
+IDEA_HOME=${IDEA_HOME:-"/opt/open/idea/idea-IC-163.7743.44"}
+
+if [ -d "$IDEA_HOME" ]; then
+  echo "$IDEA_HOME no found, panic!"
+fi
 
 # make idea run from terminal
 IDEA_TTY='/usr/local/bin/idea'
