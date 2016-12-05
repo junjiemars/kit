@@ -1,5 +1,5 @@
 #!/bin/bash
-# usage: sudo bash <(curl https://raw.githubusercontent.com/junjiemars/kit/unbuntu/setup-idea-desktop.sh)
+# usage: sudo bash <(curl https://raw.githubusercontent.com/junjiemars/kit/ubuntu/setup-idea-desktop.sh)
 
 PREFIX=${PREFIX:-"$OPT_RUN"}
 IDEA_HOME=${IDEA_HOME:-"${PREFIX%/}/idea/idea-IC-163.7743.44"}
