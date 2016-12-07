@@ -177,6 +177,7 @@ transport_war() {
 		esac
 
 		docker cp $L_WAR_FILE $DOCKER_CONTAINER:$R_WAR_FILE 
+		docker exec $DOCKER_CONTAINER chown $DOCKER_USER:$DOCKER_USER $R_WAR_FILE
 		#docker_chown $R_WAR_FILE
 
 	elif [ 0 -eq $HAS_SSH ]; then
