@@ -66,10 +66,10 @@ END
 #!/bin/bash
 export PREFIX=$PREFIX 
 export VER=$VER
-export START_PORT=$START_PORT
-export STOP_PORT=$STOP_PORT
-export JPDA_PORT=$JPDA_PORT
-export JAVA_OPTS=\"$JAVA_OPTS\"
+export START_PORT="$START_PORT"
+export STOP_PORT="$STOP_PORT"
+export JPDA_PORT="$JPDA_PORT"
+export JAVA_OPTS="$JAVA_OPTS"
 
 $DOCKER_TC_SH \$@
 END
