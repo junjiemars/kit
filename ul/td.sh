@@ -14,7 +14,7 @@ VER=${VER:-"8.5.4"}
 START_PORT=${START_PORT:-8080}
 STOP_PORT=${STOP_PORT:-8005}
 JPDA_PORT=${JPDA_PORT:-8000}
-JAVA_OPTS="${JAVA_OPTS:+\"$JAVA_OPTS }-Djava.net.preferIPv4Stack=true\""
+JAVA_OPTS="${JAVA_OPTS}"
 TC_SH=${TC_SH:-"tc.sh"}
 TC_SH_ENV=${TC_SH_ENV:-"PREFIX=$PREFIX VER=$VER START_PORT=$START_PORT STOP_PORT=$STOP_PORT JPDA_PORT=$JPDA_PORT JAVA_OPTS=$JAVA_OPTS"}
 
@@ -111,12 +111,13 @@ END
 control_tomcat() {
 	if [ 0 -eq $HAS_DOCKER ]; then
 		docker cp $TD_CTRL_SH $DOCKER_CONTAINER:$R_TD_CTRL_SH
+		docker exec $DOCKER_CONTAINER chown $DOCKER_USER:$DOCKER_USER $R_TD_CTRL_SH
 		case $PLATFORM in
 			MSYS_NT*)
 				./$TD_CTRL_BAT "$1"
 				;;
 			*)
-				docker exec $DOCKER_CONTAINER $R_TD_CTRL_SH $1
+				docker exec -u $DOCKER_USER $DOCKER_CONTAINER $R_TD_CTRL_SH $1
 				;;
 		esac
 	elif [ 0 -eq $HAS_SSH ]; then
@@ -143,7 +144,7 @@ is_same_war() {
 				_r=`./$TD_SHA1SUM_BAT`
 				;;
 			*)
-				_r=`docker exec $DOCKER_CONTAINER $R_TD_SHA1SUM_SH`
+				_r=`docker exec -u $DOCKER_USER $DOCKER_CONTAINER $R_TD_SHA1SUM_SH`
 				;;
 		esac 
 	elif [ 0 -eq $HAS_SSH ]; then
@@ -170,7 +171,7 @@ transport_war() {
 				./$TD_RM_BAT
 				;;
 			*)
-				docker exec $DOCKER_USER $DOCKER_CONTAINER \
+				docker exec -u $DOCKER_USER $DOCKER_CONTAINER \
 					rm -rf ${WAR_DIR}${WAR_NAME} $R_WAR_FILE
 				;;
 		esac
