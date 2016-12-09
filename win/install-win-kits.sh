@@ -60,6 +60,16 @@ install_emacs() {
     unzip -qo "${emacs_home}/${gnutls_zip}" 'bin/*' -d"${emacs_home}"
     unzip -qo "${emacs_home}/${gnutls_zip}" 'lib/*' -d"${emacs_home}"
   fi
+
+  if [ ! -f "${bin_dir}/libxml2-2.dll" ]; then
+    local libxml2_zip="libxml2-2.7.8-w32-bin.zip"
+    download_winport "${emacs_home}" "${libxml2_zip}"
+    if [ ! -f "${emacs_home}/${libxml2_zip}" ]; then
+      return 1
+    fi
+    unzip -qo "${emacs_home}/${libxml2_zip}" \
+          'bin/libxml2-2.dll' -d"${emacs_home}"
+  fi  
   
   return 0
 }
