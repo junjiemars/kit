@@ -99,6 +99,7 @@ check_win_cc_include() {
 
   cat <<END > "$inc_bat"
 @echo off
+set wpwd=%cd%
 cd /d "$vstools"
 if "%1" == "" goto x86
 if /i "%2" == "x86_64" goto x86_64
@@ -116,6 +117,7 @@ set AS=ml64
 goto :echo_inc
 
 :echo_inc
+cd /d %wpwd%
 echo "%INCLUDE%" 
 END
 
