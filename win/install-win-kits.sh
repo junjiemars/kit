@@ -4,6 +4,8 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
+MACHINE="`uname -m 2>/dev/null`"
+
 HAS_ALL=${HAS_ALL:-"NO"}
 HAS_EMACS=${HAS_EMACS:-0}
 HAS_PSTOOLS=${HAS_PSTOOLS:-0}
@@ -36,7 +38,18 @@ download_winport() {
 }
 
 install_emacs() {
-  local emacs_zip="emacs-${EMACS_VER}-bin-i686-mingw32.zip"
+	local emacs_arch="i686"
+	case $MACHINE in
+		x86_64) emacs_arch="${MACHINE}" ;;
+		*) ;;
+	esac
+	local emacs_major="`echo ${EMACS_VER}|sed 's#^\([0-9][0-9]\)*\..*$#\1#'`"
+	if [ ${emacs_major} -lt 25 ]; then
+		emacs_arch="bin-i686"
+	else
+		emacs_arch="${emacs_arch}-w64"
+	fi
+  local emacs_zip="emacs-${EMACS_VER}-${emacs_arch}-mingw32.zip"
   local emacs_url="http://ftp.gnu.org/gnu/emacs/windows/${emacs_zip}"
   local emacs_home="${OPT_RUN}/emacs"
   local bin_dir="${emacs_home}/bin"
@@ -70,7 +83,7 @@ install_emacs() {
     unzip -qo "${emacs_home}/${libxml2_zip}" \
           'bin/libxml2-2.dll' -d"${emacs_home}"
   fi  
-  
+ 
   return 0
 }
 
