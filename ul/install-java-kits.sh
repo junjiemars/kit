@@ -38,7 +38,7 @@ ANT_VER=${ANT_VER:-"1.9.x"}
 MAVEN_VER=${MAVEN_VER:-"3.2.6"}
 CLOJURE_VER=${CLOJURE_VER:-"1.8.0"}
 CLOJURESCRIPT_VER=${CLOJURESCRIPT_VER:-"1.9.229"}
-GRADLE_VER=${GRADLE_VER:-"2.14.x"}
+GRADLE_VER=${GRADLE_VER:-"2.13"}
 GROOVY_VER=${GROOVY_VER:-"2_4_X"}
 SCALA_VER=${SCALA_VER:-"2.11.8"}
 
@@ -257,21 +257,27 @@ install_clojurescript() {
 }
 
 install_gradle() {
-  local gradle_url='https://github.com/gradle/gradle.git'
+  local gradle_zip="gradle-${GRADLE_VER}-bin.zip"
+  local gradle_url="https://services.gradle.org/distributions/${gradle_zip}"
   local gradle_home="${OPEN_DIR}/gradle"
-  local bin_ln="${RUN_DIR}/bin/gradlew"
+  local bin_dir="${gradle_home}/gradle-${GRADLE_VER}"
+	local bin_ln="${RUN_DIR}/bin/gradle"
 
-  [ 0 -eq `gradlew -version $>/dev/null; echo $?` ] && return 0
+  [ 0 -eq `gradle -version $>/dev/null; echo $?` ] && return 0
 
-  [ -f "${gradle_home}/gradlew" ] || \
-    git clone --depth=1 --branch="${GRADLE_VER}" \
-      "${gradle_url}" "${gradle_home}"
+  [ -d "${gradle_home}" ] || mkdir -p "${gradle_home}"
 
-  if [ 0 -eq `${gradle_home}/gradlew -version $>/dev/null; echo $?` ]; then
-    [ -L "${bin_ln}" ] && rm "${bin_ln}"
-      ln -s "${gradle_home}/gradlew" "${bin_ln}"
+#	if [ ! -f "${bin_dir}/bin/gradle" ]; then
+#		curl -Lo "${gradle_home}/${gradle_zip}" -C - "${gradle_url}" && \
+#			cd ${gradle_home} && unzip ${gradle_zip}
+#	fi
+  
+  if `${bin_dir}/bin/gradle -version &>/dev/null`; then
+		[ -L "${bin_ln}" ] && rm "${bin_ln}"
+		ln -s "${bin_dir}/bin/gradle" "${bin_ln}"
     return 0
   fi
+ 
   return 1
 }
 
