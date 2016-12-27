@@ -64,25 +64,35 @@ install_emacs() {
     cd "${emacs_home}" && unzip -qo "${emacs_home}/${emacs_zip}"
   fi
 
-  if [ ! -x "${bin_dir}/gnutls-cli.exe" ]; then
-    local gnutls_zip="gnutls-3.3.11-w32-bin.zip"
-    download_winport "${emacs_home}" "${gnutls_zip}"
-    if [ ! -f "${emacs_home}/${gnutls_zip}" ]; then
-      return 1
-    fi
-    unzip -qo "${emacs_home}/${gnutls_zip}" 'bin/*' -d"${emacs_home}"
-    unzip -qo "${emacs_home}/${gnutls_zip}" 'lib/*' -d"${emacs_home}"
-  fi
+	if [ ${emacs_major} -ge 25 ]; then
+		local dep_zip="emacs-${emacs_major}-${MACHINE}-deps.zip"
+		local dep_url="https://ftp.gnu.org/gnu/emacs/windows/${dep_zip}"
+		curl -Lo "${emacs_home}/${dep_zip}" -C - "${dep_url}"
+		if [ ! -f "${emacs_home}/${dep_zip}" ]; then
+			return 1
+		fi
+    cd "${emacs_home}" && unzip -qo "${emacs_home}/${dep_zip}"
+	else
+  	if [ ! -x "${bin_dir}/gnutls-cli.exe" ]; then
+			local gnutls_zip="gnutls-3.3.11-w32-bin.zip"
+			download_winport "${emacs_home}" "${gnutls_zip}"
+			if [ ! -f "${emacs_home}/${gnutls_zip}" ]; then
+				return 1
+			fi
+			unzip -qo "${emacs_home}/${gnutls_zip}" 'bin/*' -d"${emacs_home}"
+			unzip -qo "${emacs_home}/${gnutls_zip}" 'lib/*' -d"${emacs_home}"
+		fi
 
-  if [ ! -f "${bin_dir}/libxml2-2.dll" ]; then
-    local libxml2_zip="libxml2-2.7.8-w32-bin.zip"
-    download_winport "${emacs_home}" "${libxml2_zip}"
-    if [ ! -f "${emacs_home}/${libxml2_zip}" ]; then
-      return 1
-    fi
-    unzip -qo "${emacs_home}/${libxml2_zip}" \
-          'bin/libxml2-2.dll' -d"${emacs_home}"
-  fi  
+		if [ ! -f "${bin_dir}/libxml2-2.dll" ]; then
+			local libxml2_zip="libxml2-2.7.8-w32-bin.zip"
+    	download_winport "${emacs_home}" "${libxml2_zip}"
+    	if [ ! -f "${emacs_home}/${libxml2_zip}" ]; then
+      	return 1
+    	fi
+    	unzip -qo "${emacs_home}/${libxml2_zip}" \
+          	'bin/libxml2-2.dll' -d"${emacs_home}"
+  	fi  
+	fi
  
   return 0
 }
