@@ -4,6 +4,7 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
+PLATFORM="`uname -s 2>/dev/null`"
 
 usage() {
   echo -e "Usage: $(basename $0) [OPTIONS]"
@@ -14,12 +15,39 @@ usage() {
   echo -e "A tiny-handy web server.\n"
 }
 
+nc_cmd() {
+	local nc_listen="nc -l -p"
+	case "${PLATFORM}" in
+		Darwin)
+			nc_listen="nc -l"
+			;;
+	esac
+	echo "$nc_listen"
+}
+
+listen_port() {
+	local port="$@"
+	case "${PLATFORM}" in
+		Darwin)
+			echo "`echo $port | sed -E 's/(-p[ ]*|--port=)([0-9][0-9]*).*/\2/'`"
+			;;
+		*)
+			echo "`echo $port | sed -e 's#\(-p[ ]*\|--port=\)\([0-9][0-9]*\).*#\2#'`"
+			;;
+	esac
+}
+
+
 case ".$@" in
   .-p*|.--port*) 
-		_port_=`echo $@ | sed -e 's/\(-p\|--port=\) *\([0-9][0-9]*\).*/\2/'`
-		while true; do
-			echo -e "HTTP/1.1 200 OK\n\n $(date)" | nc -l -p $_port_; done
-		 ;;
+		nc=$(nc_cmd)
+		port=$(listen_port "$@")
+		trap "exit" INT
+		while :
+		do
+			echo -e "HTTP/1.1 200 OK\n\n $(date)" | $nc $port 
+		done
+		;;
   .-h|.--help|.*) 
 		usage 
 		;;
