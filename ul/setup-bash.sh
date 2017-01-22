@@ -73,17 +73,18 @@ check_linux_cc_include() {
 									| awk '/#include <...> search starts here:/,/End of search list./'`"
     [ -n "$cc_out" ] || return 1
 
-		cat /dev/null > "$inc_list"
 		local inc_lns=()
 		IFS=$'\n'
 		for l in `echo "$cc_out"`; do
 			inc_lns+=($(echo "$l" | sed 's/^ //'))
-			echo "$inc_lns" >> "$inc_list"
 		done
 		unset IFS
+
+		cat /dev/null > "$inc_list"
 		local inc_ln="${#inc_lns[@]}"
 		if [[ 2 -lt "$inc_ln" ]]; then
 			local inc_paths=("${inc_lns[@]:1:$(( inc_ln-2  ))}")
+			echo "${inc_paths[@]}" >> "$inc_list"
 			set_vim_path_var "${vimrc}" "${inc_paths[@]}"
     fi
   fi
