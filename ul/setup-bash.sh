@@ -66,16 +66,19 @@ set_vim_path_var() {
 }
 
 check_linux_cc_include() {
-	local vimrc=$1
+	local inc_list=$1
+	local vimrc=$2
   if `type -p cc &>/dev/null`; then
     local cc_out="`echo '' | cc -v -E 2>&1 >/dev/null - \
 									| awk '/#include <...> search starts here:/,/End of search list./'`"
     [ -n "$cc_out" ] || return 1
 
+		cat /dev/null > "$inc_list"
 		local inc_lns=()
 		IFS=$'\n'
 		for l in `echo "$cc_out"`; do
 			inc_lns+=($(echo "$l" | sed 's/^ //'))
+			echo "$inc_lns" >> "$inc_list"
 		done
 		unset IFS
 		local inc_ln="${#inc_lns[@]}"
@@ -87,8 +90,9 @@ check_linux_cc_include() {
 }
 
 check_win_cc_include() {
-  local vimrc="$1"
-  local inc_bat="$2"
+	local inc_list="$1"
+  local vimrc="$2"
+  local inc_bat="$3"
 
 	local vstools="`env|grep 'VS[0-9][0-9]*COMNTOOLS'|sed 's#^VS[0-9]*COMNTOOLS=\(.*\)$#\1#g'`"
 	[ -n "$vstools" ] || return 0
@@ -127,11 +131,13 @@ END
  	local include=$($inc_bat) 
 	[ -n "$include" ] || return 1
 
+	cat /dev/null > "$inc_list"
  	include=$(echo $include | sed 's#\"##g')
  	local inc_lns=()
  	IFS=$';'
  	for i in `echo "${include}"`; do
 		local ln=$(echo "\\${i}"|sed -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' -e 's#\\#\/#g')
+		echo "'$ln'" >> "$inc_list"
 		inc_lns+=( "$ln" )
  	done
  	unset IFS
@@ -177,10 +183,10 @@ esac
 
 case ${PLATFORM} in
   Linux)
-    check_linux_cc_include $HOME/.vimrc
+    check_linux_cc_include $HOME/.cc-inc.list $HOME/.vimrc
     ;;
   MSYS_NT*)
-    check_win_cc_include $HOME/.vimrc $HOME/.vs-inc.bat
+    check_win_cc_include $HOME/.cc-inc.list $HOME/.vimrc $HOME/.vs-inc.bat
     ;;
   *)
     ;;
