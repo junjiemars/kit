@@ -20,6 +20,7 @@ esac
 
 RUN_DIR=${RUN_DIR:-"${PREFIX}/run"}
 OPEN_DIR=${OPEN_DIR:-"${PREFIX}/open"}
+SOCKS=
 
 HAS_ALL=${HAS_ALL:-"NO"}
 HAS_JDK=${HAS_JDK:-0}
@@ -98,7 +99,7 @@ install_jdk() {
       local jdk_url="${ora_url}/${JDK_VER[0]}-${JDK_VER[1]}/${jdk_file}"
       local jdk_home="${RUN_DIR}/jdk/${JDK_VER[0]}"
       [ -d "${jdk_home}" ] || mkdir -p "${jdk_home}"
-      curl -skL -H"${ora_cookie}" -O -C - "${jdk_url}" && \
+      curl $SOCKS -skL -H"${ora_cookie}" -O -C - "${jdk_url}" && \
         tar xf "${jdk_file}" -C "${jdk_home}" --strip-components=1
       if [ 0 -eq `${jdk_home}/bin/javac -version &>/dev/null; echo $?` ]; then
         append_vars "JAVA_HOME" "${jdk_home}"
@@ -174,7 +175,7 @@ install_boot() {
 
   [ 0 -eq `boot -v $>/dev/null; echo $?` ] && return 0
 
-  curl -fsSLo "${bin_dir}/boot" -C - "${boot_url}" && \
+  curl $SOCKS -fsSLo "${bin_dir}/boot" -C - "${boot_url}" && \
     chmod 755 "${bin_dir}/boot"
   
   [ 0 -eq `${bin_dir}/boot -v &>/dev/null; echo $?` ] && return 0
@@ -186,14 +187,14 @@ install_lein() {
   local bin_dir="${RUN_DIR}/bin"
   
   if [ ! -f "${bin_dir}/lein" ]; then
-    curl -fsSLo "${bin_dir}/lein" -C - "${lein_url}" && \
+    curl $SOCKS -fsSLo "${bin_dir}/lein" -C - "${lein_url}" && \
       chmod u+x "${bin_dir}/lein"
   fi
 
   case "${PLATFORM}" in
     MSYS_NT*)
       if [ ! -f "${bin_dir}/lein.bat" ]; then
-        curl -fsSLo "${bin_dir}/lein.bat" -C - "${lein_url}.bat" && \
+        curl $SOCKS -fsSLo "${bin_dir}/lein.bat" -C - "${lein_url}.bat" && \
           chmod u+x "${bin_dir}/lein.bat"
       fi
       ;;
@@ -213,14 +214,14 @@ install_clojure() {
 
   [ -d "${clojure_home}" ] || mkdir -p "${clojure_home}"
   if [ ! -f "${bin_dir}/${clojure_jar}" ]; then
-    curl -L -o "${clojure_home}/${clojure_zip}" -C - "${clojure_url}"
+    curl $SOCKS -L -o "${clojure_home}/${clojure_zip}" -C - "${clojure_url}"
     if [ -f "${clojure_home}/${clojure_zip}" ]; then
       cd "${clojure_home}" && unzip "${clojure_home}/${clojure_zip}"
     fi
   fi
 
   if [ -f "${bin_dir}/${clojure_jar}" ]; then
-    curl -L -o "${clojure_bin}" -C - "${clojure_sh}" && \
+    curl $SOCKS -L -o "${clojure_bin}" -C - "${clojure_sh}" && \
       sed -i.b0 -e "s#CLOJURE_JAR=#CLOJURE_JAR=\"${bin_dir}/${clojure_jar}\"#" \
         "${clojure_bin}"
 		if `chmod_file "${clojure_bin}" "u+x"`; then
@@ -241,12 +242,13 @@ install_clojurescript() {
 
   [ -d "${cljs_home}" ] || mkdir -p "${cljs_home}"
   if [ ! -f "${cljs_home}/cljs.jar" ]; then
-    curl -fsSLo "${cljs_home}/cljs.jar" -C - "${cljs_jar}"
+    curl $SOCKS -fsSLo "${cljs_home}/cljs.jar" -C - "${cljs_jar}"
   fi
 
   if [ -f "${cljs_home}/cljs.jar" ]; then
-    curl -fsSLo "${cljs_bin}" -C - "${cljs_sh}" && \
-      sed -i.b0 -e "s#CLOJURESCRIPT_JAR=#CLOJURESCRIPT_JAR=\"${cljs_home}/cljs.jar\"#" \
+    curl $SOCKS -fsSLo "${cljs_bin}" -C - "${cljs_sh}" && \
+      sed -i.b0 \
+				  -e "s#CLOJURESCRIPT_JAR=#CLOJURESCRIPT_JAR=\"${cljs_home}/cljs.jar\"#" \
           "${cljs_bin}"
     if `chmod_file "${cljs_bin}" "u+x"`; then
 			return 0
@@ -263,16 +265,16 @@ install_gradle() {
   local bin_dir="${gradle_home}/gradle-${GRADLE_VER}"
 	local bin_ln="${RUN_DIR}/bin/gradle"
 
-  [ 0 -eq `gradle -version $>/dev/null; echo $?` ] && return 0
+  [ 0 -eq `gradle -v $>/dev/null;echo $?` ] && return 0
 
   [ -d "${gradle_home}" ] || mkdir -p "${gradle_home}"
 
-#	if [ ! -f "${bin_dir}/bin/gradle" ]; then
-#		curl -Lo "${gradle_home}/${gradle_zip}" -C - "${gradle_url}" && \
-#			cd ${gradle_home} && unzip ${gradle_zip}
-#	fi
+	if [ ! -f "${bin_dir}/bin/gradle" ]; then
+		curl $SOCKS -Lo "${gradle_home}/${gradle_zip}" -C - "${gradle_url}" && \
+			cd ${gradle_home} && unzip ${gradle_zip}
+	fi
   
-  if `${bin_dir}/bin/gradle -version &>/dev/null`; then
+  if `${bin_dir}/bin/gradle -v &>/dev/null`; then
 		[ -L "${bin_ln}" ] && rm "${bin_ln}"
 		ln -s "${bin_dir}/bin/gradle" "${bin_ln}"
     return 0
@@ -315,7 +317,7 @@ install_scala() {
   [ 0 -eq `scala -version &>/dev/null; echo $?` ] && return 0
 
   [ -d "${scala_home}" ] || mkdir -p "${scala_home}"
-  curl -L -o "${scala_home}/${scala_tgz}" "${scala_url}" && \
+  curl $SOCKS -L -o "${scala_home}/${scala_tgz}" "${scala_url}" && \
     tar xf "${scala_home}/${scala_tgz}" -C "${scala_home}" --strip-components=1
   
   if [ 0 -eq `${bin_dir}/scala -version &>/dev/null; echo $?` ]; then
