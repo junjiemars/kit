@@ -275,8 +275,15 @@ install_gradle() {
 	fi
   
   if `${bin_dir}/bin/gradle -v &>/dev/null`; then
-		[ -L "${bin_ln}" ] && rm "${bin_ln}"
-		ln -s "${bin_dir}/bin/gradle" "${bin_ln}"
+		case "${PLATFORM}" in
+			MSYS_NT*)
+				append_paths "${bin_dir}/bin"
+			;;
+			*)
+				[ -L "${bin_ln}" ] && rm "${bin_ln}"
+				ln -s "${bin_dir}/bin/gradle" "${bin_ln}"
+			;;
+		esac
     return 0
   fi
  
