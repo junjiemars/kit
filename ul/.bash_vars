@@ -5,7 +5,6 @@
 #------------------------------------------------
 
 PLATFORM=`uname -s 2>/dev/null`
-
 case "${PLATFORM}" in
   MSYS_NT*)
     if [ -d "/d/" ]; then
@@ -20,6 +19,8 @@ case "${PLATFORM}" in
     PREFIX=${PREFIX:-"/opt"}
     ;;
 esac
+
+export HOME=${HOME%/}
 
 OPT_RUN=${OPT_RUN:-"${PREFIX}/run"}
 OPT_OPEN=${OPT_OPEN:-"${PREFIX}/open"}
@@ -54,6 +55,7 @@ check_term() {
     export TERM="xterm"
   fi
 }
+
 
 opt_basis_dirs
 
