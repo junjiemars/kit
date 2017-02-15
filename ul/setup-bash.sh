@@ -4,6 +4,7 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
+HOME=${HOME%/}
 PLATFORM=`uname -s 2>/dev/null`
 GITHUB_H=${GITHUB_H:-"https://raw.githubusercontent.com/junjiemars/kit/master"}
 curl='curl -sL '
@@ -18,8 +19,6 @@ declare -a BASH_S=(\
   '.vimrc' \
   '_vimrc' \
   )
-
-export HOME=${HOME%/}
 
 save_as() {
   local f="$HOME/$1"

@@ -20,7 +20,6 @@ case "${PLATFORM}" in
     ;;
 esac
 
-export HOME=${HOME%/}
 
 OPT_RUN=${OPT_RUN:-"${PREFIX}/run"}
 OPT_OPEN=${OPT_OPEN:-"${PREFIX}/open"}

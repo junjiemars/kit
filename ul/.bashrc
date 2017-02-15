@@ -1,6 +1,15 @@
 # minimal .bashrc, can be on Docker or EC2
 
-test -n "$PS1" || PS1="\u@\h:\w\$ "
+export HOME=${HOME%/}
+
+case ".$PS1"
+	.|\s*)
+		PS1="\u@\h:\w\$ "
+		;;
+	*)
+		;;
+esac
+
 
 test -f $HOME/.bash_vars && . $HOME/.bash_vars
 
