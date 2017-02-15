@@ -172,7 +172,7 @@ case ${PLATFORM} in
 			sed -i'' -e '$d' $HOME/.bashrc
 		fi
 		cat << END >> $HOME/.bashrc
-test -f \$HOME/.bash_init && . \$HOME/.bash_init
+test -f \${HOME%/}/.bash_init && . \${HOME%/}/.bash_init
 export PATH
 END
     ${curl} ${GITHUB_H}/ul/.bash_logout -o $HOME/.bash_logout
