@@ -3,7 +3,7 @@
 export HOME=${HOME%/}
 
 case ".$PS1" in
-	.|\s*)
+	.|.\\s*)
 		PS1="\u@\h:\w\$ "
 		;;
 	*)
