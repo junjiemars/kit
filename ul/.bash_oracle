@@ -1,0 +1,9 @@
+#!/bin/bash
+#------------------------------------------------
+# target: oracle on bash environment
+# author: junjiemars@gmail.com
+#------------------------------------------------
+
+export ORACLE_HOME=
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$ORACLE_HOME/lib
+export PATH=${PATH:+$PATH:}$ORACLE_HOME/bin
