@@ -10,6 +10,7 @@ case ".$PS1" in
 		;;
 esac
 
+#PREFIX=/opt
 
 test -f $HOME/.bash_vars && . $HOME/.bash_vars
 
