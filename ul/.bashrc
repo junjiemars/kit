@@ -12,6 +12,9 @@ esac
 
 #PREFIX=/opt
 #JAVA_HOME=
+#TMOUT=3000 # seconds
+#readonly TMOUT
+#export TMOUT
 
 test -f $HOME/.bash_vars && . $HOME/.bash_vars
 
