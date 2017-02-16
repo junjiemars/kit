@@ -40,7 +40,8 @@ check_java() {
       local javac=`type -p javac 2>/dev/null`
       [ -n "${javac}" ] && \
         local java_home=$(readlink -f "${javac}" | sed 's:/bin/javac::')
-      [ -n "${java_home}" ] && export JAVA_HOME="${java_home}"
+      [ -n "${java_home}" ] && [ -z "$JAVA_HOME" ] && \
+				export JAVA_HOME="${java_home}"
       ;; 
     MSYS_NT*)
       ;;

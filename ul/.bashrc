@@ -11,6 +11,7 @@ case ".$PS1" in
 esac
 
 #PREFIX=/opt
+#JAVA_HOME=
 
 test -f $HOME/.bash_vars && . $HOME/.bash_vars
 
