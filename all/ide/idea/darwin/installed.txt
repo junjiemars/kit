@@ -1,0 +1,2 @@
+com.thoughtworks.gauge
+org.intellij.plugins.markdown
