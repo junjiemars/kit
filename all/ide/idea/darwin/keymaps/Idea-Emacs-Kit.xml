@@ -1,4 +1,8 @@
 <keymap version="1" name="Idea-Emacs-Kit" parent="Emacs">
+  <action id="Compile">
+    <keyboard-shortcut first-keystroke="shift ctrl f9" />
+    <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="ctrl c" />
+  </action>
   <action id="EditorJoinLines">
     <keyboard-shortcut first-keystroke="shift ctrl 6" />
   </action>
@@ -24,6 +28,13 @@
     <keyboard-shortcut first-keystroke="ctrl alt a" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="p" />
   </action>
+  <action id="Refactorings.QuickListPopupAction">
+    <keyboard-shortcut first-keystroke="shift ctrl alt t" />
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="r" />
+  </action>
+  <action id="ReformatCode">
+    <keyboard-shortcut first-keystroke="ctrl alt back_slash" />
+  </action>
   <action id="ShowBookmarks">
     <keyboard-shortcut first-keystroke="shift f11" />
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="b" />
@@ -31,6 +42,10 @@
   <action id="ShowProjectStructureSettings">
     <keyboard-shortcut first-keystroke="shift ctrl alt s" />
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="s" />
+  </action>
+  <action id="ShowReformatFileDialog">
+    <keyboard-shortcut first-keystroke="shift ctrl alt l" />
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="back_slash" />
   </action>
   <action id="SwitchApply">
     <keyboard-shortcut first-keystroke="ctrl alt enter" />
@@ -52,6 +67,12 @@
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="b" />
   </action>
   <action id="ToggleBookmark6" />
+  <action id="TypeHierarchy">
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="h" />
+  </action>
+  <action id="Vcs.Show.Local.Changes">
+    <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="s" />
+  </action>
   <action id="Vcs.ShowHistoryForBlock">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="shift h" />
   </action>
