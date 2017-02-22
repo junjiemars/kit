@@ -1,0 +1,21 @@
+<keymap version="1" name="Idea-Emacs-Kit" parent="Emacs">
+  <action id="$Paste">
+    <keyboard-shortcut first-keystroke="shift insert" />
+    <keyboard-shortcut first-keystroke="ctrl y" />
+  </action>
+  <action id="MethodDown">
+    <keyboard-shortcut first-keystroke="alt n" />
+  </action>
+  <action id="MethodUp">
+    <keyboard-shortcut first-keystroke="alt p" />
+  </action>
+  <action id="ShowProjectStructureSettings">
+    <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="s" />
+  </action>
+  <action id="ShowSettings">
+    <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="shift s" />
+  </action>
+  <action id="ViewBreakpoints">
+    <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="b" />
+  </action>
+</keymap>
