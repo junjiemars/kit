@@ -16,6 +16,10 @@ esac
 #readonly TMOUT
 #export TMOUT
 
+# fix set locale failed
+# sudo localedef -i en_US -f UTF-8 en_US.UTF-8
+
+
 test -f $HOME/.bash_vars && . $HOME/.bash_vars
 
 test -f $HOME/.bash_paths && . $HOME/.bash_paths
