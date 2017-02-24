@@ -57,13 +57,6 @@ alias_racket() {
 	fi
 }
 
-alias_lein() {
-	local p_lein=$(exist_p 'lein')
-	if [ 0 -eq $p_lein ]; then
-		alias lein='rlwrap lein'
-	fi	
-}
-
 alias_emacs() {
 	local p_emacs=$(exist_p 'emacs')
 	if [ 0 -eq $p_emacs ]; then
@@ -81,17 +74,19 @@ alias_vi() {
 	fi
 }
 
-alias_sbcl() {
+alias_rlwrap_bin() {
 	if [ 0 -eq $has_rlwrap ]; then
-		local p_sbcl=$(exist_p 'sbcl')
-		if [ 0 -eq $p_sbcl ]; then
-			alias sbcl='rlwrap sbcl'
+		local p_bin=$(exist_p "$1")
+		if [ 0 -eq $p_bin ]; then
+			alias $(echo "$1")="rlwrap $1"
 		fi
 	fi
 }
 
+
 alias_vi
 alias_emacs
 alias_racket
-alias_lein
-alias_sbcl
+alias_rlwrap_bin lein
+alias_rlwrap_bin sbcl
+alias_rlwrap_bin ecl
