@@ -4,7 +4,8 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
-PREFIX=${PREFIX:-"`pwd`"}
+PREFIX=${PREFIX:-"/opt/apps/kit/all/ide/idea"}
+JAR_NAME="settings.jar"
 
 function set_os_prefix() {
 	local p="$1"	
@@ -31,35 +32,53 @@ function usage() {
   echo -e "Usage: $(basename $0) COMMAND [arg...]"
   echo -e "       $(basename $0) [ -h | --help | -v | --version ]\n"
   echo -e "Options:"
-  echo -e "  -h, --help\t\tPrint usage"
+  echo -e "  -h, --help\t\tPrint this message"
   echo -e "A Idea settings extract/archive kit.\n"
   echo -e "Commands:"
-  echo -e "\t-x|--extract\t\teXtract <settings.jar> to <PREFIX|somewhere>"
-  echo -e "\t-a|--archive\t\tarchive <settings> from git repo to <PREFIX|somewhere>"
+  echo -e "\t-x=|--extract=<where>\t\teXtract to <PREFIX> from <where> settings.jar"
+  echo -e "\t-a=|--archive=<where>\t\tarchive from <PREFIX> to <where> settings.jar"
+  echo -e "\t-l=|--list=<where>\t\tlist the content of settings.jar"
 }
 
 case "$@" in
-	-x*|--extract=*)
-		if [ $# -lt 2 ]; then
+	-x=*|--extract=*)
+		KIT_EXTRACT="${@#*=}"
+		if [ -z "$KIT_EXTRACT" ]; then
 			usage	
+			exit 1
 		else
-			p=$(set_os_prefix "$3")
+			shift
+			p=$(set_os_prefix "$1")
 			[ -d "$p" ] || mkdir -p "$p"; 
-			echo "extracting [$2] to \n\t$p ..."
-			cd "$p" ; jar xvf "$2"
+			echo "extracting ["$KIT_EXTRACT"] to \n\t$p ..."
+			cd "$p" ; jar xvf "$KIT_EXTRACT"
 		fi
 		;;
-	-a*|--archive=*)
-		if [ $# -lt 2 ]; then
+	-a=*|--archive=*)
+		KIT_ARCHIVE="${@#*=}"
+		if [ -z "$KIT_ARCHIVE" ]; then
 			usage
+			exit 1
 		else
-			p=$(set_os_prefix "$3")
-			echo "archiving [$2] to \n\t[$p] ..."
-			jar cvfM "${2%/}" -C "$p" .
+			shift
+			KIT_ARCHIVE="${KIT_ARCHIVE%/}/$JAR_NAME"
+			p=$(set_os_prefix "$1")
+			echo "archiving ["$KIT_ARCHIVE"] to \n\t[$p] ..."
+			jar cvfM "$KIT_ARCHIVE" -C "$p" .
+		fi
+		;;
+	-l=*|--list=*)
+		KIT_LIST="${@#*=}"
+		if [ -z "$KIT_LIST}" ]; then
+			usage
+			exit 1
+		else
+			jar tf "${KIT_LIST%/}/$JAR_NAME"
 		fi
 		;;
 	-h|--help|*)
 		usage
+		exit 1
 		;;
 esac
 
