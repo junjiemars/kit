@@ -4,7 +4,7 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
-PREFIX=${PREFIX:-"/opt/apps/kit/all/ide/idea"}
+PREFIX=${PREFIX:-"`pwd`"}
 JAR_NAME="settings.jar"
 
 function set_os_prefix() {
