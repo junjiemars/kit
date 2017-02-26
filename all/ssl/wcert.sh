@@ -8,33 +8,36 @@ function usage() {
   echo -e "Usage: $(basename $0) COMMAND [arg...]"
   echo -e "       $(basename $0) [ -h | --help | -v | --version ]\n"
   echo -e "Options:"
-  echo -e "  -h, --help\t\tPrint usage"
-  echo -e "Retrive or Extract digital certificate kit.\n"
+  echo -e "  -h, --help\t\t\t\tPrint this message"
+  echo -e "A digital certificate retriving/extract kit.\n"
   echo -e "Commands:"
-  echo -e "\t-r|--retrive\t\tretrive the digital certificate from www.xyz.com:443"
-  echo -e "\t-x|--eXtact\t\textract fields from the digital certificate"
+  echo -e "\t-r=|--retrive=<host:port>\tretrive digital certificate"
+  echo -e "\t-x=|--extact=<where-pem>\teXtract fields from digital certificate"
 }
 
 case "$@" in
-	-r*|--retrive=*)
-		if [ $# -lt 2 ]; then
+	-r=*|--retrive=*)
+		KIT_RETRIVE="${@#*=}"
+		if [ -z "$KIT_RETRIVE" ]; then
 			usage	
 			exit 1
 		else
-			openssl s_client -showcerts -connect $2 </dev/null 2>/dev/null \
-				| openssl x509 -outform PEM > $3
+			openssl s_client -showcerts -connect $KIT_RETRIVE </dev/null 2>/dev/null \
+				| openssl x509 -outform PEM 
 		fi
 		;;
 	-x*|--extract=*)
-		if [ $# -lt 2 ]; then
+		KIT_EXTRACT="${@#*=}"
+		if [ -z "$KIT_EXTRACT" ]; then
 			usage
 			exit 1
 		else
-			openssl x509 -in $2 -text -noout | less
+			openssl x509 -in $KIT_EXTRACT -text -noout
 		fi
 		;;
 	-h|--help|*)
 		usage
+		exit 1
 		;;
 esac
 
