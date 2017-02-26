@@ -19,6 +19,7 @@ case "$@" in
 	-r*|--retrive=*)
 		if [ $# -lt 2 ]; then
 			usage	
+			exit 1
 		else
 			openssl s_client -showcerts -connect $2 </dev/null 2>/dev/null \
 				| openssl x509 -outform PEM > $3
@@ -27,6 +28,7 @@ case "$@" in
 	-x*|--extract=*)
 		if [ $# -lt 2 ]; then
 			usage
+			exit 1
 		else
 			openssl x509 -in $2 -text -noout | less
 		fi
