@@ -28,18 +28,20 @@ HAS_ANT=${HAS_ANT:-0}
 HAS_MAVEN=${HAS_MAVEN:-0}
 HAS_BOOT=${HAS_BOOT:-0}
 HAS_LEIN=${HAS_LEIN:-0}
+HAS_GRADLE=${HAS_GRADLE:-0}
+HAS_SBT=${HAS_SBT:-0}
 HAS_CLOJURE=${HAS_CLOJURE:-0}
 HAS_CLOJURESCRIPT=${HAS_CLOJURESCRIPT:-0}
-HAS_GRADLE=${HAS_GRADLE:-0}
 HAS_GROOVY=${HAS_GROOVY:-0}
 HAS_SCALA=${HAS_SCALA:-0}
 
 JDK_VER=(${JDK_U:-"8u91"} ${JDK_B:-"b14"})
 ANT_VER=${ANT_VER:-"1.9.x"}
 MAVEN_VER=${MAVEN_VER:-"3.2.6"}
+GRADLE_VER=${GRADLE_VER:-"2.13"}
+SBT_VER=${SBT_VER:-"0.13.13"}
 CLOJURE_VER=${CLOJURE_VER:-"1.8.0"}
 CLOJURESCRIPT_VER=${CLOJURESCRIPT_VER:-"1.9.229"}
-GRADLE_VER=${GRADLE_VER:-"2.13"}
 GROOVY_VER=${GROOVY_VER:-"2_4_X"}
 SCALA_VER=${SCALA_VER:-"2.11.8"}
 
@@ -290,6 +292,38 @@ install_gradle() {
   return 1
 }
 
+install_sbt() {
+  local sbt_zip="sbt-${SBT_VER}.zip"
+  local sbt_url="https://dl.bintray.com/sbt/native-packages/sbt/${SBT_VER}/${sbt_zip}"
+  local sbt_home="${OPEN_DIR}/sbt"
+  local bin_dir="${sbt_home}/sbt-launcher-packaging-${SBT_VER}"
+	local bin_ln="${RUN_DIR}/bin/sbt"
+
+  [ 0 -eq `sbt </dev/null &>/dev/null;echo $?` ] && return 0
+
+  [ -d "${sbt_home}" ] || mkdir -p "${sbt_home}"
+
+	if [ ! -f "${bin_dir}/bin/sbt" ]; then
+		curl $SOCKS -Lo "${sbt_home}/${sbt_zip}" -C - "${sbt_url}" && \
+			cd ${sbt_home} && unzip ${sbt_zip}
+	fi
+  
+  if `${bin_dir}/bin/sbt </dev/null &>/dev/null`; then
+		case "${PLATFORM}" in
+			MSYS_NT*)
+				append_paths "${bin_dir}/bin"
+			;;
+			*)
+				[ -L "${bin_ln}" ] && rm "${bin_ln}"
+				ln -s "${bin_dir}/bin/sbt" "${bin_ln}"
+			;;
+		esac
+    return 0
+  fi
+ 
+  return 1
+}
+
 install_groovy() {
   local groovy_tag="GROOVY_${GROOVY_VER}"
   local groovy_url="https://github.com/apache/groovy.git"
@@ -343,9 +377,10 @@ if [ "YES" == "${HAS_ALL}" ]; then
   HAS_MAVEN=1
   HAS_BOOT=1
   HAS_LEIN=1
+  HAS_GRADLE=1
+  HAS_SBT=1
   HAS_CLOJURE=1
   HAS_CLOJURESCRIPT=1
-  HAS_GRADLE=1
   HAS_GROOVY=1
   HAS_SCALA=1
 fi
@@ -355,9 +390,10 @@ fi
 [ 0 -lt "${HAS_MAVEN}" ]          && KITS+=('install_maven')
 [ 0 -lt "${HAS_BOOT}" ]           && KITS+=('install_boot')
 [ 0 -lt "${HAS_LEIN}" ]           && KITS+=('install_lein')
+[ 0 -lt "${HAS_GRADLE}" ]         && KITS+=('install_gradle')
+[ 0 -lt "${HAS_SBT}" ]            && KITS+=('install_sbt')
 [ 0 -lt "${HAS_CLOJURE}" ]        && KITS+=('install_clojure')
 [ 0 -lt "${HAS_CLOJURESCRIPT}" ]  && KITS+=('install_clojurescript')
-[ 0 -lt "${HAS_GRADLE}" ]         && KITS+=('install_gradle')
 [ 0 -lt "${HAS_GROOVY}" ]         && KITS+=('install_groovy')
 [ 0 -lt "${HAS_SCALA}" ]          && KITS+=('install_scala')
 
