@@ -91,3 +91,4 @@ alias_rlwrap_bin lein
 alias_rlwrap_bin sbcl
 alias_rlwrap_bin ecl
 alias_rlwrap_bin openssl
+alias_rlwrap_bin jjs
