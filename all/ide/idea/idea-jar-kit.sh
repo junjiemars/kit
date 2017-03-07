@@ -11,7 +11,7 @@ function set_os_prefix() {
 	local p="$1"	
 	local os=`uname -s 2>/dev/null`
 
-	[ -z "$p" ] && p="$PREFIX"
+	[ -z "$p" ] && p="`eval echo "$PREFIX"`"
 
 	case "$os" in
 		MSYS_NT*)
@@ -50,6 +50,7 @@ case "$@" in
 			shift
 			p=$(set_os_prefix "$1")
 			[ -d "$p" ] || mkdir -p "$p"; 
+			KIT_EXTRACT="`eval echo "$KIT_EXTRACT"`"
 			echo "extracting ["$KIT_EXTRACT"] to \n\t$p ..."
 			cd "$p" ; jar xvf "$KIT_EXTRACT"
 		fi
@@ -61,7 +62,7 @@ case "$@" in
 			exit 1
 		else
 			shift
-			KIT_ARCHIVE="${KIT_ARCHIVE%/}/$JAR_NAME"
+			KIT_ARCHIVE="`eval echo "${KIT_ARCHIVE%/}/$JAR_NAME"`"
 			p=$(set_os_prefix "$1")
 			echo "archiving ["$KIT_ARCHIVE"] to \n\t[$p] ..."
 			jar cvfM "$KIT_ARCHIVE" -C "$p" .
@@ -73,7 +74,9 @@ case "$@" in
 			usage
 			exit 1
 		else
-			jar tf "${KIT_LIST%/}/$JAR_NAME"
+			KIT_LIST="`eval echo "${KIT_LIST%/}/$JAR_NAME"`"
+			echo "listing ["$KIT_LIST"] ..."
+			jar tf "$KIT_LIST"
 		fi
 		;;
 	-h|--help|*)
