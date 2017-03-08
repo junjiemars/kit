@@ -11,6 +11,9 @@
     <keyboard-shortcut first-keystroke="shift alt m" />
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="shift c" />
   </action>
+  <action id="DebugClass">
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="d" />
+  </action>
   <action id="Diff.ShowSettingsPopup" />
   <action id="EditorSplitLine">
     <keyboard-shortcut first-keystroke="ctrl alt o" />
@@ -44,6 +47,10 @@
     <keyboard-shortcut first-keystroke="shift ctrl alt t" />
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="r" />
   </action>
+  <action id="RunClass">
+    <keyboard-shortcut first-keystroke="shift ctrl f10" />
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
+  </action>
   <action id="Scala.RunConsole" />
   <action id="Scala.SendSelectionToConsole" />
   <action id="ShowBookmarks">
@@ -59,6 +66,10 @@
   </action>
   <action id="ShowSettings">
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="shift s" />
+  </action>
+  <action id="Stop">
+    <keyboard-shortcut first-keystroke="ctrl f2" />
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="s" />
   </action>
   <action id="SwitchApply">
     <keyboard-shortcut first-keystroke="shift alt enter" />
@@ -107,5 +118,8 @@
   <action id="ViewBreakpoints">
     <keyboard-shortcut first-keystroke="shift ctrl f8" />
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="b" />
+  </action>
+  <action id="editRunConfigurations">
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="d" />
   </action>
 </keymap>

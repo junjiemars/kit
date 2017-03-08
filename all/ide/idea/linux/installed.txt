@@ -1,3 +1,4 @@
 BashSupport
+PythonCore
 org.intellij.plugins.markdown
 org.intellij.scala
