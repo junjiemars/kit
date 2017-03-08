@@ -1,3 +1,6 @@
+" nocompatible
+"set nocompatible
+
 " tabs are 2 characters
 set tabstop=2
 
@@ -24,7 +27,7 @@ hi cursorline cterm=none
 hi cursorlinenr term=bold ctermfg=yellow gui=bold guifg=yellow
 
 " syntax highlight
-syntax on
+syntax enable 
 
 " highlight search
 set hlsearch " :nohl
@@ -38,3 +41,9 @@ set ruler
 
 " set internal shell
 set shell=bash\ --rcfile\ ~/.bashrc
+
+" colorful
+set grepprg=grep\ --color=always\ -n\ $*\ /dev/null
+
+" search subdirs
+set path+=**
