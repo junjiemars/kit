@@ -30,7 +30,7 @@ DOCKER_USER=${DOCKER_USER:-"u"}
 DOCKER_TC_SH=${DOCKER_TC_SH:-"${OPT_RUN}/bin/$TC_SH"}
 
 # war 
-BUILD=${BUILD:-1}
+BUILD=${BUILD:0}
 BUILD_OPTS=${BUILD_OPTS:-}
 BUILD_DIR=${BUILD_DIR:-}
 BUILD_LOG=${BUILD_LOG:-"td-build.log"}
@@ -158,7 +158,7 @@ is_same_war() {
 }
 
 build_war() {
-	if [ 0 -eq $BUILD ]; then
+	if [ 0 -lt $BUILD ]; then
 		JAVA_OPTS="${WAR_TARGET}" \
 							 ./gradlew ${BUILD_OPTS} ${WAR_TASK} &> $BUILD_LOG
 	fi
