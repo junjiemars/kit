@@ -78,11 +78,6 @@ install_tomcat() {
     return 0
   fi
 
-  if [ 0 -ne `ant -version &>/dev/null; echo $?` ]; then 
-    echo -e "install tomcat needs Ant first, panic!"
-    return 1
-  fi
-
   local tgz="apache-tomcat-${VER}.tar.gz"
   local major="${VER%%.*}"
 	local url="http://archive.apache.org/dist/tomcat/tomcat-${major}/v${VER}/bin/${tgz}"
