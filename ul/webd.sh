@@ -48,7 +48,7 @@ _out_options_() {
   _out_ "\t[-s]: $DOWN_PORT"
   _out_ "\t[-n]: $NODE_SN"
   _out_ "\t[-i]: $UP_INCR"
-  _out_ "\t[-i]: $DOWN_INCR"
+  _out_ "\t[-k]: $DOWN_INCR"
   _out_ "\t[-g]: $GO"
 }
 
