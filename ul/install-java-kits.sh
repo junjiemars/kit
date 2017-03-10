@@ -36,14 +36,14 @@ HAS_GROOVY=${HAS_GROOVY:-0}
 HAS_SCALA=${HAS_SCALA:-0}
 
 JDK_VER=(${JDK_U:-"8u91"} ${JDK_B:-"b14"})
-ANT_VER=${ANT_VER:-"1.9.x"}
+ANT_VER=${ANT_VER:-"1.10.1"}
 MAVEN_VER=${MAVEN_VER:-"3.2.6"}
 GRADLE_VER=${GRADLE_VER:-"2.13"}
 SBT_VER=${SBT_VER:-"0.13.13"}
 CLOJURE_VER=${CLOJURE_VER:-"1.8.0"}
 CLOJURESCRIPT_VER=${CLOJURESCRIPT_VER:-"1.9.229"}
 GROOVY_VER=${GROOVY_VER:-"2_4_X"}
-SCALA_VER=${SCALA_VER:-"2.11.8"}
+SCALA_VER=${SCALA_VER:-"2.12.1"}
 
 declare -a KITS=()
 
@@ -118,19 +118,23 @@ install_jdk() {
 }
 
 install_ant() {
+  local ant_tgz="apache-ant-${ANT_VER}-bin.tar.gz"
   local ant_home="${OPEN_DIR}/ant"
-  local ant_url='https://github.com/apache/ant.git'
-  local bin_dir="${ant_home}/bootstrap"
+  local ant_url="http://archive.apache.org/dist/ant/binaries/${ant_tgz}"
+  local bin_dir="${ant_home}/bin"
 
-  [ -f `ant -version $>/dev/null; echo $?` ] && return 0
+  `ant -version $>/dev/null` && return 0
+  [ -d "${ant_home}" ] || mkdir -p "${ant_home}"
 
-  [ -f "${ant_home}/bootstrap.sh" ] || \
-    git clone --depth=1 --branch="${ANT_VER}" "${ant_url}" "${ant_home}"
+  if [ ! -f "${bin_dir}/ant" ] || \
+       [ 0 -ne `${bin_dir}/ant -version &>/dev/null; echo $?` ]; then
+    curl $SOCKS -L -o "${ant_home}/${ant_tgz}" -C - "${ant_url}" && \
+      tar xf "${ant_home}/${ant_tgz}" -C "${ant_home}" --strip-components=1
+  fi
 
-  [ -f "${bin_dir}/bin/ant" ] || cd ${ant_home} && ./bootstrap.sh 
-    
-  if [ 0 -eq `${bin_dir}/bin/ant -version &>/dev/null; echo $?` ]; then
-    append_paths "${bin_dir}/bin"
+  if [ 0 -eq `${bin_dir}/ant -version &>/dev/null; echo $?` ]; then
+    append_vars "ANT_HOME" "${ant_home}"
+    append_paths "${bin_dir}" 
     return 0
   fi
   return 1
