@@ -3,6 +3,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl f9" />
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="ctrl c" />
   </action>
+  <action id="Diff.ShowSettingsPopup" />
   <action id="EditorJoinLines">
     <keyboard-shortcut first-keystroke="shift ctrl 6" />
   </action>
@@ -47,6 +48,9 @@
     <keyboard-shortcut first-keystroke="shift ctrl alt l" />
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="back_slash" />
   </action>
+  <action id="ShowSettings">
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="shift s" />
+  </action>
   <action id="SwitchApply">
     <keyboard-shortcut first-keystroke="ctrl alt enter" />
   </action>
@@ -67,6 +71,24 @@
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="b" />
   </action>
   <action id="ToggleBookmark6" />
+  <action id="ToggleBookmarkWithMnemonic">
+    <keyboard-shortcut first-keystroke="ctrl f11" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="m" />
+  </action>
+  <action id="ToggleFieldBreakpoint">
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="f" />
+  </action>
+  <action id="ToggleLineBreakpoint">
+    <keyboard-shortcut first-keystroke="ctrl f8" />
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="l" />
+  </action>
+  <action id="ToggleMethodBreakpoint">
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="m" />
+  </action>
+  <action id="ToggleTemporaryLineBreakpoint">
+    <keyboard-shortcut first-keystroke="shift ctrl alt f8" />
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="t" />
+  </action>
   <action id="TypeHierarchy">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="h" />
   </action>
@@ -82,5 +104,6 @@
   <action id="ViewBreakpoints">
     <keyboard-shortcut first-keystroke="shift ctrl f8" />
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="b" />
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="shift b" />
   </action>
 </keymap>
