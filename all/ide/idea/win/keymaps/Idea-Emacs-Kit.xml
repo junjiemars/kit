@@ -73,12 +73,20 @@
     <keyboard-shortcut first-keystroke="shift f10" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
   </action>
+  <action id="SelectIn">
+    <keyboard-shortcut first-keystroke="alt f1" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="x" />
+  </action>
   <action id="ShowBookmarks">
     <keyboard-shortcut first-keystroke="shift f11" />
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="b" />
   </action>
   <action id="ShowProjectStructureSettings">
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="s" />
+  </action>
+  <action id="ShowReformatFileDialog">
+    <keyboard-shortcut first-keystroke="shift ctrl alt l" />
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="back_slash" />
   </action>
   <action id="ShowSettings">
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="shift s" />
@@ -105,6 +113,10 @@
   <action id="ToggleBookmark">
     <keyboard-shortcut first-keystroke="f11" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="b" />
+  </action>
+  <action id="ToggleBookmarkWithMnemonic">
+    <keyboard-shortcut first-keystroke="ctrl f11" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="m" />
   </action>
   <action id="ToggleFieldBreakpoint">
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="f" />
