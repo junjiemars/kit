@@ -37,7 +37,7 @@ HAS_SCALA=${HAS_SCALA:-0}
 
 JDK_VER=(${JDK_U:-"8u91"} ${JDK_B:-"b14"})
 ANT_VER=${ANT_VER:-"1.10.1"}
-MAVEN_VER=${MAVEN_VER:-"3.2.6"}
+MAVEN_VER=${MAVEN_VER:-"3.3.9"}
 GRADLE_VER=${GRADLE_VER:-"2.13"}
 SBT_VER=${SBT_VER:-"0.13.13"}
 CLOJURE_VER=${CLOJURE_VER:-"1.8.0"}
@@ -141,35 +141,23 @@ install_ant() {
 }
 
 install_maven() {
-  local maven_home="${OPEN_DIR}/maven"
-  local maven_url='https://github.com/apache/maven.git'
-  local maven_ver="maven-${MAVEN_VER}"
-  local bin_dir="${maven_home}/m2"
+  local mvn_tgz="apache-maven-${MAVEN_VER}-bin.tar.gz"
+  local mvn_home="${OPEN_DIR}/maven"
+  local mvn_url="http://archive.apache.org/dist/maven/maven-3/${MAVEN_VER}/binaries/${mvn_tgz}"
+  local bin_dir="${mvn_home}/bin"
   
-  [ 0 -eq `mvn -version $>/dev/null; echo $?` ] && return 0
+  `mvn -version $>/dev/null` && return 0
+  [ -d "${mvn_home}" ] || mkdir -p "${mvn_home}"
 
-  [ -f "${maven_home}/build.xml" ] || \
-    git clone --depth=1 --branch="${maven_ver}" \
-      "${maven_url}" "${maven_home}"
-
-  if [ 0 -ne `${bin_dir}/bin/mvn -version &>/dev/null; echo $?` ]; then
-    if [ 0 -eq `ant -version &>/dev/null; echo $?` ]; then
-      [ -d "${bin_dir}" ] && rm -r "${bin_dir}"
-      cd "${maven_home}" && ant clean-bootstrap && \
-        M2_HOME="${bin_dir}"            \
-        ant -D"maven.home=${bin_dir}"   \
-            -D"skipTest=true"           \
-            -D"maven.test.skip=true"    \
-            -D"timeout=1800000"
-    else
-      echo -e "# need ant to build maven, panic!"
-      return 1
-    fi
+  if [ ! -f "${bin_dir}/mvn" ] || \
+       [ 0 -ne `${bin_dir}/mvn -version &>/dev/null; echo $?` ]; then
+    curl $SOCKS -L -o "${mvn_home}/${mvn_tgz}" -C - "${mvn_url}" && \
+      tar xf "${mvn_home}/${mvn_tgz}" -C "${mvn_home}" --strip-components=1
   fi
-  
-  if [ 0 -eq `${bin_dir}/bin/mvn -version &>/dev/null; echo $?` ]; then 
-    append_vars "M2_HOME" "${bin_dir}" 
-    append_paths "${bin_dir}/bin"
+
+  if [ 0 -eq `${bin_dir}/mvn -version &>/dev/null; echo $?` ]; then
+    append_vars "MAVEN_HOME" "${mvn_home}"
+    append_paths "${bin_dir}" 
     return 0
   fi
   return 1
