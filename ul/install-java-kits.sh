@@ -355,11 +355,14 @@ install_scala() {
   local scala_home="${OPEN_DIR}/scala"
   local bin_dir="${scala_home}/bin"
 
-  [ 0 -eq `scala -version &>/dev/null; echo $?` ] && return 0
-
+  `scala -version &>/dev/null` && return 0
   [ -d "${scala_home}" ] || mkdir -p "${scala_home}"
-  curl $SOCKS -L -o "${scala_home}/${scala_tgz}" "${scala_url}" && \
-    tar xf "${scala_home}/${scala_tgz}" -C "${scala_home}" --strip-components=1
+
+  if [ ! -f "${bin_dir}/scala" ] || \
+       [ 0 -ne `${bin_dir}/scala -version &>/dev/null; echo $?` ]; then
+    curl $SOCKS -L -o "${scala_home}/${scala_tgz}" -C - "${scala_url}" && \
+      tar xf "${scala_home}/${scala_tgz}" -C "${scala_home}" --strip-components=1
+  fi
   
   if [ 0 -eq `${bin_dir}/scala -version &>/dev/null; echo $?` ]; then
     [ -d "${RUN_DIR}/share/man/man1" ] || mkdir -p "${RUN_DIR}/share/man/man1" 
