@@ -1,11 +1,19 @@
 <keymap version="1" name="Idea-Emacs-Kit" parent="Emacs">
   <action id="Compile">
     <keyboard-shortcut first-keystroke="shift ctrl f9" />
-    <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="ctrl c" />
+    <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="c" />
+  </action>
+  <action id="Debug">
+    <keyboard-shortcut first-keystroke="shift f9" />
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="d" />
   </action>
   <action id="Diff.ShowSettingsPopup" />
   <action id="EditorJoinLines">
     <keyboard-shortcut first-keystroke="shift ctrl 6" />
+  </action>
+  <action id="EvaluateExpression">
+    <keyboard-shortcut first-keystroke="alt f8" />
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="e" />
   </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
@@ -29,12 +37,20 @@
     <keyboard-shortcut first-keystroke="ctrl alt a" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="p" />
   </action>
+  <action id="OptimizeImports">
+    <keyboard-shortcut first-keystroke="ctrl alt o" />
+    <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="i" />
+  </action>
   <action id="Refactorings.QuickListPopupAction">
     <keyboard-shortcut first-keystroke="shift ctrl alt t" />
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="r" />
   </action>
   <action id="ReformatCode">
     <keyboard-shortcut first-keystroke="ctrl alt back_slash" />
+  </action>
+  <action id="Run">
+    <keyboard-shortcut first-keystroke="shift f10" />
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
   </action>
   <action id="ShowBookmarks">
     <keyboard-shortcut first-keystroke="shift f11" />
@@ -50,6 +66,10 @@
   </action>
   <action id="ShowSettings">
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="shift s" />
+  </action>
+  <action id="Stop">
+    <keyboard-shortcut first-keystroke="ctrl f2" />
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="s" />
   </action>
   <action id="SwitchApply">
     <keyboard-shortcut first-keystroke="ctrl alt enter" />
@@ -105,5 +125,8 @@
     <keyboard-shortcut first-keystroke="shift ctrl f8" />
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="b" />
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="shift b" />
+  </action>
+  <action id="editRunConfigurations">
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="d" />
   </action>
 </keymap>
