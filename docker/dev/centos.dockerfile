@@ -10,6 +10,7 @@ RUN yum -y update && \
     echo '# enable deltarpm' >> /etc/yum.conf && \
     sed -i 's/tsflags=nodocs/#tsflags=nodocs/g' /etc/yum.conf && \
     yum -y install \
+        bash-completion \   
         bc \
         bind-utils \
         clang \
