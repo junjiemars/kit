@@ -94,6 +94,10 @@
     <keyboard-shortcut first-keystroke="f11" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="b" />
   </action>
+  <action id="ToggleBookmarkWithMnemonic">
+    <keyboard-shortcut first-keystroke="ctrl f11" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="m" />
+  </action>
   <action id="ToggleFieldBreakpoint">
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="f" />
   </action>
