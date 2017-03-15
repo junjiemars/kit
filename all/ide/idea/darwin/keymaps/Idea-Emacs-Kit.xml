@@ -1,4 +1,18 @@
 <keymap version="1" name="Idea-Emacs-Kit" parent="Emacs">
+  <action id="Back">
+    <keyboard-shortcut first-keystroke="ctrl alt left" />
+    <mouse-shortcut keystroke="button4" />
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="shift ctrl 2" />
+  </action>
+  <action id="ByteCodeDecompiler">
+    <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="d" />
+  </action>
+  <action id="ByteCodeViewer">
+    <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="b" />
+  </action>
+  <action id="Compare.LastVersion">
+    <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="d" />
+  </action>
   <action id="Compile">
     <keyboard-shortcut first-keystroke="shift ctrl f9" />
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="c" />
@@ -14,6 +28,9 @@
   <action id="EvaluateExpression">
     <keyboard-shortcut first-keystroke="alt f8" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="e" />
+  </action>
+  <action id="Git.Pull">
+    <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="p" />
   </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
@@ -37,9 +54,17 @@
     <keyboard-shortcut first-keystroke="ctrl alt a" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="p" />
   </action>
+  <action id="NewElementInMenuGroup">
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="n" />
+  </action>
   <action id="OptimizeImports">
     <keyboard-shortcut first-keystroke="ctrl alt o" />
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="i" />
+  </action>
+  <action id="QuickJavaDoc">
+    <keyboard-shortcut first-keystroke="ctrl q" />
+    <mouse-shortcut keystroke="alt button2" />
+    <keyboard-shortcut first-keystroke="ctrl h" second-keystroke="d" />
   </action>
   <action id="Refactorings.QuickListPopupAction">
     <keyboard-shortcut first-keystroke="shift ctrl alt t" />
@@ -123,8 +148,7 @@
   </action>
   <action id="ViewBreakpoints">
     <keyboard-shortcut first-keystroke="shift ctrl f8" />
-    <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="b" />
-    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="shift b" />
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="b" />
   </action>
   <action id="editRunConfigurations">
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="d" />
