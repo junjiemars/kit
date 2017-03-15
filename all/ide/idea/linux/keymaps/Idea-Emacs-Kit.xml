@@ -26,6 +26,9 @@
     <keyboard-shortcut first-keystroke="alt f3" />
     <keyboard-shortcut first-keystroke="ctrl s" />
   </action>
+  <action id="Git.Pull">
+    <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="p" />
+  </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
   </action>
@@ -55,6 +58,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl f10" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
   </action>
+  <action id="Scala.RenameJavaToScala" />
   <action id="Scala.RunConsole" />
   <action id="Scala.SendSelectionToConsole" />
   <action id="ShowBookmarks">
