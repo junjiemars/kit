@@ -61,6 +61,9 @@
   <action id="MethodUp">
     <keyboard-shortcut first-keystroke="alt p" />
   </action>
+  <action id="NewElementInMenuGroup">
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="n" />
+  </action>
   <action id="OptimizeImports">
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="i" />
   </action>
