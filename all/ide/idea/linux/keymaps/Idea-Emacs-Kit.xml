@@ -3,6 +3,11 @@
     <keyboard-shortcut first-keystroke="shift insert" />
     <keyboard-shortcut first-keystroke="ctrl y" />
   </action>
+  <action id="Back">
+    <keyboard-shortcut first-keystroke="ctrl alt left" />
+    <mouse-shortcut keystroke="button4" />
+    <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="ctrl space" />
+  </action>
   <action id="ByteCodeDecompiler">
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="d" />
   </action>
