@@ -10,20 +10,15 @@
   <action id="ByteCodeViewer">
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="b" />
   </action>
-  <action id="ChooseDebugConfiguration">
-    <keyboard-shortcut first-keystroke="shift alt f9" />
-    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="d" />
-  </action>
-  <action id="ChooseRunConfiguration">
-    <keyboard-shortcut first-keystroke="shift alt f10" />
-    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
-  </action>
   <action id="Compare.LastVersion">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="d" />
   </action>
   <action id="Compile">
     <keyboard-shortcut first-keystroke="shift ctrl f9" />
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="c" />
+  </action>
+  <action id="DebugClass">
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="d" />
   </action>
   <action id="Diff.ShowSettingsPopup" />
   <action id="EditorJoinLines">
@@ -76,6 +71,10 @@
   </action>
   <action id="ReformatCode">
     <keyboard-shortcut first-keystroke="ctrl alt back_slash" />
+  </action>
+  <action id="RunClass">
+    <keyboard-shortcut first-keystroke="shift ctrl f10" />
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
   </action>
   <action id="ShowBookmarks">
     <keyboard-shortcut first-keystroke="shift f11" />
