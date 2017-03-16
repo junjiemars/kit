@@ -21,6 +21,10 @@
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="d" />
   </action>
   <action id="Diff.ShowSettingsPopup" />
+  <action id="EditBreakpoint">
+    <keyboard-shortcut first-keystroke="shift ctrl f8" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="e" />
+  </action>
   <action id="EditorJoinLines">
     <keyboard-shortcut first-keystroke="shift ctrl 6" />
   </action>
@@ -39,7 +43,6 @@
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="u" />
   </action>
   <action id="GotoTypeDeclaration">
-    <keyboard-shortcut first-keystroke="shift ctrl b" />
     <mouse-shortcut keystroke="shift control button1" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="t" />
   </action>
@@ -121,17 +124,21 @@
   </action>
   <action id="ToggleFieldBreakpoint">
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="f" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="f" />
   </action>
   <action id="ToggleLineBreakpoint">
     <keyboard-shortcut first-keystroke="ctrl f8" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="l" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="l" />
   </action>
   <action id="ToggleMethodBreakpoint">
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="m" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="m" />
   </action>
   <action id="ToggleTemporaryLineBreakpoint">
     <keyboard-shortcut first-keystroke="shift ctrl alt f8" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="t" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="t" />
   </action>
   <action id="TypeHierarchy">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="h" />
@@ -148,6 +155,7 @@
   <action id="ViewBreakpoints">
     <keyboard-shortcut first-keystroke="shift ctrl f8" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="b" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="x" />
   </action>
   <action id="editRunConfigurations">
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="d" />
