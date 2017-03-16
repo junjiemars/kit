@@ -35,6 +35,7 @@
   <action id="Git.Pull">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="p" />
   </action>
+  <action id="GotoAction" />
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
   </action>
@@ -79,9 +80,18 @@
     <keyboard-shortcut first-keystroke="shift ctrl f10" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
   </action>
+  <action id="ShowBackwardPackageDeps">
+    <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="shift d" />
+  </action>
   <action id="ShowBookmarks">
     <keyboard-shortcut first-keystroke="shift f11" />
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="b" />
+  </action>
+  <action id="ShowModulesDependencies">
+    <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="m" />
+  </action>
+  <action id="ShowPackageDeps">
+    <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="d" />
   </action>
   <action id="ShowProjectStructureSettings">
     <keyboard-shortcut first-keystroke="shift ctrl alt s" />
@@ -93,6 +103,12 @@
   </action>
   <action id="ShowSettings">
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="shift s" />
+  </action>
+  <action id="SliceBackward">
+    <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="f" />
+  </action>
+  <action id="SliceForward">
+    <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="shift f" />
   </action>
   <action id="Stop">
     <keyboard-shortcut first-keystroke="ctrl f2" />
@@ -142,6 +158,9 @@
   </action>
   <action id="TypeHierarchy">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="h" />
+  </action>
+  <action id="Unscramble">
+    <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="s" />
   </action>
   <action id="Vcs.Show.Local.Changes">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="s" />
