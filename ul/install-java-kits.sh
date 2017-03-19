@@ -34,6 +34,7 @@ HAS_CLOJURE=${HAS_CLOJURE:-0}
 HAS_CLOJURESCRIPT=${HAS_CLOJURESCRIPT:-0}
 HAS_GROOVY=${HAS_GROOVY:-0}
 HAS_SCALA=${HAS_SCALA:-0}
+HAS_SCALA_VIM=${HAS_SCALA_VIM:-0}
 
 JDK_VER=(${JDK_U:-"8u91"} ${JDK_B:-"b14"})
 ANT_VER=${ANT_VER:-"1.10.1"}
@@ -341,11 +342,25 @@ install_groovy() {
   return 1 
 }
 
+install_scala_vim() {
+	local vim_url="https://raw.githubusercontent.com/derekwyatt/vim-scala/master"
+	
+	[ -f "$HOME/.vim/syntax/scala.vim" ] && return 0
+
+	mkdir -p "$HOME/.vim/{ftdetect,indent,syntax}" 
+	for d in ftdetect indent syntax ; do 
+		curl $SOCKS -L -o "$HOME/.vim/$d/scala.vim" "${vim_url}/$d/scala.vim"; 
+	done
+
+	[ -f "$HOME/.vim/syntax/scala.vim" ] && return 0 || return 1
+}
+
 install_scala() {
   local scala_tgz="scala-${SCALA_VER}.tgz"
   local scala_url="http://downloads.lightbend.com/scala/${SCALA_VER}/${scala_tgz}"
   local scala_home="${OPEN_DIR}/scala"
   local bin_dir="${scala_home}/bin"
+	local vim_url="https://raw.githubusercontent.com/derekwyatt/vim-scala/master"
 
   `scala -version &>/dev/null` && return 0
   [ -d "${scala_home}" ] || mkdir -p "${scala_home}"
@@ -391,6 +406,7 @@ fi
 [ 0 -lt "${HAS_CLOJURESCRIPT}" ]  && KITS+=('install_clojurescript')
 [ 0 -lt "${HAS_GROOVY}" ]         && KITS+=('install_groovy')
 [ 0 -lt "${HAS_SCALA}" ]          && KITS+=('install_scala')
+[ 0 -lt "${HAS_SCALA_VIM}" ]      && KITS+=('install_scala_vim')
 
 for i in "${KITS[@]}"; do
   echo -e "# ${i} ..." 
