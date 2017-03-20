@@ -347,7 +347,7 @@ install_scala_vim() {
 	
 	[ -f "$HOME/.vim/syntax/scala.vim" ] && return 0
 
-	mkdir -p "$HOME/.vim/{ftdetect,indent,syntax}" 
+	mkdir -p "$HOME"/.vim/{ftdetect,indent,syntax}
 	for d in ftdetect indent syntax ; do 
 		curl $SOCKS -L -o "$HOME/.vim/$d/scala.vim" "${vim_url}/$d/scala.vim"; 
 	done
