@@ -3,9 +3,9 @@
     "editor.fontFamily": "Consolas, 微软雅黑",
     "editor.tabSize": 2,
     "editor.fontSize": 16,
-    "window.zoomLevel": 0
+    "window.zoomLevel": 0,
 
-    //"python.linting.pylintArgs": [
-    //  "--disable=W0311"
-    //]
+    "python.linting.pylintArgs": [
+      "--disable=C0103"
+    ]
   }
