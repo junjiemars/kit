@@ -1,0 +1,13 @@
+// Place your settings in this file to overwrite the default settings
+{
+    "editor.tabSize": 2,
+    "editor.fontSize": 15,
+    "window.menuBarVisibility": "default",
+    "workbench.sideBar.location": "left",
+    "[cpp]": {
+      "editor.quickSuggestions": false
+    },
+    "[c]": {
+      "editor.quickSuggestions": false
+    }
+  }
