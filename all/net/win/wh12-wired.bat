@@ -9,19 +9,24 @@ set igw=10.32.149.1
 set iipr=10.33.208.0
 set imaskr=255.255.255.0
 set iipr1=10.32.0.0
-
 set dns0=8.8.4.4
 set dns1=74.82.42.42
 
-ipconfig /renew
 
+REM dhcp
+netsh interface ipv4 set address name=%ifname% source=dhcp
+netsh interface ipv4 set dnsserver name=%ifname% source=dhcp
+sleep 3
+
+REM address 
 netsh interface ipv4 set address name=%ifname% static %ip% %mask% %gw% 1
 netsh interface ipv4 add address name=%ifname% %iip% %imask% %igw% 2
+sleep 3
 
+REM dns 
 netsh interface ipv4 set dnsserver name=%ifname% static %dns0% primary
 netsh interface ipv4 add dnsserver name=%ifname% %dns1%
 
-ipconfig /flushdns
 
 REM set default route table 
 route delete 0.0.0.0 
