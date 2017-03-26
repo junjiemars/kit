@@ -11,3 +11,4 @@ exp-*.sql
 *.reg
 
 TAGS
+*.rkt~
