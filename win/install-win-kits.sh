@@ -8,6 +8,7 @@ MACHINE="`uname -m 2>/dev/null`"
 
 HAS_ALL=${HAS_ALL:-"NO"}
 HAS_EMACS=${HAS_EMACS:-0}
+HAS_EMACS_SOURCE=${HAS_EMACS_SOURCE:-0}
 HAS_PSTOOLS=${HAS_PSTOOLS:-0}
 HAS_PROCEXP=${HAS_PROCEXP:-0}
 HAS_NETCAT=${HAS_NETCAT:-0}
@@ -95,6 +96,27 @@ install_emacs() {
 	fi
  
   return 0
+}
+
+install_emacs_source() {
+  local emacs_git_ver=
+  local emacs_git_url="https://github.com/emacs-mirror/emacs.git"
+  IFS='.' read -a emacs_git_ver <<< "$EMACS_VER"
+  emacs_git_ver="emacs-${emacs_git_ver[0]}"
+
+  [ -z "$OPT_OPEN" ] && return 1
+  local emacs_git_home="$OPT_OPEN/${emacs_git_ver}"
+  
+  if [ -d "${emacs_git_home%/}/.git" ]; then
+    cd "${emacs_git_home}"
+    git reset --hard
+    git pull origin "${emacs_git_ver}"
+  else
+    cd "$OPT_OPEN"
+    git clone --depth=1 -b"${emacs_git_ver}" "${emacs_git_url}" "${emacs_git_ver}"
+  fi
+
+  return $?
 }
 
 install_pstools() {
@@ -205,17 +227,19 @@ install_gmake() {
 
 if [ "YES" == "${HAS_ALL}" ]; then
   HAS_EMACS=1
+  HAS_EMACS_SOURCE=0
   HAS_PSTOOLS=1
   HAS_PROCEXP=1
   HAS_NETCAT=1
 	HAS_GMAKE=1
 fi
 
-[ 0 -lt "${HAS_EMACS}" ]        && KITS+=('install_emacs')
-[ 0 -lt "${HAS_PSTOOLS}" ]      && KITS+=('install_pstools')
-[ 0 -lt "${HAS_PROCEXP}" ]      && KITS+=('install_procexp')
-[ 0 -lt "${HAS_NETCAT}" ]       && KITS+=('install_netcat')
-[ 0 -lt "${HAS_GMAKE}" ]        && KITS+=('install_gmake')
+[ 0 -lt "${HAS_EMACS}" ]          && KITS+=('install_emacs')
+[ 0 -lt "${HAS_EMACS_SOURCE}" ]   && KITS+=('install_emacs_source')
+[ 0 -lt "${HAS_PSTOOLS}" ]        && KITS+=('install_pstools')
+[ 0 -lt "${HAS_PROCEXP}" ]        && KITS+=('install_procexp')
+[ 0 -lt "${HAS_NETCAT}" ]         && KITS+=('install_netcat')
+[ 0 -lt "${HAS_GMAKE}" ]          && KITS+=('install_gmake')
 
 # check OPT_* env vars
 if [ -z "$OPT_RUN" ]; then
@@ -225,7 +249,7 @@ if [ -z "$OPT_RUN" ]; then
 fi
 
 for i in "${KITS[@]}"; do
-  echo -e "# ${i} ..." 
+  echo -e "# ${i} ..."
   if `${i} &>/dev/null`; then
     echo -e "# ${i} good."
   else
