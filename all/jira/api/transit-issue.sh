@@ -10,6 +10,8 @@ INTERVAL=${INTERVAL:-0}
 echo "#JIRA_PROJECT=>$JIRA_PROJECT"
 echo "#JIRA_USERS=>$JIRA_USERS"
 echo "#JIRA_ISSUES=>$JIRA_ISSUES"
+echo -e "====================\n"
+
 
 IFS=';' read -a JIRA_UTS <<< "$JIRA_USERS"
 IFS=',' read -a JIRA_IDS <<< "$JIRA_ISSUES"

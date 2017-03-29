@@ -10,8 +10,13 @@ INTERVAL=${INTERVAL:-0}
 echo "#JIRA_PROJECT=>$JIRA_PROJECT"
 echo "#JIRA_USER=>$JIRA_USER"
 echo "#JIRA_ISSUES=>$JIRA_ISSUES"
+echo -e "====================\n"
 
 IFS=',' read -a JIRA_IDS <<< "$JIRA_ISSUES"
+if [ -z "${JIRA_USER}" -o 0 -eq ${#JIRA_IDS[@]} ]; then
+	echo "$0 [error]: empty JIRA_USER or JIRA_ISSUES, nothing to be done"
+	exit 1
+fi
 
 for id in "${JIRA_IDS[@]}"; do
 
