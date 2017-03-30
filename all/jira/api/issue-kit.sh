@@ -5,6 +5,7 @@
 HELP=
 VERBOSE=
 DUMP_HEADER=
+DRY_RUN=NO
 IPV6=${IPV6:-"-4"}
 COMMAND=${COMMAND:-"CREATE"}
 HOST=${HOST:-"localhost"}
@@ -30,6 +31,7 @@ usage() {
   echo -e "  --help                 Print this message"
   echo -e "  --verbose              Verbose output"
   echo -e "  --dump-header          Dump http header\n"
+  echo -e "  --dry-run              perform a trial run with no changes made\n"
 
   echo -e "Commands:"
   echo -e "  --op=create            Create issues"
@@ -62,9 +64,10 @@ do
   esac
   
   case "$option" in
-    --help)                          HELP=YES                   ;;
+    --help)                          HELP="YES"                 ;;
     --verbose)                       VERBOSE="-v"               ;;
     --dump-header)                   DUMP_HEADER="-D-"          ;;
+    --dry-run)                       DRY_RUN="YES"              ;;
     
     --host=*)   	                   HOST="$value"     				  ;;
     --post=*)   	                   PORT="$value"     				  ;;
@@ -141,7 +144,11 @@ case "$COMMAND" in
 
 		for i in $(seq 1 $SIZE); do
 			echo -e "\n"
-			curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" -d@"$JSON_FILE" $JIRA_ISSUE_URL
+			if [ "YES" = "$DRY_RUN" ]; then
+				echo curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" -d@"$JSON_FILE" $JIRA_ISSUE_URL
+			else
+				curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" -d@"$JSON_FILE" $JIRA_ISSUE_URL
+			fi
 			echo -e "\n"
 		done
 		;;
@@ -202,7 +209,11 @@ case "$COMMAND" in
 			echo $i
 			JIRA_META="${i}?deleteSubtasks=true"
 			echo -e "\n"
-			curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" "$JIRA_ISSUE_URL/${JIRA_META}"
+			if [ "YES" = "$DRY_RUN" ]; then
+				echo curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" "$JIRA_ISSUE_URL/${JIRA_META}"
+			else
+				curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" "$JIRA_ISSUE_URL/${JIRA_META}"
+			fi
 			echo -e "$0 [DELETE: $?K]\n"
 		done
 		;;
@@ -223,7 +234,11 @@ case "$COMMAND" in
 			for j in "${TRANSITION_ID_RANGE[@]}"; do
 				JSON_RAW="{\"transition\":{\"id\":"${j}"}}"
 				echo -e "\n"
-				curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" -d"$JSON_RAW" "$JIRA_ISSUE_URL/${JIRA_META}"
+				if [ "YES" = "$DRY_RUN" ]; then
+					echo curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" -d"$JSON_RAW" "$JIRA_ISSUE_URL/${JIRA_META}"
+				else
+					curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" -d"$JSON_RAW" "$JIRA_ISSUE_URL/${JIRA_META}"
+				fi
 				echo -e "$0 [TRANSIT: $?K]: => ${j}\n"
 			done
 		done
