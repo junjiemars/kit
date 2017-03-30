@@ -6,6 +6,9 @@ HELP=
 VERBOSE=
 DUMP_HEADER=
 DRY_RUN=NO
+API_DOC=NO
+API_DOC_URL='https://docs.atlassian.com/jira/REST/5.0.6/'
+
 IPV6=${IPV6:-"-4"}
 COMMAND=${COMMAND:-"CREATE"}
 HOST=${HOST:-"localhost"}
@@ -21,17 +24,18 @@ JSON_DIR=${JSON_DIR:-"`pwd`"}
 JSON_RAW=
 TRANSITION_ID=
 TRANSITION_ID_RANGE=
-
+PROPERTY_ID=
 
 usage() {
   echo -e "Usage: $(basename $0) [OPTIONS] [COMMANDS] [ARGUMENTS...]\n"
-  echo -e "A tiny tool of Jira, using --op=*-meta commands check first, then use --op=* commands\n"
+  echo -e "A tiny tool of Jira' API, using --op=*-meta commands check first, then use --op=* commands\n"
 
   echo -e "Options:"
   echo -e "  --help                 Print this message"
   echo -e "  --verbose              Verbose output"
-  echo -e "  --dump-header          Dump http header\n"
-  echo -e "  --dry-run              perform a trial run with no changes made\n"
+  echo -e "  --dump-header          Dump http header"
+  echo -e "  --dry-run              perform a trial run with no changes made"
+  echo -e "  --api-doc              Jira's offical online API's doc\n"
 
   echo -e "Commands:"
   echo -e "  --op=create            Create issues"
@@ -39,7 +43,8 @@ usage() {
   echo -e "  --op=edit-meta         Query API's edit meta, need check issue-id<N> first"
   echo -e "  --op=transit-meta      Query API's transition meta"
   echo -e "  --op=delete            Delete issue and subtasks, need privileges"
-  echo -e "  --op=query             Query issue, need issue-id<KEY>\n"
+  echo -e "  --op=query             Query issue, need issue-id<KEY>"
+  echo -e "  --op=app-meta          Query application properties, need privileges\n"
 
   echo -e "Arguments:"
 
@@ -50,6 +55,7 @@ usage() {
   echo -e "  --issue-id             Jira's issue <ID>s or <KEY>s, case insensitive, <id1,id2, ...>"
   echo -e "  --size                 Issues count, default is 1"
   echo -e "  --trainsition-id       Issues trainsition's state <id>, <id1, id2, ...>"
+  echo -e "  --property-id          Jira's property id <ID>s or <KEY>s, case insensitive, <id1,id2, ...>"
   echo -e "  --json-dir             Json tepmlate dir, default is current working dir"
 }
 
@@ -68,6 +74,7 @@ do
     --verbose)                       VERBOSE="-v"               ;;
     --dump-header)                   DUMP_HEADER="-D-"          ;;
     --dry-run)                       DRY_RUN="YES"              ;;
+    --api-doc)                       API_DOC="YES"              ;;
     
     --host=*)   	                   HOST="$value"     				  ;;
     --post=*)   	                   PORT="$value"     				  ;;
@@ -94,6 +101,11 @@ if [ "YES" = "$HELP" -o 0 -eq $# ]; then
 	exit 0
 fi
 
+if [ "YES" = "$API_DOC" ]; then
+	echo "$API_DOC_URL"
+	exit 0
+fi
+
 function check_option() {
 	local arg_name=$1
 	local arg_value=$2 
@@ -115,7 +127,8 @@ fi
 
 
 JIRA_FILE=
-JIRA_ISSUE_URL="http://${HOST}:${PORT}/jira/rest/api/2/issue"
+JIRA_URL="http://${HOST}:${PORT}/jira/rest/api/2"
+JIRA_ISSUE_URL="${JIRA_URL}/issue"
 CURL_H="Content-Type: application/json"
 CURL_M=
 
@@ -255,6 +268,13 @@ case "$COMMAND" in
 		JIRA_META="$ISSUE_ID"
 		echo -e "\n"
 		curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" "$JIRA_ISSUE_URL/${JIRA_META}"
+		echo -e "\n"
+		;;
+	APP-META)
+		CURL_M="GET"
+		JIRA_META="application-properties"
+		echo -e "\n"
+		curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" "$JIRA_URL/${JIRA_META}"
 		echo -e "\n"
 		;;
 	*)
