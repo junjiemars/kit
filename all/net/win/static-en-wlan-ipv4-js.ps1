@@ -67,7 +67,7 @@ foreach ($ip_prefix in $wif_ip_prefixes) {
   $wif_dgw = $null
   $wif_dgw = $wif | Get-NetRoute -DestinationPrefix:$ip_prefix `
                                  -ErrorAction:Continue
-  if ($wif_dgw -and $wif_dgw.NextHop -eq $ip_prefix) {
+  if ($wif_dgw -and $wif_dgw.DestinationPrefix -eq $ip_prefix) {
     Remove-NetRoute -DestinationPrefix:$ip_prefix `
                     -InterfaceIndex:$wif.ifIndex `
                     -NextHop:$ip_prefix `
