@@ -21,6 +21,14 @@ $dns1 = '74.82.42.42'
 # Enable dhcp first
 $eif | Set-NetIPInterface -Dhcp:Enabled
 
+# Remove enternet default ip address
+$ip = $eif | Get-NetIPAddress -AddressFamily:IPv4 
+if ($ip) {
+  $eif | Remove-NetIPAddress -IPAddress:$ip.IPAddress `
+                             -AddressFamily:IPv4 `
+                             -Confirm:$false
+}
+
 # Remove enternet default route
 $eif_dgw = $eif | Get-NetRoute -DestinationPrefix:'0.0.0.0/0' `
                                -ErrorAction:Continue 

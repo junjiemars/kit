@@ -14,8 +14,8 @@ $dns0 = '192.168.4.11'
 $dns1 = '74.82.42.42'
 
 $wif = Get-NetAdapter -Name:"Wi-Fi"
-$wif_ip = '192.168.0.100'
-$wif_gw = '192.168.0.1'
+#$wif_ip = '192.168.0.100'
+#$wif_gw = '192.168.0.1'
 $wif_ip_prefixes = ('10.32.0.0/16', '10.33.0.0/16')
 
 
@@ -56,6 +56,7 @@ $eif | Set-DNSClientServerAddress -ServerAddresses:($dns0,$dns1) `
 $wif_dgw = $wif | Get-NetRoute -DestinationPrefix:'0.0.0.0/0' `
                                -ErrorAction:Continue
 if ($wif_dgw) {
+  $wif_gw = $wif_dgw.NextHop
   Remove-NetRoute -DestinationPrefix:'0.0.0.0/0' `
                   -InterfaceIndex:$wif.ifIndex `
                   -NextHop:$wif_dgw.NextHop `
@@ -73,7 +74,9 @@ foreach ($ip_prefix in $wif_ip_prefixes) {
                     -NextHop:$ip_prefix `
                     -Confirm:$false
   }
-  $wif | New-NetRoute -DestinationPrefix:$ip_prefix `
-                      -NextHop:$wif_gw `
-                      -Confirm:$false
+  if ($wif_gw) {
+    $wif | New-NetRoute -DestinationPrefix:$ip_prefix `
+                        -NextHop:$wif_gw `
+                        -Confirm:$false
+  }
 }
