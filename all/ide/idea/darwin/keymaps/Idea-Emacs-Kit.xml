@@ -1,4 +1,7 @@
 <keymap version="1" name="Idea-Emacs-Kit" parent="Emacs">
+  <action id="$Cut">
+    <keyboard-shortcut first-keystroke="shift delete" />
+  </action>
   <action id="Back">
     <keyboard-shortcut first-keystroke="ctrl alt left" />
     <mouse-shortcut keystroke="button4" />
@@ -50,6 +53,9 @@
     <keyboard-shortcut first-keystroke="shift ctrl open_bracket" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift ctrl b" />
   </action>
+  <action id="EditorCut">
+    <keyboard-shortcut first-keystroke="shift delete" />
+  </action>
   <action id="EditorJoinLines">
     <keyboard-shortcut first-keystroke="shift ctrl 6" />
   </action>
@@ -88,7 +94,10 @@
   <action id="Git.Pull">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="p" />
   </action>
-  <action id="GotoAction" />
+  <action id="GotoAction">
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="x" />
+    <keyboard-shortcut first-keystroke="alt x" />
+  </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
   </action>
