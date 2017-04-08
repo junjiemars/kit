@@ -10,6 +10,13 @@
   <action id="ByteCodeViewer">
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="b" />
   </action>
+  <action id="ChangesView.Commit">
+    <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="c" />
+  </action>
+  <action id="CommentByLineComment">
+    <keyboard-shortcut first-keystroke="alt semicolon" />
+    <keyboard-shortcut first-keystroke="ctrl semicolon" />
+  </action>
   <action id="Compare.LastVersion">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="d" />
   </action>
@@ -129,10 +136,15 @@
   <action id="ReformatCode">
     <keyboard-shortcut first-keystroke="ctrl alt back_slash" />
   </action>
+  <action id="Replace">
+    <keyboard-shortcut first-keystroke="shift alt 5" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 5" />
+  </action>
   <action id="RunClass">
     <keyboard-shortcut first-keystroke="shift ctrl f10" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
   </action>
+  <action id="Scala.RenameJavaToScala" />
   <action id="ShowBackwardPackageDeps">
     <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="shift d" />
   </action>
