@@ -1,0 +1,18 @@
+version: '3'
+services:
+  zookeeper:
+    image: "junjiemars/java-dev:osx"
+    container_name: "zookeeper"
+    hostname: "zookeeper"
+    #entrypoint: ['bash']
+    privileged: true
+    expose:
+      - "2181"
+    ports:
+      - "2181:2181"
+    tty: true
+    environment:
+      - ZOOCFGDIR=/opt/open/zookeeper/conf
+      - SERVER_JVMFLAGS=-Djava.net.preferIPv4Stack=true
+    #working_dir: /opt/open/zookeeper
+    command: /opt/open/zookeeper/bin/zkServer.sh start-foreground zoo_sample.cfg
