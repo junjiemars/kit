@@ -8,11 +8,16 @@ services:
     privileged: true
     expose:
       - "2181"
+      - "2282"
     ports:
       - "2181:2181"
+      - "2282:2282"
     tty: true
     environment:
       - ZOOCFGDIR=/opt/open/zookeeper/conf
       - SERVER_JVMFLAGS=-Djava.net.preferIPv4Stack=true
+      #- JMXPORT=2282
+      #- JMXLOCALONLY=false
+      #- JMXAUTH=false
     #working_dir: /opt/open/zookeeper
     command: /opt/open/zookeeper/bin/zkServer.sh start-foreground zoo_sample.cfg
