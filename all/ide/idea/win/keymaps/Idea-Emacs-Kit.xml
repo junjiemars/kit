@@ -12,6 +12,9 @@
     <keyboard-shortcut first-keystroke="alt comma" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="comma" />
   </action>
+  <action id="CloseProject">
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="shift ctrl c" />
+  </action>
   <action id="CommentByBlockComment">
     <keyboard-shortcut first-keystroke="shift ctrl slash" />
     <keyboard-shortcut first-keystroke="shift ctrl divide" />
@@ -47,9 +50,15 @@
   <action id="EditorJoinLines">
     <keyboard-shortcut first-keystroke="shift alt 6" />
   </action>
+  <action id="EditorTextEnd">
+    <keyboard-shortcut first-keystroke="ctrl end" />
+    <keyboard-shortcut first-keystroke="shift alt period" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift period" />
+  </action>
   <action id="EditorTextStart">
     <keyboard-shortcut first-keystroke="ctrl home" />
     <keyboard-shortcut first-keystroke="shift alt comma" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift comma" />
   </action>
   <action id="EditorToggleCase">
     <keyboard-shortcut first-keystroke="alt u" />
@@ -73,6 +82,13 @@
   <action id="GotoTypeDeclaration">
     <mouse-shortcut keystroke="shift control button1" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="t" />
+  </action>
+  <action id="HideAllWindows">
+    <keyboard-shortcut first-keystroke="shift ctrl f12" />
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="9" />
+  </action>
+  <action id="HideSideWindows">
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="comma" />
   </action>
   <action id="MethodDown">
     <keyboard-shortcut first-keystroke="alt n" />
