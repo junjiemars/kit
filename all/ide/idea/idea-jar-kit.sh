@@ -51,7 +51,7 @@ case "$@" in
 			p=$(set_os_prefix "$1")
 			[ -d "$p" ] || mkdir -p "$p"; 
 			KIT_EXTRACT="`eval echo "$KIT_EXTRACT"`"
-			echo "extracting ["$KIT_EXTRACT"] to \n\t$p ..."
+			echo "extracting [${KIT_EXTRACT}] to [$p] ..."
 			cd "$p" ; jar xvf "$KIT_EXTRACT"
 		fi
 		;;
@@ -64,7 +64,7 @@ case "$@" in
 			shift
 			KIT_ARCHIVE="`eval echo "${KIT_ARCHIVE%/}/$JAR_NAME"`"
 			p=$(set_os_prefix "$1")
-			echo "archiving ["$KIT_ARCHIVE"] to \n\t[$p] ..."
+			echo "archiving [$p] to [${KIT_ARCHIVE}] ..."
 			jar cvfM "$KIT_ARCHIVE" -C "$p" .
 		fi
 		;;
@@ -75,7 +75,7 @@ case "$@" in
 			exit 1
 		else
 			KIT_LIST="`eval echo "${KIT_LIST%/}/$JAR_NAME"`"
-			echo "listing ["$KIT_LIST"] ..."
+			echo "listing [$KIT_LIST] ..."
 			jar tf "$KIT_LIST"
 		fi
 		;;
