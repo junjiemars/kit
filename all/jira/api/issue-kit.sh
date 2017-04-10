@@ -190,9 +190,13 @@ case "$COMMAND" in
 
 		CURL_M="GET"
 		JIRA_META="$ISSUE_ID/editmata"
-		echo -e "\n"
-		curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" "$JIRA_ISSUE_URL/${JIRA_META}"
-		echo -e "\n"
+		if [ "YES" = "$DRY_RUN" ]; then
+			echo curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" "$JIRA_ISSUE_URL/${JIRA_META}"
+		else
+			echo -e "\n"
+			curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" "$JIRA_ISSUE_URL/${JIRA_META}"
+			echo -e "\n"
+		fi
 		;;
 	TRANSIT-META)
 		check_option "issue-id" "${ISSUE_ID}" 1
