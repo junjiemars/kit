@@ -243,6 +243,9 @@
   <action id="TypeHierarchy">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="h" />
   </action>
+  <action id="TypeHierarchy.Class">
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="c" />
+  </action>
   <action id="Unscramble">
     <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="s" />
   </action>
