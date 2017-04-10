@@ -92,3 +92,6 @@ $ pslist
 Set PsTools environment variables by hand, the reason is samed with [Emacs](#emacs):
 * Set PSTOOLS_HOME to $OPT_RUN/pstools
 * Append %PSTOOLS_HOME% to PATH
+
+## References
+* [Change default code page of Windows console to UTF-8](https://superuser.com/questions/269818/change-default-code-page-of-windows-console-to-utf-8)
