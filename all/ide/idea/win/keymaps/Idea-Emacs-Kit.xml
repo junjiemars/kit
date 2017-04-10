@@ -10,6 +10,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl slash" />
     <keyboard-shortcut first-keystroke="shift ctrl divide" />
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="shift 8" />
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="ctrl semicolon" />
   </action>
   <action id="CommentByLineComment">
     <keyboard-shortcut first-keystroke="alt semicolon" />
@@ -84,6 +85,7 @@
     <keyboard-shortcut first-keystroke="shift f10" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
   </action>
+  <action id="Scala.SendSelectionToConsole" />
   <action id="SelectIn">
     <keyboard-shortcut first-keystroke="alt f1" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="x" />
