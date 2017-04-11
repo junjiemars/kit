@@ -10,6 +10,8 @@
     <keyboard-shortcut first-keystroke="ctrl alt left" />
     <mouse-shortcut keystroke="button4" />
     <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl space" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="comma" />
+    <keyboard-shortcut first-keystroke="alt comma" />
   </action>
   <action id="ByteCodeDecompiler">
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="d" />
