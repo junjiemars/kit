@@ -17,6 +17,11 @@
   <action id="ByteCodeViewer">
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="b" />
   </action>
+  <action id="CommentByBlockComment">
+    <keyboard-shortcut first-keystroke="shift ctrl slash" />
+    <keyboard-shortcut first-keystroke="shift ctrl divide" />
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt semicolon" />
+  </action>
   <action id="Compare.LastVersion">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="d" />
   </action>
