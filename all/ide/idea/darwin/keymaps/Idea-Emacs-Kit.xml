@@ -209,6 +209,9 @@
     <keyboard-shortcut first-keystroke="ctrl f2" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="s" />
   </action>
+  <action id="StructuralSearchPlugin.StructuralSearchAction">
+    <keyboard-shortcut first-keystroke="shift ctrl s" second-keystroke="t" />
+  </action>
   <action id="SurroundWith">
     <keyboard-shortcut first-keystroke="ctrl alt t" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 9" />
