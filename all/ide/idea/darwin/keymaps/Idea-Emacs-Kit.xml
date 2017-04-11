@@ -178,7 +178,6 @@
     <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="d" />
   </action>
   <action id="ShowProjectStructureSettings">
-    <keyboard-shortcut first-keystroke="shift ctrl alt s" />
     <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="s" />
   </action>
   <action id="ShowReformatFileDialog">
@@ -197,6 +196,10 @@
   <action id="Stop">
     <keyboard-shortcut first-keystroke="ctrl f2" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="s" />
+  </action>
+  <action id="SurroundWith">
+    <keyboard-shortcut first-keystroke="ctrl alt t" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 9" />
   </action>
   <action id="SwitchApply">
     <keyboard-shortcut first-keystroke="ctrl alt enter" />
