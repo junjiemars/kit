@@ -108,6 +108,10 @@
     <keyboard-shortcut first-keystroke="escape" second-keystroke="x" />
     <keyboard-shortcut first-keystroke="alt x" />
   </action>
+  <action id="GotoClass">
+    <keyboard-shortcut first-keystroke="shift alt g" />
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="shift ctrl f" />
+  </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
   </action>

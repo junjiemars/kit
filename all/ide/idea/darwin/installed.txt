@@ -3,3 +3,4 @@ com.demonwav.minecraft-dev
 mobi.hsz.idea.gitignore
 org.intellij.plugins.markdown
 org.intellij.scala
+org.nik.presentation-assistant
