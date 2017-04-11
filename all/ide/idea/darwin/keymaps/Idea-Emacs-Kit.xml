@@ -168,6 +168,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
   </action>
   <action id="Scala.RenameJavaToScala" />
+  <action id="Scala.SendSelectionToConsole" />
   <action id="ShowBackwardPackageDeps">
     <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="shift d" />
   </action>
@@ -182,7 +183,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="d" />
   </action>
   <action id="ShowProjectStructureSettings">
-    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="s" />
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="s" />
   </action>
   <action id="ShowReformatFileDialog">
     <keyboard-shortcut first-keystroke="shift ctrl alt l" />
