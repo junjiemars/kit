@@ -1,4 +1,7 @@
 <keymap version="1" name="Idea-Emacs-Kit" parent="Emacs">
+  <action id="$Cut">
+    <keyboard-shortcut first-keystroke="shift delete" />
+  </action>
   <action id="$Paste">
     <keyboard-shortcut first-keystroke="shift insert" />
     <keyboard-shortcut first-keystroke="ctrl y" />
@@ -7,12 +10,25 @@
     <keyboard-shortcut first-keystroke="ctrl alt left" />
     <mouse-shortcut keystroke="button4" />
     <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl space" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="comma" />
+    <keyboard-shortcut first-keystroke="alt comma" />
   </action>
   <action id="ByteCodeDecompiler">
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="d" />
   </action>
   <action id="ByteCodeViewer">
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="b" />
+  </action>
+  <action id="CheckinFiles">
+    <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="c" />
+  </action>
+  <action id="CloseProject">
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="shift ctrl c" />
+  </action>
+  <action id="CommentByBlockComment">
+    <keyboard-shortcut first-keystroke="shift ctrl slash" />
+    <keyboard-shortcut first-keystroke="shift ctrl divide" />
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt semicolon" />
   </action>
   <action id="Compare.LastVersion">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="d" />
@@ -54,6 +70,9 @@
     <keyboard-shortcut first-keystroke="shift ctrl open_bracket" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift ctrl b" />
   </action>
+  <action id="EditorCut">
+    <keyboard-shortcut first-keystroke="shift delete" />
+  </action>
   <action id="EditorNextWord">
     <keyboard-shortcut first-keystroke="ctrl right" />
     <keyboard-shortcut first-keystroke="alt f" />
@@ -75,6 +94,16 @@
   <action id="EditorSplitLine">
     <keyboard-shortcut first-keystroke="ctrl alt o" />
   </action>
+  <action id="EditorTextEnd">
+    <keyboard-shortcut first-keystroke="ctrl end" />
+    <keyboard-shortcut first-keystroke="shift alt period" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift period" />
+  </action>
+  <action id="EditorTextStart">
+    <keyboard-shortcut first-keystroke="ctrl home" />
+    <keyboard-shortcut first-keystroke="shift alt comma" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift comma" />
+  </action>
   <action id="EvaluateExpression">
     <keyboard-shortcut first-keystroke="alt f8" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="e" />
@@ -86,7 +115,10 @@
   <action id="Git.Pull">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="p" />
   </action>
-  <action id="GotoAction" />
+  <action id="GotoAction">
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="x" />
+    <keyboard-shortcut first-keystroke="alt x" />
+  </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
   </action>
@@ -96,7 +128,13 @@
   </action>
   <action id="GotoTypeDeclaration">
     <mouse-shortcut keystroke="shift control button1" />
-    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="t" />
+  </action>
+  <action id="HideAllWindows">
+    <keyboard-shortcut first-keystroke="shift ctrl f12" />
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="9" />
+  </action>
+  <action id="HideSideWindows">
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="comma" />
   </action>
   <action id="MethodDown">
     <keyboard-shortcut first-keystroke="alt n" />
@@ -197,7 +235,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="m" />
   </action>
   <action id="TypeHierarchy">
-    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="h" />
+    <keyboard-shortcut first-keystroke="shift n" second-keystroke="t" />
   </action>
   <action id="TypeHierarchy.Class">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="c" />
