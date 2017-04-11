@@ -17,6 +17,9 @@
   <action id="ByteCodeViewer">
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="b" />
   </action>
+  <action id="CheckinFiles">
+    <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="c" />
+  </action>
   <action id="CloseProject">
     <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="shift ctrl c" />
   </action>
