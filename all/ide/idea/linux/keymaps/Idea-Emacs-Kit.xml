@@ -6,6 +6,9 @@
     <keyboard-shortcut first-keystroke="shift insert" />
     <keyboard-shortcut first-keystroke="ctrl y" />
   </action>
+  <action id="ActivateVersionControlToolWindow">
+    <keyboard-shortcut first-keystroke="alt 9" />
+  </action>
   <action id="Back">
     <keyboard-shortcut first-keystroke="ctrl alt left" />
     <mouse-shortcut keystroke="button4" />
@@ -119,12 +122,20 @@
     <keyboard-shortcut first-keystroke="escape" second-keystroke="x" />
     <keyboard-shortcut first-keystroke="alt x" />
   </action>
+  <action id="GotoClass">
+    <keyboard-shortcut first-keystroke="shift alt g" />
+    <keyboard-shortcut first-keystroke="shift ctrl s" second-keystroke="c" />
+  </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
   </action>
   <action id="GotoSuperMethod">
     <keyboard-shortcut first-keystroke="ctrl u" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="u" />
+  </action>
+  <action id="GotoSymbol">
+    <keyboard-shortcut first-keystroke="shift ctrl alt n" />
+    <keyboard-shortcut first-keystroke="shift ctrl s" second-keystroke="s" />
   </action>
   <action id="GotoTypeDeclaration">
     <mouse-shortcut keystroke="shift control button1" />
@@ -136,6 +147,7 @@
   <action id="HideSideWindows">
     <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="comma" />
   </action>
+  <action id="IpnbCodeCellAction" />
   <action id="MethodDown">
     <keyboard-shortcut first-keystroke="alt n" />
   </action>
@@ -201,6 +213,14 @@
     <keyboard-shortcut first-keystroke="ctrl f2" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="s" />
   </action>
+  <action id="StructuralSearchPlugin.StructuralSearchAction">
+    <keyboard-shortcut first-keystroke="shift ctrl s" second-keystroke="t" />
+  </action>
+  <action id="SurroundWith">
+    <keyboard-shortcut first-keystroke="ctrl alt t" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 9" />
+    <keyboard-shortcut first-keystroke="shift alt 9" />
+  </action>
   <action id="SwitchApply">
     <keyboard-shortcut first-keystroke="shift alt enter" />
   </action>
@@ -236,6 +256,7 @@
   </action>
   <action id="TypeHierarchy">
     <keyboard-shortcut first-keystroke="shift n" second-keystroke="t" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="t" />
   </action>
   <action id="TypeHierarchy.Class">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="c" />
