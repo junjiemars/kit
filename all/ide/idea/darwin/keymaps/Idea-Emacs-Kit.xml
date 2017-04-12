@@ -181,7 +181,7 @@
   </action>
   <action id="ShowBookmarks">
     <keyboard-shortcut first-keystroke="shift f11" />
-    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="b" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="x" />
   </action>
   <action id="ShowModulesDependencies">
     <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="m" />
