@@ -246,6 +246,9 @@
     <keyboard-shortcut first-keystroke="ctrl f11" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="m" />
   </action>
+  <action id="ToggleBreakpointEnabled">
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="t" />
+  </action>
   <action id="ToggleFieldBreakpoint">
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="f" />
     <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="f" />
@@ -257,11 +260,6 @@
   <action id="ToggleMethodBreakpoint">
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="m" />
     <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="m" />
-  </action>
-  <action id="ToggleTemporaryLineBreakpoint">
-    <keyboard-shortcut first-keystroke="shift ctrl alt f8" />
-    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="t" />
-    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="t" />
   </action>
   <action id="TypeHierarchy">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="t" />
