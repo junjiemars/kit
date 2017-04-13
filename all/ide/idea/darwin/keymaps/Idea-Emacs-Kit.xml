@@ -118,6 +118,12 @@
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
   </action>
+  <action id="GotoNextBookmark">
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="n" />
+  </action>
+  <action id="GotoPreviousBookmark">
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="p" />
+  </action>
   <action id="GotoSuperMethod">
     <keyboard-shortcut first-keystroke="ctrl u" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="u" />
@@ -128,7 +134,6 @@
   </action>
   <action id="GotoTypeDeclaration">
     <mouse-shortcut keystroke="shift control button1" />
-    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="t" />
   </action>
   <action id="HideAllWindows">
     <keyboard-shortcut first-keystroke="shift ctrl f12" />
@@ -181,7 +186,7 @@
   </action>
   <action id="ShowBookmarks">
     <keyboard-shortcut first-keystroke="shift f11" />
-    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="x" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="x" />
   </action>
   <action id="ShowModulesDependencies">
     <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="m" />
@@ -247,7 +252,7 @@
   </action>
   <action id="ToggleLineBreakpoint">
     <keyboard-shortcut first-keystroke="ctrl f8" />
-    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="l" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="l" />
   </action>
   <action id="ToggleMethodBreakpoint">
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="m" />
@@ -259,7 +264,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="t" />
   </action>
   <action id="TypeHierarchy">
-    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="h" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="t" />
   </action>
   <action id="TypeHierarchy.Class">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="c" />
@@ -278,7 +283,7 @@
   </action>
   <action id="ViewBreakpoints">
     <keyboard-shortcut first-keystroke="shift ctrl f8" />
-    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="b" />
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="b" />
   </action>
   <action id="editRunConfigurations">
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="d" />
