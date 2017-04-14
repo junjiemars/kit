@@ -31,7 +31,7 @@
   <action id="CommentByBlockComment">
     <keyboard-shortcut first-keystroke="shift ctrl slash" />
     <keyboard-shortcut first-keystroke="shift ctrl divide" />
-    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt semicolon" />
+    <keyboard-shortcut first-keystroke="ctrl u" second-keystroke="alt semicolon" />
   </action>
   <action id="Compare.LastVersion">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="d" />
@@ -129,8 +129,13 @@
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
   </action>
+  <action id="GotoNextBookmark">
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="n" />
+  </action>
+  <action id="GotoPreviousBookmark">
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="p" />
+  </action>
   <action id="GotoSuperMethod">
-    <keyboard-shortcut first-keystroke="ctrl u" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="u" />
   </action>
   <action id="GotoSymbol">
@@ -185,7 +190,7 @@
   </action>
   <action id="ShowBookmarks">
     <keyboard-shortcut first-keystroke="shift f11" />
-    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="b" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="x" />
   </action>
   <action id="ShowModulesDependencies">
     <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="m" />
@@ -244,6 +249,9 @@
     <keyboard-shortcut first-keystroke="ctrl f11" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="m" />
   </action>
+  <action id="ToggleBreakpointEnabled">
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="t" />
+  </action>
   <action id="ToggleFieldBreakpoint">
     <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="f" />
   </action>
@@ -276,10 +284,13 @@
   </action>
   <action id="ViewBreakpoints">
     <keyboard-shortcut first-keystroke="shift ctrl f8" />
-    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="x" />
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="b" />
   </action>
   <action id="XDebugger.MuteBreakpoints">
-    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="shift m" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="u" />
+  </action>
+  <action id="XDebugger.UnmuteOnStop">
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="shift u" />
   </action>
   <action id="editRunConfigurations">
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="d" />
