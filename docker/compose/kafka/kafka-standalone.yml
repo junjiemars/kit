@@ -4,21 +4,23 @@ services:
     image: "junjiemars/java-dev:w10"
     container_name: "kafka"
     hostname: "kafka"
-    #entrypoint: ['bash']
-    #privileged: true
-    expose:
-      - 2181
-      - 9092
-    ports:
-      - 2181:2181
-      - 9092:9092
-    tty: true
-    environment:
-      #- ZOOCFGDIR=/opt/open/zookeeper/conf
-      #- SERVER_JVMFLAGS=-Djava.net.preferIPv4Stack=true
-      #- JMXPORT=2282
-      #- JMXLOCALONLY=false
-      #- JMXAUTH=false
-    working_dir: /opt/open/kafka/kafka_2.11-0.10.0.1
-    command: bin/zookeeper-server-start.sh -daemon config/zookeeper.properties
-    command: bin/kafka-server-start.sh -daemon config/server.properties
+#    #entrypoint: ['bash']
+#    #privileged: true
+#    expose:
+#      - 2181
+#      - 9092
+#    ports:
+#      - 2181:2181
+#      - 9092:9092
+#    tty: true
+#    environment:
+#       - ZOOCFGDIR=/opt/open/zookeeper/conf
+#       - SERVER_JVMFLAGS=-Djava.net.preferIPv4Stack=true
+#       - JMXPORT=2282
+#       - JMXLOCALONLY=false
+#       - JMXAUTH=false
+#     working_dir: /opt/open/kafka/kafka_2.11-0.10.0.1
+#     command: bin/zookeeper-server-start.sh config/zookeeper.properties
+#     command: bin/kafka-server-start.sh config/server.properties
+#     run
+#    command: echo "ddd"

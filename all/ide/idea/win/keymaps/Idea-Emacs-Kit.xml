@@ -6,6 +6,9 @@
     <keyboard-shortcut first-keystroke="shift insert" />
     <keyboard-shortcut first-keystroke="ctrl y" />
   </action>
+  <action id="ActivateVersionControlToolWindow">
+    <keyboard-shortcut first-keystroke="alt 9" />
+  </action>
   <action id="Back">
     <keyboard-shortcut first-keystroke="ctrl alt left" />
     <mouse-shortcut keystroke="button4" />
@@ -44,6 +47,10 @@
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="d" />
   </action>
   <action id="Diff.ShowSettingsPopup" />
+  <action id="EditBreakpoint">
+    <keyboard-shortcut first-keystroke="shift ctrl f8" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="e" />
+  </action>
   <action id="EditorCut">
     <keyboard-shortcut first-keystroke="shift delete" />
   </action>
@@ -73,11 +80,25 @@
     <keyboard-shortcut first-keystroke="escape" second-keystroke="x" />
     <keyboard-shortcut first-keystroke="alt x" />
   </action>
+  <action id="GotoClass">
+    <keyboard-shortcut first-keystroke="shift alt g" />
+    <keyboard-shortcut first-keystroke="shift ctrl s" second-keystroke="c" />
+  </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
   </action>
+  <action id="GotoNextBookmark">
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="n" />
+  </action>
+  <action id="GotoPreviousBookmark">
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="p" />
+  </action>
   <action id="GotoSuperMethod">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="u" />
+  </action>
+  <action id="GotoSymbol">
+    <keyboard-shortcut first-keystroke="shift ctrl alt n" />
+    <keyboard-shortcut first-keystroke="shift ctrl s" second-keystroke="s" />
   </action>
   <action id="GotoTypeDeclaration">
     <mouse-shortcut keystroke="shift control button1" />
@@ -121,13 +142,9 @@
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
   </action>
   <action id="Scala.SendSelectionToConsole" />
-  <action id="SelectIn">
-    <keyboard-shortcut first-keystroke="alt f1" />
-    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="x" />
-  </action>
   <action id="ShowBookmarks">
     <keyboard-shortcut first-keystroke="shift f11" />
-    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="b" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="x" />
   </action>
   <action id="ShowProjectStructureSettings">
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="s" />
@@ -142,6 +159,11 @@
   <action id="Stop">
     <keyboard-shortcut first-keystroke="ctrl f2" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="s" />
+  </action>
+  <action id="SurroundWith">
+    <keyboard-shortcut first-keystroke="ctrl alt t" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 9" />
+    <keyboard-shortcut first-keystroke="shift alt 9" />
   </action>
   <action id="SwitchApply">
     <keyboard-shortcut first-keystroke="shift alt enter" />
@@ -166,15 +188,18 @@
     <keyboard-shortcut first-keystroke="ctrl f11" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="m" />
   </action>
+  <action id="ToggleBreakpointEnabled">
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="t" />
+  </action>
   <action id="ToggleFieldBreakpoint">
-    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="f" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="f" />
   </action>
   <action id="ToggleLineBreakpoint">
     <keyboard-shortcut first-keystroke="ctrl f8" />
-    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="l" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="l" />
   </action>
   <action id="ToggleMethodBreakpoint">
-    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="m" />
+    <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="m" />
   </action>
   <action id="TypeHierarchy">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="h" />
@@ -189,7 +214,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="h" />
   </action>
   <action id="ViewBreakpoints">
-    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="x" />
+    <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="b" />
   </action>
   <action id="editRunConfigurations">
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="d" />
