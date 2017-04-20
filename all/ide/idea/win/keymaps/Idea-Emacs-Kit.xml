@@ -15,6 +15,10 @@
     <keyboard-shortcut first-keystroke="alt comma" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="comma" />
   </action>
+  <action id="ChooseDebugConfiguration">
+    <keyboard-shortcut first-keystroke="shift alt f9" />
+    <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="equals" />
+  </action>
   <action id="CloseProject">
     <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="shift ctrl c" />
   </action>
