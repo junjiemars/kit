@@ -45,6 +45,16 @@ sudo systemctl restart NetworkManager
 sudo mount -t cifs -o user=<win-user-name>//<host-name/ip>/<shared-dir> <mnt-dir>
 ```
 
+### Change Directory
+the name of some directory composed with non-alpha characters, so how to ```cd``` it in:
+```sh
+# get inum
+ls -i
+
+# cd it
+cd $(find . -type d -inum <inum> 2>/dev/null)
+```
+
 ## Java
 
 ### Can not attach to the process
