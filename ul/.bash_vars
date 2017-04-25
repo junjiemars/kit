@@ -9,20 +9,20 @@ case "${PLATFORM}" in
   MSYS_NT*)
     if [ -d "/d/" ]; then
       [ -d "/d/opt" ] || mkdir -p "/d/opt"
-      PREFIX=${PREFIX:-"/d/opt"}
+      PREFIX="${PREFIX:-/d/opt}"
     else
       [ -d "/c/opt" ] || mkdir -p "/c/opt"
-      PREFIX=${PREFIX:-"/c/opt"}
+      PREFIX="${PREFIX:-/c/opt}"
     fi
     ;;
   *)
-    PREFIX=${PREFIX:-"/opt"}
+    PREFIX="${PREFIX:-/opt}"
     ;;
 esac
 
 
-OPT_RUN=${OPT_RUN:-"${PREFIX}/run"}
-OPT_OPEN=${OPT_OPEN:-"${PREFIX}/open"}
+OPT_RUN="${OPT_RUN:-${PREFIX}/run}"
+OPT_OPEN="${OPT_OPEN:-${PREFIX}/open}"
 
 
 opt_basis_dirs() {
