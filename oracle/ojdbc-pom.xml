@@ -1,0 +1,21 @@
+<!--
+    mvn install:install-file -Dfile=./ojdbc6.jar -DgroupId='com.oracle' -DartifactId=ojdbc6 -Dversion="11.2.0.4" -Dpackaging=jar
+-->
+<dependencies>
+
+        <!-- ojdbc6.jar example -->
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>11.2.0.4</version>
+            <packaging>jar</packaging>
+        </dependency>
+
+        <!-- ojdbc7.jar example -->
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc7</artifactId>
+            <version>12.1.0</version>
+        </dependency>
+
+</dependencies>
