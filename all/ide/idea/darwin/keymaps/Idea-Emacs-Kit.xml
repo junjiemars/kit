@@ -279,6 +279,9 @@
   <action id="Vcs.Show.Local.Changes">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="s" />
   </action>
+  <action id="Vcs.Show.Log">
+    <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="l" />
+  </action>
   <action id="Vcs.ShowHistoryForBlock">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="shift h" />
   </action>
