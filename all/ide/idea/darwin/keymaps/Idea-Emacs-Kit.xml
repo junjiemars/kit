@@ -48,6 +48,10 @@
     <keyboard-shortcut first-keystroke="shift ctrl f8" />
     <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="e" />
   </action>
+  <action id="EditorBackwardParagraph">
+    <keyboard-shortcut first-keystroke="ctrl up" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift open_bracket" />
+  </action>
   <action id="EditorCodeBlockEnd">
     <keyboard-shortcut first-keystroke="ctrl close_bracket" />
     <keyboard-shortcut first-keystroke="ctrl alt close_bracket" />
@@ -68,6 +72,10 @@
   </action>
   <action id="EditorCut">
     <keyboard-shortcut first-keystroke="shift delete" />
+  </action>
+  <action id="EditorForwardParagraph">
+    <keyboard-shortcut first-keystroke="ctrl down" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift close_bracket" />
   </action>
   <action id="EditorJoinLines">
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 6" />
