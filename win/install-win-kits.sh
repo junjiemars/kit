@@ -44,13 +44,19 @@ install_emacs() {
 		x86_64) emacs_arch="${MACHINE}" ;;
 		*) ;;
 	esac
-	local emacs_major="`echo ${EMACS_VER}|sed 's#^\([0-9][0-9]\)*\..*$#\1#'`"
+	local emacs_version=
+	IFS='.' read -a emacs_version <<< "${EMACS_VER}"
+	local emacs_major="${emacs_version[0]}"
+	local emacs_minor="${emacs_version[1]}"
 	if [ ${emacs_major} -lt 25 ]; then
 		emacs_arch="bin-i686"
-	else
-		emacs_arch="${emacs_arch}-w64"
+	elif [ ${emacs_major} -ge 25 -a ${emacs_minor} -gt 1 ]; then
+		emacs_arch="${emacs_arch}"
 	fi
   local emacs_zip="emacs-${EMACS_VER}-${emacs_arch}-mingw32.zip"
+	if [ ${emacs_major} -ge 25 -a ${emacs_minor} -ge 1 ]; then
+  	emacs_zip="emacs-${EMACS_VER}-${emacs_arch}.zip"
+	fi
   local emacs_url="http://ftp.gnu.org/gnu/emacs/windows/${emacs_zip}"
   local emacs_home="${OPT_RUN}/emacs"
   local bin_dir="${emacs_home}/bin"
