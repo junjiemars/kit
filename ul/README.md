@@ -15,15 +15,15 @@ and just one line code you need to getting things done:
 ```sh
 $ bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh)
 ```
-For Windiows you can use [Git Bash](https://git-scm.com/downloads) insdead, it's same with Linux or Darwin.
+For Windiows you can use [Git Bash](https://git-scm.com/downloads) instead.
 
 You can boot it from local storage two.
 ```sh
 # git clone it from github to <kit-local-dir>
-$ git clone https://github.com/junjiemars/kit.git <kit-local-dir>
+$ git clone --depth=1 https://github.com/junjiemars/kit.git <kit-local-dir>
 
 # boot up from <kit-local-dir>
-$ GITHUB_H=<file://kit-local-dir> <kit-local-dir>/ul/setup-bash.sh  
+$ GITHUB_H=file://<kit-local-dir> <kit-local-dir>/ul/setup-bash.sh
 ```
 
 ## Java Programming Environement
