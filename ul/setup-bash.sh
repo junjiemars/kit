@@ -6,7 +6,7 @@
 
 HOME=${HOME%/}
 PLATFORM=`uname -s 2>/dev/null`
-GITHUB_H=${GITHUB_H:-"https://raw.githubusercontent.com/junjiemars/kit/master"}
+GITHUB_H="${GITHUB_H:-https://raw.githubusercontent.com/junjiemars/kit/master}"
 curl='curl -sL '
 declare -a BASH_S=(\
 	'.bash_init' \

@@ -8,21 +8,21 @@ PLATFORM=`uname -s 2>/dev/null`
 case "${PLATFORM}" in
   MSYS_NT*)
     if [ -d "/d/" ]; then
-      PREFIX=${PREFIX:-"/d/opt"}
+      PREFIX="${PREFIX:-/d/opt}"
     else
-      PREFIX=${PREFIX:-"/c/opt"}
+      PREFIX="${PREFIX:-/c/opt}"
     fi
     ;;
   *)
-    PREFIX=${PREFIX:-"/opt"}
+    PREFIX="${PREFIX:-/opt}"
     ;;
 esac
 
-RUN_DIR=${RUN_DIR:-"${PREFIX}/run"}
-OPEN_DIR=${OPEN_DIR:-"${PREFIX}/open"}
+RUN_DIR="${RUN_DIR:-${PREFIX}/run}"
+OPEN_DIR="${OPEN_DIR:-${PREFIX}/open}"
 SOCKS=
 
-HAS_ALL=${HAS_ALL:-"NO"}
+HAS_ALL=${HAS_ALL:-NO}
 HAS_JDK=${HAS_JDK:-0}
 HAS_ANT=${HAS_ANT:-0}
 HAS_MAVEN=${HAS_MAVEN:-0}
@@ -37,29 +37,31 @@ HAS_SCALA=${HAS_SCALA:-0}
 HAS_SCALA_VIM=${HAS_SCALA_VIM:-0}
 HAS_ZOOKEEPER=${HAS_ZOOKEEPER:-0}
 
-JDK_VER=(${JDK_U:-"8u91"} ${JDK_B:-"b14"})
-ANT_VER=${ANT_VER:-"1.10.1"}
-MAVEN_VER=${MAVEN_VER:-"3.3.9"}
-GRADLE_VER=${GRADLE_VER:-"2.13"}
-SBT_VER=${SBT_VER:-"0.13.13"}
-CLOJURE_VER=${CLOJURE_VER:-"1.8.0"}
-CLOJURESCRIPT_VER=${CLOJURESCRIPT_VER:-"1.9.229"}
-GROOVY_VER=${GROOVY_VER:-"2_4_X"}
-SCALA_VER=${SCALA_VER:-"2.12.1"}
-ZOOKEEPER_VER=${ZOOKEEPER_VER:-"3.4.10"}
+JDK_VER=("${JDK_U:-8u121} ${JDK_B:-b13}")
+ANT_VER="${ANT_VER:-1.10.1}"
+MAVEN_VER="${MAVEN_VER:-3.3.9}"
+GRADLE_VER="${GRADLE_VER:-2.13}"
+SBT_VER="${SBT_VER:-0.13.13}"
+CLOJURE_VER="${CLOJURE_VER:-1.8.0}"
+CLOJURESCRIPT_VER="${CLOJURESCRIPT_VER:-1.9.229}"
+GROOVY_VER="${GROOVY_VER:-2_4_X}"
+SCALA_VER="${SCALA_VER:-2.12.1}"
+ZOOKEEPER_VER="${ZOOKEEPER_VER:-3.4.10}"
 
 declare -a KITS=()
 
 append_paths() {
   local f_paths="$HOME/.bash_paths"
-  if [ 0 -ne `echo "$PATH" | tr ':' '\n' | grep "^$1$" &>/dev/null; echo $?` ]; then 
-    if [ 0 -eq `grep "^PATH='.*'" ${f_paths} &>/dev/null; echo $?` ]; then
-      sed -i "s#^PATH='.*'#PATH=$PATH:$1#g" "${f_paths}"
-    else
-      echo -e "PATH='$PATH:$1'" >> "${f_paths}"
-    fi
-    . "${f_paths}"
+	local name="PATH"
+	local val="\${PATH:+\$PATH:}$1"
+	local flag="$2"
+	local var="${name}=${val}"
+  if [ 0 -eq `grep "^${name}=\".*${flag}.*\"" "${f_paths}" &>/dev/null; echo $?` ]; then
+    sed -i "s#^${name}=\".*\"#${name}=\"${val}\"#g" "${f_paths}"
+	else
+    echo -e "${var}" >> "${f_paths}"
   fi
+  . "${f_paths}"
 }
 
 append_vars() {
@@ -108,7 +110,7 @@ install_jdk() {
         tar xf "${jdk_file}" -C "${jdk_home}" --strip-components=1
       if [ 0 -eq `${jdk_home}/bin/javac -version &>/dev/null; echo $?` ]; then
         append_vars "JAVA_HOME" "${jdk_home}"
-        append_paths "${jdk_home}/bin"
+        append_paths "\${JAVA_HOME}/bin" "JAVA_HOME"
         return 0
       fi
       ;;
@@ -137,7 +139,7 @@ install_ant() {
 
   if [ 0 -eq `${bin_dir}/ant -version &>/dev/null; echo $?` ]; then
     append_vars "ANT_HOME" "${ant_home}"
-    append_paths "${bin_dir}" 
+    append_paths "\${ANT_HOME}" "ANT_HOME"
     return 0
   fi
   return 1
@@ -160,7 +162,7 @@ install_maven() {
 
   if [ 0 -eq `${bin_dir}/mvn -version &>/dev/null; echo $?` ]; then
     append_vars "MAVEN_HOME" "${mvn_home}"
-    append_paths "${bin_dir}" 
+    append_paths "\${MAVEN_HOME}" "MAVEN_HOME"
     return 0
   fi
   return 1
@@ -274,7 +276,7 @@ install_gradle() {
   if `${bin_dir}/bin/gradle -v &>/dev/null`; then
 		case "${PLATFORM}" in
 			MSYS_NT*)
-				append_paths "${bin_dir}/bin"
+				append_paths "${bin_dir}/bin" "gradle"
 			;;
 			*)
 				[ -L "${bin_ln}" ] && rm "${bin_ln}"
@@ -306,7 +308,7 @@ install_sbt() {
   if `${bin_dir}/bin/sbt </dev/null &>/dev/null`; then
 		case "${PLATFORM}" in
 			MSYS_NT*)
-				append_paths "${bin_dir}/bin"
+				append_paths "${bin_dir}/bin" "sbt"
 			;;
 			*)
 				[ -L "${bin_ln}" ] && rm "${bin_ln}"
@@ -338,7 +340,7 @@ install_groovy() {
 
   if [ 0 -eq `${bin_dir}/bin/groovysh -version $>/dev/null; echo $?` ]; then
     append_vars "GROOVY_HOME" "${bin_dir}" 
-    append_paths "${bin_dir}/bin"
+    append_paths "\${GROOVY_HOME}/bin" "GROOVY_HOME"
     return 0
   fi
   return 1 
@@ -377,7 +379,7 @@ install_scala() {
     [ -d "${RUN_DIR}/share/man/man1" ] || mkdir -p "${RUN_DIR}/share/man/man1" 
     cp -R "${scala_home}/man/man1/." "${RUN_DIR}/share/man/man1/"
     append_vars "SCALA_HOME" "${scala_home}"
-    append_paths "${bin_dir}" 
+    append_paths "\${SCALA_HOME}/bin" "SCALA_HOME"
     return 0
   fi
   return 1

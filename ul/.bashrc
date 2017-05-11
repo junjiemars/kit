@@ -11,10 +11,6 @@ case ".$PS1" in
 esac
 
 #PREFIX=/opt
-#JAVA_HOME=
-#TMOUT=3000 # seconds
-#readonly TMOUT
-#export TMOUT
 
 # fix set locale failed
 # sudo localedef -i en_US -f UTF-8 en_US.UTF-8
@@ -27,4 +23,10 @@ export PATH
 
 test -f $HOME/.bash_aliases && . $HOME/.bash_aliases 
 
+# customize
+#---------- 
 #export LANG=en_US.UTF-8
+#TMOUT=3000 # seconds
+#readonly TMOUT
+#export TMOUT
+
