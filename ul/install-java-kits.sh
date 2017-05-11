@@ -139,7 +139,7 @@ install_ant() {
 
   if [ 0 -eq `${bin_dir}/ant -version &>/dev/null; echo $?` ]; then
     append_vars "ANT_HOME" "${ant_home}"
-    append_paths "\${ANT_HOME}" "ANT_HOME"
+    append_paths "\${ANT_HOME}/bin" "ANT_HOME"
     return 0
   fi
   return 1
@@ -162,7 +162,7 @@ install_maven() {
 
   if [ 0 -eq `${bin_dir}/mvn -version &>/dev/null; echo $?` ]; then
     append_vars "MAVEN_HOME" "${mvn_home}"
-    append_paths "\${MAVEN_HOME}" "MAVEN_HOME"
+    append_paths "\${MAVEN_HOME}/bin" "MAVEN_HOME"
     return 0
   fi
   return 1
