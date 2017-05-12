@@ -4,9 +4,23 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
-CTAGS=${CTAGS:-ctags}
-PREFIX=${PREFIX:-"`pwd`"}
-PLATFORM=`uname -s 2>/dev/null`
+CTAGS="${CTAGS:-ctags}"
+PREFIX="${PREFIX:-`pwd`}"
+PLATFORM="`uname -s 2>/dev/null`"
+VERSION="1.1"
+
+CTAGS_LANG=
+CTAGS_OPTIONS=
+
+usage() {
+  echo -e "Usage: $(basename $0) [OPTIONS]"
+  echo -e "       $(basename $0) [ --help | --version]\n"
+  echo -e "Options:"
+  echo -e "  --help\t\tPrint this message"
+  echo -e "  --version\t\tPrint version"
+  echo -e "  --language\t\tspecify language:c,java,sql,sh"
+  echo -e "  --ctags-options\tctags options"
+}
 
 ctags_exists() {
 	type -P $CTAGS &>/dev/null; echo $?
@@ -37,26 +51,60 @@ sql_tags() {
 	echo "--language-force=SQL --SQL-kinds=+px --extra=+fq -R $PREFIX "
 }
 
+for option
+do
+  opt="$opt `echo $option | sed -e \"s/\(--[^=]*=\)\(.* .*\)/\1'\2'/\"`"
+  
+  case "$option" in
+    -*=*) value=`echo "$option" | sed -e 's/[-_a-zA-Z0-9]*=//'` ;;
+    *) value="" ;;
+  esac
+  
+  case "$option" in
+    --help)                  help=yes                   ;;
+    --version)               version=yes      			    ;;
+
+    --language=*)            CTAGS_LANG="$value" 				;;
+    --ctags-options=*)       CTAGS_OPTIONS="$value"			;;
+    
+    *)
+      echo "$0: error: invalid option \"$option\""
+			usage
+      exit 1
+    ;;
+  esac
+done
+
+if [ "$help" = "yes" -o 0 -eq $# ]; then
+	usage
+	exit 0
+fi
+
+if [ "$version" = "yes" ]; then
+	echo -e "$VERSION"
+	exit 0
+fi
+
 if [ 0 -eq $(ctags_exists) -a 0 -eq $(ctags_exuberant) ]; then
 	[ $# -lt 1 ] && exit 1
 
-	case $1 in
+	CTAGS_LANG="`echo $CTAGS_LANG | tr [:lower:] [:upper:]`"
+
+	case $CTAGS_LANG in
 		C)
-			shift 
-			$CTAGS $@ `eval echo $(c_tags)`
+			$CTAGS `eval echo $(c_tags)` $CTAGS_OPTIONS
 			;;
 		Java)
-			shift
-			$CTAGS $@ `eval echo $(java_tags)`
+			$CTAGS `eval echo $(java_tags)` $CTAGS_OPTIONS
 			;;
 		Sh)
-			shift
-			$CTAGS $@ `eval echo $(sh_tags)`
+			$CTAGS `eval echo $(sh_tags)` $CTAGS_OPTIONS
 			;;
 		SQL)
-			shift
-			$CTAGS $@ `eval echo $(sql_tags)`
+			$CTAGS `eval echo $(sql_tags)` $CTAGS_OPTIONS
 			;;
+		*)
+			$CTAGS $CTAGS_OPTIONS
 	esac
 
 fi
