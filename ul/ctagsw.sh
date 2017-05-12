@@ -94,10 +94,10 @@ if [ 0 -eq $(ctags_exists) -a 0 -eq $(ctags_exuberant) ]; then
 		C)
 			$CTAGS `eval echo $(c_tags)` $CTAGS_OPTIONS
 			;;
-		Java)
+		JAVA)
 			$CTAGS `eval echo $(java_tags)` $CTAGS_OPTIONS
 			;;
-		Sh)
+		SH)
 			$CTAGS `eval echo $(sh_tags)` $CTAGS_OPTIONS
 			;;
 		SQL)
