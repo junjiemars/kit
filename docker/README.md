@@ -69,6 +69,10 @@ docker run -w /home/u -h centos --privileged -u u -it --rm junjiemars/centos-dev
 docker run --name centos-dev -w /home/u -h centos --privileged -d junjiemars/centos-dev
 docker exec -it -u u centos-dev /bin/bash
 ```
+* cannot change locale
+```sh
+localedef -i en_US -f UTF-8 en_US.UTF-8
+```
 
 ## Basic Ubuntu Development Environment
 Include basic building/networking tools, emacs/vim editors for c/c++/llvm/python/lua development.
