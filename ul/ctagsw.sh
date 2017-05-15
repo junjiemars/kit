@@ -36,23 +36,23 @@ c_tags() {
   local inc_file="$HOME/.cc-inc.list"
 
 	if [ -f "$inc_file" ]; then 
+    local cc_list=
 		case $PLATFORM in
 			MSYS_NT*)
-        local cc_list="`cat $inc_file | tr '\r\n' ';' | tr -d \'`"
-        $CTAGS --language-force=C --C-kinds=+px --extra=+fq \
-               -R "${PREFIX}" "${options}"
-        IFS=';' read -a inc <<< "${cc_list}"
-        for i in "${inc[@]}"; do
-          $CTAGS --language-force=C --C-kinds=+px --extra=+fq -a \
-                 -R "${i}" "${options}"
-        done
+        cc_list="`cat $inc_file | tr '\r\n' ';' | tr -d \'`"
 				;;
 			*)
-				inc="`cat $inc_file`"
-	      $CTAGS --language-force=C --C-kinds=+px --extra=+fq \
-               -R "${PREFIX}" "${inc[@]}" "${options}"
+        cc_list="`cat $inc_file | tr ' ' ';'`"
 				;;
 		esac
+
+    $CTAGS --language-force=C --C-kinds=+px --extra=+fq \
+           -R "${PREFIX}" "${options}"
+    IFS=';' read -a inc <<< "${cc_list}"
+    for i in "${inc[@]}"; do
+      $CTAGS --language-force=C --C-kinds=+px --extra=+fq -a \
+             -R "${i}" "${options}"
+    done
   else
     $CTAGS --language-force=C --C-kinds=+px --extra=+fq -a \
            -R "${PREFIX}" "${inc[@]}" "${options}"
