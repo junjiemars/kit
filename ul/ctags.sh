@@ -51,10 +51,12 @@ c_tags() {
     IFS=';' read -a inc <<< "${cc_list}"
     for i in "${inc[@]}"; do
       $CTAGS --language-force=C --C-kinds=+px --extra=+fq -a \
+					   --exclude=c++                                   \
              -R "${i}" ${options}
     done
   else
     $CTAGS --language-force=C --C-kinds=+px --extra=+fq -a \
+					 --exclude=c++                                   \
            -R "${PREFIX}" "${inc[@]}" ${options}
 	fi
 }
