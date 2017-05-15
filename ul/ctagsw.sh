@@ -42,20 +42,20 @@ c_tags() {
         cc_list="`cat $inc_file | tr '\r\n' ';' | tr -d \'`"
 				;;
 			*)
-        cc_list="`cat $inc_file | tr ' ' ';'`"
+        cc_list="`cat $inc_file | tr ' ' ';'`;"
 				;;
 		esac
 
     $CTAGS --language-force=C --C-kinds=+px --extra=+fq \
-           -R "${PREFIX}" "${options}"
+           -R "${PREFIX}" ${options}
     IFS=';' read -a inc <<< "${cc_list}"
     for i in "${inc[@]}"; do
       $CTAGS --language-force=C --C-kinds=+px --extra=+fq -a \
-             -R "${i}" "${options}"
+             -R "${i}" ${options}
     done
   else
     $CTAGS --language-force=C --C-kinds=+px --extra=+fq -a \
-           -R "${PREFIX}" "${inc[@]}" "${options}"
+           -R "${PREFIX}" "${inc[@]}" ${options}
 	fi
 }
 
