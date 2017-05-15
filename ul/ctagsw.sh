@@ -31,24 +31,48 @@ ctags_exuberant() {
 }
 
 c_tags() {
-	local inc='/usr/include'
-	[ -f "~/.cc-inc.list" ] && inc="`cat ~/.cc-inc.list`"
-	echo "--language-force=C --C-kinds=+px --extra=+fq -R $PREFIX $inc"
+  local options="$1"
+	local inc=("/usr/include")
+  local inc_file="$HOME/.cc-inc.list"
+
+	if [ -f "$inc_file" ]; then 
+		case $PLATFORM in
+			MSYS_NT*)
+        local cc_list="`cat $inc_file | tr '\r\n' ';' | tr -d \'`"
+        $CTAGS --language-force=C --C-kinds=+px --extra=+fq \
+               -R "${PREFIX}" "${options}"
+        IFS=';' read -a inc <<< "${cc_list}"
+        for i in "${inc[@]}"; do
+          $CTAGS --language-force=C --C-kinds=+px --extra=+fq -a \
+                 -R "${i}" "${options}"
+        done
+				;;
+			*)
+				inc="`cat $inc_file`"
+	      $CTAGS --language-force=C --C-kinds=+px --extra=+fq \
+               -R "${PREFIX}" "${inc[@]}" "${options}"
+				;;
+		esac
+  else
+    $CTAGS --language-force=C --C-kinds=+px --extra=+fq -a \
+           -R "${PREFIX}" "${inc[@]}" "${options}"
+	fi
 }
 
 java_tags() {
 	#extract src.zip under $JAVA_HOME 
 	local src="$JAVA_HOME/src"
 	[ -d "$src" ] || src=""
-	echo "--language-force=Java --Java-kinds=+p --extra=+fq -R $PREFIX $src"
+	$CTAGS --language-force=Java --Java-kinds=+p --extra=+fq \
+         -R "${PREFIX}" "${src}"
 }
 
 sh_tags() {
-	echo "--language-force=Sh --extra=+f -R $PREFIX "
+	$CTAGS --language-force=Sh --extra=+f -R "${PREFIX}"
 }
 
 sql_tags() {
-	echo "--language-force=SQL --SQL-kinds=+px --extra=+fq -R $PREFIX "
+	$CTAGS --language-force=SQL --SQL-kinds=+px --extra=+fq -R "${PREFIX}"
 }
 
 for option
@@ -92,16 +116,16 @@ if [ 0 -eq $(ctags_exists) -a 0 -eq $(ctags_exuberant) ]; then
 
 	case $CTAGS_LANG in
 		C)
-			$CTAGS `eval echo $(c_tags)` $CTAGS_OPTIONS
+			c_tags "$CTAGS_OPTIONS"
 			;;
 		JAVA)
-			$CTAGS `eval echo $(java_tags)` $CTAGS_OPTIONS
+      java_tags "$CTAGS_OPTIONS"
 			;;
 		SH)
-			$CTAGS `eval echo $(sh_tags)` $CTAGS_OPTIONS
+      sh_tags "$CTAGS_OPTIONS"
 			;;
 		SQL)
-			$CTAGS `eval echo $(sql_tags)` $CTAGS_OPTIONS
+			sql_tags "$CTAGS_OPTIONS"
 			;;
 		*)
 			$CTAGS $CTAGS_OPTIONS
