@@ -43,7 +43,7 @@ set ruler
 set shell=bash\ --rcfile\ ~/.bashrc
 
 " colorful
-set grepprg=grep\ --color=always\ -n\ $*\ /dev/null
+"set grepprg=grep\ --color=always\ -n\ $*\ /dev/null
 
 " search subdirs
 set path+=**
