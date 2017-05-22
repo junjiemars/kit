@@ -13,3 +13,4 @@ exp-*.sql
 TAGS
 *.rkt~
 tags
+\*shell\*

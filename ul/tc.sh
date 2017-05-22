@@ -4,31 +4,54 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
-OPT_RUN=${OPT_RUN:-"/opt/run"}
-PREFIX=${PREFIX:-"${OPT_RUN%/}/www/tomcat"}
-VER=${VER:-"8.5.6"}
-CATALINA_BASE=${CATALINA_BASE:-"${PREFIX%/}/${VER}"}
-export CATALINA_PID=${CATALINA_PID:-"${CATALINA_BASE%/}/logs/pid"}
+PLATFORM="`uname -s 2>/dev/null`"
+OPT_RUN="${OPT_RUN:-/opt/run}"
+PREFIX="${PREFIX:-${OPT_RUN%/}/www/tomcat}"
+VERSION="1.1.3"
 
-PLATFORM=`uname -s 2>/dev/null`
-CATALINA_BIN="${CATALINA_BASE}/bin/catalina.sh"
+VER="${VER:-8.5.8}"
+CATALINA_BASE="${CATALINA_BASE:-${PREFIX%/}/${VER}}"
+JAVA_OPTS="${JAVA_OPTS}"
+IP4_OPT='-Djava.net.preferIPv4Stack=true'
 
-STOP_TIMEOUT=${STOP_TIMEOUT:-10}
-STOP_FORCE=${STOP_FORCE:-"-force"}
+CATALINA_OPTS="${CATALINA_OPTS}"
 
-CATALINA_OPTS=${CATALINA_OPTS}
-JAVA_OPTS="${JAVA_OPTS:+$JAVA_OPTS }-Djava.net.preferIPv4Stack=true"
+STOP_TIMEOUT="${STOP_TIMEOUT:-10}"
+STOP_FORCE="${STOP_FORCE:--force}"
 
 START_PORT=${START_PORT:-8080}
 STOP_PORT=${STOP_PORT:-8005}
 JPDA_PORT=${JPDA_PORT:-8000}
 
 
+
+usage() {
+  echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
+  echo -e "       $(basename $0) [ -h | --help | -v | --version ]\n"
+  echo -e "Options:"
+  echo -e "  --help\t\t\t\tPrint this message"
+  echo -e "  --version\t\t\t\tPrint version information and quit"
+  echo -e "  --prefix\t\t\t\tcatalina prefix dir"
+  echo -e "  --tomcat-version\t\ttomcat version, default is $VER"
+  echo -e "  --java-options\t\tjava options, JAVA_OPTS"
+  echo -e "  --ipv4\t\t\t\twhether prefer IPv4, default is none"
+  echo -e "  --catalina-base\t\tcatalina base dir"
+  echo -e "  --catalina-options\tcatalina options, CATALINA_OPTS"
+  echo -e "  --stop-timeout\t\twaiting up n($STOP_TIMEOUT) seconds to stop"
+  echo -e "  --start-port\t\ttomcat start port, default is $START_PORT"
+  echo -e "  --stop-port\t\ttomcat stop port, default is $STOP_PORT"
+  echo -e "  --jpda-port\t\ttomcat debug port, default is $JPDA_PORT\n"
+  echo -e "A tiny-handy console for tomcat.\n"
+  echo -e "Commands:"
+  echo -e "  start\t\t\t\t\tstart a tomcat instance"
+  echo -e "  stop\t\t\t\t\tstop a tomcat instance"
+  echo -e "  debug\t\t\t\t\tstart a tomcat instance in debug mode"
+  echo -e "  check-env\t\t\t\tcheck environment"
+  echo -e "  install\t\t\t\tinstall tomcat"
+}
+
 export_catalina_opts() {
-  CATALINA_OPTS="${1}${CATALINA_OPTS}"
-  if [ -n "${CATALINA_OPTS}" ]; then
-    export CATALINA_OPTS=`echo "${CATALINA_OPTS}" | tr -s " "`
-  fi
+  export CATALINA_OPTS=`echo "${CATALINA_OPTS}" | tr -s " "`
 }
 
 artified_ports() {
@@ -63,13 +86,22 @@ export_java_opts() {
   export JAVA_OPTS=`echo "${JAVA_OPTS}" | tr -s " "`
 }
 
-show_env() {
-  echo -e "---------------------------------"
-  echo -e "CATALINA_PID[${1}]=${CATALINA_PID}"
-  echo -e "JPDA_PORT=${JPDA_PORT}"
-  echo -e "JAVA_OPTS=${JAVA_OPTS}"
-  echo -e "CATALINA_OPTS=${CATALINA_OPTS}"
-  echo -e "CATALINA_BASE=${CATALINA_BASE}"
+export_pid_var() {
+  export CATALINA_PID="${CATALINA_PID:-${CATALINA_BASE%/}/logs/pid}"
+}
+
+check_env() {
+  local pid=`check_pid`
+  local run="Stopped"
+  if [ 0 -eq `ps -p $pid &>/dev/null;echo $?` ]; then
+    run="Running"
+  fi
+  echo -e "+ check Tomcat environment ...$run"
+  echo -e "\tCATALINA_PID[$pid]=${CATALINA_PID}"
+  echo -e "\tJPDA_PORT=${JPDA_PORT}"
+  echo -e "\tJAVA_OPTS=${JAVA_OPTS}"
+  echo -e "\tCATALINA_OPTS=${CATALINA_OPTS}"
+  echo -e "\tCATALINA_BASE=${CATALINA_BASE}"
 }
 
 install_tomcat() {
@@ -114,7 +146,7 @@ check_pid() {
 	fi
 }
 
-show_version() {
+check_catalina_ver() {
   if `check_catalina_bin`; then
     "${CATALINA_BIN}" version
   else
@@ -123,58 +155,134 @@ show_version() {
 }
 
 stop_tomcat() {
-  local pid=`check_pid`
   if `check_catalina_bin`; then
-    export_java_opts
     "${CATALINA_BIN}" stop "${STOP_TIMEOUT}" "${STOP_FORCE}"
 	else
   	echo -e "checking ${CATALINA_BIN} ...failed, panic!"
+    return 1
   fi
-  show_env "${pid}"
 }
 
 start_tomcat() {
   if `check_catalina_bin`; then
-    export_java_opts
     "${CATALINA_BIN}" start
+    return $?
 	else
   	echo -e "checking ${CATALINA_BIN} ...failed, panic!"
+    return 1
   fi
-  show_env "`check_pid`"
 }
 
 debug_tomcat() {
   if `check_catalina_bin`; then
-    export_java_opts
-    export_catalina_opts "-XX:+HeapDumpOnOutOfMemoryError \
-                          -XX:HeapDumpPath=${CATALINA_BASE}/logs"
     JPDA_ADDRESS="${JPDA_PORT}" "${CATALINA_BIN}" jpda start
 	else
   	echo -e "checking ${CATALINA_BIN} ...failed, panic!"
+    return 1
   fi
-  show_env "`check_pid`"
 }
 
-usage() {
-  echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
-  echo -e "       $(basename $0) [ -h | --help | -v | --version ]\n"
-  echo -e "Options:"
-  echo -e "  -h, --help\t\tPrint usage"
-  echo -e "  -v, --version\t\tPrint version information and quit\n"
-  echo -e "A tiny-handy console for tomcat.\n"
-  echo -e "Commands:"
-  echo -e "\tstart\t\tStart a tomcat instance"
-  echo -e "\tstop\t\tStop a tomcat instance"
-  echo -e "\tdebug\t\tStart a tomcat instance in debug mode"
-  echo -e "\tinstall\t\tInstall tomcat"
-}
 
-case ".$@" in
-  .install) install_tomcat ;;
-  .start) start_tomcat ;;
-  .stop) stop_tomcat ;;
-  .debug) debug_tomcat ;;
-  .-v|.--version) show_version ;;
-  .-h|.--help) usage ;;
-  .*) usage ;;
+for option
+do
+  opt="$opt `echo $option | sed -e \"s/\(--[^=]*=\)\(.* .*\)/\1'\2'/\"`"
+  
+  case "$option" in
+    -*=*) value=`echo "$option" | sed -e 's/[-_a-zA-Z0-9]*=//'` ;;
+    *) value="" ;;
+  esac
+  
+  case "$option" in
+    --help)                  help=yes                   ;;
+    --version)               version=yes      			    ;;
+
+    --prefix=*)              prefix="$value"   			    ;;
+    --tomcat-version=*)      VER="$value"      			    ;;
+    --catalina-base=*)       catalina_base="$value"     ;;
+    --catalina-options=*)    catalina_opts="$value"		  ;;
+
+    --java-options=*)        java_opts="$value"		      ;;
+    --ipv4)                  ipv4=yes                   ;;
+
+    --stop-timeout=*)        STOP_TIMEOUT="$value"		  ;;
+    --start-port=*)          START_PORT="$value"			  ;;
+    --stop-port=*)           STOP_PORT="$value" 			  ;;
+    --jpda-port=*)           JPDA_PORT="$value"  			  ;;
+
+    *)
+      command="$option"
+    ;;
+  esac
+done
+
+
+if [ "$help" = "yes" -o 0 -eq $# ]; then
+	usage
+	exit 0
+fi
+
+if [ "$version" = "yes" ]; then
+	echo -e "$VERSION"
+	exit 0
+fi
+
+# setup env vars
+
+if [ -n "$prefix" ]; then
+  PREFIX="$prefix"
+  CATALINA_BASE="${CATALINA_BASE:-${PREFIX%/}/${VER}}"
+fi
+
+if [ -n "$catalina_base" ]; then
+  CATALINA_BASE="${catalina_base}"
+fi
+
+CATALINA_BIN="${CATALINA_BASE}/bin/catalina.sh"
+
+if [ -n "$catalina_opts" ]; then
+  CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }${catalina_opts}"
+fi
+
+if [ "$ipv4" = "yes" ]; then
+  JAVA_OPTS="${JAVA_OPTS:+$JAVA_OPTS }${IP4_OPT}"
+fi
+
+if [ -n "$java_opts" ]; then
+  JAVA_OPTS="${JAVA_OPTS:+$JAVA_OPTS }${java_opts}"
+fi
+
+
+export_pid_var
+export_java_opts
+
+command="`echo $command | tr '[:upper:]' '[:lower:]'`"
+case "$command" in
+  check-env)
+    check_env
+    exit $?
+    ;;
+  start)
+    start_tomcat
+    exit $?
+    ;;
+  stop)
+    stop_tomcat
+    exit $?
+    ;;
+  debug)
+    CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }-XX:+HeapDumpOnOutOfMemoryError"
+    CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }-XX:HeapDumpPath=${CATALINA_BASE}/logs"
+    export_catalina_opts
+    debug_tomcat
+    exit $?
+    ;;
+  install)
+    install_tomcat
+    exit $?    
+    ;;
+  *)
+    echo "$0: error: invalid command \"$command\""
+		usage
+    exit 1    
+    ;;
 esac
