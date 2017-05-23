@@ -91,7 +91,7 @@ parameterize() {
 }
 
 export_java_opts() {
-  parameterize
+
   JAVA_OPTS="-Dstart.port=${START_PORT}      \
              -Dstop.port=${STOP_PORT}        \
              -Dlisten.address=${LISTEN_ON}   \
@@ -284,6 +284,7 @@ case "$command" in
     exit $?
     ;;
   start)
+    parameterize
     start_tomcat
     exit $?
     ;;
@@ -292,6 +293,7 @@ case "$command" in
     exit $?
     ;;
   debug)
+    parameterize
     CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }-XX:+HeapDumpOnOutOfMemoryError"
     CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }-XX:HeapDumpPath=${CATALINA_BASE}/logs"
     export_catalina_opts
