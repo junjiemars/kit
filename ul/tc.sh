@@ -15,6 +15,7 @@ CATALINA_OPTS="${CATALINA_OPTS}"
 
 JAVA_OPTS="${JAVA_OPTS}"
 IP4_OPT='-Djava.net.preferIPv4Stack=true'
+LISTEN_ON=("localhost" "127.0.0.1" "0.0.0.0")
 
 STOP_TIMEOUT="${STOP_TIMEOUT:-10}"
 STOP_FORCE="${STOP_FORCE:--force}"
@@ -35,6 +36,7 @@ usage() {
   echo -e "  --tomcat-version\t\ttomcat version, default is $VER"
   echo -e "  --java-options\t\tjava options, JAVA_OPTS"
   echo -e "  --ipv4\t\t\t\tprefer IPv4 option"
+  echo -e "  --listen-on\t\t\tlisten on what address: localhost,0.0.0.0,etc.,"
   echo -e "  --catalina-base\t\tcatalina base dir"
   echo -e "  --catalina-options\tcatalina options, CATALINA_OPTS"
   echo -e "  --stop-timeout\t\twaiting up n($STOP_TIMEOUT) seconds to stop"
@@ -89,8 +91,9 @@ artified_ports() {
 
 export_java_opts() {
   artified_ports
-  JAVA_OPTS="-Dstart.port=${START_PORT} \
-             -Dstop.port=${STOP_PORT} \
+  JAVA_OPTS="-Dstart.port=${START_PORT}      \
+             -Dstop.port=${STOP_PORT}        \
+             -Dlisten.address=${LISTEN_ON}   \
              ${JAVA_OPTS}"
   export JAVA_OPTS=`echo "${JAVA_OPTS}" | tr -s " "`
 }
@@ -212,6 +215,7 @@ do
 
     --java-options=*)        java_opts="$value"		      ;;
     --ipv4)                  ipv4=yes                   ;;
+    --listen-on=*)           LISTEN_ON="$value"         ;;
 
     --stop-timeout=*)        STOP_TIMEOUT="$value"		  ;;
     --start-port=*)          START_PORT="$value"			  ;;
