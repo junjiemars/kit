@@ -48,6 +48,7 @@ usage() {
   echo -e "  start\t\t\t\t\tstart a tomcat instance"
   echo -e "  stop\t\t\t\t\tstop a tomcat instance"
   echo -e "  debug\t\t\t\t\tstart a tomcat instance in debug mode"
+  echo -e "  parameterize\t\t\tparameterize tomcat's configurations"
   echo -e "  check-env\t\t\t\tcheck environment"
   echo -e "  install\t\t\t\tinstall tomcat"
 }
@@ -56,7 +57,7 @@ export_catalina_opts() {
   export CATALINA_OPTS=`echo "${CATALINA_OPTS}" | tr -s " "`
 }
 
-artified_ports() {
+parameterize() {
   local server_xml="${CATALINA_BASE}/conf/server.xml"
   if [ -r "${server_xml}" ]; then
     local stop_soft='<Server port="\${stop\.port}" shutdown="SHUTDOWN">'
@@ -90,7 +91,7 @@ artified_ports() {
 }
 
 export_java_opts() {
-  artified_ports
+  parameterize
   JAVA_OPTS="-Dstart.port=${START_PORT}      \
              -Dstop.port=${STOP_PORT}        \
              -Dlisten.address=${LISTEN_ON}   \
@@ -275,6 +276,9 @@ export_java_opts
 
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
+  parameterize)
+    parameterize
+    ;;
   check-env)
     check_env
     exit $?
