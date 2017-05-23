@@ -34,7 +34,7 @@ usage() {
   echo -e "  --prefix\t\t\t\tcatalina prefix dir"
   echo -e "  --tomcat-version\t\ttomcat version, default is $VER"
   echo -e "  --java-options\t\tjava options, JAVA_OPTS"
-  echo -e "  --ipv4\t\t\t\twhether prefer IPv4, default is none"
+  echo -e "  --ipv4\t\t\t\tprefer IPv4 option"
   echo -e "  --catalina-base\t\tcatalina base dir"
   echo -e "  --catalina-options\tcatalina options, CATALINA_OPTS"
   echo -e "  --stop-timeout\t\twaiting up n($STOP_TIMEOUT) seconds to stop"
@@ -58,11 +58,14 @@ artified_ports() {
   local server_xml="${CATALINA_BASE}/conf/server.xml"
   if [ -r "${server_xml}" ]; then
     local stop_soft='<Server port="\${stop\.port}" shutdown="SHUTDOWN">'
-    local start_soft='<Connector port="\${start\.port}" protocol="HTTP'
+    local start_soft='<Connector port="\${start\.port}" protocol="HTTP\/1\.[10]"'
+    local addr_soft='<Connector port="\${start\.port}" protocol="HTTP\/1\.[10]" address="\${listen.address}"'
     local stop_old='<Server port="\([0-9]*\)" shutdown="SHUTDOWN">'
     local stop_new='<Server port="\${stop\.port}" shutdown="SHUTDOWN">'
     local start_old='<Connector port="\([0-9]*\)" protocol="HTTP'
     local start_new='<Connector port="\${start\.port}" protocol="HTTP'
+    local addr_old='<Connector port="\(.*\)" protocol="\(HTTP\/1\.[10]\)"'
+    local addr_new='<Connector port="\1" protocol="\2" address="\${listen.address}"'
 
     [ -f "${server_xml}.ori" ] || cp "${server_xml}" "${server_xml}.ori"
     
@@ -73,8 +76,14 @@ artified_ports() {
     if [ 0 -ne `grep "${start_soft}" "${server_xml}" &>/dev/null; echo $?` ]; then
       sed -i -e "s/${start_old}/${start_new}/" "${server_xml}"
     fi
+
+    if [ 0 -ne `grep "${addr_soft}" "${server_xml}" &>/dev/null; echo $?` ]; then
+      sed -i -e "s/${addr_old}/${addr_new}/" "${server_xml}"
+    fi
+    
   else
     echo -e "artified ports failed, ${server_xml} no found, panic!"
+    return 1
   fi
 }
 
@@ -197,7 +206,7 @@ do
     --version)               version=yes      			    ;;
 
     --prefix=*)              prefix="$value"   			    ;;
-    --tomcat-version=*)      VER="$value"      			    ;;
+    --tomcat-version=*)      tomcat_ver="$value"        ;;
     --catalina-base=*)       catalina_base="$value"     ;;
     --catalina-options=*)    catalina_opts="$value"		  ;;
 
@@ -230,7 +239,12 @@ fi
 
 if [ -n "$prefix" ]; then
   PREFIX="$prefix"
-  CATALINA_BASE="${CATALINA_BASE:-${PREFIX%/}/${VER}}"
+  CATALINA_BASE="${PREFIX%/}/${VER}"
+fi
+
+if [ -n "$tomcat_ver" ]; then
+  VER="$tomcat_ver"
+  CATALINA_BASE="${PREFIX%/}/${VER}"
 fi
 
 if [ -n "$catalina_base" ]; then
