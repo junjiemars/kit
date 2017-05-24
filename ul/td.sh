@@ -13,22 +13,28 @@ PREFIX=${PREFIX:-"${OPT_RUN%/}/www/tomcat"}
 VERSION="1.2.1"
 
 JAVA_OPTS="${JAVA_OPTS}"
+DEBUG=("no" "yes")
 
 VER=${VER:-"8.5.8"}
-
-TC_PATH=("./tc.sh" "${OPT_RUN%/}/bin/tc.sh")
 TC_OPTS=
+TC_SH="tc.sh"
+
 
 STOP_TIMEOUT="${STOP_TIMEOUT:3}"
 START_PORT="${START_PORT:-8080}"
 STOP_PORT="${STOP_PORT:-8005}"
 
-TC_SH="${TC_SH:-tc.sh}"
 TO_WHERE=("local" "ssh" "docker")
+TW_IDX=
+TW_IDX_LOCAL=0
+TW_IDX_SSH=1
+TW_IDX_DOCKER=2
 
 L_WAR_PATH="${L_WAR_PATH}"
-R_WAR_PATH="${R_WAR_PATH}"
+R_WAR_PATH=
+R_TC_PATH=
 
+BUILD=("no" "yes")
 BUILD_CMD=("gradlew" "gradle" "ant" "mvn")
 BUILD_DIR="${BUILD_DIR:-.}"
 BUILD_OPTS="${BUILD_OPTS:-build}"
@@ -168,13 +174,36 @@ END
 	esac
 }
 
+function local_bin_path() {
+  local bin="$1"
+  if [ -f "$bin" ]; then
+    echo "${PWD%/}/$bin"
+  elif [ -f "`which $bin 2>/dev/null`" ]; then
+    echo "`which $bin`"
+  else
+    curl -sqL -O$bin https://raw.githubusercontent.com/junjiemars/kit/master/ul/$bin
+    echo "${PWD%/}/$bin"
+  fi
+}
+
+function remote_war_path() {
+  local p="${PREFIX%/}/$VER/webapps/`basename $L_WAR_PATH`"
+  echo "$p"
+}
+
+function remote_bin_path() {
+  local p="${PREFIX%/}/$VER/bin/$1"
+  echo "$p"
+}
+
 function is_file_exist() {
   local p="$1"
-  local t=
+  local w="$2"
   local lr="R"
+  local t=
 
   echo -e "? check [$p] is exist ..."
-  case "$TO_WHERE" in
+  case "$w" in
     ssh)
       t=`ssh $SSH_USER@$SSH_HOST test -f $p &>/dev/null; echo $?`
       ;;
@@ -186,44 +215,57 @@ function is_file_exist() {
       lr="L"
       ;;
   esac
-  if [ 0 -ne $t ]; then
-    echo -e "! $lr[$p] exist   =false"
-  else
+  if [ 0 -eq $t ]; then
     echo -e "# $lr[$p] exist   =true"
+  else
+    echo -e "! $lr[$p] exist   =false"
   fi
   return $t
 }
 
 control_tomcat() {
   local cmd="$1"
+  local w="$2"
   local tc=
-  
-  for s in "${TC_PATH[@]}"; do
-    if [ -f "$s" ]; then
-      tc="$s"
-      break
-    fi
-  done
-  if [ -z "$tc" ]; then
-    return 1
-  fi
+  local t=
 
-  case "$TO_WHERE" in
+  echo -e "+ control Tomcat =>[$cmd] ..."
+  case "$w" in
     ssh)
-      echo "ssh"
+      tc="`remote_bin_path $TC_SH`"
+      is_samed_file "`local_bin_path $TC_SH`" "$tc" "$w"
+      if [ 0 -ne $? ]; then
+        transport_file "`local_bin_path $TC_SH`" "$tc" "$w"
+      fi
+      
+      ssh $SSH_USER@$SSH_HOST $tc $cmd               \
+          --prefix=$PREFIX                           \
+          --tomcat-version=$VER                      \
+          --start-port=$START_PORT                   \
+          --stop-port=$STOP_PORT                     \
+          ${TC_OPTS}          
+      t=$?
       ;;
     docker)
       echo "docker"
       ;;
     *)
-     $tc $cmd                                       \
-         --prefix=$PREFIX                           \
-         --tomcat-version=$VER                      \
-         --start-port=$START_PORT                   \
-         --stop-port=$STOP_PORT                     \
-         ${TC_OPTS}
+      $tc $cmd                                       \
+          --prefix=$PREFIX                           \
+          --tomcat-version=$VER                      \
+          --start-port=$START_PORT                   \
+          --stop-port=$STOP_PORT                     \
+          ${TC_OPTS}
+      t=$?
       ;;
   esac
+  
+  if [ 0 -eq $t ]; then
+    echo -e "# control Tomcat =>[$cmd]  =succeed"
+  else
+    echo -e "! control Tomcat =>[$cmd]  =failed"
+  fi
+  return $t
 
 	#if [ 0 -eq $HAS_DOCKER ]; then
 	#	docker cp $TD_CTRL_SH $DOCKER_CONTAINER:$R_TD_CTRL_SH
@@ -247,6 +289,7 @@ control_tomcat() {
 function is_samed_file() {
   local lwp="$1"
   local rwp="$2"
+  local w="$3"
 
   echo -e "? L[$lwp] samed with R[$rwp] ..."
   if [ ! -f "$lwp" ]; then
@@ -257,7 +300,7 @@ function is_samed_file() {
   local lwh="`sha1sum $lwp | cut -d' ' -f1`"
   local rwh="`test -f "$rwp" && sha1sum "$rwp" | cut -d' ' -f1`"
 
-  case "$TO_WHERE" in
+  case "$w" in
     ssh)
 		  rwh=`ssh $SSH_USER@$SSH_HOST "test -f $rwp && sha1sum $rwp | cut -d' ' -f1"`
       ;;
@@ -317,6 +360,7 @@ function build_war() {
 function transport_file() {
   local lp="$1"
   local rp="$2"
+  local w="$3"
   local t=
 
   echo -e "+ transport L[$lp] to R[$rp] ..."
@@ -324,7 +368,7 @@ function transport_file() {
     echo -e "! L[$lp] does not exist."
   fi
 
-  case "$TO_WHERE" in
+  case "$w" in
     ssh)
 	  	scp $lp $SSH_USER@$SSH_HOST:$rp
       t=$?
@@ -399,17 +443,17 @@ do
 
     --prefix=*)              prefix="$value"   			    ;;
     --tomcat-version=*)      VER="$value"      			    ;;
-    --tc-path=*)             tc_path="$value"           ;;
     --tc-options=*)          tc_opts="$value"		        ;;
 
     --java-options=*)        java_opts="$value"		      ;;
+    --debug)                 DEBUG=yes    		          ;;
 
     --where=*)               where="$value"		          ;;
     --local-war-path=*)      L_WAR_PATH="$value"	      ;;
-    --remote-war-path=*)     R_WAR_PATH="$value"	      ;;
     --ssh-user=*)            SSH_USER="$value"	        ;;
     --ssh-host=*)            SSH_HOST="$value"	        ;;
 
+    --build)                 BUILD=yes    		          ;;
     --build-dir=*)           build_dir="$value"	        ;;
     --build-cmd=*)           build_cmd="$value"	        ;;
     --build-options=*)       BUILD_OPTS="$value"	      ;;
@@ -442,14 +486,6 @@ if [ -n "$prefix" ]; then
   PREFIX="$prefix"
 fi
 
-if [ -n "$tc_path" ]; then
-  if [ -x "$tc_path" ]; then
-    TC_PATH+="$tc_path "
-    exit 0
-  fi
-  exit 1
-fi
-
 if [ -n "$tc_opts" ]; then
   TC_OPTS="${TC_OPTS:+$TC_OPTS }${tc_opts}"
 fi
@@ -471,7 +507,16 @@ if [ -n "$L_WAR_PATH" ]; then
 fi
 
 if [ -n "$where" ]; then
-  TO_WHERE="$where"
+  for i in "${!TO_WHERE[@]}"; do
+    if [ "${TO_WHERE[$i]}" = "$where" ]; then
+      TW_IDX=$i
+      break;
+    fi
+  done
+  if [ -z "$TW_IDX" ]; then
+    echo -e "! --where=$where  =invalid"
+    exit 1
+  fi
 fi
 
 
@@ -486,32 +531,32 @@ case "$command" in
     exit $?
     ;;
   start)
-    is_file_exist "$L_WAR_PATH"
+    is_file_exist "$L_WAR_PATH" "${TO_WHERE[$TW_IDX_LOCAL]}"
     retval=$?
-    if [ 0 -ne $retval ]; then
+    if [ "yes" = "$BUILD" -o 0 -ne $retval ]; then
       build_war "$L_WAR_PATH"
       retval=$?
       [ 0 -eq $retval ] || exit $retval
     fi
-    is_samed_file "$L_WAR_PATH" "$R_WAR_PATH"
+    R_WAR_PATH="`remote_war_path`"
+    is_samed_file "$L_WAR_PATH" "$R_WAR_PATH" "${TO_WHERE[$TW_IDX]}"
     retval=$?
     if [ 0 -ne $retval ]; then
-      transport_file "$L_WAR_PATH" "$R_WAR_PATH"
+      transport_file "$L_WAR_PATH" "`dirname $R_WAR_PATH`" "${TO_WHERE[$TW_IDX]}"
       retval=$?
       [ 0 -eq $retval ] || exit $retval
     fi
-    #[ 0 -eq $? ] || exit 1
-    #control_tomcat start
+    
+    if [ "$DEBUG" = "yes" ]; then
+      export JPDA_PORT="$JPDA_PORT"
+      control_tomcat debug "${TO_WHERE[$TW_IDX]}"
+    else
+      control_tomcat start "${TO_WHERE[$TW_IDX]}"
+    fi
     exit $?
     ;;
   stop)
-    echo -e "+ stop control_mark ..."	
-    control_tomcat stop
-    exit $?
-    ;;
-  debug)
-    export JPDA_PORT="${JPDA_PORT:8000}"
-    control_tomcat debug
+    control_tomcat stop "${TO_WHERE[$TW_IDX]}"
     exit $?
     ;;
   *)
