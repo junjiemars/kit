@@ -87,13 +87,13 @@ usage() {
   echo -e "  --prefix\t\t\t\tcatalina prefix dir"
   echo -e "  --tomcat-version\t\ttomcat version, default is $VER"
   echo -e "  --java-options\t\tjava options, JAVA_OPTS"
-  echo -e "  --tc-path\t\ttc.sh path"
-  echo -e "  --tc-options\t\ttc.sh options"
+  echo -e "  --tc-path\t\t\t\ttc.sh path"
+  echo -e "  --tc-options\t\t\ttc.sh options"
   echo -e "  --start-port\t\t\ttomcat start port, default is $START_PORT"
   echo -e "  --stop-port\t\t\ttomcat stop port, default is $STOP_PORT"
   echo -e "  --jpda-port\t\t\ttomcat debug port, default is $JPDA_PORT"
-  echo -e "  --war-path\t\t\t\where war file exists"
-  echo -e "  --where\t\twhere to deploy, ${TO_WHERE[@]}\n"
+  echo -e "  --war-path\t\t\twhere war file exists"
+  echo -e "  --where\t\t\t\twhere to deploy, ${TO_WHERE[@]}\n"
   echo -e "A tiny-handy console for tomcat.\n"
   echo -e "Commands:"
   echo -e "  build\t\t\t\t\tbuild war which will be deployed"
@@ -168,6 +168,31 @@ END
 	esac
 }
 
+function is_file_exist() {
+  local p="$1"
+  local t=
+  local lr="R"
+
+  echo -e "? check [$p] is exist ..."
+  case "$TO_WHERE" in
+    ssh)
+      t=`ssh $SSH_USER@$SSH_HOST test -f $p &>/dev/null; echo $?`
+      ;;
+    docker)
+      
+      ;;
+    *)
+      t=`test -f $p &>/dev/null; echo $?`
+      lr="L"
+      ;;
+  esac
+  if [ 0 -ne $t ]; then
+    echo -e "! $lr[$p] exist   =false"
+  else
+    echo -e "# $lr[$p] exist   =true"
+  fi
+  return $t
+}
 
 control_tomcat() {
   local cmd="$1"
@@ -219,7 +244,7 @@ control_tomcat() {
 	#fi
 }
 
-function is_same_war() {
+function is_samed_file() {
   local lwp="$1"
   local rwp="$2"
 
@@ -248,16 +273,19 @@ function is_same_war() {
       ;;
   esac
 
-  if [ "$lwh" != "$rwh" ]; then
-    echo -e "! L[$lwp] samed with R[$rwp] =false"
+  if [ "$lwh" = "$rwh" ]; then
+    echo -e "# L[$lwp] samed with R[$rwp]  =true"
+    return 0
+  else
+    echo -e "! L[$lwp] samed with R[$rwp]  =false"
     return 1
   fi
-  return 0
 }
 
 function build_war() {
   local lwp="$1"
   local cmd=
+
   echo -e "+ build L[$lwp}] ..."
   case "$BUILD_CMD" in
     gradlew*)
@@ -268,7 +296,7 @@ function build_war() {
       ;;
   esac
   if [ ! -d "$BUILD_DIR" ]; then
-    echo -e "! dir[$BUILD_DIR] does not exists."
+    echo -e "\t ! L[$BUILD_DIR] does not exists."
     return 1
   fi
 
@@ -277,28 +305,45 @@ function build_war() {
   fi
 
   cd "$BUILD_DIR" && "$cmd" ${BUILD_OPTS}
-  if [ 0 -ne $? ]; then
-    echo -e "! build L[$lwp}] =failed"
-    return $?
+  local t=$?
+  if [ 0 -eq $t ]; then
+    echo -e "# build L[$lwp}]  =succeed"
+  else
+    echo -e "! build L[$lwp}]  =failed"
   fi
-  return 0
+  return $t
 }
 
-function transport_war() {
+function transport_file() {
+  local lp="$1"
+  local rp="$2"
+  local t=
+
+  echo -e "+ transport L[$lp] to R[$rp] ..."
+  if [ ! -f "$lp" ]; then
+    echo -e "! L[$lp] does not exist."
+  fi
+
   case "$TO_WHERE" in
     ssh)
-	    ssh $SSH_USER@$SSH_HOST \
-	  		  "$TC_SH_ENV rm -rf ${WAR_DIR}${WAR_NAME} $R_WAR_FILE"
-	  	scp $L_WAR_FILE $SSH_USER@$SSH_HOST:$R_WAR_FILE
+	  	scp $lp $SSH_USER@$SSH_HOST:$rp
+      t=$?
       ;;
     docker)
       
       ;;
     *)
-	    rm -rf ${WAR_DIR}${WAR_NAME} $R_WAR_FILE	
-	    cp $L_WAR_FILE $R_WAR_FILE
+	    cp $lp $rp
+      t=$?
       ;;
   esac
+  if [ 0 -eq $t ]; then
+    echo -e "# transport L[$lp] to R[$rp]  =succeed"
+  else
+    echo -e "! transport L[$lp] to R[$rp]  =failed"
+  fi
+  return $t
+    
 	#if [ 0 -eq $HAS_DOCKER ]; then
 	#	case $PLATFORM in
 	#		MSYS_NT*)
@@ -358,12 +403,14 @@ do
     --tc-options=*)          tc_opts="$value"		        ;;
 
     --java-options=*)        java_opts="$value"		      ;;
-    --where=*)               where="$value"		          ;;
 
+    --where=*)               where="$value"		          ;;
     --local-war-path=*)      L_WAR_PATH="$value"	      ;;
     --remote-war-path=*)     R_WAR_PATH="$value"	      ;;
+    --ssh-user=*)            SSH_USER="$value"	        ;;
+    --ssh-host=*)            SSH_HOST="$value"	        ;;
 
-    --build-dir=*)           BUILD_DIR="$value"	        ;;
+    --build-dir=*)           build_dir="$value"	        ;;
     --build-cmd=*)           build_cmd="$value"	        ;;
     --build-options=*)       BUILD_OPTS="$value"	      ;;
 
@@ -411,15 +458,27 @@ if [ -n "$java_opts" ]; then
   JAVA_OPTS="${JAVA_OPTS:+$JAVA_OPTS }${java_opts}"
 fi
 
+if [ -n "$build_dir" ]; then
+  BUILD_DIR="`eval echo $build_dir`"
+fi
+
 if [ -n "$build_cmd" ]; then
   BUILD_CMD="$build_cmd"
 fi
 
+if [ -n "$L_WAR_PATH" ]; then
+  L_WAR_PATH="`eval echo $L_WAR_PATH`"
+fi
+
+if [ -n "$where" ]; then
+  TO_WHERE="$where"
+fi
 
 
 #export_pid_var
 export_java_opts
 
+retval=0
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
   build)
@@ -427,13 +486,20 @@ case "$command" in
     exit $?
     ;;
   start)
-    #echo -e "+ transport L[$L_WAR_PATH] to `control_mark`|R[$R_WAR_PATH] ..."
-    is_same_war "$L_WAR_PATH" "$R_WAR_PATH"
-    if [ 0 -eq $? ]; then
+    is_file_exist "$L_WAR_PATH"
+    retval=$?
+    if [ 0 -ne $retval ]; then
       build_war "$L_WAR_PATH"
-      [ 0 -eq $? ] || exit $?
+      retval=$?
+      [ 0 -eq $retval ] || exit $retval
     fi
-    #transport_war
+    is_samed_file "$L_WAR_PATH" "$R_WAR_PATH"
+    retval=$?
+    if [ 0 -ne $retval ]; then
+      transport_file "$L_WAR_PATH" "$R_WAR_PATH"
+      retval=$?
+      [ 0 -eq $retval ] || exit $retval
+    fi
     #[ 0 -eq $? ] || exit 1
     #control_tomcat start
     exit $?
