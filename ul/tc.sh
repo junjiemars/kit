@@ -189,7 +189,7 @@ start_tomcat() {
 debug_tomcat() {
   if `check_catalina_bin`; then
     JPDA_ADDRESS="${JPDA_PORT}" "${CATALINA_BIN}" jpda start
-	else
+ 	else
   	echo -e "checking ${CATALINA_BIN} ...failed, panic!"
     return 1
   fi
