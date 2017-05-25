@@ -106,6 +106,7 @@ usage() {
   echo -e "  start\t\t\t\t\tstart a tomcat instance"
   echo -e "  stop\t\t\t\t\tstop a tomcat instance"
   echo -e "  debug\t\t\t\t\tstart a tomcat instance in debug mode"
+  echo -e "  check\t\t\t\t\tcheck the environment of the tomcat instance"
 }
 
 
@@ -250,6 +251,7 @@ control_tomcat() {
       echo "docker"
       ;;
     *)
+      tc="`local_bin_path $TC_SH`"
       $tc $cmd                                       \
           --prefix=$PREFIX                           \
           --tomcat-version=$VER                      \
@@ -538,6 +540,7 @@ case "$command" in
       retval=$?
       [ 0 -eq $retval ] || exit $retval
     fi
+
     R_WAR_PATH="`remote_war_path`"
     is_samed_file "$L_WAR_PATH" "$R_WAR_PATH" "${TO_WHERE[$TW_IDX]}"
     retval=$?
@@ -557,6 +560,10 @@ case "$command" in
     ;;
   stop)
     control_tomcat stop "${TO_WHERE[$TW_IDX]}"
+    exit $?
+    ;;
+  check)
+    control_tomcat check "${TO_WHERE[$TW_IDX]}"
     exit $?
     ;;
   *)
