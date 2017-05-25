@@ -49,7 +49,8 @@ usage() {
   echo -e "  stop\t\t\t\t\tstop a tomcat instance"
   echo -e "  debug\t\t\t\t\tstart a tomcat instance in debug mode"
   echo -e "  parameterize\t\t\t\tparameterize tomcat's configurations"
-  echo -e "  check\t\t\t\tcheck environment"
+  echo -e "  check-env\t\t\t\tcheck environment of specified tomcat instance"
+  echo -e "  check-pid\t\t\t\tcheck pid of specified tomcat instance"
   echo -e "  install\t\t\t\tinstall tomcat"
 }
 
@@ -57,7 +58,7 @@ function export_catalina_opts() {
   export CATALINA_OPTS=`echo "${CATALINA_OPTS}" | tr -s " "`
 }
 
-parameterize() {
+function parameterize() {
   local server_xml="${CATALINA_BASE}/conf/server.xml"
   echo -e "+ parameterize Tomcat[server.xml] ..."
 
@@ -107,8 +108,8 @@ function export_pid_var() {
   export CATALINA_PID="${CATALINA_PID:-${CATALINA_BASE%/}/logs/pid}"
 }
 
-check_env() {
-  local pid=`check_pid`
+function check_env() {
+  local pid=`get_ip`
   local run="Stopped"
   local t=
 
@@ -131,7 +132,19 @@ check_env() {
   fi
 }
 
-install_tomcat() {
+function check_pid() {
+  local pid="`get_ip`"
+  local t=
+
+  echo "$pid"
+  if [ 0 -eq `ps -p $pid &>/dev/null;echo $?` ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+function install_tomcat() {
   echo -e "+ install Tomcat[$VER] ..."
   if [ 0 -eq `${CATALINA_BIN} version &>/dev/null; echo $?` ]; then
     echo -e "# install Tomcat[$VER]  =existing"
@@ -158,7 +171,7 @@ install_tomcat() {
   return 1
 }
 
-check_catalina_bin() {
+function check_catalina_bin() {
   echo -e "+ check CATALINA_BIN ..."
   if [ -x "${CATALINA_BIN}" ]; then
     echo -e "# check CATALINA_BIN  =succeed"
@@ -169,7 +182,7 @@ check_catalina_bin() {
   fi
 }
 
-function check_pid() {
+function get_ip() {
 	if [ -f "${CATALINA_PID}" ]; then
 		cat "${CATALINA_PID}" 2>/dev/null
 	else
@@ -178,7 +191,7 @@ function check_pid() {
 }
 
 function stop_tomcat() {
-  local pid="`check_pid`"
+  local pid="`get_ip`"
   local t=
   echo -e "+ stop Tomcat[$pid] ..."
   "${CATALINA_BIN}" stop "${STOP_TIMEOUT}" "${STOP_FORCE}"
@@ -195,7 +208,7 @@ function start_tomcat() {
   "${CATALINA_BIN}" start
 }
 
-debug_tomcat() {
+function debug_tomcat() {
   local t=
   echo -e "+ debug Tomcat ..."
 
@@ -295,8 +308,12 @@ case "$command" in
   parameterize)
     parameterize
     ;;
-  check)
+  check-env)
     check_env
+    exit $?
+    ;;
+  check-pid)
+    check_pid
     exit $?
     ;;
   start)
