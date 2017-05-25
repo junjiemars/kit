@@ -49,49 +49,53 @@ usage() {
   echo -e "  stop\t\t\t\t\tstop a tomcat instance"
   echo -e "  debug\t\t\t\t\tstart a tomcat instance in debug mode"
   echo -e "  parameterize\t\t\t\tparameterize tomcat's configurations"
-  echo -e "  check-env\t\t\t\tcheck environment"
+  echo -e "  check\t\t\t\tcheck environment"
   echo -e "  install\t\t\t\tinstall tomcat"
 }
 
-export_catalina_opts() {
+function export_catalina_opts() {
   export CATALINA_OPTS=`echo "${CATALINA_OPTS}" | tr -s " "`
 }
 
 parameterize() {
   local server_xml="${CATALINA_BASE}/conf/server.xml"
-  if [ -r "${server_xml}" ]; then
-    local stop_soft='<Server port="\${stop\.port}" shutdown="SHUTDOWN">'
-    local start_soft='<Connector port="\${start\.port}" protocol="HTTP\/1\.[10]"'
-    local addr_soft='<Connector port="\${start\.port}" protocol="HTTP\/1\.[10]" address="\${listen.address}"'
-    local stop_old='<Server port="\([0-9]*\)" shutdown="SHUTDOWN">'
-    local stop_new='<Server port="\${stop\.port}" shutdown="SHUTDOWN">'
-    local start_old='<Connector port="\([0-9]*\)" protocol="HTTP'
-    local start_new='<Connector port="\${start\.port}" protocol="HTTP'
-    local addr_old='<Connector port="\(.*\)" protocol="\(HTTP\/1\.[10]\)"'
-    local addr_new='<Connector port="\1" protocol="\2" address="\${listen.address}"'
+  echo -e "+ parameterize Tomcat[server.xml] ..."
 
-    [ -f "${server_xml}.ori" ] || cp "${server_xml}" "${server_xml}.ori"
-    
-    if [ 0 -ne `grep "${stop_soft}" "${server_xml}" &>/dev/null; echo $?` ]; then
-       sed -i -e "s/${stop_old}/${stop_new}/" "${server_xml}"
-    fi
-
-    if [ 0 -ne `grep "${start_soft}" "${server_xml}" &>/dev/null; echo $?` ]; then
-      sed -i -e "s/${start_old}/${start_new}/" "${server_xml}"
-    fi
-
-    if [ 0 -ne `grep "${addr_soft}" "${server_xml}" &>/dev/null; echo $?` ]; then
-      sed -i -e "s/${addr_old}/${addr_new}/" "${server_xml}"
-    fi
-    
-  else
-    echo -e "artified ports failed, ${server_xml} no found, panic!"
+  if [ ! -w "${server_xml}" ]; then
+    echo -e "! parameterize Tomcat[server.xml]: file no found  =failed"
     return 1
   fi
+
+
+  local stop_soft='<Server port="\${stop\.port}" shutdown="SHUTDOWN">'
+  local start_soft='<Connector port="\${start\.port}" protocol="HTTP\/1\.[10]"'
+  local addr_soft='<Connector port="\${start\.port}" protocol="HTTP\/1\.[10]" address="\${listen.address}"'
+  local stop_old='<Server port="\([0-9]*\)" shutdown="SHUTDOWN">'
+  local stop_new='<Server port="\${stop\.port}" shutdown="SHUTDOWN">'
+  local start_old='<Connector port="\([0-9]*\)" protocol="HTTP'
+  local start_new='<Connector port="\${start\.port}" protocol="HTTP'
+  local addr_old='<Connector port="\(.*\)" protocol="\(HTTP\/1\.[10]\)"'
+  local addr_new='<Connector port="\1" protocol="\2" address="\${listen.address}"'
+
+  [ -f "${server_xml}.ori" ] || cp "${server_xml}" "${server_xml}.ori"
+  
+  if [ 0 -ne `grep "${stop_soft}" "${server_xml}" &>/dev/null; echo $?` ]; then
+    sed -i -e "s/${stop_old}/${stop_new}/" "${server_xml}"
+  fi
+
+  if [ 0 -ne `grep "${start_soft}" "${server_xml}" &>/dev/null; echo $?` ]; then
+    sed -i -e "s/${start_old}/${start_new}/" "${server_xml}"
+  fi
+
+  if [ 0 -ne `grep "${addr_soft}" "${server_xml}" &>/dev/null; echo $?` ]; then
+    sed -i -e "s/${addr_old}/${addr_new}/" "${server_xml}"
+  fi
+
+  echo -e "# parameterize Tomcat[server.xml]  =succeed"
+  return 0
 }
 
-export_java_opts() {
-
+function export_java_opts() {
   JAVA_OPTS="-Dstart.port=${START_PORT}      \
              -Dstop.port=${STOP_PORT}        \
              -Dlisten.address=${LISTEN_ON}   \
@@ -99,27 +103,38 @@ export_java_opts() {
   export JAVA_OPTS=`echo "${JAVA_OPTS}" | tr -s " "`
 }
 
-export_pid_var() {
+function export_pid_var() {
   export CATALINA_PID="${CATALINA_PID:-${CATALINA_BASE%/}/logs/pid}"
 }
 
 check_env() {
   local pid=`check_pid`
   local run="Stopped"
+  local t=
+
   if [ 0 -eq `ps -p $pid &>/dev/null;echo $?` ]; then
     run="Running"
   fi
-  echo -e "+ check Tomcat environment ...$run"
-  echo -e "\tCATALINA_PID[$pid]=${CATALINA_PID}"
-  echo -e "\tJPDA_PORT=${JPDA_PORT}"
-  echo -e "\tJAVA_OPTS=${JAVA_OPTS}"
-  echo -e "\tCATALINA_OPTS=${CATALINA_OPTS}"
-  echo -e "\tCATALINA_BASE=${CATALINA_BASE}"
+
+  echo -e "+ check Tomcat environment [$pid] ...$run"
+  echo -e "+ check Tomcat version ..."
+
+  check_catalina_bin
+  t=$?
+  if [ 0 -eq $t ]; then
+    echo -e "# check Tomcat version  =succeed"
+    ${CATALINA_BIN} version
+    return $?
+  else
+    echo -e "! check Tomcat version  =failed"
+    return 1
+  fi
 }
 
 install_tomcat() {
+  echo -e "+ install Tomcat[$VER] ..."
   if [ 0 -eq `${CATALINA_BIN} version &>/dev/null; echo $?` ]; then
-    echo -e "tomcat is good."
+    echo -e "# install Tomcat[$VER]  =existing"
     return 0
   fi
 
@@ -135,23 +150,26 @@ install_tomcat() {
   fi
    
   if [ 0 -eq `${CATALINA_BIN} version &>/dev/null; echo $?` ]; then
-    echo -e "install tomcat successed."
+    echo -e "# install Tomcat[$VER]  =succeed"
     return 0
   fi
   
-  echo -e "install tomcat failed, panic!"
+  echo -e "! install Tomcat[$VER]  =failed"
   return 1
 }
 
 check_catalina_bin() {
+  echo -e "+ check CATALINA_BIN ..."
   if [ -x "${CATALINA_BIN}" ]; then
+    echo -e "# check CATALINA_BIN  =succeed"
     return 0
   else
+    echo -e "! check CATALINA_BIN  =failed"
     return 1
   fi
 }
 
-check_pid() {
+function check_pid() {
 	if [ -f "${CATALINA_PID}" ]; then
 		cat "${CATALINA_PID}" 2>/dev/null
 	else
@@ -159,38 +177,35 @@ check_pid() {
 	fi
 }
 
-check_catalina_ver() {
-  if `check_catalina_bin`; then
-    "${CATALINA_BIN}" version
+function stop_tomcat() {
+  local pid="`check_pid`"
+  local t=
+  echo -e "+ stop Tomcat[$pid] ..."
+  "${CATALINA_BIN}" stop "${STOP_TIMEOUT}" "${STOP_FORCE}"
+  t=$?
+  if [ 0 -eq $t ]; then
+    echo -e "# stop Tomcat[$pid]  =succeed"
   else
-    echo "checking ${CATALINA_BIN} ...failed, panic!"
-	fi
+    echo -e "! stop Tomcat[$pid]  =failed"
+  fi
+  return $t
 }
 
-stop_tomcat() {
-  if `check_catalina_bin`; then
-    "${CATALINA_BIN}" stop "${STOP_TIMEOUT}" "${STOP_FORCE}"
-	else
-  	echo -e "checking ${CATALINA_BIN} ...failed, panic!"
-    return 1
-  fi
-}
-
-start_tomcat() {
-  if `check_catalina_bin`; then
-    "${CATALINA_BIN}" start
-    return $?
-	else
-  	echo -e "checking ${CATALINA_BIN} ...failed, panic!"
-    return 1
-  fi
+function start_tomcat() {
+  "${CATALINA_BIN}" start
 }
 
 debug_tomcat() {
-  if `check_catalina_bin`; then
-    JPDA_ADDRESS="${JPDA_PORT}" "${CATALINA_BIN}" jpda start
- 	else
-  	echo -e "checking ${CATALINA_BIN} ...failed, panic!"
+  local t=
+  echo -e "+ debug Tomcat ..."
+
+  JPDA_ADDRESS="${JPDA_PORT}" "${CATALINA_BIN}" jpda start
+  t=$?
+  if [ 0 -eq $t ]; then
+    echo -e "# debug Tomcat  =succeed"
+    return $t
+  else
+    echo -e "! debug Tomcat  =failed"
     return 1
   fi
 }
@@ -274,26 +289,43 @@ fi
 export_pid_var
 export_java_opts
 
+retval=
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
   parameterize)
     parameterize
     ;;
-  check-env)
+  check)
     check_env
     exit $?
     ;;
   start)
     parameterize
+    retval=$?
+    [ 0 -eq $retval ] || exit $retval
+    check_catalina_bin
+    retval=$?
+    [ 0 -eq $retval ] || exit $retval
+
     start_tomcat
     exit $?
     ;;
   stop)
+    check_catalina_bin
+    retval=$?
+    [ 0 -eq $retval ] || exit $retval
+
     stop_tomcat
     exit $?
     ;;
   debug)
     parameterize
+    retval=$?
+    [ 0 -eq $retval ] || exit $retval
+    check_catalina_bin
+    retval=$?
+    [ 0 -eq $retval ] || exit $retval
+
     CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }-XX:+HeapDumpOnOutOfMemoryError"
     CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }-XX:HeapDumpPath=${CATALINA_BASE}/logs"
     export_catalina_opts
