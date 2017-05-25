@@ -224,7 +224,7 @@ function is_file_exist() {
   return $t
 }
 
-control_tomcat() {
+function control_tomcat() {
   local cmd="$1"
   local w="$2"
   local tc=
@@ -237,6 +237,8 @@ control_tomcat() {
       is_samed_file "`local_bin_path $TC_SH`" "$tc" "$w"
       if [ 0 -ne $? ]; then
         transport_file "`local_bin_path $TC_SH`" "$tc" "$w"
+        t=$?
+        [ 0 -eq $t ] || return $t
       fi
       
       ssh $SSH_USER@$SSH_HOST $tc $cmd               \
@@ -521,8 +523,6 @@ if [ -n "$where" ]; then
   fi
 fi
 
-
-#export_pid_var
 export_java_opts
 
 retval=0
@@ -533,6 +533,11 @@ case "$command" in
     exit $?
     ;;
   start)
+    if [ -z "$L_WAR_PATH" ]; then
+      echo -e "! missing --build-* options."
+      usage
+      exit 1
+    fi
     is_file_exist "$L_WAR_PATH" "${TO_WHERE[$TW_IDX_LOCAL]}"
     retval=$?
     if [ "yes" = "$BUILD" -o 0 -ne $retval ]; then
@@ -562,8 +567,12 @@ case "$command" in
     control_tomcat stop "${TO_WHERE[$TW_IDX]}"
     exit $?
     ;;
-  check)
-    control_tomcat check "${TO_WHERE[$TW_IDX]}"
+  check-env)
+    control_tomcat check-env "${TO_WHERE[$TW_IDX]}"
+    exit $?
+    ;;
+  check-pid)
+    control_tomcat check-pid "${TO_WHERE[$TW_IDX]}"
     exit $?
     ;;
   *)
@@ -572,54 +581,3 @@ case "$command" in
     exit 1    
     ;;
 esac
-
-#case "$@" in
-#	stop)
-#		echo -n "# stop `control_mark` ..."	
-#		control_tomcat stop
-#		exit 0
-#		;;
-#	*)
-#		;;
-#esac
-#
-#
-#echo -n "# building the L[$L_WAR_FILE] ..."
-#if `build_war`; then
-#	echo "ok"
-#else
-#	echo "failed, panic!"
-#	exit 1
-#fi
-#
-#echo -n "# checking platform scripts ..."
-#if `gen_platform_sh`; then
-#	echo "ok"
-#else
-#	echo "failed, panic!"
-#	exit 1
-#fi
-#
-#echo -n "# checking the L/R wars ..."
-#if `is_same_war`; then
-#	echo "ok, skip process."
-#else
-#	echo "diffed"
-#
-#		
-#	echo -n "# stop `control_mark` ..."	
-#	control_tomcat stop
-#	
-#
-#	echo "---------------------------------"
-#	echo -n "# transport L[$L_WAR_FILE] to `control_mark`|R[$R_WAR_FILE] ..."
-#	if `transport_war`; then
-#		echo "ok"
-#	else
-#		echo "failed, panic!"
-#	fi
-#fi
-#
-#
-#echo -n "# start `control_mark` ..."	
-#control_tomcat debug 
