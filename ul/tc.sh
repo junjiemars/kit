@@ -152,17 +152,25 @@ function check_exist() {
 }
 
 function install_tomcat() {
+  local tgz="apache-tomcat-${VER}.tar.gz"
+  local major="${VER%%.*}"
+	local url="http://archive.apache.org/dist/tomcat/tomcat-${major}/v${VER}/bin/${tgz}"
   local t=
 
   echo -e "+ install Tomcat[$VER] ..."
   if `check_exist`; then
+    if [ "yes" = "$DOWNLOAD_ONLY" -a ! -f "${PREFIX}/$tgz" ]; then
+      cd "${PREFIX}" && curl -sLO -C - "${url}"
+      t=$?
+      if [ 0 -eq $t ]; then
+        echo -e "# install Tomcat[$VER]: download  =succeed"
+      else
+        echo -e "! install Tomcat[$VER]: download  =failed"
+      fi
+    fi
     echo -e "# install Tomcat[$VER]  =existing"
     return 0
   fi
-
-  local tgz="apache-tomcat-${VER}.tar.gz"
-  local major="${VER%%.*}"
-	local url="http://archive.apache.org/dist/tomcat/tomcat-${major}/v${VER}/bin/${tgz}"
 
   [ -d "${CATALINA_BASE}" ] || mkdir -p "${CATALINA_BASE}"
 
