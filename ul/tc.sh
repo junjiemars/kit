@@ -51,6 +51,7 @@ usage() {
   echo -e "  parameterize\t\t\t\tparameterize tomcat's configurations"
   echo -e "  check-env\t\t\t\tcheck environment of specified tomcat instance"
   echo -e "  check-pid\t\t\t\tcheck pid of specified tomcat instance"
+  echo -e "  check-exist\t\t\t\tcheck existing of tomcat installation"
   echo -e "  install\t\t\t\tinstall tomcat"
 }
 
@@ -142,6 +143,10 @@ function check_pid() {
   else
     return 1
   fi
+}
+
+function check_exist() {
+  ${CATALINA_BIN} version &>/dev/null
 }
 
 function install_tomcat() {
@@ -314,6 +319,10 @@ case "$command" in
     ;;
   check-pid)
     check_pid
+    exit $?
+    ;;
+  check-exist)
+    check_exist
     exit $?
     ;;
   start)
