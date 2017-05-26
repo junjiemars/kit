@@ -151,7 +151,7 @@ function check_exist() {
 
 function install_tomcat() {
   echo -e "+ install Tomcat[$VER] ..."
-  if [ 0 -eq `${CATALINA_BIN} version &>/dev/null; echo $?` ]; then
+  if `check_exist`; then
     echo -e "# install Tomcat[$VER]  =existing"
     return 0
   fi
@@ -161,13 +161,24 @@ function install_tomcat() {
 	local url="http://archive.apache.org/dist/tomcat/tomcat-${major}/v${VER}/bin/${tgz}"
 
   [ -d "${CATALINA_BASE}" ] || mkdir -p "${CATALINA_BASE}"
-  if [ ! -f "${CATALINA_BASE}/build.xml" ]; then
+
+  if [ ! -f "${CATALINA_BASE}/bin/catalina.sh" ]; then
+
+    if [ -f "${PREFIX}/$tgz" ]; then
+      cd "${PREFIX}" && \
+        tar -xf "${tgz}" -C "${CATALINA_BASE}" --strip-components=1
+      if `check_exist`; then
+        echo -e "# install Tomcat[$VER]  =succeed"
+        return 0
+      fi
+    fi
+    
     cd "${PREFIX}" && \
     curl -sLO -C - "${url}" && \
     tar -xf "${tgz}" -C "${CATALINA_BASE}" --strip-components=1
   fi
    
-  if [ 0 -eq `${CATALINA_BIN} version &>/dev/null; echo $?` ]; then
+  if `check_exist`; then
     echo -e "# install Tomcat[$VER]  =succeed"
     return 0
   fi
