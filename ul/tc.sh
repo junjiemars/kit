@@ -24,6 +24,7 @@ START_PORT=${START_PORT:-8080}
 STOP_PORT=${STOP_PORT:-8005}
 JPDA_PORT=${JPDA_PORT:-8000}
 
+DOWNLOAD_ONLY=("no" "yes")
 
 
 usage() {
@@ -42,7 +43,8 @@ usage() {
   echo -e "  --stop-timeout\t\t\twaiting up n($STOP_TIMEOUT) seconds to stop"
   echo -e "  --start-port\t\t\t\ttomcat start port, default is $START_PORT"
   echo -e "  --stop-port\t\t\t\ttomcat stop port, default is $STOP_PORT"
-  echo -e "  --jpda-port\t\t\t\ttomcat debug port, default is $JPDA_PORT\n"
+  echo -e "  --jpda-port\t\t\t\ttomcat debug port, default is $JPDA_PORT"
+  echo -e "  --download-only\t\t\tdownload tomcat tgz file only\n"
   echo -e "A tiny-handy console for tomcat.\n"
   echo -e "Commands:"
   echo -e "  start\t\t\t\t\tstart a tomcat instance"
@@ -150,6 +152,8 @@ function check_exist() {
 }
 
 function install_tomcat() {
+  local t=
+
   echo -e "+ install Tomcat[$VER] ..."
   if `check_exist`; then
     echo -e "# install Tomcat[$VER]  =existing"
@@ -165,6 +169,11 @@ function install_tomcat() {
   if [ ! -f "${CATALINA_BASE}/bin/catalina.sh" ]; then
 
     if [ -f "${PREFIX}/$tgz" ]; then
+      if [ "yes" = "$DOWNLOAD_ONLY" ]; then
+        echo -e "# install Tomcat[$VER]: download  =succeed"
+        return 0
+      fi
+
       cd "${PREFIX}" && \
         tar -xf "${tgz}" -C "${CATALINA_BASE}" --strip-components=1
       if `check_exist`; then
@@ -173,18 +182,27 @@ function install_tomcat() {
       fi
     fi
     
-    cd "${PREFIX}" && \
-    curl -sLO -C - "${url}" && \
+    cd "${PREFIX}" && curl -sLO -C - "${url}"
+    t=$?
+    if [ 0 -ne $t ]; then
+      echo -e "! install Tomcat[$VER]: download  =failed"
+      return $t
+    fi
+
+    if [ "yes" = "$DOWNLOAD_ONLY" ]; then
+      echo -e "# install Tomcat[$VER]: download  =successed"
+      return 0
+    fi
     tar -xf "${tgz}" -C "${CATALINA_BASE}" --strip-components=1
   fi
-   
-  if `check_exist`; then
+
+  t=`check_exist &>/dev/null; echo $?`
+  if [ 0 -eq $t ]; then
     echo -e "# install Tomcat[$VER]  =succeed"
-    return 0
+  else
+    echo -e "! install Tomcat[$VER]  =failed"
   fi
-  
-  echo -e "! install Tomcat[$VER]  =failed"
-  return 1
+  return $t
 }
 
 function check_catalina_bin() {
@@ -266,6 +284,8 @@ do
     --start-port=*)          START_PORT="$value"			  ;;
     --stop-port=*)           STOP_PORT="$value" 			  ;;
     --jpda-port=*)           JPDA_PORT="$value"  			  ;;
+
+    --download-only)         DOWNLOAD_ONLY=yes      	  ;;
 
     *)
       command="$option"
