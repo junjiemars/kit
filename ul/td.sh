@@ -135,6 +135,11 @@ function remote_bin_path() {
   echo "$p"
 }
 
+function ssh_login_id() {
+  local id="$SSH_USER${SSH_HOST:+@$SSH_HOST}"
+  echo "$id"
+}
+
 function is_file_exist() {
   local p="$1"
   local w="$2"
@@ -144,13 +149,16 @@ function is_file_exist() {
   echo -e "? check [$p] is exist ..."
   case "$w" in
     ssh)
-      t=`ssh $SSH_USER@$SSH_HOST test -f $p &>/dev/null; echo $?`
+      ssh `ssh_login_id` test -f $p
+      t=$?
       ;;
     docker)
-      t=`docker exec -u $DOCKER_USER $DOCKER_HOST test -f $p &>/dev/null; echo $?`
+      docker exec -u $DOCKER_USER $DOCKER_HOST test -f $p
+      t=$?
       ;;
     *)
-      t=`test -f $p &>/dev/null; echo $?`
+      test -f $p
+      t=$?
       lr="L"
       ;;
   esac
@@ -183,7 +191,7 @@ function check_exist() {
 
   case "$w" in
     ssh)
-      ssh $SSH_USER@$SSH_HOST $rp version
+      ssh `ssh_login_id` $rp version
       t=$?
       ;;
     docker)
@@ -217,7 +225,7 @@ function control_tomcat() {
         [ 0 -eq $t ] || return $t
       fi
       
-      ssh $SSH_USER@$SSH_HOST $tc $cmd               \
+      ssh `ssh_login_id` $tc $cmd                    \
           --prefix=$PREFIX                           \
           --tomcat-version=$VER                      \
           --start-port=$START_PORT                   \
@@ -272,7 +280,7 @@ function mkdir_remote() {
 
   case "$w" in
     ssh)
-      ssh $SSH_USER@$SSH_HOST mkdir -p "$d"
+      ssh `ssh_login_id` mkdir -p "$d"
       t=$?
       ;;
     docker)
@@ -359,7 +367,7 @@ function is_samed_file() {
 
   case "$w" in
     ssh)
-		  rh=`ssh $SSH_USER@$SSH_HOST "test -f $rp && sha1sum $rp | cut -d' ' -f1"`
+		  rh=`ssh $(ssh_login_id) "test -f $rp && sha1sum $rp | cut -d' ' -f1"`
       ;;
     docker)
 		  case "$PLATFORM" in
@@ -443,7 +451,7 @@ function transport_file() {
 
   case "$w" in
     ssh)
-	  	scp $lp $SSH_USER@$SSH_HOST:$rp
+	  	scp $lp `ssh_login_id`:$rp
       t=$?
       ;;
     docker)
@@ -606,14 +614,23 @@ case "$command" in
     exit $?
     ;;
   stop)
+    check_exist "${TO_WHERE[$TW_IDX]}"
+    retval=$?
+    [ 0 -eq $retval ] || exit $t
     control_tomcat stop "${TO_WHERE[$TW_IDX]}"
     exit $?
     ;;
   check-env)
+    check_exist "${TO_WHERE[$TW_IDX]}"
+    retval=$?
+    [ 0 -eq $retval ] || exit $t
     control_tomcat check-env "${TO_WHERE[$TW_IDX]}"
     exit $?
     ;;
   check-pid)
+    check_exist "${TO_WHERE[$TW_IDX]}"
+    retval=$?
+    [ 0 -eq $retval ] || exit $t
     control_tomcat check-pid "${TO_WHERE[$TW_IDX]}"
     exit $?
     ;;
