@@ -107,8 +107,6 @@ function local_bin_path() {
   local bin="$1"
   if [ -f "$bin" ]; then
     echo "${PWD%/}/$bin"
-  elif [ -f "`which $bin 2>/dev/null`" ]; then
-    echo "`which $bin`"
   else
     curl -L -O$bin https://raw.githubusercontent.com/junjiemars/kit/master/ul/$bin
     echo "${PWD%/}/$bin"
