@@ -105,10 +105,16 @@ END
 
 function local_bin_path() {
   local bin="$1"
+  local t=
+
   if [ -f "$bin" ]; then
     echo "${PWD%/}/$bin"
   else
-    curl -L -O$bin https://raw.githubusercontent.com/junjiemars/kit/master/ul/$bin
+    curl -qL -O$bin https://raw.githubusercontent.com/junjiemars/kit/master/ul/$bin
+    t=$?
+    if [ 0 -ne $t ]; then
+      return $t
+    fi
     chmod u+x "$bin"
     echo "${PWD%/}/$bin"
   fi
