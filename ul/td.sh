@@ -109,6 +109,7 @@ function local_bin_path() {
     echo "${PWD%/}/$bin"
   else
     curl -L -O$bin https://raw.githubusercontent.com/junjiemars/kit/master/ul/$bin
+    chmod u+x "$bin"
     echo "${PWD%/}/$bin"
   fi
 }
