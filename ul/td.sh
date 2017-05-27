@@ -218,7 +218,7 @@ function control_tomcat() {
   case "$w" in
     ssh)
       tc="`remote_bin_path $TC_SH`"
-      is_samed_file "`local_bin_path $TC_SH`" "$tc" "$w"
+      is_file_eq "`local_bin_path $TC_SH`" "$tc" "$w"
       if [ 0 -ne $? ]; then
         transport_file "`local_bin_path $TC_SH`" "$tc" "$w"
         t=$?
@@ -235,7 +235,7 @@ function control_tomcat() {
       ;;
     docker)
       tc="`remote_bin_path $TC_SH`"
-      is_samed_file "`local_bin_path $TC_SH`" "$tc" "$w"
+      is_file_eq "`local_bin_path $TC_SH`" "$tc" "$w"
       if [ 0 -ne $? ]; then
         transport_file "`local_bin_path $TC_SH`" "$tc" "$w"
         t=$?
@@ -340,7 +340,7 @@ function install_tomcat() {
   t=$?
   [ 0 -eq $t ] || return $t
 
-  is_samed_file "${ltgz[0]}" "$rtgz"
+  is_file_eq "${ltgz[0]}" "$rtgz"
   t=$?
   if [ 0 -ne $t ]; then
     transport_file "${ltgz[0]}" "$rtgz" "$w"
@@ -351,12 +351,12 @@ function install_tomcat() {
   control_tomcat install "$w"
 }
 
-function is_samed_file() {
+function is_file_eq() {
   local lp="$1"
   local rp="$2"
   local w="$3"
 
-  echo -e "? L[$lp] samed with R[$rp] ..."
+  echo -e "? L[$lp] eq with R[$rp] ..."
   if [ ! -f "$lp" ]; then
     echo -e "! L[$1] does not exist."
     return 1
@@ -397,10 +397,10 @@ function is_samed_file() {
   esac
 
   if [ "$lh" = "$rh" ]; then
-    echo -e "# L[$lp] samed with R[$rp]  =true"
+    echo -e "# L[$lp] eq with R[$rp]  =true"
     return 0
   else
-    echo -e "! L[$lp] samed with R[$rp]  =false"
+    echo -e "! L[$lp] eq with R[$rp]  =false"
     return 1
   fi
 }
@@ -597,7 +597,7 @@ case "$command" in
     fi
 
     R_WAR_PATH="`remote_war_path`"
-    is_samed_file "$L_WAR_PATH" "$R_WAR_PATH" "${TO_WHERE[$TW_IDX]}"
+    is_file_eq "$L_WAR_PATH" "$R_WAR_PATH" "${TO_WHERE[$TW_IDX]}"
     retval=$?
     if [ 0 -ne $retval ]; then
       transport_file "$L_WAR_PATH" "`dirname $R_WAR_PATH`" "${TO_WHERE[$TW_IDX]}"
