@@ -1,7 +1,7 @@
 #!/bin/bash
 #------------------------------------------------
 # require: bash env, tc.sh
-# target : tomcat debugger 
+# target : tomcat deploy/debug tool
 # author : junjiemars@gmail.com
 #------------------------------------------------
 
@@ -74,7 +74,7 @@ usage() {
   echo -e "  --start-port\t\t\t\ttomcat start port, default is $START_PORT"
   echo -e "  --stop-port\t\t\t\ttomcat stop port, default is $STOP_PORT"
   echo -e "  --jpda-port\t\t\t\ttomcat debug port, default is $JPDA_PORT\n"
-  echo -e "A tiny-handy console for tomcat.\n"
+  echo -e "A deploy/debug console for tomcat.\n"
   echo -e "Commands:"
   echo -e "  build\t\t\t\t\tbuild war which will be deployed"
   echo -e "  start\t\t\t\t\tstart a tomcat instance"
