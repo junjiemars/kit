@@ -110,7 +110,7 @@ function local_bin_path() {
   elif [ -f "`which $bin 2>/dev/null`" ]; then
     echo "`which $bin`"
   else
-    curl -sqL -O$bin https://raw.githubusercontent.com/junjiemars/kit/master/ul/$bin
+    curl -L -O$bin https://raw.githubusercontent.com/junjiemars/kit/master/ul/$bin
     echo "${PWD%/}/$bin"
   fi
 }
