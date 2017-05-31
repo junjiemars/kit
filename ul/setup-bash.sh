@@ -171,9 +171,11 @@ case ${PLATFORM} in
 		sed_i_0="-i''"
 		[ "Darwin" = "$PLATFORM" ] && sed_i_0="-i ''"
 		${curl} ${GITHUB_H}/ul/.bashrc -o $HOME/.bash_init
-		sed $sed_i_0 -E -e '/test -f \$(HOME|\{HOME%\/\})\/\.bash_init/d' $HOME/.bashrc
-		if `tail -n1 $HOME/.bashrc | grep 'export\ * PATH' &>/dev/null`; then
-			sed $sed_i_0 -e '$d' $HOME/.bashrc
+		if [ -f "$HOME/.bashrc" ]; then
+			sed $sed_i_0 -E -e '/test -f \$(HOME|\{HOME%\/\})\/\.bash_init/d' $HOME/.bashrc
+			if `tail -n1 $HOME/.bashrc | grep 'export\ * PATH' &>/dev/null`; then
+				sed $sed_i_0 -e '$d' $HOME/.bashrc
+			fi
 		fi
 		cat << END >> $HOME/.bashrc
 test -f \${HOME%/}/.bash_init && . \${HOME%/}/.bash_init
