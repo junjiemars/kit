@@ -19,7 +19,9 @@ STOP_TIMEOUT="${STOP_TIMEOUT:-10}"
 STOP_FORCE="${STOP_FORCE:--force}"
 
 IP_VER=("4" "6")
-IP4_OPT='-Djava.net.preferIPv4Stack=true'
+IP_IDX=
+IP_OPTS=("-Djava.net.preferIPv4Stack=true" "-Djava.net.preferIPv6Addresses=true")
+
 LISTEN_ON=("localhost" "127.0.0.1" "0.0.0.0")
 START_PORT=${START_PORT:-8080}
 STOP_PORT=${STOP_PORT:-8005}
@@ -34,17 +36,17 @@ usage() {
   echo -e "Options:"
   echo -e "  --help\t\t\t\tPrint this message"
   echo -e "  --version\t\t\t\tPrint version information and quit"
-  echo -e "  --prefix\t\t\t\tcatalina prefix dir, default PREFIX='${PREFIX}'"
   echo -e ""
+  echo -e "  --prefix=\t\t\t\tcatalina prefix dir, default PREFIX='${PREFIX}'"
   echo -e "  --java-options=\t\t\tjava options, default JAVA_OPTS='${JAVA_OPTS}'"
   echo -e "  --tomcat-version=\t\t\ttomcat version, default VER${VER:+='$VER'}"
   echo -e "  --catalina-base=\t\t\tcatalina base dir, CATALINA_BASE='${CATALINA_BASE}'"
   echo -e "  --catalina-options=\t\t\tcatalina options, CATALINA_OPTS='${CATALINA_OPTS}'"
   echo -e "  --download-only\t\t\tdownload tomcat tgz file only"
   echo -e ""
-  echo -e "  --prefer-ip-version=\t\t\tprefer IP version: `echo ${IP_VER[@]}|tr ' ' ','`"
   echo -e "  --ipv4\t\t\t\tprefer IPv4 option"
   echo -e "  --listen-on=\t\t\t\tlisten on what address: `echo ${LISTEN_ON[@]}|tr ' ' ','`, etc.,"
+  echo -e "  --ip-version=\t\t\t\tprefered IP version: `echo ${IP_VER[@]}|tr ' ' ','`"
   echo -e "  --stop-timeout=\t\t\twaiting up $STOP_TIMEOUT seconds to stop"
   echo -e "  --start-port=\t\t\t\ttomcat start port, default START_PORT='${START_PORT}'"
   echo -e "  --stop-port=\t\t\t\ttomcat stop port, default STOP_PORT='${STOP_PORT}'"
@@ -286,20 +288,18 @@ do
     --version)               version=yes      			    ;;
 
     --prefix=*)              prefix="$value"   			    ;;
+    --java-options=*)        java_opts="$value"		      ;;
     --tomcat-version=*)      tomcat_ver="$value"        ;;
     --catalina-base=*)       catalina_base="$value"     ;;
     --catalina-options=*)    catalina_opts="$value"		  ;;
+    --download-only)         DOWNLOAD_ONLY=yes      	  ;;
 
-    --java-options=*)        java_opts="$value"		      ;;
-    --ipv4)                  ipv4=yes                   ;;
     --listen-on=*)           LISTEN_ON="$value"         ;;
-
+    --ip-version=*)          ip_ver="$value"            ;;
     --stop-timeout=*)        STOP_TIMEOUT="$value"		  ;;
     --start-port=*)          START_PORT="$value"			  ;;
     --stop-port=*)           STOP_PORT="$value" 			  ;;
     --jpda-port=*)           JPDA_PORT="$value"  			  ;;
-
-    --download-only)         DOWNLOAD_ONLY=yes      	  ;;
 
     *)
       command="$option"
@@ -343,6 +343,21 @@ fi
 if [ "$ipv4" = "yes" ]; then
   JAVA_OPTS="${JAVA_OPTS:+$JAVA_OPTS }${IP4_OPT}"
 fi
+
+if [ -n "$ip_ver" ]; then
+  for i in "${!IP_VER[@]}"; do
+    if [ "$ip_ver" = "${IP_VER[$i]}" ]; then
+      IP_IDX=$i
+      break;
+    fi
+  done
+  if [ -z "$IP_IDX" ]; then
+    echo -e "! --ip-version=$ip_ver  =invalid"
+    exit 1
+  fi
+  JAVA_OPTS="${JAVA_OPTS:+$JAVA_OPTS }${IP_OPTS[$IP_IDX]}"
+fi
+
 
 if [ -n "$java_opts" ]; then
   JAVA_OPTS="${JAVA_OPTS:+$JAVA_OPTS }${java_opts}"
