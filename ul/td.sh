@@ -12,7 +12,7 @@ OPT_RUN=${OPT_RUN:-"/opt/run"}
 PREFIX=${PREFIX:-"${OPT_RUN%/}/www/tomcat"}
 VERSION="1.2.1"
 
-JAVA_OPTS="${JAVA_OPTS}"
+JAVA_OPTS=
 DEBUG=("no" "yes")
 
 VER=${VER:-"8.5.8"}
@@ -20,7 +20,7 @@ TC_OPTS=
 TC_SH="tc.sh"
 
 
-STOP_TIMEOUT="${STOP_TIMEOUT:3}"
+STOP_TIMEOUT="${STOP_TIMEOUT:-5}"
 START_PORT="${START_PORT:-8080}"
 STOP_PORT="${STOP_PORT:-8005}"
 JPDA_PORT="${JPDA_PORT:-8000}"
@@ -56,25 +56,32 @@ usage() {
   echo -e "Options:"
   echo -e "  --help\t\t\t\tPrint this message"
   echo -e "  --version\t\t\t\tPrint version information and quit"
-  echo -e "  --prefix\t\t\t\tcatalina prefix dir"
-  echo -e "  --tomcat-version\t\t\ttomcat version, default is $VER"
-  echo -e "  --tc-options\t\t\t\ttc.sh options"
-  echo -e "  --java-options\t\t\tjava options, JAVA_OPTS"
-  echo -e "  --debug\t\t\t\tstart tomcat in debug mode"
-  echo -e "  --local-war-path\t\t\tthe local path of the war"
-  echo -e "  --where\t\t\t\twhere to deploy, ${TO_WHERE[@]}"
+  echo -e ""
+  echo -e "  --prefix=\t\t\t\tcatalina prefix dir"
+  echo -e "  --java-options\t\t\tjava options, JAVA_OPTS='${JAVA_OPTS}'"
+  echo -e ""
+  echo -e "  --tomcat-version=\t\t\ttomcat version, default is $VER"
+  echo -e "  --debug\t\t\t\tstart tomcat in debug mode, default is ${DEBUG}"  
+  echo -e "  --tc-options=\t\t\t\ttc.sh options"
+  echo -e ""
+  echo -e "  --where=\t\t\t\twhere to deploy: `echo ${TO_WHERE[@]}|tr ' ' ','`"  
+  echo -e "  --local-war-path=\t\t\tthe local path of the war"
+  echo -e "  --ssh-user=\t\t\t\tssh login user, default SSH_USER='${SSH_USER}'"
+  echo -e "  --ssh-host=\t\t\t\twhich ssh host to login"
+  echo -e "  --docker-user=\t\t\tdocker container user, default DOCKER_USER='${DOCKER_USER}'"
+  echo -e "  --docker-host=\t\t\tdocker container name"
+  echo -e ""
   echo -e "  --build\t\t\t\tforce to build, default is $BUILD"
-  echo -e "  --build-dir\t\t\t\tbuilding in where"
-  echo -e "  --build-cmd\t\t\t\twhich building tool to use, default is ${BUILD_CMD}"
-  echo -e "  --build-options\t\t\tbuilding options, default is ${BUILD_OPTS}"
-  echo -e "  --ssh-user\t\t\t\tssh login user, default is ${SSH_USER}"
-  echo -e "  --ssh-host\t\t\t\twhich ssh host to login"
-  echo -e "  --docker-user\t\t\t\tdocker container user, default is ${DOCKER_USER}"
-  echo -e "  --docker-host\t\t\t\tdocker container name"
-  echo -e "  --start-port\t\t\t\ttomcat start port, default is $START_PORT"
-  echo -e "  --stop-port\t\t\t\ttomcat stop port, default is $STOP_PORT"
-  echo -e "  --jpda-port\t\t\t\ttomcat debug port, default is $JPDA_PORT\n"
-  echo -e "A deploy/debug console for tomcat.\n"
+  echo -e "  --build-dir=\t\t\t\tbuilding in where"
+  echo -e "  --build-cmd=\t\t\t\twhich building tool to use, default BUILD_CMD='${BUILD_CMD}'"
+  echo -e "  --build-options=\t\t\tbuilding options, default BUILD_OPTS='${BUILD_OPTS}'"
+  echo -e ""
+  echo -e "  --stop-timeout=\t\t\twaiting up ${STOP_TIMEOUT} seconds to stop"
+  echo -e "  --start-port=\t\t\t\ttomcat start port, default START_PORT='$START_PORT'"
+  echo -e "  --stop-port=\t\t\t\ttomcat stop port, default STOP_PORT='$STOP_PORT'"
+  echo -e "  --jpda-port=\t\t\t\ttomcat debug port, default JPDA_PORT='$JPDA_PORT'"
+  echo -e ""
+  echo -e "A deploy & debug console for tomcat.\n"
   echo -e "Commands:"
   echo -e "  build\t\t\t\t\tbuild war which will be deployed"
   echo -e "  start\t\t\t\t\tstart a tomcat instance"
@@ -88,7 +95,6 @@ usage() {
 export_java_opts() {
   JAVA_OPTS="-Dstart.port=${START_PORT}      \
              -Dstop.port=${STOP_PORT}        \
-             -Dlisten.address=${LISTEN_ON}   \
              ${JAVA_OPTS}"
   export JAVA_OPTS=`echo "${JAVA_OPTS}" | tr -s " "`
 }
@@ -491,11 +497,11 @@ do
     --version)               version=yes      			    ;;
 
     --prefix=*)              prefix="$value"   			    ;;
+    --java-options=*)        java_opts="$value"		      ;;
+
     --tomcat-version=*)      VER="$value"      			    ;;
     --tc-options=*)          tc_opts="$value"		        ;;
-
-    --java-options=*)        java_opts="$value"		      ;;
-    --debug)                 DEBUG=yes    		          ;;
+    --debug)                 DEBUG=yes    		          ;;    
 
     --where=*)               where="$value"		          ;;
     --local-war-path=*)      L_WAR_PATH="$value"	      ;;
