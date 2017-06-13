@@ -44,7 +44,6 @@ usage() {
   echo -e "  --catalina-options=\t\t\tcatalina options, CATALINA_OPTS='${CATALINA_OPTS}'"
   echo -e "  --download-only\t\t\tdownload tomcat tgz file only"
   echo -e ""
-  echo -e "  --ipv4\t\t\t\tprefer IPv4 option"
   echo -e "  --listen-on=\t\t\t\tlisten on what address: `echo ${LISTEN_ON[@]}|tr ' ' ','`, etc.,"
   echo -e "  --ip-version=\t\t\t\tprefered IP version: `echo ${IP_VER[@]}|tr ' ' ','`"
   echo -e "  --stop-timeout=\t\t\twaiting up $STOP_TIMEOUT seconds to stop"
