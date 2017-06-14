@@ -20,6 +20,8 @@ TC_OPTS=
 TC_SH="tc.sh"
 
 
+LISTEN_ON=("localhost" "127.0.0.1" "0.0.0.0")
+IP_VER=("4" "6")
 STOP_TIMEOUT="${STOP_TIMEOUT:-5}"
 START_PORT="${START_PORT:-8080}"
 STOP_PORT="${STOP_PORT:-8005}"
@@ -59,10 +61,7 @@ usage() {
   echo -e ""
   echo -e "  --prefix=\t\t\t\tcatalina prefix dir"
   echo -e "  --java-options\t\t\tjava options, JAVA_OPTS='${JAVA_OPTS}'"
-  echo -e ""
-  echo -e "  --tomcat-version=\t\t\ttomcat version, default is $VER"
   echo -e "  --debug\t\t\t\tstart tomcat in debug mode, default is ${DEBUG}"  
-  echo -e "  --tc-options=\t\t\t\ttc.sh options"
   echo -e ""
   echo -e "  --where=\t\t\t\twhere to deploy: `echo ${TO_WHERE[@]}|tr ' ' ','`"  
   echo -e "  --local-war-path=\t\t\tthe local path of the war"
@@ -76,6 +75,11 @@ usage() {
   echo -e "  --build-cmd=\t\t\t\twhich building tool to use, default BUILD_CMD='${BUILD_CMD}'"
   echo -e "  --build-options=\t\t\tbuilding options, default BUILD_OPTS='${BUILD_OPTS}'"
   echo -e ""
+  echo -e "  --tomcat-version=\t\t\ttomcat version, default is $VER"
+  echo -e "  --tc-options=\t\t\t\ttc.sh options"
+  echo -e ""
+  echo -e "  --listen-on=\t\t\t\tlisten on what address: `echo ${LISTEN_ON[@]}|tr ' ' ','`, etc.,"
+  echo -e "  --ip-version=\t\t\t\tprefered IP version: `echo ${IP_VER[@]}|tr ' ' ','`"
   echo -e "  --stop-timeout=\t\t\twaiting up ${STOP_TIMEOUT} seconds to stop"
   echo -e "  --start-port=\t\t\t\ttomcat start port, default START_PORT='$START_PORT'"
   echo -e "  --stop-port=\t\t\t\ttomcat stop port, default STOP_PORT='$STOP_PORT'"
@@ -93,8 +97,7 @@ usage() {
 
 
 export_java_opts() {
-  JAVA_OPTS="-Dstart.port=${START_PORT}      \
-             -Dstop.port=${STOP_PORT}        \
+  JAVA_OPTS=" \
              ${JAVA_OPTS}"
   export JAVA_OPTS=`echo "${JAVA_OPTS}" | tr -s " "`
 }
@@ -151,13 +154,28 @@ function ssh_login_id() {
   echo "$id"
 }
 
+function where_abbrev() {
+  local w="$1"
+  case "$w" in
+    ssh)
+      echo "S"
+      ;;
+    docker)
+      echo "D"
+      ;;
+    *)
+      echo "L"
+      ;;
+  esac
+}
+
 function is_file_exist() {
   local p="$1"
   local w="$2"
-  local lr="R"
+  local wa="`where_abbrev $w`"
   local t=
 
-  echo -e "? check [$p] is exist ..."
+  echo -e "? check $wa[$p] is exist ..."
   case "$w" in
     ssh)
       ssh `ssh_login_id` test -f $p
@@ -170,22 +188,23 @@ function is_file_exist() {
     *)
       test -f $p
       t=$?
-      lr="L"
+      wa="L"
       ;;
   esac
   if [ 0 -eq $t ]; then
-    echo -e "# $lr[$p] exist   =true"
+    echo -e "# $wa[$p] exist   =true"
   else
-    echo -e "! $lr[$p] exist   =false"
+    echo -e "! $wa[$p] exist   =false"
   fi
   return $t
 }
 
 function check_exist() {
   local w="$1"
+  local lr="`where_abbrev $w`"
   local t=
 
-  echo -e "+ check Tomcat[$VER] existing ..."
+  echo -e "+ check Tomcat $lr[$VER] existing ..."
 
   if [ "${TO_WHERE[$TW_IDX_LOCAL]}" = "$w" ]; then
     control_tomcat check-exist "$w"
@@ -196,7 +215,7 @@ function check_exist() {
   is_file_exist "$rp" "$w"
   t=$?
   if [ 0 -ne $t ]; then
-    echo -e "! check Tomcat[$VER] existing: catalina.sh no found  =failed"
+    echo -e "! check Tomcat $lr[$VER] existing: catalina.sh no found  =failed"
     return $t
   fi
 
@@ -212,9 +231,9 @@ function check_exist() {
   esac
 
   if [ 0 -eq $t ]; then
-    echo -e "# check Tomcat[$VER] existing  =succeed"
+    echo -e "# check Tomcat $lr[$VER] existing  =succeed"
   else
-    echo -e "! check Tomcat[$VER] existing  =failed"
+    echo -e "! check Tomcat $lr[$VER] existing  =failed"
   fi
   return $t
 }
@@ -239,8 +258,11 @@ function control_tomcat() {
       ssh `ssh_login_id` $tc $cmd                    \
           --prefix=$PREFIX                           \
           --tomcat-version=$VER                      \
+          --listen-on=$LISTEN_ON                     \
+          --ip-version=$IP_VER                       \
           --start-port=$START_PORT                   \
           --stop-port=$STOP_PORT                     \
+          --stop-timeout=$STOP_TIMEOUT               \
           ${TC_OPTS}          
       t=$?
       ;;
@@ -257,8 +279,11 @@ function control_tomcat() {
              "`remote_bin_path $TC_SH`" $cmd         \
              --prefix=$PREFIX                        \
              --tomcat-version=$VER                   \
+             --listen-on=$LISTEN_ON                  \
+             --ip-version=$IP_VER                    \
              --start-port=$START_PORT                \
              --stop-port=$STOP_PORT                  \
+             --stop-timeout=$STOP_TIMEOUT            \
              ${TC_OPTS}          
       t=$?
       ;;
@@ -267,8 +292,11 @@ function control_tomcat() {
       $tc $cmd                                       \
           --prefix=$PREFIX                           \
           --tomcat-version=$VER                      \
+          --listen-on=$LISTEN_ON                     \
+          --ip-version=$IP_VER                       \
           --start-port=$START_PORT                   \
           --stop-port=$STOP_PORT                     \
+          --stop-timeout=$STOP_TIMEOUT               \
           ${TC_OPTS}
       t=$?
       ;;
@@ -366,8 +394,9 @@ function is_file_eq() {
   local lp="$1"
   local rp="$2"
   local w="$3"
+  local wa="`where_abbrev $w`"
 
-  echo -e "? L[$lp] eq with R[$rp] ..."
+  echo -e "? L[$lp] eq with $wa[$rp] ..."
   if [ ! -f "$lp" ]; then
     echo -e "! L[$1] does not exist."
     return 1
@@ -408,10 +437,10 @@ function is_file_eq() {
   esac
 
   if [ "$lh" = "$rh" ]; then
-    echo -e "# L[$lp] eq with R[$rp]  =true"
+    echo -e "# L[$lp] eq with $wa[$rp]  =true"
     return 0
   else
-    echo -e "! L[$lp] eq with R[$rp]  =false"
+    echo -e "! L[$lp] eq with $wa[$rp]  =false"
     return 1
   fi
 }
@@ -453,9 +482,10 @@ function transport_file() {
   local lp="$1"
   local rp="$2"
   local w="$3"
+  local wa="`where_abbrev $w`"
   local t=
 
-  echo -e "+ transport L[$lp] to R[$rp] ..."
+  echo -e "+ transport L[$lp] to $wa[$rp] ..."
   if [ ! -f "$lp" ]; then
     echo -e "! L[$lp] does not exist."
   fi
@@ -475,9 +505,9 @@ function transport_file() {
       ;;
   esac
   if [ 0 -eq $t ]; then
-    echo -e "# transport L[$lp] to R[$rp]  =succeed"
+    echo -e "# transport L[$lp] to $wa[$rp]  =succeed"
   else
-    echo -e "! transport L[$lp] to R[$rp]  =failed"
+    echo -e "! transport L[$lp] to $wa[$rp]  =failed"
   fi
   return $t
 }
@@ -498,11 +528,8 @@ do
 
     --prefix=*)              prefix="$value"   			    ;;
     --java-options=*)        java_opts="$value"		      ;;
-
-    --tomcat-version=*)      VER="$value"      			    ;;
-    --tc-options=*)          tc_opts="$value"		        ;;
-    --debug)                 DEBUG=yes    		          ;;    
-
+    --debug)                 DEBUG=yes    		          ;;
+    
     --where=*)               where="$value"		          ;;
     --local-war-path=*)      L_WAR_PATH="$value"	      ;;
     --ssh-user=*)            SSH_USER="$value"	        ;;
@@ -515,6 +542,11 @@ do
     --build-cmd=*)           build_cmd="$value"	        ;;
     --build-options=*)       BUILD_OPTS="$value"	      ;;
 
+    --tomcat-version=*)      VER="$value"      			    ;;
+    --tc-options=*)          tc_opts="$value"		        ;;
+
+    --listen-on=*)           LISTEN_ON="$value"		      ;;
+    --ip-version=*)          IP_VER="$value"	   	      ;;
     --stop-timeout=*)        STOP_TIMEOUT="$value"		  ;;
     --start-port=*)          START_PORT="$value"			  ;;
     --stop-port=*)           STOP_PORT="$value" 			  ;;
