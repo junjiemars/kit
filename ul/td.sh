@@ -342,10 +342,11 @@ function mkdir_remote() {
 
 function install_tomcat() {
   local w="$1"
+  local wa="`where_abbrev $w`"
   local tc=
   local t=
 
-  echo -e "+ install Tomcat[$VER] ..."
+  echo -e "+ install Tomcat $wa[$VER] ..."
   if [ "${TO_WHERE[$TW_LOCAL]}" = "$w" ]; then
     control_tomcat install "$w"
     return $?
@@ -354,13 +355,13 @@ function install_tomcat() {
   tc="`local_bin_path $TC_SH`"
   t=$?
   if [ 0 -ne $t ]; then
-    echo -e "! install Tomcat[$VER]: $TC_SH no found  =failed"
+    echo -e "! install Tomcat $wa[$VER]: $TC_SH no found  =failed"
     return $t
   fi
 
   local tgz="apache-tomcat-$VER.tar.gz"
   local ltgz=("`remote_root_path`/$tgz" "/tmp/$tgz" "./$tgz")
-  local rtgz="`remote_ver_path`/$tgz"
+  local rtgz="`remote_root_path`/$tgz"
 
   for f in "${ltgz[@]}"; do
     if [ -f "$f" ]; then
@@ -370,22 +371,25 @@ function install_tomcat() {
   done
 
   if [ ! -f "${ltgz[0]}" ]; then
+    echo -e "+ download Tomcat L[${ltgz[0]}] ..."
     $tc install --download-only --tomcat-version="$VER" --prefix="`dirname ${ltgz[0]}`"
     t=$?
-    [ 0 -eq $t ] || return $t
+    if [ 0 -ne $t ]; then
+      echo -e "! download Tomcat L[${ltgz[0]}] =failed"
+      return $t
+    fi
+    echo -e "! download Tomcat L[${ltgz[0]}] =succeed"
   fi
 
   mkdir_remote "`remote_ver_path`/bin" "$w"
   t=$?
   [ 0 -eq $t ] || return $t
 
-  is_file_eq "${ltgz[0]}" "$rtgz"
+  transport_file "${ltgz[0]}" "$rtgz" "$w"
+  
+  is_file_eq "${ltgz[0]}" "$rtgz" "$w"
   t=$?
-  if [ 0 -ne $t ]; then
-    transport_file "${ltgz[0]}" "$rtgz" "$w"
-    t=$?
-    [ 0 -eq $t ] || return $t
-  fi
+  [ 0 -eq $t ] || return $t
 
   control_tomcat install "$w"
 }
