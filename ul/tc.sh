@@ -158,66 +158,148 @@ function check_exist() {
   ${CATALINA_BIN} version &>/dev/null
 }
 
+function compare_sha1() {
+  local lhs="$1"
+  local rhs="$2"
+
+  echo -e "+ verify Tomcat[$rhs] ..."
+
+  if [ ! -f "$lhs" -o ! -f "$rhs" ]; then
+    echo -e "! verify Tomcat[$rhs]  =failed"
+    return 1
+  fi
+
+  local rsha1="`cat $rhs | cut -d' ' -f1`"
+  if [ -z "$rsha1" ]; then
+   echo -e "! verify Tomcat[$rhs]  =failed"
+   return 1
+  fi
+
+  local lsha1="`sha1sum $lhs 2>/dev/null | cut -d' ' -f1`"
+  if [ "$lsha1" = "$rsha1" ]; then
+    echo -e "# verify Tomcat[$rhs]  =succeed"
+    return 0
+  else
+    echo -e "! verify Tomcat[$rhs]  =failed"
+    return 1
+  fi
+}
+
+function download_file() {
+  local d="$1"
+  local lf="$2"
+  local rf="$3"
+  local t=
+
+  echo -e "+ download Tomcat[$rf] ..."
+  cd "$d" && curl -sL -o"${lf}" -C - "${rf}"
+  t=$?
+  if [ 33 -eq $t ]; then
+    cd "$d" && curl -sL -o"${lf}" "${rf}"
+  fi
+
+  if [ 0 -ne $t ]; then
+    echo -e "! download Tomcat[$rf]  =failed"
+  else
+    echo -e "# download Tomcat[$rf]  =succeed"    
+  fi
+
+  return $t
+}
+
+function download_tomcat() {
+  local d="$1"
+  local ltgz="$2"
+  local ltgz_sha1="$3"
+  local rtgz="$4"
+  local rtgz_sha1="$5"
+  local t=
+
+  compare_sha1 "$ltgz" "$ltgz_sha1"
+  t=$?
+  if [ 0 -ne $t ]; then
+    download_file "$d" "$ltgz_sha1" "$rtgz_sha1"
+    t=$?
+    [ 0 -eq $t ] || return $t
+
+    compare_sha1 "$ltgz" "$ltgz_sha1"
+    t=$?
+    [ 0 -ne $t ] || return $t
+
+    download_file "$d" "$ltgz" "$rtgz"
+    t=$?
+    [ 0 -eq $t ] || return $t
+    
+    compare_sha1 "$ltgz" "$ltgz_sha1"
+    t=$?
+    return $t
+  fi
+}
+
 function install_tomcat() {
   local tgz="apache-tomcat-${VER}.tar.gz"
+  local tgz_sha1="${tgz}.sha1"
   local major="${VER%%.*}"
-	local url="http://archive.apache.org/dist/tomcat/tomcat-${major}/v${VER}/bin/${tgz}"
+  local head="https://archive.apache.org/dist/tomcat/tomcat-${major}/v${VER}/bin"
+	local url_tgz="${head}/${tgz}"
+  local url_sha1="${head}/${tgz_sha1}"
+  local ltgz="${PREFIX}/$tgz"
+  local ltgz_sha1="${ltgz}.sha1"
   local t=
 
   echo -e "+ install Tomcat[$VER] ..."
-  if `check_exist`; then
-    if [ "yes" = "$DOWNLOAD_ONLY" -a ! -f "${PREFIX}/$tgz" ]; then
-      cd "${PREFIX}" && curl -sLO -C - "${url}"
+
+  if [ "yes" = "$DOWNLOAD_ONLY" ]; then
+    compare_sha1 "$ltgz" "$ltgz_sha1"
+    t=$?
+    if [ 0 -eq $t ]; then
+      return $t
+    else
+      download_tomcat "$PREFIX" "$ltgz" "$ltgz_sha1" "$url_tgz" "$url_sha1"
       t=$?
       if [ 0 -eq $t ]; then
-        echo -e "# install Tomcat[$VER]: download  =succeed"
-      else
-        echo -e "! install Tomcat[$VER]: download  =failed"
+        compare_sha1 "$ltgz" "$ltgz_sha1"
+        t=$?
       fi
+      return $t
     fi
-    echo -e "# install Tomcat[$VER]  =existing"
+  fi
+
+  echo -e "+ check Tomcat[$VER] existing ..."
+  if `check_exist`; then
+    echo -e "# check Tomcat[$VER] existing  =succeed"
     return 0
+  fi
+  echo -e "! check Tomcat[$VER] existing  =failed"
+  
+  compare_sha1 "$ltgz" "$ltgz_sha1"
+  t=$?
+  if [ 0 -ne $t ]; then
+    download_tomcat "$PREFIX" "$ltgz" "$ltgz_sha1" "$url_tgz" "$url_sha1"
+    t=$?
+    if [ 0 -ne $t ]; then
+      echo -e "! install Tomcat[$VER]  =failed"
+      return $t
+    fi
+  fi
+
+  compare_sha1 "$ltgz" "$ltgz_sha1"
+  t=$?
+  if [ 0 -ne $t ]; then
+    echo -e "! install Tomcat[$VER]  =failed"
+    return $t
   fi
 
   [ -d "${CATALINA_BASE}" ] || mkdir -p "${CATALINA_BASE}"
+  tar -xf "${ltgz}" -C "${CATALINA_BASE}" --strip-components=1
 
-  if [ ! -f "${CATALINA_BASE}/bin/catalina.sh" ]; then
-
-    if [ -f "${PREFIX}/$tgz" ]; then
-      if [ "yes" = "$DOWNLOAD_ONLY" ]; then
-        echo -e "# install Tomcat[$VER]: download  =succeed"
-        return 0
-      fi
-
-      cd "${PREFIX}" && \
-        tar -xf "${tgz}" -C "${CATALINA_BASE}" --strip-components=1
-      if `check_exist`; then
-        echo -e "# install Tomcat[$VER]  =succeed"
-        return 0
-      fi
-    fi
-    
-    cd "${PREFIX}" && curl -sLO -C - "${url}"
-    t=$?
-    if [ 0 -ne $t ]; then
-      echo -e "! install Tomcat[$VER]: download  =failed"
-      return $t
-    fi
-
-    if [ "yes" = "$DOWNLOAD_ONLY" ]; then
-      echo -e "# install Tomcat[$VER]: download  =successed"
-      return 0
-    fi
-    tar -xf "${tgz}" -C "${CATALINA_BASE}" --strip-components=1
-  fi
-
-  t=`check_exist &>/dev/null; echo $?`
-  if [ 0 -eq $t ]; then
+  if `check_exist`; then
     echo -e "# install Tomcat[$VER]  =succeed"
+    return 0
   else
     echo -e "! install Tomcat[$VER]  =failed"
+    return 1
   fi
-  return $t
 }
 
 function check_catalina_bin() {
