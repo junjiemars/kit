@@ -175,7 +175,7 @@ function is_file_exist() {
   local wa="`where_abbrev $w`"
   local t=
 
-  echo -e "? check $wa[$p] is exist ..."
+  echo -e "? check $wa[$p] existing ..."
   case "$w" in
     ssh)
       ssh `ssh_login_id` test -f $p
@@ -192,9 +192,9 @@ function is_file_exist() {
       ;;
   esac
   if [ 0 -eq $t ]; then
-    echo -e "# $wa[$p] exist   =true"
+    echo -e "# check $wa[$p] existing   =true"
   else
-    echo -e "! $wa[$p] exist   =false"
+    echo -e "! check $wa[$p] existing   =false"
   fi
   return $t
 }
@@ -386,8 +386,15 @@ function install_tomcat() {
   [ 0 -eq $t ] || return $t
 
   transport_file "${ltgz[0]}" "$rtgz" "$w"
-  
   is_file_eq "${ltgz[0]}" "$rtgz" "$w"
+  t=$?
+  [ 0 -eq $t ] || return $t
+
+  local ltgz_sha1="${ltgz[0]}.sha1"
+  local rtgz_sha1="${rtgz}.sha1"
+
+  transport_file "$ltgz_sha1" "$rtgz_sha1" "$w"
+  is_file_eq "$ltgz_sha1" "$rtgz_sha1" "$w"
   t=$?
   [ 0 -eq $t ] || return $t
 
