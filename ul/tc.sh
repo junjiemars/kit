@@ -268,6 +268,7 @@ function install_tomcat() {
   echo -e "+ check Tomcat[$VER] existing ..."
   if `check_exist`; then
     echo -e "# check Tomcat[$VER] existing  =succeed"
+    echo -e "# install Tomcat[$VER]  =succeed"
     return 0
   fi
   echo -e "! check Tomcat[$VER] existing  =failed"
