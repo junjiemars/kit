@@ -158,7 +158,8 @@ function check_exist() {
   ${CATALINA_BIN} version &>/dev/null
 }
 
-function compare_sha1() {
+
+function verify_tgz() {
   local lhs="$1"
   local rhs="$2"
 
@@ -215,14 +216,14 @@ function download_tomcat() {
   local rtgz_sha1="$5"
   local t=
 
-  compare_sha1 "$ltgz" "$ltgz_sha1"
+  verify_tgz "$ltgz" "$ltgz_sha1"
   t=$?
   if [ 0 -ne $t ]; then
     download_file "$d" "$ltgz_sha1" "$rtgz_sha1"
     t=$?
     [ 0 -eq $t ] || return $t
 
-    compare_sha1 "$ltgz" "$ltgz_sha1"
+    verify_tgz "$ltgz" "$ltgz_sha1"
     t=$?
     [ 0 -ne $t ] || return $t
 
@@ -230,27 +231,56 @@ function download_tomcat() {
     t=$?
     [ 0 -eq $t ] || return $t
     
-    compare_sha1 "$ltgz" "$ltgz_sha1"
+    verify_tgz "$ltgz" "$ltgz_sha1"
     t=$?
     return $t
   fi
 }
 
+
+function tomcat_tgz() {
+  local ver="$1"
+  local tgz="apache-tomcat-${ver}.tar.gz"
+  echo "$tgz"
+}
+
+
+function tomcat_tgz_sha1() {
+  local ver="$1"
+  local sha1="`tomcat_tgz $ver`.sha1"
+  echo "$sha1"
+}
+
+function tomcat_tgz_path() {
+  local h="$1"
+  local v="$2"
+  local p="${h%/}/`tomcat_tgz $v`"
+  echo "$p"
+}
+
+function tomcat_tgz_sha1_path() {
+  local h="$1"
+  local v="$2"
+  local p="${h%/}/`tomcat_tgz_sha1 $v`"
+  echo "$p"
+}
+
+
 function install_tomcat() {
-  local tgz="apache-tomcat-${VER}.tar.gz"
-  local tgz_sha1="${tgz}.sha1"
+  local tgz="`tomcat_tgz ${VER}`"
+  local tgz_sha1="`tomcat_tgz_sha1 ${VER}`"
   local major="${VER%%.*}"
   local head="https://archive.apache.org/dist/tomcat/tomcat-${major}/v${VER}/bin"
 	local url_tgz="${head}/${tgz}"
   local url_sha1="${head}/${tgz_sha1}"
-  local ltgz="${PREFIX}/$tgz"
-  local ltgz_sha1="${ltgz}.sha1"
+  local ltgz="`tomcat_tgz_path ${PREFIX} ${VER}`"
+  local ltgz_sha1="`tomcat_tgz_sha1_path ${PREFIX} ${VER}`"
   local t=
 
   echo -e "+ install Tomcat[$VER] ..."
 
   if [ "yes" = "$DOWNLOAD_ONLY" ]; then
-    compare_sha1 "$ltgz" "$ltgz_sha1"
+    verify_tgz "$ltgz" "$ltgz_sha1"
     t=$?
     if [ 0 -eq $t ]; then
       return $t
@@ -258,7 +288,7 @@ function install_tomcat() {
       download_tomcat "$PREFIX" "$ltgz" "$ltgz_sha1" "$url_tgz" "$url_sha1"
       t=$?
       if [ 0 -eq $t ]; then
-        compare_sha1 "$ltgz" "$ltgz_sha1"
+        verify_tgz "$ltgz" "$ltgz_sha1"
         t=$?
       fi
       return $t
@@ -273,7 +303,7 @@ function install_tomcat() {
   fi
   echo -e "! check Tomcat[$VER] existing  =failed"
   
-  compare_sha1 "$ltgz" "$ltgz_sha1"
+  verify_tgz "$ltgz" "$ltgz_sha1"
   t=$?
   if [ 0 -ne $t ]; then
     download_tomcat "$PREFIX" "$ltgz" "$ltgz_sha1" "$url_tgz" "$url_sha1"
@@ -284,7 +314,7 @@ function install_tomcat() {
     fi
   fi
 
-  compare_sha1 "$ltgz" "$ltgz_sha1"
+  verify_tgz "$ltgz" "$ltgz_sha1"
   t=$?
   if [ 0 -ne $t ]; then
     echo -e "! install Tomcat[$VER]  =failed"
@@ -457,15 +487,12 @@ case "$command" in
     ;;
   check-env)
     check_env
-    exit $?
     ;;
   check-pid)
     check_pid
-    exit $?
     ;;
   check-exist)
     check_exist
-    exit $?
     ;;
   start)
     parameterize
@@ -476,7 +503,6 @@ case "$command" in
     [ 0 -eq $retval ] || exit $retval
 
     start_tomcat
-    exit $?
     ;;
   stop)
     check_catalina_bin
@@ -484,7 +510,6 @@ case "$command" in
     [ 0 -eq $retval ] || exit $retval
 
     stop_tomcat
-    exit $?
     ;;
   debug)
     parameterize
@@ -498,11 +523,13 @@ case "$command" in
     CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }-XX:HeapDumpPath=${CATALINA_BASE}/logs"
     export_catalina_opts
     debug_tomcat
-    exit $?
     ;;
   install)
     install_tomcat
-    exit $?    
+    ;;
+  verify)
+    verify_tgz "`tomcat_tgz_path $PREFIX $VER`"        \
+                 "`tomcat_tgz_sha1_path $PREFIX $VER`"
     ;;
   *)
     echo "$0: error: invalid command \"$command\""

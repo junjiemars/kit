@@ -317,7 +317,6 @@ function check_console() {
 
 
 
-
 function file_eq() {
   local lp="$1"
   local rp="$2"
@@ -481,6 +480,30 @@ function transport_file() {
 }
 
 
+function transport_war() {
+  local lf="$1"
+  local w="$2"
+  local wa="`where_abbrev $w`"
+  local rf="`remote_war_path`"
+  local t=
+
+  case "$w" in
+    ssh|docker)
+      file_eq "$lf" "$rf" "$w"
+      t=$?
+      if [ 0 -ne $t ]; then
+        transport_file "$lf" "`dirname $rf`" "$w"
+        t=$?
+      fi
+      ;;
+    *)
+      t=0
+     ;; 
+  esac
+  return $t
+}
+
+
 function install_tomcat() {
   local w="$1"
   local wa="`where_abbrev $w`"
@@ -493,9 +516,11 @@ function install_tomcat() {
     control_tomcat install "$w"
     t=$?
     if [ 0 -ne $t ]; then
-      echo -e "+ install Tomcat $wa[$VER] ..."
-      return $t
+      echo -e "! install Tomcat $wa[$VER]  =failed"
+    else
+      echo -e "! install Tomcat $wa[$VER]  =failed"
     fi
+    return $t
   fi
 
   local tgz="apache-tomcat-$VER.tar.gz"
@@ -509,7 +534,9 @@ function install_tomcat() {
     fi
   done
 
-  if [ ! -f "${ltgz[0]}" ]; then
+  control_tomcat verify "${TO_WHERE[$TW_LOCAL]}"
+  t=$?
+  if [ 0 -ne $t ]; then
     $tc install                              \
         --download-only                      \
         --tomcat-version="$VER"              \
@@ -520,8 +547,6 @@ function install_tomcat() {
       return $t
     fi
   fi
-
-
 
   transport_file "${ltgz[0]}" "$rtgz" "$w"
   file_eq "${ltgz[0]}" "$rtgz" "$w"
@@ -558,6 +583,7 @@ function control_tomcat() {
 
   case "$w" in
     ssh)
+      tc="`remote_bin_path $TC_SH`"
       ssh `ssh_login_id` $tc $cmd                    \
           --prefix=$R_PREFIX                         \
           --tomcat-version=$VER                      \
@@ -588,8 +614,9 @@ function control_tomcat() {
           let t=$t+$?
         fi
       else
+        tc="`remote_bin_path $TC_SH`"
         docker `docker_login_id`                       \
-               "`remote_bin_path $TC_SH`" $cmd         \
+               $tc $cmd                                \
                --prefix=$R_PREFIX                      \
                --tomcat-version=$VER                   \
                --listen-on=$LISTEN_ON                  \
@@ -604,7 +631,7 @@ function control_tomcat() {
     *)
       tc="`local_bin_path $TC_SH`"
       $tc $cmd                                       \
-          --prefix=$L_PREFIX                           \
+          --prefix=$L_PREFIX                         \
           --tomcat-version=$VER                      \
           --listen-on=$LISTEN_ON                     \
           --ip-version=$IP_VER                       \
@@ -734,7 +761,6 @@ command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
   build)
     build_war "$L_WAR_PATH"
-    exit $?
     ;;
   start)
     if [ -z "$L_WAR_PATH" ]; then
@@ -757,55 +783,40 @@ case "$command" in
       [ 0 -eq $retval ] || exit $retval
     fi
 
-    R_WAR_PATH="`remote_war_path`"
-    file_eq "$L_WAR_PATH" "$R_WAR_PATH" "${TO_WHERE[$TW_IDX]}"
-    retval=$?
-    if [ 0 -ne $retval ]; then
-      transport_file "$L_WAR_PATH" "`dirname $R_WAR_PATH`" "${TO_WHERE[$TW_IDX]}"
-      retval=$?
-      [ 0 -eq $retval ] || exit $retval
-    fi
-    
+    transport_war "$L_WAR_PATH" "${TO_WHERE[$TW_IDX]}"
     if [ "$DEBUG" = "yes" ]; then
       export JPDA_PORT="$JPDA_PORT"
       control_tomcat debug "${TO_WHERE[$TW_IDX]}"
     else
       control_tomcat start "${TO_WHERE[$TW_IDX]}"
     fi
-    exit $?
     ;;
   stop)
     check_exist "${TO_WHERE[$TW_IDX]}"
     retval=$?
     [ 0 -eq $retval ] || exit $t
     control_tomcat stop "${TO_WHERE[$TW_IDX]}"
-    exit $?
     ;;
   check-console)
     check_console "${TO_WHERE[$TW_IDX]}"
-    exit $?
     ;;
   check-env)
     check_exist "${TO_WHERE[$TW_IDX]}"
     retval=$?
     [ 0 -eq $retval ] || exit $t
     control_tomcat check-env "${TO_WHERE[$TW_IDX]}"
-    exit $?
     ;;
   check-pid)
     check_exist "${TO_WHERE[$TW_IDX]}"
     retval=$?
     [ 0 -eq $retval ] || exit $t
     control_tomcat check-pid "${TO_WHERE[$TW_IDX]}"
-    exit $?
     ;;
   check-exist)
     check_exist "${TO_WHERE[$TW_IDX]}"
-    exit $?
     ;;
   *)
     echo "$0: error: invalid command \"$command\""
 		usage
-    exit 1    
     ;;
 esac
