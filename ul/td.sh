@@ -101,6 +101,7 @@ usage() {
 }
 
 
+
 export_java_opts() {
   JAVA_OPTS=" \
              ${JAVA_OPTS}"
@@ -108,9 +109,21 @@ export_java_opts() {
 }
 
 
+function on_win32() {
+  case "$PLATFORM" in
+    MSYS_NT*)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+
 function gen_docker_sha1sum_sh() {
 
-  echo -e "+ generate sha1sum[$TD_SHA1SUM_SH] ..."
+  echo -e "+ generate Shell L[$TD_SHA1SUM_SH] ..."
 
   cat << END > "$TD_SHA1SUM_SH"
 #!/bin/bash
@@ -119,19 +132,20 @@ END
   chmod u+x "$TD_SHA1SUM_SH"
 
   if [ -f "$TD_SHA1SUM_SH" ]; then
-    echo -e "# generate sha1sum[$TD_SHA1SUM_SH]  =succeed"
+    echo -e "# generate Shell L[$TD_SHA1SUM_SH]  =succeed"
     return 0
   else
-    echo -e "! generate sha1sum[$TD_SHA1SUM_SH]  =failed"
+    echo -e "! generate Shell L[$TD_SHA1SUM_SH]  =failed"
     return 1
   fi
 }
+
 
 function gen_docker_shell_bat() {
   local cmd="$1"
   local args="$2"
 
-  echo -e "+ generate shell[$TD_SHELL_BAT] ..."
+  echo -e "+ generate Shell L[$TD_SHELL_BAT>[$cmd]] ..."
 
   cat << END > "$TD_SHELL_BAT"
 @echo off
@@ -140,18 +154,20 @@ END
   chmod u+x "$TD_SHELL_BAT"
 
   if [ -f "$TD_SHELL_BAT" ]; then
-    echo -e "# generate shell[$TD_SHELL_BAT]  =succeed"
+    echo -e "# generate Shell L[$TD_SHELL_BAT>[$cmd]]  =succeed"
     return 0
   else
-    echo -e "! generate shell[$TD_SHELL_BAT]  =failed"
+    echo -e "! generate Shell L[$TD_SHELL_BAT>[$cmd]]  =failed"
     return 1
   fi
 }
+
 
 function local_root_path() {
   local p="${L_PREFIX%/}"
   echo "$p"
 }
+
 
 function local_bin_path() {
   local bin="$1"
@@ -170,35 +186,42 @@ function local_bin_path() {
   return 0
 }
 
+
 function remote_root_path() {
   local p="${R_PREFIX%/}"
   echo "$p"
 }
+
 
 function remote_ver_path() {
   local p="`remote_root_path $1`/${VER%/}"
   echo "$p"
 }
 
+
 function remote_war_path() {
   local p="`remote_ver_path`/webapps/`basename $L_WAR_PATH`"
   echo "$p"
 }
+
 
 function remote_bin_path() {
   local p="`remote_ver_path`/bin/$1"
   echo "$p"
 }
 
+
 function ssh_login_id() {
   local id="$SSH_USER${SSH_HOST:+@$SSH_HOST}"
   echo "$id"
 }
 
+
 function docker_login_id() {
   local id="exec -u $DOCKER_USER $DOCKER_HOST"
   echo "$id"
 }
+
 
 function where_abbrev() {
   local w="$1"
@@ -215,35 +238,6 @@ function where_abbrev() {
   esac
 }
 
-function file_exist() {
-  local p="$1"
-  local w="$2"
-  local wa="`where_abbrev $w`"
-  local t=
-
-  echo -e "? check $wa[$p] existing ..."
-  case "$w" in
-    ssh)
-      ssh `ssh_login_id` test -f $p
-      t=$?
-      ;;
-    docker)
-      docker exec -u $DOCKER_USER $DOCKER_HOST test -f $p
-      t=$?
-      ;;
-    *)
-      test -f $p
-      t=$?
-      wa="L"
-      ;;
-  esac
-  if [ 0 -eq $t ]; then
-    echo -e "# check $wa[$p] existing   =true"
-  else
-    echo -e "! check $wa[$p] existing   =false"
-  fi
-  return $t
-}
 
 function check_exist() {
   local w="$1"
@@ -270,16 +264,6 @@ function check_exist() {
   return $t
 }
 
-function on_win32() {
-  case "$PLATFORM" in
-    MSYS_NT*)
-      return 0
-      ;;
-    *)
-      return 1
-      ;;
-  esac
-}
 
 function check_console() {
   local w="$1"
@@ -291,7 +275,7 @@ function check_console() {
 
   case "$w" in
     ssh)
-      mkdir_remote "`remote_ver_path`/bin" "$w"
+      dir_mk "`remote_ver_path`/bin" "$w"
       t=$?
       if [ 0 -ne $t ]; then
         echo -e "! check Console $wa[$VER]  =failed"
@@ -303,7 +287,7 @@ function check_console() {
       t=$?
       ;;
     docker)
-      mkdir_remote "`remote_ver_path`/bin" "$w"
+      dir_mk "`remote_ver_path`/bin" "$w"
       t=$?
       if [ 0 -ne $t ]; then
         echo -e "! check Console $wa[$VER]  =failed"
@@ -329,6 +313,236 @@ function check_console() {
     echo -e "! check Console $wa[$TC_SH]  =failed"
   fi
   return $t
+}
+
+
+
+
+function file_eq() {
+  local lp="$1"
+  local rp="$2"
+  local w="$3"
+  local wa="`where_abbrev $w`"
+
+  echo -e "? L[$lp] eq $wa[$rp] ..."
+
+  echo -e "+ check L[$lp] existing ..."
+  if [ ! -f "$lp" ]; then
+    echo -e "! check L[$lp] existing  =failed"
+    return 1
+  fi
+  echo -e "# check L[$lp] existing  =succeed"
+
+  local lh="`sha1sum $lp | cut -d' ' -f1`"
+  local rh=
+
+  case "$w" in
+    ssh)
+		  rh=`ssh $(ssh_login_id) "test -f $rp && sha1sum $rp 2>/dev/null | cut -d' ' -f1"`
+      ;;
+    docker)
+      local rbp="`remote_bin_path $TD_SHA1SUM_SH`"
+      transport_file "$TD_SHA1SUM_SH" "$rbp" "$w"
+      t=$?
+      if [ 0 -eq $t ]; then
+        if `on_win32`; then
+          gen_docker_shell_bat "$rbp" "$rp"
+          t=$?
+          if [ 0 -eq $t ]; then
+            rh=`./$TD_SHELL_BAT`
+          fi
+        else
+			    rh=`docker $(docker_login_id) $rbp $rp`
+        fi
+      fi
+      ;;
+    *)
+      rh="`test -f "$rp" && sha1sum "$rp" | cut -d' ' -f1`"
+      ;;
+  esac
+
+  if [ -n "$lh" -a "$lh" = "$rh" ]; then
+    echo -e "# L[$lp] eq $wa[$rp]  =true"
+    return 0
+  else
+    echo -e "! L[$lp] eq $wa[$rp]  =false"
+    return 1
+  fi
+}
+
+
+function dir_mk() {
+  local d="$1"
+  local w="$2"
+  local wa="`where_abbrev $w`"
+  local t=
+
+  echo -e "+ mkdir $wa[$d] ..."
+
+  case "$w" in
+    ssh)
+      ssh `ssh_login_id` mkdir -p "$d"
+      t=$?
+      ;;
+    docker)
+      if `on_win32`; then
+        gen_docker_shell_bat "mkdir -p $d"
+        t=$?
+        if [ 0 -eq $t ]; then
+          ./$TD_SHELL_BAT
+          t=$?
+        fi
+      else
+        docker `docker_login_id` mkdir -p "$d"
+      fi
+      t=$?
+      ;;
+    *)
+      echo -e "# mkdir $wa[$d]: in local  =skipped"
+      t=0
+      ;;
+  esac
+
+  if [ 0 -eq $t ]; then
+    echo -e "+ mkdir $wa[$d]  =succeed"
+  else
+    echo -e "- mkdir $wa[$d]  =failed"
+  fi
+  return $t
+}
+
+
+function build_war() {
+  local lwp="$1"
+  local cmd=
+
+  echo -e "+ build L[$lwp}] ..."
+  case "$BUILD_CMD" in
+    gradlew*)
+      cmd="${BUILD_DIR%/}/$BUILD_CMD"
+      ;;
+    *)
+      cmd="$BUILD_CMD"
+      ;;
+  esac
+  if [ ! -d "$BUILD_DIR" ]; then
+    echo -e "! build L[$lwp]: L[$BUILD_DIR] non-exists  =failed"
+    return 1
+  fi
+
+  if [ ! -x "$cmd" ]; then
+    echo -e "! build L[$lwp]: build command no found  =failed"
+    return 1
+  fi
+
+  cd "$BUILD_DIR" && "$cmd" ${BUILD_OPTS}
+  local t=$?
+  if [ 0 -eq $t ]; then
+    echo -e "# build L[$lwp}]  =succeed"
+  else
+    echo -e "! build L[$lwp}]  =failed"
+  fi
+  return $t
+}
+
+
+function transport_file() {
+  local lp="$1"
+  local rp="$2"
+  local w="$3"
+  local wa="`where_abbrev $w`"
+  local t=
+
+  echo -e "+ transport L[$lp] to $wa[$rp] ..."
+  if [ ! -f "$lp" ]; then
+    echo -e "! L[$lp]: does not exist  =failed"
+  fi
+
+  case "$w" in
+    ssh)
+	  	scp $lp `ssh_login_id`:$rp
+      t=$?
+      ;;
+    docker)
+      docker cp $lp $DOCKER_HOST:$rp
+      t=$?
+      ;;
+    *)
+	    cp $lp $rp
+      t=$?
+      ;;
+  esac
+  if [ 0 -eq $t ]; then
+    echo -e "# transport L[$lp] to $wa[$rp]  =succeed"
+  else
+    echo -e "! transport L[$lp] to $wa[$rp]  =failed"
+  fi
+  return $t
+}
+
+
+function install_tomcat() {
+  local w="$1"
+  local wa="`where_abbrev $w`"
+  local tc="`local_bin_path $TC_SH`"
+  local t=
+
+  echo -e "+ install Tomcat $wa[$VER] ..."
+
+  if [ "${TO_WHERE[$TW_LOCAL]}" = "$w" ]; then
+    control_tomcat install "$w"
+    t=$?
+    if [ 0 -ne $t ]; then
+      echo -e "+ install Tomcat $wa[$VER] ..."
+      return $t
+    fi
+  fi
+
+  local tgz="apache-tomcat-$VER.tar.gz"
+  local ltgz=("`local_root_path`/$tgz" "/tmp/$tgz" "./$tgz")
+  local rtgz="`remote_root_path`/$tgz"
+
+  for f in "${ltgz[@]}"; do
+    if [ -f "$f" ]; then
+      ltgz="$f"
+      break;
+    fi
+  done
+
+  if [ ! -f "${ltgz[0]}" ]; then
+    $tc install                              \
+        --download-only                      \
+        --tomcat-version="$VER"              \
+        --prefix="`dirname ${ltgz[0]}`"
+    t=$?
+    if [ 0 -ne $t ]; then
+      echo -e "! install Tomcat $wa[$VER]  =failed"
+      return $t
+    fi
+  fi
+
+
+
+  transport_file "${ltgz[0]}" "$rtgz" "$w"
+  file_eq "${ltgz[0]}" "$rtgz" "$w"
+  t=$?
+  if [ 0 -ne $t ]; then
+     echo -e "! install Tomcat $wa[$VER]  =failed"
+     return $t
+  fi
+
+  local ltgz_sha1="${ltgz[0]}.sha1"
+  local rtgz_sha1="${rtgz}.sha1"
+
+  transport_file "$ltgz_sha1" "$rtgz_sha1" "$w"
+  file_eq "$ltgz_sha1" "$rtgz_sha1" "$w"
+  t=$?
+  if [ 0 -ne $t ]; then
+    echo -e "! install Tomcat $wa[$VER]  =failed"
+    return $t
+  fi
+
+  control_tomcat install "$w"
 }
 
 
@@ -410,228 +624,7 @@ function control_tomcat() {
   return $t
 }
 
-function mkdir_remote() {
-  local d="$1"
-  local w="$2"
-  local wa="`where_abbrev $w`"
-  local t=
 
-  echo -e "+ mkdir $wa[$d] ..."
-
-  case "$w" in
-    ssh)
-      ssh `ssh_login_id` mkdir -p "$d"
-      t=$?
-      ;;
-    docker)
-      if `on_win32`; then
-        gen_docker_shell_bat "mkdir -p $d"
-        t=$?
-        if [ 0 -eq $t ]; then
-          ./$TD_SHELL_BAT
-          t=$?
-        fi
-      else
-        docker `docker_login_id` mkdir -p "$d"
-      fi
-      t=$?
-      ;;
-    *)
-      echo -e "# mkdir $wa[$d]: in local  =skipped"
-      t=0
-      ;;
-  esac
-
-  if [ 0 -eq $t ]; then
-    echo -e "+ mkdir $wa[$d]  =succeed"
-  else
-    echo -e "- mkdir $wa[$d]  =failed"
-  fi
-  return $t
-}
-
-function install_tomcat() {
-  local w="$1"
-  local wa="`where_abbrev $w`"
-  local tc="`local_bin_path $TC_SH`"
-  local t=
-
-  echo -e "+ install Tomcat $wa[$VER] ..."
-
-  if [ "${TO_WHERE[$TW_LOCAL]}" = "$w" ]; then
-    control_tomcat install "$w"
-    t=$?
-    if [ 0 -ne $t ]; then
-      echo -e "+ install Tomcat $wa[$VER] ..."
-      return $t
-    fi
-  fi
-
-  local tgz="apache-tomcat-$VER.tar.gz"
-  local ltgz=("`local_root_path`/$tgz" "/tmp/$tgz" "./$tgz")
-  local rtgz="`remote_root_path`/$tgz"
-
-  for f in "${ltgz[@]}"; do
-    if [ -f "$f" ]; then
-      ltgz="$f"
-      break;
-    fi
-  done
-
-  if [ ! -f "${ltgz[0]}" ]; then
-    $tc install                              \
-        --download-only                      \
-        --tomcat-version="$VER"              \
-        --prefix="`dirname ${ltgz[0]}`"
-    t=$?
-    if [ 0 -ne $t ]; then
-      echo -e "! install Tomcat $wa[$VER]  =failed"
-      return $t
-    fi
-  fi
-
-
-
-  transport_file "${ltgz[0]}" "$rtgz" "$w"
-  file_eq "${ltgz[0]}" "$rtgz" "$w"
-  t=$?
-  if [ 0 -ne $t ]; then
-     echo -e "! install Tomcat $wa[$VER]  =failed"
-     return $t
-  fi
-
-  local ltgz_sha1="${ltgz[0]}.sha1"
-  local rtgz_sha1="${rtgz}.sha1"
-
-  transport_file "$ltgz_sha1" "$rtgz_sha1" "$w"
-  file_eq "$ltgz_sha1" "$rtgz_sha1" "$w"
-  t=$?
-  if [ 0 -ne $t ]; then
-    echo -e "! install Tomcat $wa[$VER]  =failed"
-    return $t
-  fi
-
-  control_tomcat install "$w"
-}
-
-function file_eq() {
-  local lp="$1"
-  local rp="$2"
-  local w="$3"
-  local wa="`where_abbrev $w`"
-
-  echo -e "? L[$lp] eq $wa[$rp] ..."
-
-  echo -e "+ check L[$lp] existing ..."
-  if [ ! -f "$lp" ]; then
-    echo -e "! check L[$lp] existing  =failed"
-    return 1
-  fi
-  echo -e "# check L[$lp] existing  =succeed"
-
-  local lh="`sha1sum $lp | cut -d' ' -f1`"
-  local rh=
-
-  case "$w" in
-    ssh)
-		  rh=`ssh $(ssh_login_id) "test -f $rp && sha1sum $rp 2>/dev/null | cut -d' ' -f1"`
-      ;;
-    docker)
-      local rbp="`remote_bin_path $TD_SHA1SUM_SH`"
-      transport_file "$TD_SHA1SUM_SH" "$rbp" "$w"
-      t=$?
-      if [ 0 -eq $t ]; then
-        if `on_win32`; then
-          gen_docker_shell_bat "$rbp" "$rp"
-          t=$?
-          if [ 0 -eq $t ]; then
-            rh=`./$TD_SHELL_BAT`
-          fi
-        else
-			    rh=`docker $(docker_login_id) $rbp $rp`
-        fi
-      fi
-      ;;
-    *)
-      rh="`test -f "$rp" && sha1sum "$rp" | cut -d' ' -f1`"
-      ;;
-  esac
-
-  if [ -n "$lh" -a "$lh" = "$rh" ]; then
-    echo -e "# L[$lp] eq $wa[$rp]  =true"
-    return 0
-  else
-    echo -e "! L[$lp] eq $wa[$rp]  =false"
-    return 1
-  fi
-}
-
-function build_war() {
-  local lwp="$1"
-  local cmd=
-
-  echo -e "+ build L[$lwp}] ..."
-  case "$BUILD_CMD" in
-    gradlew*)
-      cmd="${BUILD_DIR%/}/$BUILD_CMD"
-      ;;
-    *)
-      cmd="$BUILD_CMD"
-      ;;
-  esac
-  if [ ! -d "$BUILD_DIR" ]; then
-    echo -e "! build L[$lwp]: L[$BUILD_DIR] non-exists  =failed"
-    return 1
-  fi
-
-  if [ ! -x "$cmd" ]; then
-    echo -e "! build L[$lwp]: build command no found  =failed"
-    return 1
-  fi
-
-  cd "$BUILD_DIR" && "$cmd" ${BUILD_OPTS}
-  local t=$?
-  if [ 0 -eq $t ]; then
-    echo -e "# build L[$lwp}]  =succeed"
-  else
-    echo -e "! build L[$lwp}]  =failed"
-  fi
-  return $t
-}
-
-function transport_file() {
-  local lp="$1"
-  local rp="$2"
-  local w="$3"
-  local wa="`where_abbrev $w`"
-  local t=
-
-  echo -e "+ transport L[$lp] to $wa[$rp] ..."
-  if [ ! -f "$lp" ]; then
-    echo -e "! L[$lp]: does not exist  =failed"
-  fi
-
-  case "$w" in
-    ssh)
-	  	scp $lp `ssh_login_id`:$rp
-      t=$?
-      ;;
-    docker)
-      docker cp $lp $DOCKER_HOST:$rp
-      t=$?
-      ;;
-    *)
-	    cp $lp $rp
-      t=$?
-      ;;
-  esac
-  if [ 0 -eq $t ]; then
-    echo -e "# transport L[$lp] to $wa[$rp]  =succeed"
-  else
-    echo -e "! transport L[$lp] to $wa[$rp]  =failed"
-  fi
-  return $t
-}
 
 
 for option
@@ -749,9 +742,8 @@ case "$command" in
       usage
       exit 1
     fi
-    file_exist "$L_WAR_PATH" "${TO_WHERE[$TW_IDX_LOCAL]}"
-    retval=$?
-    if [ "yes" = "$BUILD" -o 0 -ne $retval ]; then
+    
+    if [ ! -f "$L_WAR_PATH" -o "yes" = "$BUILD" ]; then
       build_war "$L_WAR_PATH"
       retval=$?
       [ 0 -eq $retval ] || exit $retval
@@ -794,6 +786,9 @@ case "$command" in
     exit $?
     ;;
   check-env)
+    check_exist "${TO_WHERE[$TW_IDX]}"
+    retval=$?
+    [ 0 -eq $retval ] || exit $t
     control_tomcat check-env "${TO_WHERE[$TW_IDX]}"
     exit $?
     ;;
