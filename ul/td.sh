@@ -8,8 +8,12 @@
 
 # env 
 PLATFORM=${PLATFORM:-`uname -s`}
-OPT_RUN=${OPT_RUN:-"/opt/run"}
-PREFIX=${PREFIX:-"${OPT_RUN%/}/www/tomcat"}
+
+L_OPT_RUN=${OPT_RUN:-"/opt/run"}
+L_PREFIX=${L_PREFIX:-"${L_OPT_RUN%/}/www/tomcat"}
+R_OPT_RUN=${OPT_RUN:-"/opt/run"}
+R_PREFIX=${R_PREFIX:-"${R_OPT_RUN%/}/www/tomcat"}
+
 VERSION="1.2.1"
 
 JAVA_OPTS=
@@ -50,6 +54,7 @@ DOCKER_USER="$USER"
 DOCKER_HOST=
 
 TD_SHA1SUM_SH="td_sha1sum.sh"
+TD_SHELL_BAT="td_shell.bat"
 
 
 usage() {
@@ -107,13 +112,11 @@ function gen_docker_sha1sum_sh() {
 
   echo -e "+ generate sha1sum[$TD_SHA1SUM_SH] ..."
 
-  if [ ! -f "$TD_SHA1SUM_SH" ]; then
-    cat << END > "$TD_SHA1SUM_SH"
+  cat << END > "$TD_SHA1SUM_SH"
 #!/bin/bash
-test -f \$1 && sha1sum 2>/dev/null \$1 | cut -d' ' -f1
+test -f \$1 && sha1sum \$1 | cut -d' ' -f1
 END
-    chmod u+x "$TD_SHA1SUM_SH"
-  fi
+  chmod u+x "$TD_SHA1SUM_SH"
 
   if [ -f "$TD_SHA1SUM_SH" ]; then
     echo -e "# generate sha1sum[$TD_SHA1SUM_SH]  =succeed"
@@ -122,6 +125,32 @@ END
     echo -e "! generate sha1sum[$TD_SHA1SUM_SH]  =failed"
     return 1
   fi
+}
+
+function gen_docker_shell_bat() {
+  local cmd="$1"
+  local args="$2"
+
+  echo -e "+ generate shell[$TD_SHELL_BAT] ..."
+
+  cat << END > "$TD_SHELL_BAT"
+@echo off
+docker `docker_login_id` $cmd $args
+END
+  chmod u+x "$TD_SHELL_BAT"
+
+  if [ -f "$TD_SHELL_BAT" ]; then
+    echo -e "# generate shell[$TD_SHELL_BAT]  =succeed"
+    return 0
+  else
+    echo -e "! generate shell[$TD_SHELL_BAT]  =failed"
+    return 1
+  fi
+}
+
+function local_root_path() {
+  local p="${L_PREFIX%/}"
+  echo "$p"
 }
 
 function local_bin_path() {
@@ -142,12 +171,12 @@ function local_bin_path() {
 }
 
 function remote_root_path() {
-  local p="${PREFIX%/}"
+  local p="${R_PREFIX%/}"
   echo "$p"
 }
 
 function remote_ver_path() {
-  local p="`remote_root_path`/${VER%/}"
+  local p="`remote_root_path $1`/${VER%/}"
   echo "$p"
 }
 
@@ -186,7 +215,7 @@ function where_abbrev() {
   esac
 }
 
-function is_file_exist() {
+function file_exist() {
   local p="$1"
   local w="$2"
   local wa="`where_abbrev $w`"
@@ -223,6 +252,13 @@ function check_exist() {
 
   echo -e "+ check Tomcat $wa[$VER] existing ..."
 
+  check_console $w
+  t=$?
+  if [ 0 -ne $t ]; then
+    echo -e "+ check Tomcat $wa[$VER] existing  =failed"
+    return $t
+  fi
+
   control_tomcat check-exist "$w"
   t=$?
   if [ 0 -eq $t ]; then
@@ -232,37 +268,17 @@ function check_exist() {
   fi
 
   return $t
+}
 
-  #if [ "${TO_WHERE[$TW_IDX_LOCAL]}" = "$w" ]; then
-  #  control_tomcat check-exist "$w"
-  #  return $?
-  #fi
-  #
-  #local rp="`remote_bin_path catalina.sh`"
-  #is_file_exist "$rp" "$w"
-  #t=$?
-  #if [ 0 -ne $t ]; then
-  #  echo -e "! check Tomcat $wa[$VER] existing: catalina.sh no found  =failed"
-  #  return $t
-  #fi
-  #
-  #case "$w" in
-  #  ssh)
-  #    ssh `ssh_login_id` $rp version
-  #    t=$?
-  #    ;;
-  #  docker)
-  #    docker exec -u $DOCKER_USER $DOCKER_HOST $rp version
-  #    t=$?
-  #    ;;
-  #esac
-  #
-  #if [ 0 -eq $t ]; then
-  #  echo -e "# check Tomcat $wa[$VER] existing  =succeed"
-  #else
-  #  echo -e "! check Tomcat $wa[$VER] existing  =failed"
-  #fi
-  #return $t
+function on_win32() {
+  case "$PLATFORM" in
+    MSYS_NT*)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
 }
 
 function check_console() {
@@ -274,28 +290,32 @@ function check_console() {
   echo -e "+ check Console $wa[$TC_SH] ..."
 
   case "$w" in
-    ssh|docker)
+    ssh)
+      mkdir_remote "`remote_ver_path`/bin" "$w"
+      t=$?
+      if [ 0 -ne $t ]; then
+        echo -e "! check Console $wa[$VER]  =failed"
+        return $t
+      fi
+      
+      tc="`remote_bin_path $TC_SH`"
+      transport_file "`local_bin_path $TC_SH`" "$tc" "$w"
+      t=$?
+      ;;
+    docker)
+      mkdir_remote "`remote_ver_path`/bin" "$w"
+      t=$?
+      if [ 0 -ne $t ]; then
+        echo -e "! check Console $wa[$VER]  =failed"
+        return $t
+      fi
+      
       tc="`remote_bin_path $TC_SH`"
       transport_file "`local_bin_path $TC_SH`" "$tc" "$w"
       t=$?
 
-      #echo -e "+ generate D[$TD_SHA1SUM_SH] ..."
-      #gen_docker_sha1sum_sh
-      #t=$?
-      #if [ 0 -ne $t ]; then
-      #  echo -e "! generate D[$TD_SHA1SUM_SH]  =failed"
-      #  return $t
-      #else
-      #  echo -e "# generate D[$TD_SHA1SUM_SH]  =succeed"
-      #fi
-      #
-      #local rbp="`remote_bin_path $TD_SHA1SUM_SH`"
-      #transport_file "$TD_SHA1SUM_SH" "$rbp" "$w"
-      #t=$?
-      #[ 0 -eq $t ] || return $t
-      #
-			#rh=`docker exec -u $DOCKER_USER $DOCKER_HOST $rbp $rp`
-
+      gen_docker_sha1sum_sh
+      let t=$t+$?
       ;;
     *)
       tc="`local_bin_path $TC_SH`"
@@ -315,56 +335,69 @@ function check_console() {
 function control_tomcat() {
   local cmd="$1"
   local w="$2"
+  local opts="$3"
   local wa="`where_abbrev $w`"
   local tc=
   local t=
 
   echo -e "+ control Tomcat => $wa[$cmd] ..."
 
-  check_console "$w"
-  t=$?
-  if [ 0 -ne $t ]; then
-    echo -e "! control Tomcat => $wa[$cmd]  =failed"
-    return $t
-  fi
-
   case "$w" in
     ssh)
       ssh `ssh_login_id` $tc $cmd                    \
-          --prefix=$PREFIX                           \
+          --prefix=$R_PREFIX                         \
           --tomcat-version=$VER                      \
           --listen-on=$LISTEN_ON                     \
           --ip-version=$IP_VER                       \
           --start-port=$START_PORT                   \
           --stop-port=$STOP_PORT                     \
           --stop-timeout=$STOP_TIMEOUT               \
-          ${TC_OPTS}          
+          ${opts}          
       t=$?
       ;;
     docker)
-      docker `docker_login_id`                       \
-             "`remote_bin_path $TC_SH`" $cmd         \
-             --prefix=$PREFIX                        \
-             --tomcat-version=$VER                   \
-             --listen-on=$LISTEN_ON                  \
-             --ip-version=$IP_VER                    \
-             --start-port=$START_PORT                \
-             --stop-port=$STOP_PORT                  \
-             --stop-timeout=$STOP_TIMEOUT            \
-             ${TC_OPTS}          
-      t=$?
+      if `on_win32`; then
+        local cmd_args="$cmd                           \
+               --prefix=$R_PREFIX                      \
+               --tomcat-version=$VER                   \
+               --listen-on=$LISTEN_ON                  \
+               --ip-version=$IP_VER                    \
+               --start-port=$START_PORT                \
+               --stop-port=$STOP_PORT                  \
+               --stop-timeout=$STOP_TIMEOUT            \
+               ${opts}"
+        cmd_args="`echo $cmd_args | tr -s ' '`"
+        gen_docker_shell_bat "`remote_bin_path $TC_SH`" "$cmd_args"
+        t=$?
+        if [ 0 -eq $t ]; then
+          ./$TD_SHELL_BAT
+          let t=$t+$?
+        fi
+      else
+        docker `docker_login_id`                       \
+               "`remote_bin_path $TC_SH`" $cmd         \
+               --prefix=$R_PREFIX                      \
+               --tomcat-version=$VER                   \
+               --listen-on=$LISTEN_ON                  \
+               --ip-version=$IP_VER                    \
+               --start-port=$START_PORT                \
+               --stop-port=$STOP_PORT                  \
+               --stop-timeout=$STOP_TIMEOUT            \
+               ${opts}
+        t=$?
+      fi
       ;;
     *)
       tc="`local_bin_path $TC_SH`"
       $tc $cmd                                       \
-          --prefix=$PREFIX                           \
+          --prefix=$L_PREFIX                           \
           --tomcat-version=$VER                      \
           --listen-on=$LISTEN_ON                     \
           --ip-version=$IP_VER                       \
           --start-port=$START_PORT                   \
           --stop-port=$STOP_PORT                     \
           --stop-timeout=$STOP_TIMEOUT               \
-          ${TC_OPTS}
+          ${opts}
       t=$?
       ;;
   esac
@@ -380,9 +413,10 @@ function control_tomcat() {
 function mkdir_remote() {
   local d="$1"
   local w="$2"
+  local wa="`where_abbrev $w`"
   local t=
 
-  echo -e "+ mkdir R[$d] ..."
+  echo -e "+ mkdir $wa[$d] ..."
 
   case "$w" in
     ssh)
@@ -390,19 +424,28 @@ function mkdir_remote() {
       t=$?
       ;;
     docker)
-      docker exec -u $DOCKER_USER $DOCKER_HOST mkdir -p "$d"
+      if `on_win32`; then
+        gen_docker_shell_bat "mkdir -p $d"
+        t=$?
+        if [ 0 -eq $t ]; then
+          ./$TD_SHELL_BAT
+          t=$?
+        fi
+      else
+        docker `docker_login_id` mkdir -p "$d"
+      fi
       t=$?
       ;;
     *)
-      echo -e "# mkdir R[$d]: in local  =skipped"
+      echo -e "# mkdir $wa[$d]: in local  =skipped"
       t=0
       ;;
   esac
 
   if [ 0 -eq $t ]; then
-    echo -e "+ mkdir R[$d]  =succeed"
+    echo -e "+ mkdir $wa[$d]  =succeed"
   else
-    echo -e "- mkdir R[$d]  =failed"
+    echo -e "- mkdir $wa[$d]  =failed"
   fi
   return $t
 }
@@ -410,24 +453,22 @@ function mkdir_remote() {
 function install_tomcat() {
   local w="$1"
   local wa="`where_abbrev $w`"
-  local tc=
+  local tc="`local_bin_path $TC_SH`"
   local t=
 
   echo -e "+ install Tomcat $wa[$VER] ..."
+
   if [ "${TO_WHERE[$TW_LOCAL]}" = "$w" ]; then
     control_tomcat install "$w"
-    return $?
-  fi
-
-  tc="`local_bin_path $TC_SH`"
-  t=$?
-  if [ 0 -ne $t ]; then
-    echo -e "! install Tomcat $wa[$VER]: $TC_SH no found  =failed"
-    return $t
+    t=$?
+    if [ 0 -ne $t ]; then
+      echo -e "+ install Tomcat $wa[$VER] ..."
+      return $t
+    fi
   fi
 
   local tgz="apache-tomcat-$VER.tar.gz"
-  local ltgz=("`remote_root_path`/$tgz" "/tmp/$tgz" "./$tgz")
+  local ltgz=("`local_root_path`/$tgz" "/tmp/$tgz" "./$tgz")
   local rtgz="`remote_root_path`/$tgz"
 
   for f in "${ltgz[@]}"; do
@@ -438,24 +479,26 @@ function install_tomcat() {
   done
 
   if [ ! -f "${ltgz[0]}" ]; then
-    echo -e "+ download Tomcat L[${ltgz[0]}] ..."
-    $tc install --download-only --tomcat-version="$VER" --prefix="`dirname ${ltgz[0]}`"
+    $tc install                              \
+        --download-only                      \
+        --tomcat-version="$VER"              \
+        --prefix="`dirname ${ltgz[0]}`"
     t=$?
     if [ 0 -ne $t ]; then
-      echo -e "! download Tomcat L[${ltgz[0]}] =failed"
+      echo -e "! install Tomcat $wa[$VER]  =failed"
       return $t
     fi
-    echo -e "! download Tomcat L[${ltgz[0]}] =succeed"
   fi
 
-  mkdir_remote "`remote_ver_path`/bin" "$w"
-  t=$?
-  [ 0 -eq $t ] || return $t
+
 
   transport_file "${ltgz[0]}" "$rtgz" "$w"
   file_eq "${ltgz[0]}" "$rtgz" "$w"
   t=$?
-  [ 0 -eq $t ] || return $t
+  if [ 0 -ne $t ]; then
+     echo -e "! install Tomcat $wa[$VER]  =failed"
+     return $t
+  fi
 
   local ltgz_sha1="${ltgz[0]}.sha1"
   local rtgz_sha1="${rtgz}.sha1"
@@ -463,7 +506,10 @@ function install_tomcat() {
   transport_file "$ltgz_sha1" "$rtgz_sha1" "$w"
   file_eq "$ltgz_sha1" "$rtgz_sha1" "$w"
   t=$?
-  [ 0 -eq $t ] || return $t
+  if [ 0 -ne $t ]; then
+    echo -e "! install Tomcat $wa[$VER]  =failed"
+    return $t
+  fi
 
   control_tomcat install "$w"
 }
@@ -491,14 +537,18 @@ function file_eq() {
 		  rh=`ssh $(ssh_login_id) "test -f $rp && sha1sum $rp 2>/dev/null | cut -d' ' -f1"`
       ;;
     docker)
-      gen_docker_sha1sum_sh
+      local rbp="`remote_bin_path $TD_SHA1SUM_SH`"
+      transport_file "$TD_SHA1SUM_SH" "$rbp" "$w"
       t=$?
       if [ 0 -eq $t ]; then
-        local rbp="`remote_bin_path $TD_SHA1SUM_SH`"
-        transport_file "$TD_SHA1SUM_SH" "$rbp" "$w"
-        t=$?
-        if [ 0 -eq $t ]; then
-			    rh=`docker $(docker_login_idexec) $rbp $rp`
+        if `on_win32`; then
+          gen_docker_shell_bat "$rbp" "$rp"
+          t=$?
+          if [ 0 -eq $t ]; then
+            rh=`./$TD_SHELL_BAT`
+          fi
+        else
+			    rh=`docker $(docker_login_id) $rbp $rp`
         fi
       fi
       ;;
@@ -558,7 +608,7 @@ function transport_file() {
 
   echo -e "+ transport L[$lp] to $wa[$rp] ..."
   if [ ! -f "$lp" ]; then
-    echo -e "! L[$lp] does not exist."
+    echo -e "! L[$lp]: does not exist  =failed"
   fi
 
   case "$w" in
@@ -597,7 +647,8 @@ do
     --help)                  help=yes                   ;;
     --version)               version=yes      			    ;;
 
-    --prefix=*)              prefix="$value"   			    ;;
+    --local-prefix=*)        l_prefix="$value"   		    ;;
+    --remote-prefix=*)       r_prefix="$value"   		    ;;
     --java-options=*)        java_opts="$value"		      ;;
     --debug)                 DEBUG=yes    		          ;;
     
@@ -642,8 +693,12 @@ fi
 
 # setup env vars
 
-if [ -n "$prefix" ]; then
-  PREFIX="$prefix"
+if [ -n "$l_prefix" ]; then
+  L_PREFIX="$l_prefix"
+fi
+
+if [ -n "$r_prefix" ]; then
+  R_PREFIX="$r_prefix"
 fi
 
 if [ -n "$tc_opts" ]; then
@@ -694,7 +749,7 @@ case "$command" in
       usage
       exit 1
     fi
-    is_file_exist "$L_WAR_PATH" "${TO_WHERE[$TW_IDX_LOCAL]}"
+    file_exist "$L_WAR_PATH" "${TO_WHERE[$TW_IDX_LOCAL]}"
     retval=$?
     if [ "yes" = "$BUILD" -o 0 -ne $retval ]; then
       build_war "$L_WAR_PATH"
@@ -736,13 +791,9 @@ case "$command" in
     ;;
   check-console)
     check_console "${TO_WHERE[$TW_IDX]}"
-    retval=$?
-    exit $retval
+    exit $?
     ;;
   check-env)
-    check_exist "${TO_WHERE[$TW_IDX]}"
-    retval=$?
-    [ 0 -eq $retval ] || exit $t
     control_tomcat check-env "${TO_WHERE[$TW_IDX]}"
     exit $?
     ;;
