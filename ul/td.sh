@@ -7,12 +7,12 @@
 
 
 # env 
-PLATFORM=${PLATFORM:-`uname -s`}
+PLATFORM=${PLATFORM:-`uname -s 2>/dev/null`}
 
-L_OPT_RUN=${OPT_RUN:-"/opt/run"}
-L_PREFIX=${L_PREFIX:-"${L_OPT_RUN%/}/www/tomcat"}
-R_OPT_RUN=${OPT_RUN:-"/opt/run"}
-R_PREFIX=${R_PREFIX:-"${R_OPT_RUN%/}/www/tomcat"}
+L_OPT_RUN="${OPT_RUN:-/opt/run}"
+L_PREFIX="${L_PREFIX:-${L_OPT_RUN%/}/www/tomcat}"
+R_OPT_RUN="${OPT_RUN:-/opt/run}"
+R_PREFIX="${R_PREFIX:-${R_OPT_RUN%/}/www/tomcat}"
 
 VERSION="1.2.1"
 
@@ -33,9 +33,7 @@ JPDA_PORT="${JPDA_PORT:-8000}"
 
 TO_WHERE=("local" "ssh" "docker")
 TW_IDX=
-TW_IDX_LOCAL=0
-TW_IDX_SSH=1
-TW_IDX_DOCKER=2
+
 
 L_WAR_PATH="${L_WAR_PATH}"
 R_WAR_PATH=
@@ -64,28 +62,29 @@ usage() {
   echo -e "  --help\t\t\t\tPrint this message"
   echo -e "  --version\t\t\t\tPrint version information and quit"
   echo -e ""
-  echo -e "  --prefix=\t\t\t\tcatalina prefix dir"
+  echo -e "  --local-prefix=\t\t\tlocal catalina prefix dir, L_PREFIX='${L_PREFIX}'"
+  echo -e "  --remote-prefix=\t\t\tremote catalina prefix dir, R_PREFIX='${R_PREFIX}'"
   echo -e "  --java-options\t\t\tjava options, JAVA_OPTS='${JAVA_OPTS}'"
-  echo -e "  --debug\t\t\t\tstart tomcat in debug mode, default is ${DEBUG}"  
+  echo -e "  --debug\t\t\t\tstart tomcat in debug mode, default is '${DEBUG}'"  
   echo -e ""
-  echo -e "  --where=\t\t\t\twhere to deploy: `echo ${TO_WHERE[@]}|tr ' ' ','`"  
+  echo -e "  --where=\t\t\t\twhere to deploy: `echo ${TO_WHERE[@]}|tr ' ' ','`, default is '$TO_WHERE'"  
   echo -e "  --local-war-path=\t\t\tthe local path of the war"
   echo -e "  --ssh-user=\t\t\t\tssh login user, default SSH_USER='${SSH_USER}'"
   echo -e "  --ssh-host=\t\t\t\twhich ssh host to login"
   echo -e "  --docker-user=\t\t\tdocker container user, default DOCKER_USER='${DOCKER_USER}'"
   echo -e "  --docker-host=\t\t\tdocker container name"
   echo -e ""
-  echo -e "  --build\t\t\t\tforce to build, default is $BUILD"
-  echo -e "  --build-dir=\t\t\t\tbuilding in where"
+  echo -e "  --build\t\t\t\tforce to build, default is '${BUILD}'"
+  echo -e "  --build-dir=\t\t\t\tbuilding in where, default is '${BUILD_DIR}'"
   echo -e "  --build-cmd=\t\t\t\twhich building tool to use, default BUILD_CMD='${BUILD_CMD}'"
   echo -e "  --build-options=\t\t\tbuilding options, default BUILD_OPTS='${BUILD_OPTS}'"
   echo -e ""
-  echo -e "  --tomcat-version=\t\t\ttomcat version, default is $VER"
+  echo -e "  --tomcat-version=\t\t\ttomcat version, default is '$VER'"
   echo -e "  --tc-options=\t\t\t\ttc.sh options"
   echo -e ""
-  echo -e "  --listen-on=\t\t\t\tlisten on what address: `echo ${LISTEN_ON[@]}|tr ' ' ','`, etc.,"
+  echo -e "  --listen-on=\t\t\t\tlisten on what address: `echo ${LISTEN_ON[@]}|tr ' ' ','`, etc., default is '$LISTEN_ON'"
   echo -e "  --ip-version=\t\t\t\tprefered IP version: `echo ${IP_VER[@]}|tr ' ' ','`"
-  echo -e "  --stop-timeout=\t\t\twaiting up ${STOP_TIMEOUT} seconds to stop"
+  echo -e "  --stop-timeout=\t\t\tforce stop waiting most ${STOP_TIMEOUT} seconds"
   echo -e "  --start-port=\t\t\t\ttomcat start port, default START_PORT='$START_PORT'"
   echo -e "  --stop-port=\t\t\t\ttomcat stop port, default STOP_PORT='$STOP_PORT'"
   echo -e "  --jpda-port=\t\t\t\ttomcat debug port, default JPDA_PORT='$JPDA_PORT'"
@@ -97,7 +96,7 @@ usage() {
   echo -e "  build\t\t\t\t\tbuild war which will be deployed"
   echo -e "  check-console\t\t\t\tcheck [$(basename $0)'s console] runtime"
   echo -e "  check-pid\t\t\t\tcheck the pid of the tomcat instance"
-  echo -e "  check-exist\t\t\t\tcheck the pid of the tomcat instance"
+  echo -e "  check-exist\t\t\t\tcheck existing of tomcat installation"
 }
 
 
