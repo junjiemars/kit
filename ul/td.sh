@@ -662,12 +662,7 @@ function make_td_shell() {
   [ "${DEBUG[0]}" = "yes" ] && _d_="--debug"
   [ "${BUILD[0]}" = "yes" ] && _b_="--build"
 
-  
-  echo -e "aaa:${DEBUG[@]}:bbb"
-  echo -e "aaa:${BUILD[@]}:bbb"
-
   cat /dev/null > "$tds"
-
   cat << END > "$tds"
 #!/bin/bash
 
