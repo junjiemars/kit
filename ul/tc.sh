@@ -7,7 +7,7 @@
 PLATFORM="`uname -s 2>/dev/null`"
 OPT_RUN="${OPT_RUN:-/opt/run}"
 PREFIX="${PREFIX:-${OPT_RUN%/}/www/tomcat}"
-VERSION="1.1.3"
+VERSION="1.2.0"
 
 VER="${VER:-8.5.8}"
 CATALINA_BASE="${CATALINA_BASE:-${PREFIX%/}/${VER}}"
@@ -45,8 +45,8 @@ usage() {
   echo -e "  --download-only\t\t\tdownload tomcat tgz file only"
   echo -e ""
   echo -e "  --listen-on=\t\t\t\tlisten on what address: `echo ${LISTEN_ON[@]}|tr ' ' ','`, etc.,"
-  echo -e "  --ip-version=\t\t\t\tprefered IP version: `echo ${IP_VER[@]}|tr ' ' ','`"
-  echo -e "  --stop-timeout=\t\t\twaiting up $STOP_TIMEOUT seconds to stop"
+  echo -e "  --ip-version=\t\t\t\tprefered IP protocol version: `echo ${IP_VER[@]}|tr ' ' ','`, default is $IP_VER"
+  echo -e "  --stop-timeout=\t\t\tforce stop waiting most $STOP_TIMEOUT seconds"
   echo -e "  --start-port=\t\t\t\ttomcat start port, default START_PORT='${START_PORT}'"
   echo -e "  --stop-port=\t\t\t\ttomcat stop port, default STOP_PORT='${STOP_PORT}'"
   echo -e "  --jpda-port=\t\t\t\ttomcat debug port, default JPDA_PORT='${JPDA_PORT}'"
@@ -64,19 +64,21 @@ usage() {
   echo -e "  install\t\t\t\tinstall tomcat"
 }
 
+
 function export_catalina_opts() {
-  export CATALINA_OPTS=`echo "${CATALINA_OPTS}" | tr -s " "`
+  export CATALINA_OPTS="`echo ${CATALINA_OPTS} | tr -s ' '`"
 }
 
+
 function parameterize() {
-  local server_xml="${CATALINA_BASE}/conf/server.xml"
+  local base_dir="$1"
+  local server_xml="${base_dir%/}/conf/server.xml"
   echo -e "+ parameterize Tomcat[server.xml] ..."
 
   if [ ! -w "${server_xml}" ]; then
     echo -e "! parameterize Tomcat[server.xml]: file no found  =failed"
     return 1
   fi
-
 
   local stop_soft='<Server port="\${stop\.port}" shutdown="SHUTDOWN">'
   local start_soft='<Connector port="\${start\.port}" protocol="HTTP\/1\.[10]"'
@@ -106,20 +108,23 @@ function parameterize() {
   return 0
 }
 
+
 function export_java_opts() {
   JAVA_OPTS="-Dstart.port=${START_PORT}      \
              -Dstop.port=${STOP_PORT}        \
              -Dlisten.address=${LISTEN_ON}   \
              ${JAVA_OPTS}"
-  export JAVA_OPTS=`echo "${JAVA_OPTS}" | tr -s " "`
+  export JAVA_OPTS="`echo ${JAVA_OPTS} | tr -s ' '`"
 }
+
 
 function export_pid_var() {
   export CATALINA_PID="${CATALINA_PID:-${CATALINA_BASE%/}/logs/pid}"
 }
 
+
 function check_env() {
-  local pid=`get_ip`
+  local pid="`get_pid`"
   local run="Stopped"
   local t=
 
@@ -142,8 +147,9 @@ function check_env() {
   fi
 }
 
+
 function check_pid() {
-  local pid="`get_ip`"
+  local pid="`get_pid`"
   local t=
 
   echo "$pid"
@@ -153,6 +159,7 @@ function check_pid() {
     return 1
   fi
 }
+
 
 function check_exist() {
   ${CATALINA_BIN} version &>/dev/null
@@ -186,6 +193,7 @@ function verify_tgz() {
   fi
 }
 
+
 function download_file() {
   local d="$1"
   local lf="$2"
@@ -207,6 +215,7 @@ function download_file() {
 
   return $t
 }
+
 
 function download_tomcat() {
   local d="$1"
@@ -251,12 +260,14 @@ function tomcat_tgz_sha1() {
   echo "$sha1"
 }
 
+
 function tomcat_tgz_path() {
   local h="$1"
   local v="$2"
   local p="${h%/}/`tomcat_tgz $v`"
   echo "$p"
 }
+
 
 function tomcat_tgz_sha1_path() {
   local h="$1"
@@ -344,7 +355,8 @@ function check_catalina_bin() {
   fi
 }
 
-function get_ip() {
+
+function get_pid() {
 	if [ -f "${CATALINA_PID}" ]; then
 		cat "${CATALINA_PID}" 2>/dev/null
 	else
@@ -352,8 +364,9 @@ function get_ip() {
 	fi
 }
 
+
 function stop_tomcat() {
-  local pid="`get_ip`"
+  local pid="`get_pid`"
   local t=
   echo -e "+ stop Tomcat[$pid] ..."
   "${CATALINA_BIN}" stop "${STOP_TIMEOUT}" "${STOP_FORCE}"
@@ -366,9 +379,11 @@ function stop_tomcat() {
   return $t
 }
 
+
 function start_tomcat() {
   "${CATALINA_BIN}" start
 }
+
 
 function debug_tomcat() {
   local t=
@@ -483,7 +498,7 @@ retval=
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
   parameterize)
-    parameterize
+    parameterize "$CATALINA_BASE"
     ;;
   check-env)
     check_env
@@ -495,7 +510,7 @@ case "$command" in
     check_exist
     ;;
   start)
-    parameterize
+    parameterize "$CATALINA_BASE"
     retval=$?
     [ 0 -eq $retval ] || exit $retval
     check_catalina_bin
@@ -512,7 +527,7 @@ case "$command" in
     stop_tomcat
     ;;
   debug)
-    parameterize
+    parameterize "$CATALINA_BASE"
     retval=$?
     [ 0 -eq $retval ] || exit $retval
     check_catalina_bin
