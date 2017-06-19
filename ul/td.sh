@@ -414,7 +414,7 @@ function build_war() {
   local lwp="$1"
   local cmd=
 
-  echo -e "+ build L[$lwp}] ..."
+  echo -e "+ build L[$lwp] ..."
   case "$BUILD_CMD" in
     gradlew*)
       cmd="${BUILD_DIR%/}/$BUILD_CMD"
@@ -436,9 +436,9 @@ function build_war() {
   cd "$BUILD_DIR" && "$cmd" ${BUILD_OPTS}
   local t=$?
   if [ 0 -eq $t ]; then
-    echo -e "# build L[$lwp}]  =succeed"
+    echo -e "# build L[$lwp]  =succeed"
   else
-    echo -e "! build L[$lwp}]  =failed"
+    echo -e "! build L[$lwp]  =failed"
   fi
   return $t
 }
