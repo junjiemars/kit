@@ -435,12 +435,12 @@ function build_war() {
 
   cd "$BUILD_DIR" && "$cmd" ${BUILD_OPTS}
   local t=$?
-  if [ 0 -eq $t ]; then
+  if [ 0 -eq $t -a -f "$lwp" ]; then
     echo -e "# build L[$lwp]  =succeed"
-  else
-    echo -e "! build L[$lwp]  =failed"
+    return 0
   fi
-  return $t
+  echo -e "! build L[$lwp]  =failed"
+  return 1
 }
 
 
@@ -760,6 +760,7 @@ command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
   build)
     build_war "$L_WAR_PATH"
+
     ;;
   start)
     if [ -z "$L_WAR_PATH" ]; then
