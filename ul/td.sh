@@ -17,7 +17,7 @@ R_PREFIX="${R_PREFIX:-${R_OPT_RUN%/}/www/tomcat}"
 VERSION="1.2.1"
 
 JAVA_OPTS=
-DEBUG=("no" "yes")
+DEBUG=(${DEBUG:+$DEBUG} "no" "yes")
 
 VER=${VER:-"8.5.8"}
 TC_OPTS=
@@ -39,7 +39,7 @@ L_WAR_PATH="${L_WAR_PATH}"
 R_WAR_PATH=
 R_TC_PATH=
 
-BUILD=("no" "yes")
+BUILD=(${BUILD:+$BUILD} "no" "yes")
 BUILD_CMD=("gradlew" "gradle" "ant" "mvn")
 BUILD_DIR="${BUILD_DIR:-.}"
 BUILD_OPTS="${BUILD_OPTS:-build}"
@@ -656,6 +656,15 @@ function make_td_shell() {
   local tds="td_$(basename $PWD)_shell.sh"
   local tdp="$(dirname $0)"
   local td="${tdp%/}/$(basename $0)"
+  local _d_=
+  local _b_=
+
+  [ "${DEBUG[0]}" = "yes" ] && _d_="--debug"
+  [ "${BUILD[0]}" = "yes" ] && _b_="--build"
+
+  
+  echo -e "aaa:${DEBUG[@]}:bbb"
+  echo -e "aaa:${BUILD[@]}:bbb"
 
   cat /dev/null > "$tds"
 
@@ -669,13 +678,13 @@ function make_td_shell() {
 L_PREFIX="\${L_PREIFX:-$L_PREFIX}"
 VER="\${VER:-$VER}"
 JAVA_OPTS="\${JAVA_OPTS:-$JAVA_OPTS}"
-DEBUG="\${DEBUG:-$DEBUG}"
+DEBUG="\${DEBUG:-${_d_}}"
 L_WAR_PATH="\${L_WAR_PATH:-$L_WAR_PATH}"
 SSH_USER="\${SSH_USER:-$SSH_USER}"
 SSH_HOST="\${SSH_HOST:-$SSH_HOST}"
 DOCKER_USER="\${DOCKER_USER:-$DOCKER_USER}"
 DOCKER_HOST="\${DOCKER_HOST:-$DOCKER_HOST}"
-BUILD="\${BUILD:-$BUILD}"
+BUILD="\${BUILD:-${_b_}}"
 BUILD_DIR="\${BUILD_DIR:-$BUILD_DIR}"
 BUILD_CMD="\${BUILD_CMD:-$BUILD_CMD}"
 BUILD_OPTS="\${BUILD_OPTS:-$BUILD_OPTS}"
@@ -690,7 +699,7 @@ function download_td_sh() {
   local t=
 
   if [ ! -f "\$bin" ]; then
-    curl -qL -O\$bin https://raw.githubusercontent.com/junjiemars/kit/master/ul/\$bin
+    curl -qL -O\$bin "https://raw.githubusercontent.com/junjiemars/kit/master/ul/\$bin"
     t=\$?
     [ 0 -eq \$t ] || return \$t
 
@@ -699,20 +708,20 @@ function download_td_sh() {
   return 0
 }
 
+echo -e $xyz
 td="td.sh"
 download_td_sh "\$td"
 
 args="\${PREFIX:+--prefix=\$PREIFX} \n
   \${VER:+--tomcat-version=\$VER} \n
-  \${TC_OPTS:+--tc-options=\$TC_OPTS} \n
   \${JAVA_OPTS:+--java-options=\$JAVA_OPTS} \n
-  \${DEBUG:+--debug} \n
+  \${DEBUG:+\$DEBUG} \n
   \${L_WAR_PATH:+--local-war-path=\$L_WAR_PATH} \n
   \${SSH_USER:+--ssh-user=\$SSH_USER} \n
   \${SSH_HOST:+--ssh-host=\$SSH_HOST} \n
   \${DOCKER_USER:+--docker-user=\$DOCKER_USER} \n
   \${DOCKER_HOST:+--docker-host=\$DOCKER_HOST} \n
-  \${BUILD:+--build} \n
+  \${BUILD:+\$BUILD} \n
   \${BUILD_DIR:+--build-dir=\$BUILD_DIR} \n
   \${BUILD_CMD:+--build-cmd=\$BUILD_CMD} \n
   \${BUILD_OPTS:+--build-options=\$BUILD_OPTS} \n
@@ -722,7 +731,7 @@ args="\${PREFIX:+--prefix=\$PREIFX} \n
   \${JPDA_PORT:+--jpda-port=\$JPDA_PORT}"
 
   args="\$(echo -e \$args | tr '\\n' ' ' | tr -s ' ')"
-  echo -e "+ parsing options and arguments ...
+  echo -e "+ parsing options and arguments ..."
   echo -e "\$args"
   echo -e "# parsing options and arguments ...done"
 \$td \$args \$@
