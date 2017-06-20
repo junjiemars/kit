@@ -686,8 +686,11 @@ td="td.sh"
 download_td_sh "\$td"
 
 ./\$td ${L_PREFIX:+--local-prefix=$L_PREFIX} \\
+	${R_PREFIX:+--remote-prefix=$R_PREFIX} \\
 	${VER:+--tomcat-version=$VER} \\
 	${L_WAR_PATH:+--local-war-path=$L_WAR_PATH}	\\
+	${LISTEN_ON:+--listen-on=$LISTEN_ON} \\
+	${IP_VER:+--ip-version=$IP_VER} \\
 	${SSH_USER:+--ssh-user=$SSH_USER} \\
 	${SSH_HOST:+--ssh-host=$SSH_HOST} \\
 	${DOCKER_USER:+--docker-user=$DOCKER_USER} \\
