@@ -436,11 +436,12 @@ function build_war() {
 
   cd "$BUILD_DIR" && "$cmd" ${BUILD_OPTS}
   local t=$?
+  
   if [ 0 -eq $t -a -f "$lwp" ]; then
-    echo -e "# build L[$lwp]  =succeed"
+    echo -e "# build L[$lwp] via [$cmd:${BUILD_OPTS}]  =succeed"
     return 0
   fi
-  echo -e "! build L[$lwp]  =failed"
+  echo -e "! build L[$lwp] via [$cmd:${BUILD_OPTS}]  =failed"
   return 1
 }
 
@@ -497,7 +498,8 @@ function transport_war() {
       fi
       ;;
     *)
-      t=0
+      cp "$lf" "$rf"
+      t=$?
      ;; 
   esac
   return $t
