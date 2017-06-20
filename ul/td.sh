@@ -685,28 +685,22 @@ function download_td_sh() {
 td="td.sh"
 download_td_sh "\$td"
 
-
-L_PREFIX="\${L_PREIFX:-$L_PREFIX}" \\
-VER="\${VER:-$VER}" \\
-JAVA_OPTS="\${JAVA_OPTS:-$JAVA_OPTS}" \\
-DEBUG="\${DEBUG:-$DEBUG}" \\
-L_WAR_PATH="\${L_WAR_PATH:-$L_WAR_PATH}" \\
-SSH_USER="\${SSH_USER:-$SSH_USER}" \\
-SSH_HOST="\${SSH_HOST:-$SSH_HOST}" \\
-DOCKER_USER="\${DOCKER_USER:-$DOCKER_USER}" \\
-DOCKER_HOST="\${DOCKER_HOST:-$DOCKER_HOST}" \\
-BUILD="\${BUILD:-$BUILD}" \\
-BUILD_DIR="\${BUILD_DIR:-$BUILD_DIR}" \\
-BUILD_CMD="\${BUILD_CMD:-$BUILD_CMD}" \\
-BUILD_OPTS="\${BUILD_OPTS:-$BUILD_OPTS}" \\
-STOP_TIMEOUT="\${STOP_TIMEOUT:-$STOP_TIMEOUT}" \\
-START_PORT="\${START_PORT:-$START_PORT}" \\
-STOP_PORT="\${STOP_PORT:-$STOP_PORT}" \\
-JPDA_PORT="\${JPDA_PORT:-$JPDA_PORT}" \\
-./\$td \$args \$@
+./\$td ${L_PREFIX:+--local-prefix=$L_PREFIX} \\
+	${VER:+--tomcat-version=$VER} \\
+	${L_WAR_PATH:+--local-war-path=$L_WAR_PATH}	\\
+	${SSH_USER:+--ssh-user=$SSH_USER} \\
+	${SSH_HOST:+--ssh-host=$SSH_HOST} \\
+	${DOCKER_USER:+--docker-user=$DOCKER_USER} \\
+	${DOCKER_HOST:+--docker-host=$DOCKER_HOST} \\
+	${BUILD_DIR:+--build-dir=$BUILD_DIR} \\
+	${BUILD_CMD:+--build-cmd=$BUILD_CMD} \\
+	${STOP_TIMEOUT:+--stop-timeout=$STOP_TIMEOUT} \\
+	${START_PORT:+--start-port=$START_PORT} \\
+	${STOP_PORT:+--stop-port=$STOP_PORT} \\
+	${JPDA_PORT:+--jpda-port=$JPDA_PORT} \\
+	\$@ 
 END
 
-#  \${BUILD_OPTS:+--build-options='\$BUILD_OPTS'} \n
   chmod u+x "${PWD%/}/$tds"
 }
 
