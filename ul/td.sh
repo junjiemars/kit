@@ -16,7 +16,7 @@ R_PREFIX="${R_PREFIX:-${R_OPT_RUN%/}/www/tomcat}"
 
 VERSION="1.2.1"
 
-JAVA_OPTS=
+JAVA_OPTS="${JAVA_OPTS}"
 DEBUG=(${DEBUG:+$DEBUG} "no" "yes")
 
 VER=${VER:-"8.5.8"}
