@@ -109,6 +109,13 @@ export_java_opts() {
 }
 
 
+function echo_opts() {
+	local name="$1"
+	local opts="${@:2}"
+	echo "@|1[$name]:$opts"
+}
+
+
 function on_win32() {
   case "$PLATFORM" in
     MSYS_NT*)
@@ -625,10 +632,10 @@ function control_tomcat() {
   local t=
 
   echo -e "+ control Tomcat => $wa[$cmd] ..."
+	echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 
   case "$w" in
     ssh)
-			echo "@@${JAVA_OPTS}"
       tc="`remote_bin_path $TC_SH`"
       ssh `ssh_login_id` $tc $cmd                    \
           --prefix=$R_PREFIX                         \
@@ -642,7 +649,6 @@ function control_tomcat() {
       t=$?
       ;;
     docker)
-			echo "@@${JAVA_OPTS}"
       if `on_win32`; then
         local cmd_args="$cmd                           \
                --prefix=$R_PREFIX                      \
@@ -671,12 +677,11 @@ function control_tomcat() {
                --start-port=$START_PORT                \
                --stop-port=$STOP_PORT                  \
                --stop-timeout=$STOP_TIMEOUT            \
-							 --java-options=\'"${JAVA_OPTS}"\'           
+							 --java-options="${JAVA_OPTS}"           
         t=$?
       fi
       ;;
     *)
-			echo "@@${JAVA_OPTS}"
       tc="`local_bin_path $TC_SH`"
       $tc $cmd                                       \
           --prefix=$L_PREFIX                         \
@@ -686,8 +691,7 @@ function control_tomcat() {
           --start-port=$START_PORT                   \
           --stop-port=$STOP_PORT                     \
           --stop-timeout=$STOP_TIMEOUT               \
-					--java-options=\'"${JAVA_OPTS}"\'           
-
+					--java-options="${JAVA_OPTS}"           
       t=$?
       ;;
   esac
@@ -853,9 +857,9 @@ if [ -n "$where" ]; then
   fi
 fi
 
-java_opts="${java_opts:+${java_opts} ${JAVA_OPTS}}"
-echo "@@${java_opts}"
-export_java_opts "$java_opts"
+echo_opts "java_opts" "${java_opts}"
+export_java_opts "${java_opts}"
+echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 
 retval=0
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"

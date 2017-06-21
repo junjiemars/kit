@@ -110,13 +110,18 @@ function parameterize() {
 
 
 function export_java_opts() {
-	local opts="$@"
-  opts="-Dstart.port=${START_PORT}      \
-				-Dstop.port=${STOP_PORT}        \
-				-Dlisten.address=${LISTEN_ON}   \
-        ${opts}"
-	opts="`echo $opts | tr -s ' '`"
-  export JAVA_OPTS="$opts"
+  local opts="-Dstart.port=${START_PORT}      \
+							-Dstop.port=${STOP_PORT}        \
+							-Dlisten.address=${LISTEN_ON}"
+	opts="$(echo $opts " $@" | tr -s ' ')"
+  export JAVA_OPTS="${opts}"
+}
+
+
+function echo_opts() {
+	local name="$1"
+	local opts="${@:2}"
+	echo "@|0[$name]:$opts"
 }
 
 
@@ -488,9 +493,11 @@ if [ -n "$ip_ver" ]; then
 fi
 
 
-java_opts="${java_opts:+${java_opts} }${JAVA_OPTS}"
 export_pid_var
+
+echo_opts "java_opts" "${java_opts}"
 export_java_opts "$java_opts"
+echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 
 retval=
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
