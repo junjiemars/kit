@@ -481,6 +481,48 @@ function transport_file() {
 }
 
 
+function delete_war_dir() {
+  local lf="$1"
+  local w="$2"
+  local wa="`where_abbrev $w`"
+  local rf="`remote_war_path`"
+	local lfn="`basename $lf`"
+	local rd="`dirname $rf`"
+	local rdw="${rd%/}/${lfn%.*}"
+  local t=
+
+	echo -e "+ delete $wa[$rdw] ..."
+
+  case "$w" in
+    ssh)
+      file_eq "$lf" "$rf" "$w"
+      t=$?
+      if [ 0 -ne $t ]; then
+        transport_file "$lf" "`dirname $rf`" "$w"
+        t=$?
+      fi
+      ;;
+		docker)
+			;;
+    *)
+			if [ -d "$rdw" ]; then
+				rm -r "$rdw"
+      	t=$?
+			else
+				t=0
+			fi
+     ;; 
+  esac
+
+	if [ 0 -eq $t ]; then
+		echo -e "# delete $wa[$rdw]  =succeed"
+	else
+		echo -e "! delete $wa[$rdw]  =failed"
+	fi
+  return $t
+}
+
+
 function transport_war() {
   local lf="$1"
   local w="$2"
@@ -498,6 +540,7 @@ function transport_war() {
       fi
       ;;
     *)
+			delete_war_dir "$lf" "$w"
       transport_file "$lf" "`dirname $rf`" "$w"
       t=$?
      ;; 
