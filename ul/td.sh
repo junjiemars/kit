@@ -703,7 +703,7 @@ download_td_sh "\$td"
 	${START_PORT:+--start-port=${START_PORT}} \\
 	${STOP_PORT:+--stop-port=${STOP_PORT}} \\
 	${JPDA_PORT:+--jpda-port=${JPDA_PORT}} \\
-	\$@ 
+	"\$@"
 END
 
   chmod u+x "${PWD%/}/$tds"
