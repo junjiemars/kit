@@ -105,7 +105,7 @@ usage() {
 export_java_opts() {
   JAVA_OPTS=" \
              ${JAVA_OPTS}"
-  export JAVA_OPTS=`echo "${JAVA_OPTS}" | tr -s " "`
+  export JAVA_OPTS="`echo ${JAVA_OPTS} | tr -s ' '`"
 }
 
 
@@ -594,7 +594,7 @@ function control_tomcat() {
           --start-port=$START_PORT                   \
           --stop-port=$STOP_PORT                     \
           --stop-timeout=$STOP_TIMEOUT               \
-          ${opts}          
+					--java-options=\'"${JAVA_OPTS}"\'           
       t=$?
       ;;
     docker)
@@ -606,8 +606,8 @@ function control_tomcat() {
                --ip-version=$IP_VER                    \
                --start-port=$START_PORT                \
                --stop-port=$STOP_PORT                  \
-               --stop-timeout=$STOP_TIMEOUT            \
-               ${opts}"
+               --stop-timeout=$STOP_TIMEOUAT           \
+							 --java-options=\'"${JAVA_OPTS}"\'"           
         cmd_args="`echo $cmd_args | tr -s ' '`"
         gen_docker_shell_bat "`remote_bin_path $TC_SH`" "$cmd_args"
         t=$?
@@ -616,6 +616,7 @@ function control_tomcat() {
           let t=$t+$?
         fi
       else
+				echo "@@${JAVA_OPTS}"
         tc="`remote_bin_path $TC_SH`"
         docker `docker_login_id`                       \
                $tc $cmd                                \
@@ -626,7 +627,7 @@ function control_tomcat() {
                --start-port=$START_PORT                \
                --stop-port=$STOP_PORT                  \
                --stop-timeout=$STOP_TIMEOUT            \
-               ${opts}
+							 --java-options=\'"${JAVA_OPTS}"\'           
         t=$?
       fi
       ;;
@@ -640,7 +641,8 @@ function control_tomcat() {
           --start-port=$START_PORT                   \
           --stop-port=$STOP_PORT                     \
           --stop-timeout=$STOP_TIMEOUT               \
-          ${opts}
+					--java-options=\'"${JAVA_OPTS}"\'           
+
       t=$?
       ;;
   esac
@@ -685,22 +687,22 @@ function download_td_sh() {
 td="td.sh"
 download_td_sh "\$td"
 
-./\$td ${L_PREFIX:+--local-prefix=$L_PREFIX} \\
-	${R_PREFIX:+--remote-prefix=$R_PREFIX} \\
-	${VER:+--tomcat-version=$VER} \\
-	${L_WAR_PATH:+--local-war-path=$L_WAR_PATH}	\\
-	${LISTEN_ON:+--listen-on=$LISTEN_ON} \\
-	${IP_VER:+--ip-version=$IP_VER} \\
-	${SSH_USER:+--ssh-user=$SSH_USER} \\
-	${SSH_HOST:+--ssh-host=$SSH_HOST} \\
-	${DOCKER_USER:+--docker-user=$DOCKER_USER} \\
-	${DOCKER_HOST:+--docker-host=$DOCKER_HOST} \\
-	${BUILD_DIR:+--build-dir=$BUILD_DIR} \\
-	${BUILD_CMD:+--build-cmd=$BUILD_CMD} \\
-	${STOP_TIMEOUT:+--stop-timeout=$STOP_TIMEOUT} \\
-	${START_PORT:+--start-port=$START_PORT} \\
-	${STOP_PORT:+--stop-port=$STOP_PORT} \\
-	${JPDA_PORT:+--jpda-port=$JPDA_PORT} \\
+./\$td ${L_PREFIX:+--local-prefix=${L_PREFIX}} \\
+	${R_PREFIX:+--remote-prefix=${R_PREFIX}} \\
+	${VER:+--tomcat-version=${VER}} \\
+	${L_WAR_PATH:+--local-war-path=${L_WAR_PATH}}	\\
+	${LISTEN_ON:+--listen-on=${LISTEN_ON}} \\
+	${IP_VER:+--ip-version=${IP_VER}} \\
+	${SSH_USER:+--ssh-user=${SSH_USER}} \\
+	${SSH_HOST:+--ssh-host=${SSH_HOST}} \\
+	${DOCKER_USER:+--docker-user=${DOCKER_USER}} \\
+	${DOCKER_HOST:+--docker-host=${DOCKER_HOST}} \\
+	${BUILD_DIR:+--build-dir=${BUILD_DIR}} \\
+	${BUILD_CMD:+--build-cmd=${BUILD_CMD}} \\
+	${STOP_TIMEOUT:+--stop-timeout=${STOP_TIMEOUT}} \\
+	${START_PORT:+--start-port=${START_PORT}} \\
+	${STOP_PORT:+--stop-port=${STOP_PORT}} \\
+	${JPDA_PORT:+--jpda-port=${JPDA_PORT}} \\
 	\$@ 
 END
 
@@ -781,10 +783,6 @@ if [ -n "$tc_opts" ]; then
   TC_OPTS="${TC_OPTS:+$TC_OPTS }${tc_opts}"
 fi
 
-if [ -n "$java_opts" ]; then
-  JAVA_OPTS="${JAVA_OPTS:+$JAVA_OPTS }${java_opts}"
-fi
-
 if [ -n "$build_dir" ]; then
   BUILD_DIR="`eval echo $build_dir`"
 fi
@@ -810,6 +808,8 @@ if [ -n "$where" ]; then
   fi
 fi
 
+JAVA_OPTS="${java_opts:+${java_opts} ${JAVA_OPTS}}"
+echo "@@${JAVA_OPTS}"
 export_java_opts
 
 retval=0
