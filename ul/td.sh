@@ -103,9 +103,9 @@ usage() {
 
 
 export_java_opts() {
-  JAVA_OPTS=" \
-             ${JAVA_OPTS}"
-  export JAVA_OPTS="`echo ${JAVA_OPTS} | tr -s ' '`"
+	local opts="$@"
+	opts="`echo $opts | tr -s ' '`"
+  export JAVA_OPTS="$opts"
 }
 
 
@@ -585,6 +585,7 @@ function control_tomcat() {
 
   case "$w" in
     ssh)
+			echo "@@${JAVA_OPTS}"
       tc="`remote_bin_path $TC_SH`"
       ssh `ssh_login_id` $tc $cmd                    \
           --prefix=$R_PREFIX                         \
@@ -598,6 +599,7 @@ function control_tomcat() {
       t=$?
       ;;
     docker)
+			echo "@@${JAVA_OPTS}"
       if `on_win32`; then
         local cmd_args="$cmd                           \
                --prefix=$R_PREFIX                      \
@@ -616,7 +618,6 @@ function control_tomcat() {
           let t=$t+$?
         fi
       else
-				echo "@@${JAVA_OPTS}"
         tc="`remote_bin_path $TC_SH`"
         docker `docker_login_id`                       \
                $tc $cmd                                \
@@ -632,6 +633,7 @@ function control_tomcat() {
       fi
       ;;
     *)
+			echo "@@${JAVA_OPTS}"
       tc="`local_bin_path $TC_SH`"
       $tc $cmd                                       \
           --prefix=$L_PREFIX                         \
@@ -808,9 +810,9 @@ if [ -n "$where" ]; then
   fi
 fi
 
-JAVA_OPTS="${java_opts:+${java_opts} ${JAVA_OPTS}}"
-echo "@@${JAVA_OPTS}"
-export_java_opts
+java_opts="${java_opts:+${java_opts} ${JAVA_OPTS}}"
+echo "@@${java_opts}"
+export_java_opts "$java_opts"
 
 retval=0
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
