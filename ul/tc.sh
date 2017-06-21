@@ -486,11 +486,7 @@ if [ -n "$ip_ver" ]; then
 fi
 
 
-if [ -n "$java_opts" ]; then
-  JAVA_OPTS="${JAVA_OPTS:+$JAVA_OPTS }${java_opts}"
-fi
-
-
+JAVA_OPTS="${java_opts:+${java_opts} }${JAVA_OPTS}"
 export_pid_var
 export_java_opts
 
