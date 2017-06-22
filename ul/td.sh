@@ -510,6 +510,16 @@ function delete_war_dir() {
       fi
       ;;
 		docker)
+			if `on_win32`; then
+				echo "@@:unimplemented"
+			else
+				docker `docker_login_id` test -d "$rdw"
+				t=$?
+				if [ 0 -eq $t ]; then
+					docker `docker_login_id` rm -r "$rdw"
+					t=$?
+				fi
+			fi
 			;;
     *)
 			if [ -d "$rdw" ]; then
@@ -537,6 +547,9 @@ function transport_war() {
   local rf="`remote_war_path`"
   local t=
 
+
+	delete_war_dir "$lf" "$w"
+
   case "$w" in
     ssh|docker)
       file_eq "$lf" "$rf" "$w"
@@ -547,7 +560,6 @@ function transport_war() {
       fi
       ;;
     *)
-			delete_war_dir "$lf" "$w"
       transport_file "$lf" "`dirname $rf`" "$w"
       t=$?
      ;; 
