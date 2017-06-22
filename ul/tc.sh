@@ -112,7 +112,8 @@ function parameterize() {
 function export_java_opts() {
   local opts="-Dstart.port=${START_PORT}      \
 							-Dstop.port=${STOP_PORT}        \
-							-Dlisten.address=${LISTEN_ON}"
+							-Dlisten.address=${LISTEN_ON}   \
+							${IP_OPTS[$IP_IDX]}"
 	opts="$(echo $opts " $@" | tr -s ' ')"
   export JAVA_OPTS="${opts}"
 }
@@ -485,7 +486,6 @@ if [ -n "$ip_ver" ]; then
     echo -e "! --ip-version=$ip_ver  =invalid"
     exit 1
   fi
-  java_opts="${java_opts:+$java_opts }${IP_OPTS[$IP_IDX]}"
 fi
 
 
