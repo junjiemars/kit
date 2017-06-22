@@ -474,10 +474,6 @@ if [ -n "$catalina_opts" ]; then
   CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }${catalina_opts}"
 fi
 
-if [ "$ipv4" = "yes" ]; then
-  JAVA_OPTS="${JAVA_OPTS:+$JAVA_OPTS }${IP4_OPT}"
-fi
-
 if [ -n "$ip_ver" ]; then
   for i in "${!IP_VER[@]}"; do
     if [ "$ip_ver" = "${IP_VER[$i]}" ]; then
@@ -489,12 +485,11 @@ if [ -n "$ip_ver" ]; then
     echo -e "! --ip-version=$ip_ver  =invalid"
     exit 1
   fi
-  JAVA_OPTS="${JAVA_OPTS:+$JAVA_OPTS }${IP_OPTS[$IP_IDX]}"
+  java_opts="${java_opts:+$java_opts }${IP_OPTS[$IP_IDX]}"
 fi
 
 
 export_pid_var
-
 echo_opts "java_opts" "${java_opts}"
 export_java_opts "$java_opts"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
