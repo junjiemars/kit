@@ -64,7 +64,7 @@ fi
 
 # java home
 case "${PLATFORM}" in
-  MSYS_NT*)
+  MSYS_NT*|MINGW*)
     if [ -n "${JAVA_HOME}" ]; then
       java_path=$(to_posix_path "${JAVA_HOME}")
       append_path "${java_path}"

@@ -6,7 +6,7 @@
 
 PLATFORM=`uname -s 2>/dev/null`
 case "${PLATFORM}" in
-  MSYS_NT*)
+  MSYS_NT*|MINGW*)
     if [ -d "/d/" ]; then
       [ -d "/d/opt" ] || mkdir -p "/d/opt"
       PREFIX="${PREFIX:-/d/opt}"
