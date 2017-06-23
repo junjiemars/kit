@@ -113,8 +113,8 @@ function export_java_opts() {
   local opts="-Dstart.port=${START_PORT}      \
 							-Dstop.port=${STOP_PORT}        \
 							-Dlisten.address=${LISTEN_ON}   \
-							${IP_OPTS[$IP_IDX]}"
-	opts="$(echo $opts " $@" | tr -s ' ')"
+							${IP_OPTS[$IP_IDX]} "
+	opts="$(echo $opts $@ | tr -s ' ')"
   export JAVA_OPTS="${opts}"
 }
 

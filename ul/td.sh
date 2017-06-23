@@ -103,8 +103,7 @@ usage() {
 
 
 export_java_opts() {
-	local opts="$@"
-	opts="`echo $opts | tr -s ' '`"
+	local opts="`echo $@ | tr -s ' '`"
   export JAVA_OPTS="$opts"
 }
 
@@ -511,7 +510,20 @@ function delete_war_dir() {
       ;;
 		docker)
 			if `on_win32`; then
-				echo "@@:unimplemented"
+        gen_docker_shell_bat "test" "-d ${rdw}"
+        t=$?
+        if [ 0 -eq $t ]; then
+          ./$TD_SHELL_BAT
+          t=$?
+          if [ 0 -eq $t ]; then
+            gen_docker_shell_bat "rm" "-r ${rdw}"
+            t=$?
+            if [ 0 -eq $t ]; then
+              ./$TD_SHELL_BAT
+              t=$t
+            fi
+          fi
+        fi
 			else
 				docker `docker_login_id` test -d "$rdw"
 				t=$?
@@ -670,7 +682,7 @@ function control_tomcat() {
                --start-port=$START_PORT                \
                --stop-port=$STOP_PORT                  \
                --stop-timeout=$STOP_TIMEOUAT           \
-							 --java-options=\'"${JAVA_OPTS}"\'"           
+							 --java-options=\"${JAVA_OPTS}\""           
         cmd_args="`echo $cmd_args | tr -s ' '`"
         gen_docker_shell_bat "`remote_bin_path $TC_SH`" "$cmd_args"
         t=$?
