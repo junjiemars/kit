@@ -25,7 +25,7 @@ save_as() {
   local f="$HOME/$1"
 	local ori=$f.ori
   case "${PLATFORM}" in
-    MSYS_NT*) 
+    MSYS_NT*|MINGW*) 
       local find='/usr/bin/find' 
       local sort='/usr/bin/sort'
       ;;
@@ -162,7 +162,7 @@ ${curl} ${GITHUB_H}/ul/.bash_paths -o $HOME/.bash_paths
 ${curl} ${GITHUB_H}/ul/.bash_profile -o $HOME/.bash_profile
 
 case ${PLATFORM} in
-  MSYS_NT*)
+  MSYS_NT*|MINGW*)
     ${curl} ${GITHUB_H}/win/.bashrc -o $HOME/.bashrc
     ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/_vimrc && \
       cp $HOME/_vimrc $HOME/.vimrc
@@ -192,7 +192,7 @@ case ${PLATFORM} in
   Linux)
     check_linux_cc_include $HOME/.cc-inc.list $HOME/.vimrc
     ;;
-  MSYS_NT*)
+  MSYS_NT*|MINGW*)
     check_win_cc_include $HOME/.cc-inc.list $HOME/.vimrc $HOME/.vs-inc.bat
     ;;
   *)

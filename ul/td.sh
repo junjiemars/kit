@@ -117,7 +117,7 @@ function echo_opts() {
 
 function on_win32() {
   case "$PLATFORM" in
-    MSYS_NT*)
+    MSYS_NT*|MINGW*)
       return 0
       ;;
     *)

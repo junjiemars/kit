@@ -38,7 +38,7 @@ c_tags() {
 	if [ -f "$inc_file" ]; then 
     local cc_list=
 		case $PLATFORM in
-			MSYS_NT*)
+			MSYS_NT*|MINGW*)
         cc_list="`cat $inc_file | tr '\r\n' ';' | tr -d \'`"
 				;;
 			*)

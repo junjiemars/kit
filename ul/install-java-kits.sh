@@ -5,18 +5,28 @@
 #------------------------------------------------
 
 PLATFORM=`uname -s 2>/dev/null`
-case "${PLATFORM}" in
-  MSYS_NT*)
-    if [ -d "/d/" ]; then
-      PREFIX="${PREFIX:-/d/opt}"
-    else
-      PREFIX="${PREFIX:-/c/opt}"
-    fi
-    ;;
-  *)
-    PREFIX="${PREFIX:-/opt}"
-    ;;
-esac
+
+function on_windows_nt() {
+  case "$PLATFORM" in
+    MSYS_NT*|MINGW*)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+if `on_windows_nt`; then
+  if [ -d "/d/" ]; then
+    PREFIX="${PREFIX:-/d/opt}"
+  else
+    PREFIX="${PREFIX:-/c/opt}"
+  fi
+else
+  PREFIX="${PREFIX:-/opt}"
+fi
+
 
 RUN_DIR="${RUN_DIR:-${PREFIX}/run}"
 OPEN_DIR="${OPEN_DIR:-${PREFIX}/open}"
@@ -190,14 +200,13 @@ install_lein() {
       chmod u+x "${bin_dir}/lein"
   fi
 
-  case "${PLATFORM}" in
-    MSYS_NT*)
-      if [ ! -f "${bin_dir}/lein.bat" ]; then
-        curl $SOCKS -fsSLo "${bin_dir}/lein.bat" -C - "${lein_url}.bat" && \
-          chmod u+x "${bin_dir}/lein.bat"
-      fi
-      ;;
-  esac
+  if `on_windows_nt`; then
+    if [ ! -f "${bin_dir}/lein.bat" ]; then
+      curl $SOCKS -fsSLo "${bin_dir}/lein.bat" \
+           -C - "${lein_url}.bat" \
+        && chmod u+x "${bin_dir}/lein.bat"
+    fi
+  fi
 }
 
 install_clojure() {
@@ -274,15 +283,12 @@ install_gradle() {
 	fi
   
   if `${bin_dir}/bin/gradle -v &>/dev/null`; then
-		case "${PLATFORM}" in
-			MSYS_NT*)
-				append_paths "${bin_dir}/bin" "gradle"
-			;;
-			*)
-				[ -L "${bin_ln}" ] && rm "${bin_ln}"
-				ln -s "${bin_dir}/bin/gradle" "${bin_ln}"
-			;;
-		esac
+    if `on_windows_nt`; then
+      append_paths "${bin_dir}/bin" "gradle"
+    else
+			[ -L "${bin_ln}" ] && rm "${bin_ln}"
+			ln -s "${bin_dir}/bin/gradle" "${bin_ln}"
+    fi
     return 0
   fi
  
@@ -306,15 +312,12 @@ install_sbt() {
 	fi
   
   if `${bin_dir}/bin/sbt </dev/null &>/dev/null`; then
-		case "${PLATFORM}" in
-			MSYS_NT*)
-				append_paths "${bin_dir}/bin" "sbt"
-			;;
-			*)
-				[ -L "${bin_ln}" ] && rm "${bin_ln}"
-				ln -s "${bin_dir}/bin/sbt" "${bin_ln}"
-			;;
-		esac
+    if `on_windows_nt`; then
+			append_paths "${bin_dir}/bin" "sbt"
+    else
+			[ -L "${bin_ln}" ] && rm "${bin_ln}"
+			ln -s "${bin_dir}/bin/sbt" "${bin_ln}"
+    fi
     return 0
   fi
  
