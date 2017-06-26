@@ -14,7 +14,7 @@ function set_os_prefix() {
 	[ -z "$p" ] && p="`eval echo "$PREFIX"`"
 
 	case "$os" in
-		MSYS_NT*)
+		MSYS_NT*|MINGW*)
 			p="${p%/}/win"
 			;;
 		Darwin)
