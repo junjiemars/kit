@@ -16,3 +16,5 @@ tags
 \*shell\*
 ul/td_sha1sum.sh
 ul/td_*.bat
+all/ide/idea/**/installed.txt
+all/ide/idea/**/IntelliJ\ IDEA\ Global\ Settings
