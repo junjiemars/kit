@@ -4,7 +4,7 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
-PLATFORM=`uname -s 2>/dev/null`
+PLATFORM="`uname -s 2>/dev/null`"
 
 alias ..1='cd ../'
 alias ..2='cd ../../'
@@ -75,10 +75,23 @@ alias_vi() {
 }
 
 alias_rlwrap_bin() {
-	if [ 0 -eq $has_rlwrap ]; then
-		local p_bin=$(exist_p "$1")
+	local bin="$1"
+	local os="$2"
+	local m=
+
+	if [ -n "$os" ]; then
+		case "$PLATFORM" in
+			$os) m=0 ;;
+			*) m=1 ;;
+		esac
+	else
+		m=1
+	fi
+
+	if [ 0 -eq $m -a 0 -eq $has_rlwrap ]; then
+		local p_bin=$(exist_p "$bin")
 		if [ 0 -eq $p_bin ]; then
-			alias $(echo "$1")="rlwrap $1"
+			alias $(echo "$bin")="rlwrap $bin"
 		fi
 	fi
 }
@@ -92,3 +105,4 @@ alias_rlwrap_bin sbcl
 alias_rlwrap_bin ecl
 alias_rlwrap_bin openssl
 alias_rlwrap_bin jjs
+alias_rlwrap_bin lldb Linux
