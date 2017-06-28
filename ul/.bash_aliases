@@ -85,7 +85,7 @@ alias_rlwrap_bin() {
 			*) m=1 ;;
 		esac
 	else
-		m=1
+		m=0
 	fi
 
 	if [ 0 -eq $m -a 0 -eq $has_rlwrap ]; then
