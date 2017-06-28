@@ -180,6 +180,7 @@ case ${PLATFORM} in
 		cat << END >> $HOME/.bashrc
 test -f \${HOME%/}/.bash_init && . \${HOME%/}/.bash_init
 export PATH
+export LD_LIBRARY_PATH
 END
     ${curl} ${GITHUB_H}/ul/.bash_logout -o $HOME/.bash_logout
     ${curl} ${GITHUB_H}/ul/.vimrc -o $HOME/.vimrc
