@@ -148,6 +148,21 @@ END
  	set_vim_path_var "${vimrc}" "${inc_lns[@]}"
 }
 
+function delete_tail_line() {
+	local os="$1" 
+	local r="$2"
+	local f="$3"
+
+	sed_i_0="-i''"
+	[ "Darwin" = "$os" ] && sed_i_0="-i ''"
+	if [ -f "$f" ]; then
+		if `tail -n1 $f | grep "$r" &>/dev/null`; then
+			sed $sed_i_0 -e '$d' "$f"
+		fi
+	fi
+}
+
+
 
 BEGIN=`date +%s`
 echo "setup $PLATFORM bash env ..."
@@ -171,12 +186,11 @@ case ${PLATFORM} in
 		sed_i_0="-i''"
 		[ "Darwin" = "$PLATFORM" ] && sed_i_0="-i ''"
 		${curl} ${GITHUB_H}/ul/.bashrc -o $HOME/.bash_init
-		if [ -f "$HOME/.bashrc" ]; then
-			sed $sed_i_0 -E -e '/test -f \$(HOME|\{HOME%\/\})\/\.bash_init/d' $HOME/.bashrc
-			if `tail -n1 $HOME/.bashrc | grep 'export\ * PATH' &>/dev/null`; then
-				sed $sed_i_0 -e '$d' $HOME/.bashrc
-			fi
-		fi
+		
+		delete_tail_line "`uname -s 2>/dev/null`" 'LD_LIBRARY_PATH' "$HOME/.bashrc" 
+		delete_tail_line "`uname -s 2>/dev/null`" 'export\ * PATH' "$HOME/.bashrc" 
+		delete_tail_line "`uname -s 2>/dev/null`" 'test -f.*\.bash_init' "$HOME/.bashrc" 
+
 		cat << END >> $HOME/.bashrc
 test -f \${HOME%/}/.bash_init && . \${HOME%/}/.bash_init
 export PATH
