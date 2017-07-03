@@ -501,8 +501,13 @@ function delete_war_dir() {
 
   case "$w" in
     ssh)
-      ssh `ssh_login_id` rm -r "$rdw"
+      ssh `ssh_login_id` test -d "$rdw"
 			t=$?
+			if [ 0 -eq $t ]; then
+				ssh `ssh_login_id` rm -r "$rdw"
+				t=$?
+			fi
+
 			if [ 0 -eq $t ]; then	
 				file_eq "$lf" "$rf" "$w"
 				t=$?
