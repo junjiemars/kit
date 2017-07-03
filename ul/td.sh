@@ -501,12 +501,16 @@ function delete_war_dir() {
 
   case "$w" in
     ssh)
-      file_eq "$lf" "$rf" "$w"
-      t=$?
-      if [ 0 -ne $t ]; then
-        transport_file "$lf" "`dirname $rf`" "$w"
-        t=$?
-      fi
+      ssh `ssh_login_id` rm -r "$rdw"
+			t=$?
+			if [ 0 -eq $t ]; then	
+				file_eq "$lf" "$rf" "$w"
+				t=$?
+				if [ 0 -ne $t ]; then
+					transport_file "$lf" "`dirname $rf`" "$w"
+					t=$?
+				fi
+			fi
       ;;
 		docker)
 			if `on_win32`; then
