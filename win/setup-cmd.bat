@@ -32,6 +32,13 @@ reg add "HKCU\Console" /v FaceName /t REG_SZ /d %face_name% /f
 reg add "HKCU\Console" /v FontSize /t REG_DWORD /d %font_size% /f
 reg add "HKCU\Console" /v QuickEdit /t REG_DWORD /d %quick_edit% /f
 
+echo "setup cmd"
+reg add "HKCU\Console\%%SystemRoot%%_system32_cmd.exe" /v CodePage /t REG_DWORD /d %code_page% /f
+reg add "HKCU\Console\%%SystemRoot%%_system32_cmd.exe" /v FaceName /t REG_SZ /d %face_name% /f
+reg add "HKCU\Console\%%SystemRoot%%_system32_cmd.exe" /v FontSize /t REG_DWORD /d %font_size% /f
+reg add "HKCU\Console\%%SystemRoot%%_system32_cmd.exe" /v QuickEdit /t REG_DWORD /d %quick_edit% /f
+
+echo "setup powershel"
 reg add "HKCU\Console\%%SystemRoot%%_System32_WindowsPowerShell_v1.0_powershell.exe" /v CodePage /t REG_DWORD /d %code_page% /f
 reg add "HKCU\Console\%%SystemRoot%%_System32_WindowsPowerShell_v1.0_powershell.exe" /v FaceName /t REG_SZ /d %face_name% /f
 reg add "HKCU\Console\%%SystemRoot%%_System32_WindowsPowerShell_v1.0_powershell.exe" /v FontSize /t REG_DWORD /d %font_size% /f
