@@ -1,11 +1,15 @@
 // Place your settings in this file to overwrite the default settings
 {
-    "editor.fontFamily": "Consolas, 微软雅黑",
+    "editor.fontFamily": "Monaco, Consolas, 微软雅黑",
     "editor.tabSize": 2,
-    "editor.fontSize": 16,
+    "editor.fontSize": 14,
     "window.zoomLevel": 0,
 
     "python.linting.pylintArgs": [
       "--disable=C0103"
-    ]
+    ],
+    "terminal.integrated.shell.windows": "C:\\WINDOWS\\Sysnative\\cmd.exe",
+    "vim.disableAnnoyingNeovimMessage": true,
+    "extensions.ignoreRecommendations": false,
+    "workbench.activityBar.visible": true
   }

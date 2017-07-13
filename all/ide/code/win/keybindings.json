@@ -1,0 +1,67 @@
+// Place your key bindings in this file to overwrite the defaults
+[
+  {
+    "key": "ctrl+x ctrl+f",
+    "command": "workbench.action.quickOpen"
+  },
+  {
+    "key": "ctrl+p",
+    "command": "-workbench.action.quickOpen"
+  },
+  {
+    "key": "alt+x",
+    "command": "workbench.action.showCommands"
+  },
+  {
+    "key": "ctrl+shift+p",
+    "command": "-workbench.action.showCommands"
+  },
+  {
+    "key": "ctrl+e",
+    "command": "workbench.action.quickOpenNavigateNextInFilePicker",
+    "when": "inFilesPicker && inQuickOpen"
+  },
+  {
+    "key": "ctrl+e",
+    "command": "-workbench.action.quickOpenNavigateNextInFilePicker",
+    "when": "inFilesPicker && inQuickOpen"
+  },
+  {
+    "key": "ctrl+e",
+    "command": "-workbench.action.quickOpen"
+  },
+  {
+    "key": "ctrl+x ctrl+s",
+    "command": "workbench.action.files.save"
+  },
+  {
+    "key": "ctrl+s",
+    "command": "-workbench.action.files.save"
+  },
+  {
+    "key": "ctrl+x ctrl+shift+s",
+    "command": "workbench.action.files.saveAs"
+  },
+  {
+    "key": "ctrl+shift+s",
+    "command": "-workbench.action.files.saveAs"
+  },
+  {
+    "key": "ctrl+s",
+    "command": "actions.find"
+  },
+  {
+    "key": "ctrl+f",
+    "command": "-actions.find"
+  },
+  {
+    "key": "ctrl+s",
+    "command": "workbench.action.terminal.focusFindWidget",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+f",
+    "command": "-workbench.action.terminal.focusFindWidget",
+    "when": "terminalFocus"
+  }
+]
