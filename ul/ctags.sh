@@ -1,6 +1,6 @@
 #!/bin/bash
 #------------------------------------------------
-# target: ctags wrapper
+# target: a shortcut of exuberant ctags 
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
@@ -9,28 +9,34 @@ PREFIX="${PREFIX:-`pwd`}"
 PLATFORM="`uname -s 2>/dev/null`"
 VERSION="1.1"
 
-CTAGS_LANG=
-CTAGS_OPTIONS=
 
-usage() {
+function usage() {
+	local x="."
+	if [ 0 -ne `ctags_exuberant` ]; then
+		x=", but it seems like exhaust ..."
+	fi
+
   echo -e "Usage: $(basename $0) [OPTIONS]"
-  echo -e "       $(basename $0) [ --help | --version]\n"
+  echo -e "       $(basename $0) [ --help | --version]"
+	echo -e ""
+	echo -e "A shortcut of exuberant ctags${x}"
+	echo -e ""
   echo -e "Options:"
-  echo -e "  --help\t\tPrint this message"
-  echo -e "  --version\t\tPrint version"
-  echo -e "  --language\t\tspecify language:c,java,sql,sh"
-  echo -e "  --ctags-options\tctags options"
+  echo -e "  --help\t\t\tPrint this message"
+  echo -e "  --version\t\t\tPrint version"
+  echo -e "  --language\t\t\tspecify language:c,java,sql,sh"
+  echo -e "  --ctags-options\t\tctags options"
 }
 
-ctags_exists() {
+function ctags_exists() {
 	type -P $CTAGS &>/dev/null; echo $?
 }
 
-ctags_exuberant() {
+function ctags_exuberant() {
 	$CTAGS --version 2>/dev/null | grep "^Exuberant Ctags" &>/dev/null; echo $?
 }
 
-c_tags() {
+function c_tags() {
   local options="$1"
 	local inc=("/usr/include")
   local inc_file="$HOME/.cc-inc.list"
@@ -64,7 +70,7 @@ c_tags() {
 	fi
 }
 
-java_tags() {
+function java_tags() {
 	#extract src.zip under $JAVA_HOME 
 	local src="$JAVA_HOME/src"
 	[ -d "$src" ] || src=""
@@ -72,13 +78,35 @@ java_tags() {
          -R "${PREFIX}" "${src}"
 }
 
-sh_tags() {
+function sh_tags() {
 	$CTAGS --language-force=Sh --extra=+f -R "${PREFIX}"
 }
 
-sql_tags() {
+function sql_tags() {
 	$CTAGS --language-force=SQL --SQL-kinds=+px --extra=+fq -R "${PREFIX}"
 }
+
+function ctags_shell {
+	local lan="$1"
+	local opt="$2"
+	case $lan in
+		c)
+			c_tags "$opt"
+			;;
+		java)
+			java_tags "$opt"
+			;;
+		sh)
+			sh_tags "$opt"
+			;;
+		sql)
+			sql_tags "$opt"
+			;;
+		*)
+			$CTAGS $opt
+	esac
+}
+
 
 for option
 do
@@ -93,8 +121,8 @@ do
     --help)                  help=yes                   ;;
     --version)               version=yes      			    ;;
 
-    --language=*)            CTAGS_LANG="$value" 				;;
-    --ctags-options=*)       CTAGS_OPTIONS="$value"			;;
+    --language=*)            ctags_lang="$value" 				;;
+    --ctags-options=*)       ctags_options="$value"			;;
     
     *)
       echo "$0: error: invalid option \"$option\""
@@ -114,26 +142,16 @@ if [ "$version" = "yes" ]; then
 	exit 0
 fi
 
-if [ 0 -eq $(ctags_exists) -a 0 -eq $(ctags_exuberant) ]; then
-	[ $# -lt 1 ] && exit 1
-
-	CTAGS_LANG="`echo $CTAGS_LANG | tr [:lower:] [:upper:]`"
-
-	case $CTAGS_LANG in
-		C)
-			c_tags "$CTAGS_OPTIONS"
-			;;
-		JAVA)
-      java_tags "$CTAGS_OPTIONS"
-			;;
-		SH)
-      sh_tags "$CTAGS_OPTIONS"
-			;;
-		SQL)
-			sql_tags "$CTAGS_OPTIONS"
-			;;
-		*)
-			$CTAGS $CTAGS_OPTIONS
-	esac
-
+if [ 0 -ne $(ctags_exists) ]; then
+	echo -e "! [$CTAGS] no found ..."
+	exit 1
 fi
+
+if [ 0 -ne $(ctags_exuberant) ]; then
+	echo -e "! [$CTAGS] is exhaust ..."
+	exit 1
+fi
+
+ctags_lang="`echo $ctags_lang | tr [:upper:] [:lower:]`"
+ctags_shell "$ctags_lang" "$ctags_options"
+
