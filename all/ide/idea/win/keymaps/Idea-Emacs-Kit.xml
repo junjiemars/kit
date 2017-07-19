@@ -124,7 +124,6 @@
     <keyboard-shortcut first-keystroke="alt p" />
   </action>
   <action id="NewElement">
-    <keyboard-shortcut first-keystroke="alt insert" />
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="n" />
   </action>
   <action id="OptimizeImports">
@@ -189,7 +188,6 @@
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="s" />
   </action>
   <action id="SurroundWith">
-    <keyboard-shortcut first-keystroke="ctrl alt t" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 9" />
     <keyboard-shortcut first-keystroke="shift alt 9" />
   </action>
@@ -223,7 +221,6 @@
     <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="f" />
   </action>
   <action id="ToggleLineBreakpoint">
-    <keyboard-shortcut first-keystroke="ctrl f8" />
     <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="l" />
   </action>
   <action id="ToggleMethodBreakpoint">
@@ -234,6 +231,9 @@
   </action>
   <action id="Vcs.Show.Local.Changes">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="s" />
+  </action>
+  <action id="Vcs.Show.Log">
+    <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="l" />
   </action>
   <action id="Vcs.ShowHistoryForBlock">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="shift h" />
