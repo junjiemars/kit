@@ -1,7 +1,7 @@
 // Place your key bindings in this file to overwrite the defaults
 [
   {
-    "key": "ctrl+x ctrl+f",
+    "key": "ctrl+x b",
     "command": "workbench.action.quickOpen"
   },
   {
@@ -63,5 +63,29 @@
     "key": "ctrl+f",
     "command": "-workbench.action.terminal.focusFindWidget",
     "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+x ctrl+f",
+    "command": "workbench.action.files.newUntitledFile"
+  },
+  {
+    "key": "ctrl+n",
+    "command": "-workbench.action.files.newUntitledFile"
+  },
+  {
+    "key": "ctrl+x ctrl+b",
+    "command": "workbench.view.explorer"
+  },
+  {
+    "key": "ctrl+shift+e",
+    "command": "-workbench.view.explorer"
+  },
+  {
+    "key": "ctrl+x ctrl+d",
+    "command": "workbench.action.files.openFolder"
+  },
+  {
+    "key": "ctrl+k ctrl+o",
+    "command": "-workbench.action.files.openFolder"
   }
 ]
