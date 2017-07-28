@@ -1,9 +1,9 @@
 #!/bin/bash
 # sudo bash <(curl https://raw.githubusercontent.com/junjiemars/kit/ubuntu/setup-idea-desktop.sh)
 
-IDEA_HOME=${IDEA_HOME:-"/opt/open/idea/idea-IC-163.7743.44"}
+IDEA_HOME="${IDEA_HOME:-/opt/open/idea/idea-IC-163.7743.44}"
 
-if [ -d "$IDEA_HOME" ]; then
+if [ ! -d "$IDEA_HOME" ]; then
   echo "$IDEA_HOME no found, panic!"
 fi
 
