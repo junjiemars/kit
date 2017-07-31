@@ -1,0 +1,32 @@
+// Place your settings in this file to overwrite the default settings
+{
+    "editor.fontFamily": "Monaco, Menlo, 'Courier New', monospace",
+    "editor.fontSize": 16,
+    "editor.tabSize": 2,
+    "startanyshell.shells": [
+        {
+            "description": "Bash",
+            "command": "/bin/bash"
+        },
+        {
+            "description": "Git Bash",
+            "command": "\"C:\\Program Files\\Git\\git-bash.exe\" \"--cd=%path%\""
+        },
+        {
+            "description": "Windows Command Prompt",
+            "command": "start \"%description%\" /WAIT %comspec%"
+        },
+        {
+            "description": "Developer Command Prompt for VS2015",
+            "command": "start \"%description%\" /WAIT \"%HOMEDRIVE%\\Program Files (x86)\\Microsoft Visual Studio 14.0\\Common7\\Tools\\VsDevCmd.bat\""
+        }
+    ]
+,
+"editor.cursorStyle": "block",
+"terminal.integrated.fontFamily": "Monaco, monospace",
+"terminal.integrated.fontSize": 14,
+"terminal.integrated.lineHeight": 1.2,
+"window.zoomLevel": 0,
+"vim.disableAnnoyingNeovimMessage": true,
+"workbench.sideBar.location": "left"
+}
