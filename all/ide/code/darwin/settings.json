@@ -25,7 +25,7 @@
 "editor.cursorStyle": "block",
 "terminal.integrated.fontFamily": "Monaco, monospace",
 "terminal.integrated.fontSize": 14,
-"terminal.integrated.lineHeight": 1.2,
+"terminal.integrated.lineHeight": 1.4,
 "window.zoomLevel": 0,
 "vim.disableAnnoyingNeovimMessage": true,
 "workbench.sideBar.location": "left"
