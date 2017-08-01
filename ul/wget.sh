@@ -54,7 +54,7 @@ function decode() {
 		else
 			case "$f" in
 				$dfilter)
-					if [ 0 -ne `diff $f ${fdst%/}$f &>/dev/null` ]; then
+					if [ ! -f ${fdst%/}$f ]; then
 						iconv -f$csrc -t$ddst $f >${fdst%/}/$f
 					fi
 					;;
