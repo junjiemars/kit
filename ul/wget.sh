@@ -10,7 +10,7 @@ VERSION="1.0"
 
 
 function usage() {
-  echo -e "Usage: $(basename $0) [OPTIONS]"
+  echo -e "Usage: $(basename $0) [OPTIONS] [COMMAND]"
   echo -e "       $(basename $0) [ --help | --version]"
 	echo -e ""
 	echo -e "A shortcut of wget to mirror a website"
@@ -27,6 +27,11 @@ function usage() {
   echo -e "  --decode-dir\t\t\tdecode dir"
   echo -e "  --decode-filter\t\t\tdecode files on filter"
   echo -e "  --wget-options\t\twget options"
+
+	echo -e ""
+	echo -e "Commands:"
+  echo -e "  mirror\t\t\tmirror a website"
+  echo -e "  decode\t\t\tdecode the website"
 }
 
 function mirror() {
