@@ -57,11 +57,12 @@ usage() {
   echo -e "  start\t\t\t\t\tstart a tomcat instance"
   echo -e "  stop\t\t\t\t\tstop a tomcat instance"
   echo -e "  debug\t\t\t\t\tstart a tomcat instance in debug mode"
-  echo -e "  parameterize\t\t\t\tparameterize tomcat's configurations"
   echo -e "  check-env\t\t\t\tcheck environment of specified tomcat instance"
   echo -e "  check-pid\t\t\t\tcheck pid of specified tomcat instance"
   echo -e "  check-exist\t\t\t\tcheck existing of tomcat installation"
   echo -e "  install\t\t\t\tinstall tomcat"
+  echo -e "  verify\t\t\t\tverify tomcat tgz file"
+  echo -e "  parameterize\t\t\t\tparameterize tomcat's configurations"
 }
 
 
@@ -497,6 +498,12 @@ echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 retval=
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
+  install)
+    install_tomcat
+    ;;
+  verify)
+    verify_tgz "`tomcat_tgz_path $PREFIX $VER`" "`tomcat_tgz_sha1_path $PREFIX $VER`"
+    ;;
   parameterize)
     parameterize "$CATALINA_BASE"
     ;;
@@ -538,13 +545,6 @@ case "$command" in
     CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }-XX:HeapDumpPath=${CATALINA_BASE}/logs"
     export_catalina_opts
     debug_tomcat
-    ;;
-  install)
-    install_tomcat
-    ;;
-  verify)
-    verify_tgz "`tomcat_tgz_path $PREFIX $VER`"        \
-                 "`tomcat_tgz_sha1_path $PREFIX $VER`"
     ;;
   *)
     echo "$0: error: invalid command \"$command\""
