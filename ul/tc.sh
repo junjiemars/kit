@@ -7,7 +7,7 @@
 PLATFORM="`uname -s 2>/dev/null`"
 OPT_RUN="${OPT_RUN:-/opt/run}"
 PREFIX="${PREFIX:-${OPT_RUN%/}/www/tomcat}"
-VERSION="1.2.0"
+VERSION="1.2.1"
 
 VER="${VER:-8.5.8}"
 CATALINA_BASE="${CATALINA_BASE:-${PREFIX%/}/${VER}}"
