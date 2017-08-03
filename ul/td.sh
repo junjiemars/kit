@@ -33,6 +33,7 @@ JPDA_PORT="${JPDA_PORT:-8000}"
 
 TO_WHERE=("local" "ssh" "docker")
 TW_IDX=
+TW_IDX_LOCAL=0
 
 
 L_WAR_PATH="${L_WAR_PATH}"
@@ -169,9 +170,21 @@ END
 }
 
 
-function local_root_path() {
+function local_src_path() {
   local p="${L_PREFIX%/}"
   echo "$p"
+}
+
+
+function local_dst_path() {
+	local lp="${1%}"
+	local rp="${2%/}"
+
+	if [ -n "$rp" -a "$rp" != "$lp" ]; then
+		echo "$rp"
+	else
+		echo "$lp"
+	fi
 }
 
 
@@ -614,19 +627,8 @@ function install_tomcat() {
 
   echo -e "+ install Tomcat $wa[$VER] ..."
 
-  if [ "${TO_WHERE[$TW_LOCAL]}" = "$w" ]; then
-    control_tomcat install "$w"
-    t=$?
-    if [ 0 -ne $t ]; then
-      echo -e "! install Tomcat $wa[$VER]  =failed"
-    else
-      echo -e "! install Tomcat $wa[$VER]  =failed"
-    fi
-    return $t
-  fi
-
   local tgz="apache-tomcat-$VER.tar.gz"
-  local ltgz=("`local_root_path`/$tgz" "/tmp/$tgz" "./$tgz")
+  local ltgz=("`local_src_path`/$tgz" "/tmp/$tgz" "./$tgz")
   local rtgz="`remote_root_path`/$tgz"
 
   for f in "${ltgz[@]}"; do
@@ -636,7 +638,7 @@ function install_tomcat() {
     fi
   done
 
-  control_tomcat verify "${TO_WHERE[$TW_LOCAL]}"
+  control_tomcat verify "${TO_WHERE[$TW_IDX_LOCAL]}"
   t=$?
   if [ 0 -ne $t ]; then
     $tc install                              \
@@ -733,14 +735,14 @@ function control_tomcat() {
       ;;
     *)
       tc="`local_bin_path $TC_SH $VERSION`"
-      $tc $cmd                                       \
-          --prefix=$L_PREFIX                         \
-          --tomcat-version=$VER                      \
-          --listen-on=$LISTEN_ON                     \
-          --ip-version=$IP_VER                       \
-          --start-port=$START_PORT                   \
-          --stop-port=$STOP_PORT                     \
-          --stop-timeout=$STOP_TIMEOUT               \
+      $tc $cmd																			 						\
+          --prefix=$(local_dst_path $L_PREFIX $R_PREFIX) 	 			\
+          --tomcat-version=$VER                									\
+          --listen-on=$LISTEN_ON               									\
+          --ip-version=$IP_VER                 									\
+          --start-port=$START_PORT             									\
+          --stop-port=$STOP_PORT               									\
+          --stop-timeout=$STOP_TIMEOUT         									\
 					--java-options="${JAVA_OPTS}"           
       t=$?
       ;;
