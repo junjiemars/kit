@@ -61,7 +61,7 @@ usage() {
   echo -e "  check-pid\t\t\t\tcheck pid of specified tomcat instance"
   echo -e "  check-exist\t\t\t\tcheck existing of tomcat installation"
   echo -e "  install\t\t\t\tinstall tomcat"
-  echo -e "  verify\t\t\t\tverify tomcat tgz file"
+  echo -e "  verify\t\t\t\tverify tomcat tgz with sha1"
   echo -e "  parameterize\t\t\t\tparameterize tomcat's configurations"
 }
 
@@ -210,10 +210,13 @@ function download_file() {
   local t=
 
   echo -e "+ download Tomcat[$rf] ..."
+	[ ! -d "$d" ] || mkdir -p "$d"
+
   cd "$d" && curl -sL -o"${lf}" -C - "${rf}"
   t=$?
   if [ 33 -eq $t ]; then
     cd "$d" && curl -sL -o"${lf}" "${rf}"
+		t=$?
   fi
 
   if [ 0 -ne $t ]; then
@@ -236,23 +239,23 @@ function download_tomcat() {
 
   verify_tgz "$ltgz" "$ltgz_sha1"
   t=$?
-  if [ 0 -ne $t ]; then
-    download_file "$d" "$ltgz_sha1" "$rtgz_sha1"
-    t=$?
-    [ 0 -eq $t ] || return $t
+	[ 0 -eq $t ] && return $t
 
-    verify_tgz "$ltgz" "$ltgz_sha1"
-    t=$?
-    [ 0 -ne $t ] || return $t
+	download_file "$d" "$ltgz_sha1" "$rtgz_sha1"
+	t=$?
+	[ 0 -eq $t ] || return $t
 
-    download_file "$d" "$ltgz" "$rtgz"
-    t=$?
-    [ 0 -eq $t ] || return $t
-    
-    verify_tgz "$ltgz" "$ltgz_sha1"
-    t=$?
-    return $t
-  fi
+	verify_tgz "$ltgz" "$ltgz_sha1"
+	t=$?
+	[ 0 -ne $t ] || return $t
+
+	download_file "$d" "$ltgz" "$rtgz"
+	t=$?
+	[ 0 -eq $t ] || return $t
+	
+	verify_tgz "$ltgz" "$ltgz_sha1"
+	t=$?
+	return $t
 }
 
 
@@ -300,19 +303,9 @@ function install_tomcat() {
   echo -e "+ install Tomcat[$VER] ..."
 
   if [ "yes" = "$DOWNLOAD_ONLY" ]; then
-    verify_tgz "$ltgz" "$ltgz_sha1"
-    t=$?
-    if [ 0 -eq $t ]; then
-      return $t
-    else
-      download_tomcat "$PREFIX" "$ltgz" "$ltgz_sha1" "$url_tgz" "$url_sha1"
-      t=$?
-      if [ 0 -eq $t ]; then
-        verify_tgz "$ltgz" "$ltgz_sha1"
-        t=$?
-      fi
-      return $t
-    fi
+		download_tomcat "$PREFIX" "$ltgz" "$ltgz_sha1" "$url_tgz" "$url_sha1"
+		t=$?
+		return $t
   fi
 
   echo -e "+ check Tomcat[$VER] existing ..."
@@ -323,22 +316,11 @@ function install_tomcat() {
   fi
   echo -e "! check Tomcat[$VER] existing  =failed"
   
-  verify_tgz "$ltgz" "$ltgz_sha1"
-  t=$?
-  if [ 0 -ne $t ]; then
-    download_tomcat "$PREFIX" "$ltgz" "$ltgz_sha1" "$url_tgz" "$url_sha1"
-    t=$?
-    if [ 0 -ne $t ]; then
-      echo -e "! install Tomcat[$VER]  =failed"
-      return $t
-    fi
-  fi
-
-  verify_tgz "$ltgz" "$ltgz_sha1"
-  t=$?
-  if [ 0 -ne $t ]; then
-    echo -e "! install Tomcat[$VER]  =failed"
-    return $t
+	download_tomcat "$PREFIX" "$ltgz" "$ltgz_sha1" "$url_tgz" "$url_sha1"
+	t=$?
+	if [ 0 -ne $t ]; then
+		echo -e "! install Tomcat[$VER]  =failed"
+		return $t
   fi
 
   [ -d "${CATALINA_BASE}" ] || mkdir -p "${CATALINA_BASE}"
