@@ -207,6 +207,12 @@ function local_bin_path() {
 		return 0
 	fi
 
+	local sdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+	if [ -f "${sdir%/}/$bin" ]; then
+		echo "${sdir%/}/$bin"
+		return 0
+	fi
+
 	if [ -f "`type -P $bin 2>/dev/null`" ]; then
 		bin="`type -P $bin 2>/dev/null`"	
 		if $(local_check_version $VERSION "$bin"); then
