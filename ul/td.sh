@@ -811,7 +811,7 @@ function download_td_sh() {
 	fi
 
 	if [ -f "\$(type -P \$bin 2>/dev/null)" ]; then
-		sbin="\$(type -P $bin 2>/dev/null)"	
+		sbin="\$(type -P \$bin 2>/dev/null)"	
 		if \$(check_version \$ver "\$sbin"); then
 			echo "\$sbin"
 			return 0
