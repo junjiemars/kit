@@ -20,6 +20,7 @@ JAVA_OPTS=
 DEBUG=(${DEBUG:+$DEBUG} "no" "yes")
 
 VER=${VER:-"8.5.8"}
+CLEAN="no"
 TC_OPTS=
 TC_SH="tc.sh"
 
@@ -65,7 +66,7 @@ usage() {
   echo -e ""
   echo -e "  --local-prefix=\t\t\tlocal catalina prefix dir, L_PREFIX='${L_PREFIX}'"
   echo -e "  --remote-prefix=\t\t\tremote catalina prefix dir, R_PREFIX='${R_PREFIX}'"
-  echo -e "  --java-options\t\t\tjava options, JAVA_OPTS='${JAVA_OPTS}'"
+  echo -e "  --java-options=\t\t\tjava options, JAVA_OPTS='${JAVA_OPTS}'"
   echo -e "  --debug\t\t\t\tstart tomcat in debug mode, default is '${DEBUG}'"  
   echo -e ""
   echo -e "  --where=\t\t\t\twhere to deploy: `echo ${TO_WHERE[@]}|tr ' ' ','`, default is '$TO_WHERE'"  
@@ -81,6 +82,7 @@ usage() {
   echo -e "  --build-options=\t\t\tbuilding options, default BUILD_OPTS='${BUILD_OPTS}'"
   echo -e ""
   echo -e "  --tomcat-version=\t\t\ttomcat version, default is '$VER'"
+  echo -e "  --tomcat-clean\t\t\twhether clean tomcat, default is '$CLEAN'"
   echo -e "  --tc-options=\t\t\t\ttc.sh options"
   echo -e ""
   echo -e "  --listen-on=\t\t\t\tlisten on what address: `echo ${LISTEN_ON[@]}|tr ' ' ','`, etc., default is '$LISTEN_ON'"
@@ -804,7 +806,7 @@ function download_td_sh() {
 }
 
 td=\$(download_td_sh "td.sh" "$VERSION")
-[ 0 -eq $? ] || echo "! missing td.sh ..."
+[ 0 -eq $? ] || echo "! missing td.sh" 
 
 \$td ${L_PREFIX:+--local-prefix=${L_PREFIX}} \\
 	${R_PREFIX:+--remote-prefix=${R_PREFIX}} \\
@@ -862,6 +864,7 @@ do
     --build-options=*)       BUILD_OPTS="$value"	      ;;
 
     --tomcat-version=*)      VER="$value"      			    ;;
+    --tomcat-clean)          CLEAN="yes"      			    ;;
     --tc-options=*)          tc_opts="$value"		        ;;
 
     --listen-on=*)           LISTEN_ON="$value"		      ;;
@@ -958,6 +961,10 @@ case "$command" in
       retval=$?
       [ 0 -eq $retval ] || exit $retval
     fi
+
+		if [ "$CLEAN" == "yes" ]; then
+			control_tomcat clean "${TO_WHERE[$TW_IDX]}"
+		fi
 
     transport_war "$L_WAR_PATH" "${TO_WHERE[$TW_IDX]}"
     if [ "$DEBUG" = "yes" ]; then

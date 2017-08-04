@@ -63,6 +63,7 @@ usage() {
   echo -e "  install\t\t\t\tinstall tomcat"
   echo -e "  verify\t\t\t\tverify tomcat tgz with sha1"
   echo -e "  parameterize\t\t\t\tparameterize tomcat's configurations"
+  echo -e "  clean\t\t\t\t\tclean tomcat webapps or other useless things"
 }
 
 
@@ -172,6 +173,24 @@ function check_pid() {
 
 function check_exist() {
   ${CATALINA_BIN} version &>/dev/null
+}
+
+
+function clean_apps() {
+	local base="${1%/}/webapps"
+	local apps=("docs" "examples" "host-manager" "manager" "ROOT")
+	local p=
+	
+  echo -e "+ clean Tomcat[$base] ..."
+
+	for d in "${apps[@]}"; do
+		p="${base%/}/webapps/$d"		
+		if [ -d "$p" ]; then
+			rm -r "$p"
+		fi
+	done
+
+  echo -e "# clean Tomcat[$base]  =succeed" 
 }
 
 
@@ -488,6 +507,9 @@ case "$command" in
     ;;
   parameterize)
     parameterize "$CATALINA_BASE"
+		;;
+	clean)
+		clean_apps "$CATALINA_BASE"
     ;;
   check-env)
     check_env
