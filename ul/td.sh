@@ -200,23 +200,28 @@ function local_check_version() {
 function local_bin_path() {
   local bin="$1"
 	local ver="$2"
+	local dir="${PWD%/}"
+	local sbin=
+	local sdir=
   local t=
 
-  if [ -f "$bin" ] && $(local_check_version $ver "$bin"); then
-    echo "${PWD%/}/$bin"
+	sbin="${dir}/$bin"
+  if [ -f "$sbin" ] && $(local_check_version $ver "$sbin"); then
+    echo "$sbin"
 		return 0
 	fi
 
-	local sdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-	if [ -f "${sdir%/}/$bin" ]; then
-		echo "${sdir%/}/$bin"
+	sdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+	sbin="${sdir%/}/$bin"
+	if [ -f "$sbin" ] && $(local_check_version $ver "$sbin"); then
+		echo "$sbin"
 		return 0
 	fi
 
 	if [ -f "`type -P $bin 2>/dev/null`" ]; then
-		bin="`type -P $bin 2>/dev/null`"	
-		if $(local_check_version $VERSION "$bin"); then
-			echo "$bin"
+		sbin="`type -P $bin 2>/dev/null`"	
+		if $(local_check_version $ver "$sbin"); then
+			echo "$sbin"
 			return 0
 		fi
 	fi
@@ -226,7 +231,7 @@ function local_bin_path() {
 	[ 0 -eq $t ] || return $t
 	chmod u+x "$bin"
 
-	echo "${PWD%/}/$bin"
+	echo "${dir}/$bin"
   return 0
 }
 
@@ -787,27 +792,38 @@ function check_version() {
 function download_td_sh() {
   local bin="\$1"
 	local ver="\$2"
+	local dir="\${PWD%/}"
+	local sbin=
+	local sdir=
   local t=
 
-  if [ -f "\$bin" ] && \$(check_version \$ver \$bin); then
-    echo "./\$bin"
-    return 0
-  fi
+	sbin="\${dir}/\$bin"
+  if [ -f "\$sbin" ] && \$(check_version \$ver "\$sbin"); then
+    echo "\$sbin"
+		return 0
+	fi
 
-	if [ -f \$(type -P \$bin 2>/dev/null) ]; then
-		bin="\$(type -P \$bin 2>/dev/null)"
-		if \$(check_version \$ver \$bin); then
-			echo "\$bin"
+	sdir="\$( cd "\$( dirname "\${BASH_SOURCE[0]}" )" && pwd )"
+	sbin="\${sdir%/}/\$bin"
+	if [ -f "\$sbin" ] && \$(check_version \$ver "\$sbin"); then
+		echo "\$sbin"
+		return 0
+	fi
+
+	if [ -f "\$(type -P \$bin 2>/dev/null)" ]; then
+		sbin="\$(type -P $bin 2>/dev/null)"	
+		if \$(check_version \$ver "\$sbin"); then
+			echo "\$sbin"
 			return 0
 		fi
 	fi
 
-	curl -qL -O\$bin "https://raw.githubusercontent.com/junjiemars/kit/master/ul/\$bin"
+	curl -qL -O\$bin https://raw.githubusercontent.com/junjiemars/kit/master/ul/\$bin
 	t=\$?
 	[ 0 -eq \$t ] || return \$t
 	chmod u+x "\$bin"
 
-	echo "\$bin"
+	echo "\${dir}/\$bin"
   return 0
 }
 
@@ -817,7 +833,8 @@ td=\$(download_td_sh "td.sh" "$VERSION")
 \$td ${L_PREFIX:+--local-prefix=${L_PREFIX}} \\
 	${R_PREFIX:+--remote-prefix=${R_PREFIX}} \\
 	${VER:+--tomcat-version=${VER}} \\
-	${L_WAR_PATH:+--local-war-path=${L_WAR_PATH}}	\\
+	${CLEAN:+--tomcat-clean=${CLEAN}} \\
+	${L_WAR_PATH:+--local-war-path=${L_WAR_PATH}} \\
 	${LISTEN_ON:+--listen-on=${LISTEN_ON}} \\
 	${IP_VER:+--ip-version=${IP_VER}} \\
 	${SSH_USER:+--ssh-user=${SSH_USER}} \\
