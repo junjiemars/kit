@@ -21,3 +21,4 @@ all/ide/idea/**/IntelliJ\ IDEA\ Global\ Settings
 all/ide/idea/darwin/options/
 all/ide/idea/win/options/
 .vscode/
+*.bak

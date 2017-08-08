@@ -52,7 +52,7 @@ Emacs:
 |#
 
 ;(keybinding "c:x;k" (λ (editor evt) (send editor close-current-tab) ))
-(keybinding "c:a:i" (λ (editor evt) (send editor auto-complete) ))
+(keybinding "esc;tab" (λ (editor event) (send editor auto-complete) ))
 
 
 
