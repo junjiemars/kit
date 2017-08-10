@@ -8,7 +8,6 @@ Emacs:
 |#
 
 
-;(keybinding "c:x;k" (λ (editor evt) (send editor close-current-tab) ))
 (keybinding "esc;tab" (λ (editor event) (send editor auto-complete)))
 
 
