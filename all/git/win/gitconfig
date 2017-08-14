@@ -1,0 +1,3 @@
+core.autocrlf=input
+core.quotepath=off
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
