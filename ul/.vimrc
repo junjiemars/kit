@@ -35,6 +35,9 @@ set hlsearch " :nohl
 " background dark
 set background=light
 
+" keep filetype and syntax
+set hidden " :nohidden
+
 " status bar
 set ruler
 "set laststatus=2
