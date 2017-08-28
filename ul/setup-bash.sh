@@ -109,16 +109,19 @@ check_win_cc_include() {
 set wpwd=%cd%
 cd /d "$vstools"
 if "%1" == "" goto x86
-if /i "%2" == "x86_64" goto x86_64
+if "%1" == "x86_arm" goto x86
+if "%2" == "x64" goto x86_64
+if "%2" == "x86_amd64" goto x86_64
 
 :x86
-call vcvarsall.bat
+shift
+call vcvarsall.bat %*
 set CC=cl
 set AS=ml
 goto :echo_inc
 
 :x86_64
-call vsvarsall.bat x86_amd64
+call vsvarsall.bat %*
 set CC=cl
 set AS=ml64
 goto :echo_inc
@@ -208,7 +211,7 @@ case ${PLATFORM} in
     check_linux_cc_include $HOME/.cc-inc.list $HOME/.vimrc
     ;;
   MSYS_NT*|MINGW*)
-    check_win_cc_include $HOME/.cc-inc.list $HOME/.vimrc $HOME/.vs-inc.bat
+    check_win_cc_include $HOME/.cc-inc.list $HOME/.vimrc $HOME/.vc-inc.bat
     ;;
   *)
     ;;
