@@ -23,5 +23,13 @@
   {
     "key": "cmd+o",
     "command": "-workbench.action.files.openFileFolder"
+  },
+  {
+    "key": "ctrl+x ctrl+f",
+    "command": "workbench.action.files.newUntitledFile"
+  },
+  {
+    "key": "cmd+n",
+    "command": "-workbench.action.files.newUntitledFile"
   }
 ]
