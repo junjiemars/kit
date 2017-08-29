@@ -5,31 +5,19 @@
     "command": "workbench.action.quickOpen"
   },
   {
-    "key": "cmd+p",
-    "command": "-workbench.action.quickOpen"
-  },
-  {
     "key": "alt+x",
     "command": "workbench.action.showCommands"
-  },
-  {
-    "key": "shift+cmd+p",
-    "command": "-workbench.action.showCommands"
   },
   {
     "key": "ctrl+x d",
     "command": "workbench.action.files.openFileFolder"
   },
   {
-    "key": "cmd+o",
-    "command": "-workbench.action.files.openFileFolder"
-  },
-  {
     "key": "ctrl+x ctrl+f",
     "command": "workbench.action.files.newUntitledFile"
   },
   {
-    "key": "cmd+n",
-    "command": "-workbench.action.files.newUntitledFile"
+    "key": "ctrl+x ctrl+k",
+    "command": "workbench.action.closeActiveEditor"
   }
 ]
