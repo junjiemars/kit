@@ -19,5 +19,23 @@
   {
     "key": "ctrl+x ctrl+k",
     "command": "workbench.action.closeActiveEditor"
+  },
+  {
+    "key": "ctrl+x ctrl+g",
+    "command": "workbench.view.scm"
+  },
+  {
+    "key": "ctrl+shift+g",
+    "command": "-workbench.view.scm"
+  },
+  {
+    "key": "ctrl+x ctrl+s",
+    "command": "workbench.view.search",
+    "when": "!searchViewletVisible"
+  },
+  {
+    "key": "shift+cmd+f",
+    "command": "-workbench.view.search",
+    "when": "!searchViewletVisible"
   }
 ]
