@@ -37,5 +37,13 @@
     "key": "shift+cmd+f",
     "command": "-workbench.view.search",
     "when": "!searchViewletVisible"
+  },
+  {
+    "key": "ctrl+x ctrl+b",
+    "command": "workbench.view.explorer"
+  },
+  {
+    "key": "shift+cmd+e",
+    "command": "-workbench.view.explorer"
   }
 ]
