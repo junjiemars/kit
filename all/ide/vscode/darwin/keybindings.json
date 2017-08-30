@@ -45,5 +45,13 @@
   {
     "key": "shift+cmd+e",
     "command": "-workbench.view.explorer"
+  },
+  {
+    "key": "ctrl+x ctrl+d",
+    "command": "workbench.view.debug"
+  },
+  {
+    "key": "shift+cmd+d",
+    "command": "-workbench.view.debug"
   }
 ]

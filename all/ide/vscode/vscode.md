@@ -19,6 +19,6 @@
 | view git                           | C-x C-g        |
 | view search                        | C-x C-s        | 
 | toggle sidebar                     |                |
-| focus <n>th editor group           | C-<n>          |
+| focus \<n\>th editor group         | C-\<n\>        |
 | toggle integrated terminal         | C-`            |
 | toggle panel                       |                |
