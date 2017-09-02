@@ -13,6 +13,8 @@
 | open untitled file                 | C-x C-f        |
 | switch buffer (quick open)         | C-x b          |
 | close active editor                | C-x C-k        |
+| open next editor                   | C-tab          |
+| open previous editor               | C-S-tab        |
 | run command (show command)         | M-x            |
 | view explorer                      | C-x C-b        |
 | view debug                         | C-x C-d        |
