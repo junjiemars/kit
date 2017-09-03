@@ -4,5 +4,8 @@
     "editor.fontFamily": "Monaco, Menlo, 'Courier New', monospace",
     "terminal.integrated.fontSize": 14,
     "terminal.integrated.lineHeight": 1.4,
-    "window.zoomLevel": 0
+    "window.zoomLevel": 0,
+    "python.linting.pylintArgs": [
+        "--extension-pkg-whitelist=numpy"
+    ]
 }
