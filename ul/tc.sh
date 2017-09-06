@@ -9,7 +9,7 @@ OPT_RUN="${OPT_RUN:-/opt/run}"
 PREFIX="${PREFIX:-${OPT_RUN%/}/www/tomcat}"
 VERSION="1.2.1"
 
-VER="${VER:-8.5.8}"
+VER="${VER:-8.5.16}"
 CATALINA_BASE="${CATALINA_BASE:-${PREFIX%/}/${VER}}"
 CATALINA_OPTS="${CATALINA_OPTS}"
 
@@ -133,6 +133,29 @@ function export_pid_var() {
 }
 
 
+function on_win32() {
+  case "$PLATFORM" in
+    MSYS_NT*|MINGW*)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+
+function unix_path() {
+	local p="$1"
+	if `on_win32`; then
+		echo "$p" | sed -e 's#^\([a-zA-Z]\):/#/\l\1/#'
+	else
+		echo "$p"
+	fi
+}
+
+
+
 function check_env() {
   local pid="`get_pid`"
   local run="Stopped"
@@ -179,12 +202,11 @@ function check_exist() {
 function clean_apps() {
 	local base="${1%/}/webapps"
 	local apps=("docs" "examples" "host-manager" "manager" "ROOT")
-	local p=
 	
   echo -e "+ clean Tomcat[$base] ..."
 
 	for d in "${apps[@]}"; do
-		p="${base%/}/webapps/$d"		
+		local p="${base%/}/$d"		
 		if [ -d "$p" ]; then
 			rm -r "$p"
 		fi
@@ -343,7 +365,7 @@ function install_tomcat() {
   fi
 
   [ -d "${CATALINA_BASE}" ] || mkdir -p "${CATALINA_BASE}"
-  tar -xf "${ltgz}" -C "${CATALINA_BASE}" --strip-components=1
+  tar -xf "`unix_path ${ltgz}`" -C "${CATALINA_BASE}" --strip-components=1
 
   if `check_exist`; then
     echo -e "# install Tomcat[$VER]  =succeed"
@@ -494,7 +516,10 @@ fi
 export_pid_var
 echo_opts "java_opts" "${java_opts}"
 export_java_opts "$java_opts"
+echo_opts "PREFIX" "${PREFIX}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
+echo_opts "CATALINA_BASE" "${CATALINA_BASE}"
+
 
 retval=
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"

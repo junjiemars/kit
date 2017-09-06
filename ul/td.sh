@@ -19,7 +19,7 @@ VERSION="1.2.1"
 JAVA_OPTS=
 DEBUG=(${DEBUG:+$DEBUG} "no" "yes")
 
-VER=${VER:-"8.5.8"}
+VER=${VER:-"8.5.16"}
 CLEAN="no"
 TC_OPTS=
 TC_SH="tc.sh"
@@ -517,8 +517,12 @@ function transport_file() {
       t=$?
       ;;
     *)
-	    cp $lp $rp
-      t=$?
+			if [ "$lp" == "$rp" ]; then
+				t=0
+			else
+	    	cp $lp $rp
+      	t=$?
+			fi
       ;;
   esac
   if [ 0 -eq $t ]; then
