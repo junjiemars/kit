@@ -14,7 +14,7 @@ HAS_PROCEXP=${HAS_PROCEXP:-0}
 HAS_NETCAT=${HAS_NETCAT:-0}
 HAS_GMAKE=${HAS_GMAKE:-0}
 
-EMACS_VER=${EMACS_VER:-"24.5"}
+EMACS_VER=${EMACS_VER:-"25.2"}
 
 to_win_path() {
   echo "$1" | \
