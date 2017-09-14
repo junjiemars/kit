@@ -1,29 +1,129 @@
 #!/bin/bash
+#------------------------------------------------
+# require: bash env
+# target : nginx maker
+# author : junjiemars@gmail.com
+#------------------------------------------------
 
-NGINX_HOME=${NGINX_HOME:-$OPT_OPEN/nginx/nginx-release-1.11.10}
-NGINX_RUN_DIR=${NGINX_RUN_DIR:-$OPT_RUN}
-NGINX_LOG_DIR=${NGINX_LOG_DIR:-$NGINX_RUN_DIR/var/nginx}
+VERSION=${VER:-0.1.1}
 
-cd $NGINX_HOME
-auto/configure --prefix=$NGINX_RUN_DIR \
-  --error-log-path=$NGINX_LOG_DIR/error.log \
-  --pid-path=$NGINX_LOG_DIR/pid \
-  --with-stream \
-  --without-http_geo_module         \
-  --without-http_map_module         \
-  --without-http_geo_module         \
-  --without-http_map_module         \
-  --without-http_fastcgi_module     \
-  --without-http_scgi_module        \
-  --without-http_memcached_module   \
-  --without-mail_pop3_module        \
-  --without-mail_imap_module        \
-  --without-mail_smtp_module        \
-  --without-stream_geo_module       \
-  --without-stream_map_module 
+NGX_TARGET=( http stream http-stream )
+NGX_HOME=${NGX_HOME:-$OPT_OPEN/nginx/nginx-release-1.11.10}
+NGX_RUN_DIR=${NGX_RUN_DIR:-$OPT_RUN}
+NGX_LOG_DIR=${NGX_LOG_DIR:-$NGX_RUN_DIR/var/nginx}
 
-make
-make install
+
+usage() {
+  echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
+  echo -e "       $(basename $0) [ -h | --help | -v | --version ]\n"
+  echo -e "Options:"
+  echo -e "  --help\t\t\t\tPrint this message"
+  echo -e "  --version\t\t\t\tPrint version information and quit"
+  echo -e ""
+  echo -e "  --target=\t\t\twhat to do, TARGET='${NGX_TARGET}'"
+  echo -e "  --home=\t\t\tnginx source dir, NGX_HOME='${NGX_HOME}'"
+  echo -e "  --run-dir=\t\t\twhere nginx run, NGX_RUN_DIR='${NGX_RUN_DIR}'"
+  echo -e "  --log-dir=\t\t\twhere nginx log store, NGX_LOG_DIR='${NGX_LOG_DIR}'"
+	echo -e ""
+  echo -e "A Nginx maker."
+	echo -e ""
+  #echo -e "Commands:"
+  #echo -e "  <none>\t\t\t\t\t<none>"
+}
+
+
+for option
+do
+  opt="$opt `echo $option | sed -e \"s/\(--[^=]*=\)\(.* .*\)/\1'\2'/\"`"
+  
+  case "$option" in
+    -*=*) value=`echo "$option" | sed -e 's/[-_a-zA-Z0-9]*=//'` ;;
+    *) value="" ;;
+  esac
+  
+  case "$option" in
+    --help)                  help=yes                   ;;
+    --version)               version=yes                ;;
+
+    --target=*)              NGX_TARGET="$value" 				;;
+    --home=*)                ngx_home="$value"    			;;
+		--run-dir=*)             ngx_run_dir="$value"       ;;
+		--log-dir=*)             ngx_log_dir="$value"       ;;
+    
+    *)
+      echo "$0: error: invalid option \"$option\""
+			usage
+      exit 1
+    ;;
+  esac
+done
+
+
+if [ "$help" = "yes" -o 0 -eq $# ]; then
+	usage
+	exit 0
+fi
+
+if [ "$version" = "yes" ]; then
+	echo -e "$VERSION"
+	exit 0
+fi
+
+# setup env vars
+
+if [ -n "$ngx_home" ]; then
+	if [ -d "$NGX_HOME" ]; then
+  	NGX_HOME="$NGX_HOME"
+	else
+    echo -e "! --home=$ngx_home  =invalid"
+		exit 1
+	fi
+fi
+
+if [ -n "$ngx_run_dir" ]; then
+	[ -d "$ngx_run_dir" ] || mkdir -p "$ngx_run_dir"
+  NGX_RUN_DIR="$ngx_run_dir"
+fi
+
+if [ -n "$ngx_log_dir" ]; then
+	[ -d "$ngx_log_dir" ] || mkdir -p "$ngx_log_dir"	
+	NGX_LOG_DIR="$ngx_log_dir"
+fi
+
+#
+#retval=0
+#command="`echo $command | tr '[:upper:]' '[:lower:]'`"
+#case "$command" in
+#
+#  build)
+#    build_war "$L_WAR_PATH"
+#    ;;
+#  *)
+#    echo "$0: error: invalid command \"$command\""
+#		usage
+#    ;;
+#esac
+
+#cd $NGX_HOME
+#auto/configure --prefix=$NGX_RUN_DIR \
+#  --error-log-path=$NGX_LOG_DIR/error.log \
+#  --pid-path=$NGX_LOG_DIR/pid \
+#  --with-stream \
+#  --without-http_geo_module         \
+#  --without-http_map_module         \
+#  --without-http_geo_module         \
+#  --without-http_map_module         \
+#  --without-http_fastcgi_module     \
+#  --without-http_scgi_module        \
+#  --without-http_memcached_module   \
+#  --without-mail_pop3_module        \
+#  --without-mail_imap_module        \
+#  --without-mail_smtp_module        \
+#  --without-stream_geo_module       \
+#  --without-stream_map_module 
+#
+#make
+#make install
 
 
 #  --help                             print this message
