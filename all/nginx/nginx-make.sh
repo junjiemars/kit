@@ -7,28 +7,36 @@
 
 VERSION=${VER:-0.1.1}
 
-NGX_TARGET=( http stream http-stream )
-NGX_HOME=${NGX_HOME:-$OPT_OPEN/nginx/nginx-release-1.11.10}
+NGX_TARGET=( raw http stream http-stream )
+NGX_HOME=${NGX_HOME:-$OPT_OPEN/nginx}
 NGX_RUN_DIR=${NGX_RUN_DIR:-$OPT_RUN}
 NGX_LOG_DIR=${NGX_LOG_DIR:-$NGX_RUN_DIR/var/nginx}
+NGX_OPTIONS=${NGX_OPTIONS}
 
 
 usage() {
   echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
   echo -e "       $(basename $0) [ -h | --help | -v | --version ]\n"
   echo -e "Options:"
-  echo -e "  --help\t\t\t\tPrint this message"
-  echo -e "  --version\t\t\t\tPrint version information and quit"
+  echo -e "  --help\t\t\tPrint this message"
+  echo -e "  --version\t\t\tPrint version information and quit"
   echo -e ""
-  echo -e "  --target=\t\t\twhat to do, TARGET='${NGX_TARGET}'"
+  echo -e "  --target=\t\t\twhat[${NGX_TARGET[@]}] to do, TARGET='${NGX_TARGET}'"
   echo -e "  --home=\t\t\tnginx source dir, NGX_HOME='${NGX_HOME}'"
   echo -e "  --run-dir=\t\t\twhere nginx run, NGX_RUN_DIR='${NGX_RUN_DIR}'"
   echo -e "  --log-dir=\t\t\twhere nginx log store, NGX_LOG_DIR='${NGX_LOG_DIR}'"
+  echo -e "  --options=\t\t\tnginx auto/configure options, NGX_OPTIONS='${NGX_OPTIONS}'"
 	echo -e ""
   echo -e "A Nginx maker."
 	echo -e ""
-  #echo -e "Commands:"
-  #echo -e "  <none>\t\t\t\t\t<none>"
+  echo -e "Commands:"
+  echo -e "  configure\t\t\tconfigure nginx build env"
+  echo -e "  make\t\t\t\tmake nginx"
+  echo -e "  install\t\t\tinstall nginx"
+  echo -e "  clean\t\t\t\tclean nginx build env"
+  echo -e "  modules\t\t\tbuild nginx modules"
+  echo -e "  upgrade\t\t\tupgrade nginx"
+  echo -e "  shell\t\t\t\tgenerate nginx shell"
 }
 
 
@@ -49,11 +57,10 @@ do
     --home=*)                ngx_home="$value"    			;;
 		--run-dir=*)             ngx_run_dir="$value"       ;;
 		--log-dir=*)             ngx_log_dir="$value"       ;;
+		--options=*)             ngx_options="$value"       ;;
     
     *)
-      echo "$0: error: invalid option \"$option\""
-			usage
-      exit 1
+      command="$option"
     ;;
   esac
 done
@@ -90,40 +97,110 @@ if [ -n "$ngx_log_dir" ]; then
 	NGX_LOG_DIR="$ngx_log_dir"
 fi
 
-#
-#retval=0
-#command="`echo $command | tr '[:upper:]' '[:lower:]'`"
-#case "$command" in
-#
-#  build)
-#    build_war "$L_WAR_PATH"
-#    ;;
-#  *)
-#    echo "$0: error: invalid command \"$command\""
-#		usage
-#    ;;
-#esac
+if [ -n "$ngx_options" ]; then
+	NGX_OPTIONS="$ngx_options"
+fi
 
-#cd $NGX_HOME
-#auto/configure --prefix=$NGX_RUN_DIR \
-#  --error-log-path=$NGX_LOG_DIR/error.log \
-#  --pid-path=$NGX_LOG_DIR/pid \
-#  --with-stream \
-#  --without-http_geo_module         \
-#  --without-http_map_module         \
-#  --without-http_geo_module         \
-#  --without-http_map_module         \
-#  --without-http_fastcgi_module     \
-#  --without-http_scgi_module        \
-#  --without-http_memcached_module   \
-#  --without-mail_pop3_module        \
-#  --without-mail_imap_module        \
-#  --without-mail_smtp_module        \
-#  --without-stream_geo_module       \
-#  --without-stream_map_module 
-#
-#make
-#make install
+
+configure() {
+	case "$NGX_TARGET" in
+
+		raw)
+			echo $NGX_OPTIONS
+		;;
+
+		http)
+		;;
+
+		stream)
+echo "\
+--prefix=$NGX_RUN_DIR                   \
+--error-log-path=$NGX_LOG_DIR/error.log  \
+--pid-path=$NGX_LOG_DIR/pid      				 \
+--with-stream                    				 \
+--without-http_geo_module        				 \
+--without-http_map_module        				 \
+--without-http_geo_module        				 \
+--without-http_map_module        				 \
+--without-http_fastcgi_module    				 \
+--without-http_scgi_module       				 \
+--without-http_memcached_module  				 \
+--without-mail_pop3_module       				 \
+--without-mail_imap_module       				 \
+--without-mail_smtp_module       				 \
+--without-stream_geo_module      				 \
+--without-stream_map_module"
+
+		;;
+
+		*)
+		;;
+
+	esac
+}
+
+
+make_target() {
+	local t="$1"
+
+	cd $NGX_HOME
+	make $t
+}
+
+
+check() {
+	local c="`configure | tr -s ' '`"
+
+	cd $NGX_HOME
+auto/configure $c
+}
+
+
+gen_shell() {
+
+}
+
+
+retval=0
+command="`echo $command | tr '[:upper:]' '[:lower:]'`"
+case "$command" in
+
+  configure)
+		check
+	;;
+
+	make)
+		make_target -j4
+	;;
+
+	install)
+		make_target install
+	;;
+
+	clean)
+		make_target clean
+	;;
+
+	modules)
+		make_target modules
+	;;
+
+	upgrade)
+		make_target upgrade
+	;;
+
+	shell)
+		gen_shell
+	;;
+
+
+  *)
+    echo "$0: error: invalid command \"$command\""
+		usage
+    ;;
+
+esac
+
 
 
 #  --help                             print this message
