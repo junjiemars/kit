@@ -11,24 +11,33 @@ export ORACLE_HOME=${ORACLE_HOME:-"/opt/oracle/u01/app/oracle/product/11.2.0/xe"
 export SQLPATH=${SQLPATH:-"/opt/oracle/sql"}
 export NLS_LANG=${NLS_LANG:-"AMERICAN_AMERICA.UTF8"}
 
-ORA_LD=${ORACLE_HOME%/}/lib
+ORA_LD=${ORACLE_HOME%/}
+if [ -d "${ORA_LD}/lib" ]; then
+	ORA_LD=${ORA_LD}/lib
+fi
+
+ORA_BIN=${ORACLE_HOME%/}
+if [ -d "${ORA_BIN}/bin" ]; then
+	ORA_BIN=${ORA_BIN}/bin
+fi
+
 case $PLATFORM in
 	Darwin)
-		export DYLD_LIBRARY_PATH=$ORA_LD${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
+		export DYLD_LIBRARY_PATH=${ORA_LD}${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
 		;;
 	*)
-		export LD_LIBRARY_PATH=$ORA_LD${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+		export LD_LIBRARY_PATH=${ORA_LD}${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 		;;
 esac
 
-export PATH=${ORACLE_HOME%/}/bin${PATH:+:$PATH}
+export PATH=${ORA_BIN}${PATH:+:$PATH}
 
-ORA_USER=${ORA_USER:-'system'}
-ORA_PASSWD=${ORA_PASSWD:-'oracle'}
-HOST=${HOST:-'localhost'}
-PORT=${PORT:-'1521'}
+ORA_USER=${ORA_USER:-system}
+ORA_PASSWD=${ORA_PASSWD:-oracle}
+HOST=${HOST:-localhost}
+PORT=${PORT:-1521}
 SID=${SID:-'XE'}
-USERID=${USERID:-"${HOST}:${PORT}/${SID}"}
+USERID=${USERID:-${HOST}:${PORT}/${SID}}
 
 if [ 0 -eq `type -p rlwrap &>/dev/null; echo $?` ]; then
 	RLWRAP='rlwrap'
