@@ -23,7 +23,7 @@ NGX_CPU_N=1
 NGX_CON_N=1024
 
 NGX_LISTEN_PORT=
-NGX_BACKEND_PORTS=
+NGX_BACKENDS=
 
 
 function usage() {
@@ -41,7 +41,7 @@ function usage() {
   echo -e "  --chained\t\t\tchained commands, '${NGX_CHAINED}'"
   echo -e ""
   echo -e "  --listen-port=\t\tnginx listen port"
-  echo -e "  --backend-ports=\t\tnginx backend ports"
+  echo -e "  --backends=\t\t\tnginx backends"
 	echo -e ""
   echo -e "A nginx configuration and shell maker"
 	echo -e ""
@@ -77,7 +77,7 @@ do
 		--chained)               NGX_CHAINED="yes"           				 ;;
 
 		--listen-port=*)         NGX_LISTEN_PORT="$value"			       ;;
-		--backend-ports=*)       NGX_BACKEND_PORTS=( "$value" )      ;;
+		--backends=*)						 NGX_BACKENDS=( "$value" )           ;;
     
     *)
 
@@ -268,6 +268,13 @@ events {
 }
 
 
+#function gen_backends() {
+#	for i in "${NGX_BACKENDS[@]}"; do
+#		
+#	done
+#}
+
+
 function gen_http_section() {
 echo "
 http {
@@ -283,8 +290,12 @@ http {
 		#gzip_types		text/plain application/xml;
 
 		upstream backend {
-			\${backend.list}
-			server 10.32.65.238:8989;
+`
+for i in ${NGX_BACKENDS[@]}; do
+		echo "\
+				server $i;"
+done
+`
 		} # end of upstream
 	
     server {
