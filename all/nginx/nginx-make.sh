@@ -23,7 +23,7 @@ NGX_CPU_N=1
 NGX_CON_N=1024
 
 NGX_LISTEN_PORT=
-NGX_BACKEND_PORT=
+NGX_BACKEND_PORTS=
 
 
 function usage() {
@@ -43,7 +43,7 @@ function usage() {
   echo -e "  --listen-port=\t\tnginx listen port"
   echo -e "  --backend-ports=\t\tnginx backend ports"
 	echo -e ""
-  echo -e "A Nginx configuration and shell maker"
+  echo -e "A nginx configuration and shell maker"
 	echo -e ""
   echo -e "Commands:"
   echo -e "  configure\t\t\tconfigure nginx build env"
@@ -75,18 +75,30 @@ do
 		--log-dir=*)             ngx_log_dir="$value"       				 ;;
 		--options=*)             ngx_options="$value"       				 ;;
 		--chained)               NGX_CHAINED="yes"           				 ;;
-    --target=*)              ngx_target=( $value )  	  				;;
-    --home=*)                ngx_home="$value"    							;;
-		--run-dir=*)             ngx_run_dir="$value"       				;;
-		--log-dir=*)             ngx_log_dir="$value"       				;;
-		--options=*)             ngx_options="$value"       				;;
-		--chained)               NGX_CHAINED="yes"           				;;
+    --target=*)              ngx_target=( $value )  	  				 ;;
+    --home=*)                ngx_home="$value"    							 ;;
+		--run-dir=*)             ngx_run_dir="$value"       				 ;;
+		--log-dir=*)             ngx_log_dir="$value"       				 ;;
+		--options=*)             ngx_options="$value"       				 ;;
+		--chained)               NGX_CHAINED="yes"           				 ;;
 
 		--listen-port=*)         NGX_LISTEN_PORT="$value"			       ;;
-		--backend-ports=*)       NGX_BACKEND_PORT=( "$value" )       ;;
+		--backend-ports=*)       NGX_BACKEND_PORTS=( "$value" )      ;;
     
     *)
-      command="$option"
+
+			case "$option" in
+				-*)
+					echo "$0: error: invalid option \"$option\""
+					usage
+					exit 1
+				;;
+
+				*) 
+      		command="$option"
+				;;
+			esac
+
     ;;
   esac
 done
@@ -370,17 +382,10 @@ case "$command" in
 
 
   *)
-		case "$command" in
-			--*)
-				echo "$0: error: invalid option \"$command\""
-			;;
-			*) 
-				echo "$0: error: invalid command \"$command\""
-			;;
-		esac
-
+		echo "$0: error: invalid command \"$command\""
 		usage
-    ;;
+		exit 1
+  ;;
 
 esac
 
