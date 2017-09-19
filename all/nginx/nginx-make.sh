@@ -75,6 +75,12 @@ do
 		--log-dir=*)             ngx_log_dir="$value"       				 ;;
 		--options=*)             ngx_options="$value"       				 ;;
 		--chained)               NGX_CHAINED="yes"           				 ;;
+    --target=*)              ngx_target=( $value )  	  				;;
+    --home=*)                ngx_home="$value"    							;;
+		--run-dir=*)             ngx_run_dir="$value"       				;;
+		--log-dir=*)             ngx_log_dir="$value"       				;;
+		--options=*)             ngx_options="$value"       				;;
+		--chained)               NGX_CHAINED="yes"           				;;
 
 		--listen-port=*)         NGX_LISTEN_PORT="$value"			       ;;
 		--backend-ports=*)       NGX_BACKEND_PORT=( "$value" )       ;;
