@@ -14,6 +14,8 @@ NGX_RUN_DIR=${NGX_RUN_DIR:-$OPT_RUN}
 NGX_LOG_DIR=${NGX_LOG_DIR:-$NGX_RUN_DIR/var/nginx}
 NGX_OPTIONS=${NGX_OPTIONS}
 
+NGX_CHAINED=( no yes )
+
 NGX_CPU_N=1
 NGX_CON_N=1024
 
@@ -33,6 +35,7 @@ usage() {
   echo -e "  --run-dir=\t\t\twhere nginx run, NGX_RUN_DIR='${NGX_RUN_DIR}'"
   echo -e "  --log-dir=\t\t\twhere nginx log store, NGX_LOG_DIR='${NGX_LOG_DIR}'"
   echo -e "  --options=\t\t\tnginx auto/configure options, NGX_OPTIONS='${NGX_OPTIONS}'"
+  echo -e "  --chained\t\t\tchained commands, '${NGX_CHAINED}'"
   echo -e ""
   echo -e "  --listen-port=\t\t\tnginx listen port"
   echo -e "  --backend-ports=\t\t\tnginx backend ports"
@@ -68,6 +71,7 @@ do
 		--run-dir=*)             ngx_run_dir="$value"       				;;
 		--log-dir=*)             ngx_log_dir="$value"       				;;
 		--options=*)             ngx_options="$value"       				;;
+		--chained)               NGX_CHAINED="yes"           				;;
 
 		--listen-port=*)         NGX_LISTEN_PORT="$value"			       ;;
 		--backend-port=*)        NGX_BACKEND_PORT=( "$value" )       ;;
@@ -135,6 +139,9 @@ configure() {
 
 		raw)
 			echo $NGX_OPTIONS
+echo "\
+--prefix=$NGX_RUN_DIR"
+
 		;;
 
 		http)
@@ -142,7 +149,7 @@ configure() {
 
 		stream)
 echo "\
---prefix=$NGX_RUN_DIR                   \
+--prefix=$NGX_RUN_DIR                    \
 --error-log-path=$NGX_LOG_DIR/error.log  \
 --pid-path=$NGX_LOG_DIR/pid      				 \
 --with-stream                    				 \
@@ -168,19 +175,65 @@ echo "\
 }
 
 
-make_target() {
-	local t="$1"
-
-	cd $NGX_HOME
-	make $t
-}
-
-
-check() {
+do_configure() {
 	local c="`configure | tr -s ' '`"
 
 	cd $NGX_HOME
 auto/configure $c
+}
+
+
+do_make() {
+	local t=0
+
+	if [ "$NGX_CHAINED" = "yes" ]; then
+		do_configure	
+		t=$?
+		[ 0 -eq $t ] || exit $t
+	fi
+
+	cd $NGX_HOME
+	make -j4
+}
+
+do_install() {
+	local t=0
+	
+	if [ "$NGX_CHAINED" = "yes" ]; then
+		do_make
+		t=$?
+		[ 0 -eq $t ] || exit $t
+	fi
+
+	cd $NGX_HOME
+	make install
+}
+
+do_clean() {
+	cd $NGX_HOME
+	make clean
+}
+
+
+do_modules() {
+	local t=0
+
+	if [ "$NGX_CHAINED" = "yes" ]; then
+		do_configure	
+		t=$?
+		[ 0 -eq $t ] || exit $t
+	fi
+
+	cd $NGX_HOME
+	make modules
+}
+
+
+do_upgrade() {
+	local t=0
+
+	cd $NGX_HOME
+	make upgrade
 }
 
 
@@ -257,27 +310,27 @@ command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
 
   configure)
-		check
+		do_configure	
 	;;
 
 	make)
-		make_target -j4
+		do_make -j4
 	;;
 
 	install)
-		make_target install
+		do_install
 	;;
 
 	clean)
-		make_target clean
+		do_clean
 	;;
 
 	modules)
-		make_target modules
+		do_modules
 	;;
 
 	upgrade)
-		make_target upgrade
+		do_upgrade
 	;;
 
 	shell)
