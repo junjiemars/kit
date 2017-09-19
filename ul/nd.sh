@@ -7,7 +7,7 @@
 
 VERSION=${VER:-0.1.1}
 
-NGX_TARGETS=( raw http stream https)
+NGX_TARGETS=( raw http stream https )
 NGX_IDX=()
 NGX_HOME=${NGX_HOME:-$OPT_OPEN/nginx}
 NGX_RUN_DIR=${NGX_RUN_DIR:-$OPT_RUN}
@@ -42,6 +42,8 @@ function usage() {
   echo -e "  --options=\t\t\tnginx auto/configure options, NGX_OPTIONS='${NGX_OPTIONS}'"
   echo -e "  --chained\t\t\tchained commands, '${NGX_CHAINED}'"
   echo -e ""
+  echo -e "  --opt-processes=\t\toption: worker_processes, default is '$OPT_CPU_N'"
+  echo -e "  --opt-connections=\t\toption: worker_connections, default is '$OPT_CON_N'"
   echo -e "  --opt-listen-port=\t\toption: listen_port, default is '$OPT_LISTEN_PORT'"
   echo -e "  --opt-upstream=\t\toption: upstream backends"
   echo -e "  --opt-server-name=\t\toption: server_name, default is '$OPT_SERVER_NAME'"
@@ -80,6 +82,8 @@ do
 		--options=*)             				ngx_options="$value"       				 ;;
 		--chained)               				NGX_CHAINED="yes"          				 ;;
 
+		--opt-processes=*)     					OPT_CPU_N="$value"      		       ;;
+		--opt-connections=*)     				OPT_CON_N="$value"       		       ;;
 		--opt-listen-port=*)     				OPT_LISTEN_PORT="$value"		       ;;
 		--opt-upstream=*)								OPT_UPSTREAM=( "$value" )          ;;
 		--opt-server-tokens=*)	 				OPT_SERVER_TOKENS=( "$value" )     ;;
@@ -276,16 +280,16 @@ events {
 function gen_http_section() {
 echo "
 http {
-    include       mime.types;
-    default_type  application/octet-stream;
-		access_log  off;
-    sendfile        on;
-    #tcp_nopush     on;
-    #keepalive_timeout  0;
-    keepalive_timeout  65;
+		#access_log  off;
+    #default_type  application/octet-stream;
+    #include       mime.types;
     #gzip  on;
 		#gzip_min_length  1000;
 		#gzip_types		text/plain application/xml;
+    #keepalive_timeout  0;
+    #keepalive_timeout  65;
+    #sendfile        on;
+    #tcp_nopush     on;
 
 		upstream backend {
 			#server x.x.x.x:8181;
@@ -305,7 +309,9 @@ done
 				location / {
 					proxy_pass http://backend;
 				} # end of location
+
     } # end of server
+
 } # end of http
 
 "
