@@ -7,7 +7,7 @@
 
 VERSION=${VER:-0.1.1}
 
-NGX_TARGET=( raw http stream https )
+NGX_TARGET=( raw http https stream dns )
 NGX_IDX=${NGX_TARGET[0]}
 NGX_HOME=${NGX_HOME:-$OPT_OPEN/nginx}
 NGX_RUN_DIR=${NGX_RUN_DIR:-$OPT_RUN}
@@ -190,7 +190,7 @@ echo "\
 
 		;;
 
-		stream)
+		stream|dns)
 echo "\
 --prefix=$NGX_RUN_DIR                             \
 --error-log-path=${NGX_LOG_DIR%/}/$NGX_ERR_LOG    \
@@ -388,6 +388,34 @@ done
 
 }
 
+
+function gen_dns_section() {
+echo "
+stream {
+
+		upstream dns {
+    		#server x.x.x.x:53;
+`
+for i in ${OPT_UPSTREAM[@]}; do
+		echo "\
+				server $i;"
+done
+`
+
+    } # end of upstream dns
+
+    server {
+        listen $OPT_LISTEN_PORT udp;
+        proxy_responses 1;
+        proxy_timeout 20s;
+        proxy_pass dns;
+
+    } #end of server
+
+} # end of stream
+
+"
+}
 
 
 function gen_shell() {
