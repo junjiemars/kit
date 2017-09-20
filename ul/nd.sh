@@ -7,8 +7,8 @@
 
 VERSION=${VER:-0.1.1}
 
-NGX_TARGETS=( http stream https )
-NGX_IDX=()
+NGX_TARGET=( raw http stream https )
+NGX_IDX=${NGX_TARGET[0]}
 NGX_HOME=${NGX_HOME:-$OPT_OPEN/nginx}
 NGX_RUN_DIR=${NGX_RUN_DIR:-$OPT_RUN}
 NGX_LOG_DIR=${NGX_LOG_DIR:-${NGX_RUN_DIR%/}/var/nginx}
@@ -41,7 +41,7 @@ function usage() {
   echo -e "  --help\t\t\tPrint this message"
   echo -e "  --version\t\t\tPrint version information and quit"
   echo -e ""
-  echo -e "  --targets=\t\t\twhat nginx [${NGX_TARGETS[@]}] do, IDX='${NGX_TARGETS}'"
+  echo -e "  --target=\t\t\twhat nginx [${NGX_TARGET[@]}] do, default is '${NGX_IDX}'"
   echo -e "  --home=\t\t\tnginx source dir, NGX_HOME='${NGX_HOME}'"
   echo -e "  --run-dir=\t\t\twhere nginx run, NGX_RUN_DIR='${NGX_RUN_DIR}'"
   echo -e "  --log-dir=\t\t\twhere nginx log store, NGX_LOG_DIR='${NGX_LOG_DIR}'"
@@ -83,7 +83,7 @@ do
     --help)                  				help=yes                   				 ;;
     --version)               				version=yes                				 ;;
 
-    --targets=*)             				ngx_targets=( $value ) 	  				 ;;
+    --target=*)             				ngx_target=( $value ) 	  				 ;;
     --home=*)                				ngx_home="$value"    							 ;;
 		--run-dir=*)             				ngx_run_dir="$value"       				 ;;
 		--log-dir=*)             				ngx_log_dir="$value"       				 ;;
@@ -153,25 +153,23 @@ if [ -n "$ngx_options" ]; then
 	NGX_OPTIONS="$ngx_options"
 fi
 
-if [ -n "$ngx_targets" ]; then
-	for i in "${NGX_TARGETS[@]}"; do
-		for j in "${ngx_targets[@]}"; do
-				if [ ".$i" = ".$j" ]; then
-					NGX_IDX+=( $i )
-					break
-				fi
-		done
+if [ -n "$ngx_target" ]; then
+	for i in "${NGX_TARGET[@]}"; do
+		if [ ".$ngx_target" = ".$i" ]; then
+			NGX_IDX="$i"
+			break
+		fi
 	done
 
-	if [ ${#ngx_targets[@]} -ne ${#NGX_IDX[@]} ]; then
-    echo -e "! --target=\"${ngx_targets[@]}\"  =invalid"
+	if [ "$ngx_target" != "$NGX_IDX" ]; then
+    echo -e "! --target=\"$ngx_target\"  =invalid"
     exit 1
 	fi
 fi
 
 
 function configure() {
-	case "$NGX_IDX" in
+	case "$1" in
 
 		raw)
 			echo $NGX_OPTIONS
@@ -221,11 +219,7 @@ echo "\
 
 
 function do_configure() {
-	local c=
-
-	for i in "$NGX_IDX"; do
-		c="${c:+$c }`configure | tr -s ' '`"
-	done
+	local c="`configure $NGX_IDX | tr -s ' '`"
 
 	if [ "yes" = "$NGX_GEN_SHELL" ]; then
 		gen_shell
