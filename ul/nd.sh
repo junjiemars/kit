@@ -485,12 +485,6 @@ case "$command" in
 		do_upgrade
 	;;
 
-	shell)
-		gen_shell
-		gen_conf
-	;;
-
-
   *)
 		echo "$0: error: invalid command \"$command\""
 		usage
