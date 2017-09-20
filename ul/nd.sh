@@ -356,6 +356,39 @@ done
 }
 
 
+function gen_stream_section() {
+echo "
+stream {
+
+    upstream backend {
+        hash \$remote_addr consistent;
+
+        #server x.x.x.x:12345     weight=5;
+        #server x.x.x.x:12345     max_fails=3 fail_timeout=30s;
+`
+for i in ${OPT_UPSTREAM[@]}; do
+		echo "\
+				server $i;"
+done
+`
+
+    } # end of upstream backend
+
+    server {
+        listen $OPT_LISTEN_PORT;
+        proxy_connect_timeout 1s;
+        proxy_timeout 3s;
+        proxy_pass backend;
+
+    } # end of server
+
+} # end of stream
+
+"
+
+}
+
+
 
 function gen_shell() {
 	cat << END > $NGX_SHELL
