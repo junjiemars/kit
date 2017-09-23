@@ -25,7 +25,11 @@ test -f $HOME/.bash_aliases && . $HOME/.bash_aliases
 
 # customize
 #---------- 
-#export LANG=en_US.UTF-8
+
+if [ -z "$LANG" ]; then 
+	export LANG=en_US.UTF-8
+fi
+
 #TMOUT=3000 # seconds
 #readonly TMOUT
 #export TMOUT
