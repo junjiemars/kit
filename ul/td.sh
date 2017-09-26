@@ -20,7 +20,7 @@ JAVA_OPTS=
 DEBUG=(${DEBUG:+$DEBUG} "no" "yes")
 
 VER=${VER:-"8.5.16"}
-CLEAN="no"
+CLEAN=( "no" "yes" )
 TC_OPTS=
 TC_SH="tc.sh"
 
@@ -82,7 +82,7 @@ usage() {
   echo -e "  --build-options=\t\t\tbuilding options, default BUILD_OPTS='${BUILD_OPTS}'"
   echo -e ""
   echo -e "  --tomcat-version=\t\t\ttomcat version, default is '$VER'"
-  echo -e "  --tomcat-clean\t\t\twhether clean tomcat, default is '$CLEAN'"
+  echo -e "  --tomcat-clean=\t\t\tclean tomcat [${CLEAN[@]}], default is '$CLEAN'"
   echo -e "  --tc-options=\t\t\t\ttc.sh options"
   echo -e ""
   echo -e "  --listen-on=\t\t\t\tlisten on what address: `echo ${LISTEN_ON[@]}|tr ' ' ','`, etc., default is '$LISTEN_ON'"
@@ -891,7 +891,7 @@ do
     --build-options=*)       BUILD_OPTS="$value"	      ;;
 
     --tomcat-version=*)      VER="$value"      			    ;;
-    --tomcat-clean)          CLEAN="yes"      			    ;;
+    --tomcat-clean=*)        clean="$value"     		    ;;
     --tc-options=*)          tc_opts="$value"		        ;;
 
     --listen-on=*)           LISTEN_ON="$value"		      ;;
@@ -938,6 +938,15 @@ fi
 
 if [ -n "$build_cmd" ]; then
   BUILD_CMD="$build_cmd"
+fi
+
+if [ -n "$clean" ]; then
+	for i in "${CLEAN[@]}"; do
+		if [ "$clean" = "$i" ]; then
+			CLEAN=$clean
+			break;
+		fi
+	done
 fi
 
 if [ -n "$L_WAR_PATH" ]; then
@@ -989,7 +998,7 @@ case "$command" in
       [ 0 -eq $retval ] || exit $retval
     fi
 
-		if [ "$CLEAN" == "yes" ]; then
+		if [ "$CLEAN" = "yes" ]; then
 			control_tomcat clean "${TO_WHERE[$TW_IDX]}"
 		fi
 
