@@ -131,8 +131,8 @@ fi
 # setup env vars
 
 if [ -n "$ngx_home" ]; then
-	if [ -d "$NGX_HOME" ]; then
-  	NGX_HOME="$NGX_HOME"
+	if [ -d "$ngx_home" ]; then
+  	NGX_HOME="$ngx_home"
 	else
     echo -e "! --home=$ngx_home  =invalid"
 		exit 1
@@ -183,10 +183,12 @@ echo "\
 --prefix=$NGX_RUN_DIR                              \
 --error-log-path=${NGX_LOG_DIR%/}/$NGX_ERR_LOG     \
 --pid-path=${NGX_LOG_DIR%/}/$NGX_PID_LOG           \
---http-log-path=${NGX_LOG_DIR%/}/access.log  \
+--http-log-path=${NGX_LOG_DIR%/}/access.log        \
 --without-http_memcached_module  				           \
 --without-http_fastcgi_module    				           \
---without-http_scgi_module"
+--without-http_scgi_module                         \
+--without-http_rewrite_module
+"
 
 		;;
 
