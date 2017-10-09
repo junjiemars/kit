@@ -1,4 +1,5 @@
 core.autocrlf=input
 core.quotepath=off
+core.editor = vi
 color.ui=auto
 remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
