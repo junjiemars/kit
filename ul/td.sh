@@ -875,7 +875,7 @@ do
 
     --local-prefix=*)        l_prefix="$value"   		    ;;
     --remote-prefix=*)       r_prefix="$value"   		    ;;
-    --java-options=*)        java_opts="$value"		      ;;
+    --java-options=*)        java_opts="${java_opts:+$java_opts }$value"		      ;;
     --debug)                 DEBUG=yes    		          ;;
     
     --where=*)               where="$value"		          ;;
