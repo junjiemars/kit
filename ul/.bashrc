@@ -19,7 +19,6 @@ esac
 test -f $HOME/.bash_vars && . $HOME/.bash_vars
 
 test -f $HOME/.bash_paths && . $HOME/.bash_paths
-export PATH
 
 test -f $HOME/.bash_aliases && . $HOME/.bash_aliases 
 
