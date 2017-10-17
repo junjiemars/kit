@@ -70,7 +70,7 @@ esac
 
 
 PATH="`uniq_path $PATH`"
-
+LD_LIBRARY_PATH="`uniq_path $LD_LIBRARY_PATH`"
 
 # other paths
 
