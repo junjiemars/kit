@@ -27,6 +27,9 @@ else
   PREFIX="${PREFIX:-/opt}"
 fi
 
+sed_i_0="-i''"
+[ "Darwin" = "$os" ] && sed_i_0="-i ''"
+
 
 RUN_DIR="${RUN_DIR:-${PREFIX}/run}"
 OPEN_DIR="${OPEN_DIR:-${PREFIX}/open}"
@@ -54,7 +57,7 @@ GRADLE_VER="${GRADLE_VER:-2.13}"
 SBT_VER="${SBT_VER:-0.13.13}"
 CLOJURE_VER="${CLOJURE_VER:-1.8.0}"
 CLOJURESCRIPT_VER="${CLOJURESCRIPT_VER:-1.9.229}"
-GROOVY_VER="${GROOVY_VER:-2_4_X}"
+GROOVY_VER="${GROOVY_VER:-2.4.12}"
 SCALA_VER="${SCALA_VER:-2.12.1}"
 ZOOKEEPER_VER="${ZOOKEEPER_VER:-3.4.10}"
 
@@ -65,9 +68,9 @@ append_paths() {
 	local name="PATH"
 	local val="\${PATH:+\$PATH:}$1"
 	local flag="$2"
-	local var="${name}=${val}"
-  if [ 0 -eq `grep "^${name}=\".*${flag}.*\"" "${f_paths}" &>/dev/null; echo $?` ]; then
-    sed -i "s#^${name}=\".*\"#${name}=\"${val}\"#g" "${f_paths}"
+	local var="${name}=\"${val}\""
+  if `grep "^${name}=\".*${flag}.*\"" "${f_paths}" &>/dev/null`; then
+    sed $sed_i_0 "s#^${name}=\".*${flag}\"#${var}#g" "${f_paths}"
 	else
     echo -e "${var}" >> "${f_paths}"
   fi
@@ -79,8 +82,8 @@ append_vars() {
   local name="$1"
   local val="$2"
   local var="export ${name}='${val}'"
-  if [ 0 -eq `grep "^export ${name}='.*'" "${f_vars}" &>/dev/null; echo $?` ]; then
-    sed -i "s#^export ${name}='.*'#${var}#g" "${f_vars}"
+  if `grep "^export ${name}='.*'" "${f_vars}" &>/dev/null`; then
+    sed $sed_i_0 "s#^export ${name}='.*'#${var}#g" "${f_vars}"
   else
     echo -e "${var}" >> "${f_vars}"
   fi
@@ -325,24 +328,23 @@ install_sbt() {
 }
 
 install_groovy() {
-  local groovy_tag="GROOVY_${GROOVY_VER}"
-  local groovy_url="https://github.com/apache/groovy.git"
-  local groovy_home="${OPEN_DIR}/groovy"
-  local bin_dir="${groovy_home}/target/install"
+  local groovy_zip="apache-groovy-binary-${GROOVY_VER}.zip"
+  local groovy_url="https://dl.bintray.com/groovy/maven/${groovy_zip}"
+	local groovy_root="${OPEN_DIR}/groovy"
+  local groovy_home="${groovy_root}/groovy-${GROOVY_VER}"
+  local bin_dir="${groovy_home}/bin"
 
-  [ 0 -eq `groovysh -version $>/dev/null; echo $?` ] && return 0
+  `groovysh --version &>/dev/null` && return 0
+  [ -d "${groovy_root}" ] || mkdir -p "${groovy_root}"
 
-  [ -f "${groovy_home}/gradlew" ] || \
-    git clone --depth=1 --branch="${groovy_tag}" \
-      "${groovy_url}" "${groovy_home}"
-
-  if [ ! -f "${bin_dir}/bin/groovysh" ]; then
-    cd "${groovy_home}" && \
-      ./gradlew -D"skipTest=true" installGroovy 
+  if [ ! -f "${bin_dir}/groovysh" ] || \
+       [ 0 -ne `${bin_dir}/groovysh --version &>/dev/null; echo $?` ]; then
+    curl $SOCKS -L -o "${groovy_root}/${groovy_zip}" -C - "${groovy_url}" && \
+			cd ${groovy_root} && unzip ${groovy_zip}
   fi
-
-  if [ 0 -eq `${bin_dir}/bin/groovysh -version $>/dev/null; echo $?` ]; then
-    append_vars "GROOVY_HOME" "${bin_dir}" 
+ 
+  if `GROOVY_HOME=${groovy_home} ${bin_dir}/groovysh --version &>/dev/null`; then
+    append_vars "GROOVY_HOME" "${groovy_home}" 
     append_paths "\${GROOVY_HOME}/bin" "GROOVY_HOME"
     return 0
   fi
@@ -378,7 +380,7 @@ install_scala() {
       tar xf "${scala_home}/${scala_tgz}" -C "${scala_home}" --strip-components=1
   fi
   
-  if [ 0 -eq `${bin_dir}/scala -version &>/dev/null; echo $?` ]; then
+  if `SCALA_HOME=${scala_home} ${bin_dir}/scala -version &>/dev/null`; then
     [ -d "${RUN_DIR}/share/man/man1" ] || mkdir -p "${RUN_DIR}/share/man/man1" 
     cp -R "${scala_home}/man/man1/." "${RUN_DIR}/share/man/man1/"
     append_vars "SCALA_HOME" "${scala_home}"
