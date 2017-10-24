@@ -34,7 +34,7 @@ SED_OPT_I="-i''"
 RUN_DIR="${RUN_DIR:-${PREFIX}/run}"
 OPEN_DIR="${OPEN_DIR:-${PREFIX}/open}"
 SOCKS="${SOCKS}"
-
+GITHUB_SH="https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh"
 
 HAS_ALL=${HAS_ALL:-NO}
 HAS_JDK=${HAS_JDK:-0}
@@ -220,7 +220,7 @@ install_abcl() {
   local abcl_home="${OPEN_DIR}/abcl"
   local bin_dir="${abcl_home}/${ABCL_VER}"
   local cmd="java -jar ${bin_dir}/abcl.jar --batch"
-  local abcl_sh="${RUN_DIR}/bin/abcl.sh"
+  local abcl_sh="${RUN_DIR}/bin/abcl"
 
   `check_kit "abcl.sh --batch" "${abcl_home}"` && return 0
 
@@ -240,7 +240,7 @@ if \`type -P rlwrap &>/dev/null\`; then
    RLWRAP=rlwrap
 fi
 ABCL_HOME=${bin_dir}
-java -jar \${ABCL_HOME}/abcl.jar \$@
+\$RLWRAP java -jar \${ABCL_HOME}/abcl.jar \$@
 END
     chmod_file "${abcl_sh}" "u+x"
     return 0
