@@ -35,8 +35,9 @@
 #OPEN_DIR="${OPEN_DIR:-${PREFIX}/open}"
 #SOCKS="${SOCKS}"
 
-GITHUB_H="${GITHUB_H:-https://raw.githubusercontent.com/junjiemars/kit/master}"
-. <(curl ${GITHUB_H}/ul/p.sh)
+GITHUB_BRANCH="${GITHUB_BRANCH:-master}"
+GITHUB_H="${GITHUB_H:-https://raw.githubusercontent.com/junjiemars/kit}"
+. <(curl ${GITHUB_H}/${GITHUB_BRANCH}/ul/p.sh)
 
 echo $PLATFORM
 
