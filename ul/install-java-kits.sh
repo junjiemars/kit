@@ -35,7 +35,8 @@
 #OPEN_DIR="${OPEN_DIR:-${PREFIX}/open}"
 #SOCKS="${SOCKS}"
 
-. <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/p.sh)
+GITHUB_H="${GITHUB_H:-https://raw.githubusercontent.com/junjiemars/kit/master}"
+. <(curl ${GITHUB_H}/ul/p.sh)
 
 echo $PLATFORM
 
