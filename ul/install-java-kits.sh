@@ -50,7 +50,6 @@ HAS_CLOJURESCRIPT=${HAS_CLOJURESCRIPT:-0}
 HAS_GROOVY=${HAS_GROOVY:-0}
 HAS_SCALA=${HAS_SCALA:-0}
 HAS_SCALA_VIM=${HAS_SCALA_VIM:-0}
-HAS_ZOOKEEPER=${HAS_ZOOKEEPER:-0}
 
 JDK_VER=("${JDK_U:-8u121} ${JDK_B:-b13}")
 ABCL_VER="${ABCL_VER:-1.5.0}"
@@ -62,7 +61,6 @@ CLOJURE_VER="${CLOJURE_VER:-1.8.0}"
 CLOJURESCRIPT_VER="${CLOJURESCRIPT_VER:-1.9.946}"
 GROOVY_VER="${GROOVY_VER:-2.4.12}"
 SCALA_VER="${SCALA_VER:-2.12.4}"
-ZOOKEEPER_VER="${ZOOKEEPER_VER:-3.4.10}"
 
 declare -a KITS=()
 
@@ -537,26 +535,6 @@ install_scala() {
   return 1
 }
 
-install_zookeeper() {
-  local zk_ver="zookeeper-${ZOOKEEPER_VER}"
-  local zk_tgz="${zk_ver}.tar.gz"
-  local zk_home="${OPEN_DIR}/zookeeper"
-  local zk_url="http://archive.apache.org/dist/zookeeper/${zk_ver}/${zk_tgz}"
-  local bin_dir="${zk_home}/bin"
-
-  `${bin_dir}/zkServer.sh print-cmd &> /dev/null` && return 0
-  [ -d "${zk_home}" ] || mkdir -p "${zk_home}"
-
-  if [ ! -f "${bin_dir}/zkServer.sh" ] || \
-       [ 0 -ne `${bin_dir}/zkServer print-cmd &>/dev/null; echo $?` ]; then
-    curl $SOCKS -L -o "${zk_home}/${zk_tgz}" -C - "${zk_url}" && \
-      tar xf "${zk_home}/${zk_tgz}" -C "${zk_home}" --strip-components=1
-  fi
-
-  `${bin_dir}/zkServer.sh print-cmd &> /dev/null` && return 0
-
-  return 1
-}
 
 if [ "YES" == "${HAS_ALL}" ]; then
   #HAS_JDK=1  # exclude JDK
@@ -571,7 +549,6 @@ if [ "YES" == "${HAS_ALL}" ]; then
   HAS_CLOJURESCRIPT=1
   HAS_GROOVY=1
   HAS_SCALA=1
-  #HAS_ZOOKEEPER=1
 fi
 
 [ 0 -lt "${HAS_JDK}" ]            && KITS+=('install_jdk')
@@ -587,7 +564,6 @@ fi
 [ 0 -lt "${HAS_GROOVY}" ]         && KITS+=('install_groovy')
 [ 0 -lt "${HAS_SCALA}" ]          && KITS+=('install_scala')
 [ 0 -lt "${HAS_SCALA_VIM}" ]      && KITS+=('install_scala_vim')
-[ 0 -lt "${HAS_ZOOKEEPER}" ]      && KITS+=('install_zookeeper')
 
 for i in "${KITS[@]}"; do
   echo -e "# ${i} ..." 
