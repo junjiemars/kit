@@ -303,13 +303,15 @@ install_maven() {
 install_boot() {
   local boot_url='https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh '
   local bin_dir="${RUN_DIR}/bin"
+  local boot_sh="${bin_dir}/boot"
+  local cmd="boot -v"
 
-  [ 0 -eq `boot -v $>/dev/null; echo $?` ] && return 0
+  `${cmd} &>/dev/null` && return 0
 
-  curl $SOCKS -fsSLo "${bin_dir}/boot" -C - "${boot_url}" && \
-    chmod 755 "${bin_dir}/boot"
-  
-  [ 0 -eq `${bin_dir}/boot -v &>/dev/null; echo $?` ] && return 0
+  if `download_kit "${boot_url}" "${boot_sh}"`; then
+    chmod_file "${boot_sh}" "u+x"
+    return $?
+  fi
   return 1
 }
 
