@@ -318,19 +318,16 @@ install_boot() {
 install_lein() {
   local lein_url="https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein"
   local bin_dir="${RUN_DIR}/bin"
-  
-  if [ ! -f "${bin_dir}/lein" ]; then
-    curl $SOCKS -fsSLo "${bin_dir}/lein" -C - "${lein_url}" && \
-      chmod u+x "${bin_dir}/lein"
-  fi
+  local lein_sh="${bin_dir}/lein"
+  local cmd="lein -v"
 
-  if `on_windows_nt`; then
-    if [ ! -f "${bin_dir}/lein.bat" ]; then
-      curl $SOCKS -fsSLo "${bin_dir}/lein.bat" \
-           -C - "${lein_url}.bat" \
-        && chmod u+x "${bin_dir}/lein.bat"
-    fi
+  `${cmd} &>/dev/null` && return 0
+
+  if `download_kit "${lein_url}" "${lein_sh}"`; then
+    chmod_file "${lein_sh}" "u+x"
+    return $?
   fi
+  return 1
 }
 
 install_clojure() {
