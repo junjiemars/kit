@@ -61,7 +61,7 @@ SBT_VER="${SBT_VER:-1.0.2}"
 CLOJURE_VER="${CLOJURE_VER:-1.8.0}"
 CLOJURESCRIPT_VER="${CLOJURESCRIPT_VER:-1.9.946}"
 GROOVY_VER="${GROOVY_VER:-2.4.12}"
-SCALA_VER="${SCALA_VER:-2.12.1}"
+SCALA_VER="${SCALA_VER:-2.12.4}"
 ZOOKEEPER_VER="${ZOOKEEPER_VER:-3.4.10}"
 
 declare -a KITS=()
@@ -500,33 +500,37 @@ install_scala_vim() {
 	[ -f "$HOME/.vim/syntax/scala.vim" ] && return 0
 
 	mkdir -p "$HOME"/.vim/{ftdetect,indent,syntax}
-	for d in ftdetect indent syntax ; do 
-		curl $SOCKS -L -o "$HOME/.vim/$d/scala.vim" "${vim_url}/$d/scala.vim"; 
+  local ds=( ftdetect indent syntax )
+	for d in ${ds[@]}; do
+    download_kit "${vim_url}/$d/scala.vim" "$HOME/.vim/$d/scala.vim"
 	done
 
-	[ -f "$HOME/.vim/syntax/scala.vim" ] && return 0 || return 1
+	[ -f "$HOME/.vim/syntax/scala.vim" ] && return 0
+  return 1
 }
 
 install_scala() {
   local scala_tgz="scala-${SCALA_VER}.tgz"
   local scala_url="http://downloads.lightbend.com/scala/${SCALA_VER}/${scala_tgz}"
   local scala_home="${OPEN_DIR}/scala"
-  local bin_dir="${scala_home}/bin"
+  local bin_dir="${scala_home}/${SCALA_VER}"
+  local cmd="${bin_dir}/bin/scala -version"
+  local scala_sh="${RUN_DIR}/bin/scala"
 	local vim_url="https://raw.githubusercontent.com/derekwyatt/vim-scala/master"
 
-  `scala -version &>/dev/null` && return 0
-  [ -d "${scala_home}" ] || mkdir -p "${scala_home}"
+  `check_kit "scala -version" "${scala_home}"` && return 0
 
-  if [ ! -f "${bin_dir}/scala" ] || \
-       [ 0 -ne `${bin_dir}/scala -version &>/dev/null; echo $?` ]; then
-    curl $SOCKS -L -o "${scala_home}/${scala_tgz}" -C - "${scala_url}" && \
-      tar xf "${scala_home}/${scala_tgz}" -C "${scala_home}" --strip-components=1
-  fi
+  install_kit "${bin_dir}/bin/scala" \
+              "${cmd}" \
+              "${scala_url}" \
+              "${scala_home}/${scala_tgz}" \
+              "${bin_dir}"
+  [ 0 -eq $? ] || return 1
   
-  if `SCALA_HOME=${scala_home} ${bin_dir}/scala -version &>/dev/null`; then
+  if `${cmd} &>/dev/null`; then
     [ -d "${RUN_DIR}/share/man/man1" ] || mkdir -p "${RUN_DIR}/share/man/man1" 
     cp -R "${scala_home}/man/man1/." "${RUN_DIR}/share/man/man1/"
-    append_vars "SCALA_HOME" "${scala_home}"
+    append_vars "SCALA_HOME" "${bin_dir}"
     append_paths "\${SCALA_HOME}/bin" "SCALA_HOME"
     return 0
   fi
