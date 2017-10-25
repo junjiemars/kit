@@ -246,7 +246,7 @@ ABCL_HOME=${bin_dir}
 \$RLWRAP java -jar \${ABCL_HOME}/abcl.jar \$@
 END
     chmod_file "${abcl_sh}" "u+x"
-    return 0
+    return $?
   fi
 
   return 1
@@ -256,19 +256,20 @@ install_ant() {
   local ant_tgz="apache-ant-${ANT_VER}-bin.tar.gz"
   local ant_home="${OPEN_DIR}/ant"
   local ant_url="http://archive.apache.org/dist/ant/binaries/${ant_tgz}"
-  local bin_dir="${ant_home}/bin"
+  local bin_dir="${ant_home}/${ANT_VER}"
+  local cmd="${bin_dir}/bin/ant -version"
 
-  `ant -version $>/dev/null` && return 0
-  [ -d "${ant_home}" ] || mkdir -p "${ant_home}"
+  `check_kit "ant -version" "${ant_home}"` && return 0
 
-  if [ ! -f "${bin_dir}/ant" ] || \
-       [ 0 -ne `${bin_dir}/ant -version &>/dev/null; echo $?` ]; then
-    curl $SOCKS -L -o "${ant_home}/${ant_tgz}" -C - "${ant_url}" && \
-      tar xf "${ant_home}/${ant_tgz}" -C "${ant_home}" --strip-components=1
-  fi
+  install_kit "${bin_dir}/bin/ant" \
+              "${cmd}" \
+              "${ant_url}" \
+              "${ant_home}/${ant_tgz}" \
+              "${bin_dir}"
+  [ 0 -eq $? ] || return 1
 
-  if [ 0 -eq `${bin_dir}/ant -version &>/dev/null; echo $?` ]; then
-    append_vars "ANT_HOME" "${ant_home}"
+  if `${cmd} &>/dev/null`; then
+    append_vars "ANT_HOME" "${bin_dir}"
     append_paths "\${ANT_HOME}/bin" "ANT_HOME"
     return 0
   fi
