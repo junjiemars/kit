@@ -55,7 +55,7 @@ HAS_ZOOKEEPER=${HAS_ZOOKEEPER:-0}
 JDK_VER=("${JDK_U:-8u121} ${JDK_B:-b13}")
 ABCL_VER="${ABCL_VER:-1.5.0}"
 ANT_VER="${ANT_VER:-1.10.1}"
-MAVEN_VER="${MAVEN_VER:-3.3.9}"
+MAVEN_VER="${MAVEN_VER:-3.5.2}"
 GRADLE_VER="${GRADLE_VER:-4.2.1}"
 SBT_VER="${SBT_VER:-0.13.13}"
 CLOJURE_VER="${CLOJURE_VER:-1.8.0}"
@@ -280,19 +280,20 @@ install_maven() {
   local mvn_tgz="apache-maven-${MAVEN_VER}-bin.tar.gz"
   local mvn_home="${OPEN_DIR}/maven"
   local mvn_url="http://archive.apache.org/dist/maven/maven-3/${MAVEN_VER}/binaries/${mvn_tgz}"
-  local bin_dir="${mvn_home}/bin"
+  local bin_dir="${mvn_home}/${MAVEN_VER}"
+  local cmd="${bin_dir}/bin/mvn -version"
   
-  `mvn -version $>/dev/null` && return 0
-  [ -d "${mvn_home}" ] || mkdir -p "${mvn_home}"
+  `check_kit "mvn -version" "${mvn_home}"` && return 0
 
-  if [ ! -f "${bin_dir}/mvn" ] || \
-       [ 0 -ne `${bin_dir}/mvn -version &>/dev/null; echo $?` ]; then
-    curl $SOCKS -L -o "${mvn_home}/${mvn_tgz}" -C - "${mvn_url}" && \
-      tar xf "${mvn_home}/${mvn_tgz}" -C "${mvn_home}" --strip-components=1
-  fi
+  install_kit "${bin_dir}/bin/mvn" \
+              "${cmd}" \
+              "${mvn_url}" \
+              "${mvn_home}/${mvn_tgz}" \
+              "${bin_dir}"
+  [ 0 -eq $? ] || return 1
 
-  if [ 0 -eq `${bin_dir}/mvn -version &>/dev/null; echo $?` ]; then
-    append_vars "MAVEN_HOME" "${mvn_home}"
+  if `${cmd} &>/dev/null`; then
+    append_vars "MAVEN_HOME" "${bin_dir}"
     append_paths "\${MAVEN_HOME}/bin" "MAVEN_HOME"
     return 0
   fi
