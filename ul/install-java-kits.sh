@@ -454,11 +454,12 @@ install_groovy() {
 
   `check_kit "groovysh --version" "${groovy_home}"` && return 0
 
-  $(install_kit "${bin_dir}/bin/groovysh" \
-                "${cmd}" \
-                "${groovy_url}" \
-                "${groovy_home}/${groovy_zip}" \
-                "${bin_dir}") || return 1
+  install_kit "${bin_dir}/bin/groovysh" \
+              "${cmd}" \
+              "${groovy_url}" \
+              "${groovy_home}/${groovy_zip}" \
+              "${bin_dir}"
+  [ 0 -eq $? ] || return 1
 
   if `${cmd} &>/dev/null`; then
     append_vars "GROOVY_HOME" "${bin_dir}" 
