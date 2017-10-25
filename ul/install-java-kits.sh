@@ -168,7 +168,7 @@ extract_kit() {
       tar xf "${src}" -C "${dst}" --strip-components=1
       ;;
     zip)
-      cd `dirname ${src}` && unzip -o "${src}" -d"${dst}"
+      cd `dirname ${src}` && unzip -q -o "${src}" -d"${dst}"
       t=$?
       [ 0 -eq $t ] || return 1
       local d="`ls -d ${dst}/*`"
@@ -187,13 +187,16 @@ install_kit() {
   local url="$3"
   local src="$4"
   local dst="$5"
-  local t=0
 
-  `test -f "$bin"` && `$cmd &>/dev/null` && return 0
+  if `test -f "$bin"`; then
+		$cmd &>/dev/null
+		[ 0 -eq $? ] && return 0
+	fi
 
-  `test -f "$src"` \
-    && `extract_kit "$src" "$dst"` \
-    && `$cmd &>/dev/null` && return 0
+  if `test -f "$src"` && `extract_kit "$src" "$dst"`; then
+    $cmd &>/dev/null
+		[ 0 -eq $? ] && return 0
+	fi
 
   if `download_kit "$url" "$src"`; then
     extract_kit "$src" "$dst"
