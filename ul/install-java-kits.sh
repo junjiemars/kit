@@ -358,7 +358,6 @@ END
     chmod_file "${clojure_sh}" "u+x"
     return 0
   fi
-
   return 1
 }
 
@@ -449,21 +448,20 @@ install_sbt() {
 install_groovy() {
   local groovy_zip="apache-groovy-binary-${GROOVY_VER}.zip"
   local groovy_url="https://dl.bintray.com/groovy/maven/${groovy_zip}"
-	local groovy_root="${OPEN_DIR}/groovy"
-  local groovy_home="${groovy_root}/groovy-${GROOVY_VER}"
-  local bin_dir="${groovy_home}/bin"
+	local groovy_home="${OPEN_DIR}/groovy"
+  local bin_dir="${groovy_home}/${GROOVY_VER}"
+  local cmd="GROOVY_HOME=${bin_dir} ${bin_dir}/bin/groovysh --version"
 
-  `groovysh --version &>/dev/null` && return 0
-  [ -d "${groovy_root}" ] || mkdir -p "${groovy_root}"
+  `check_kit "groovysh --version" "${groovy_home}"` && return 0
 
-  if [ ! -f "${bin_dir}/groovysh" ] || \
-       [ 0 -ne `${bin_dir}/groovysh --version &>/dev/null; echo $?` ]; then
-    curl $SOCKS -L -o "${groovy_root}/${groovy_zip}" -C - "${groovy_url}" && \
-			cd ${groovy_root} && unzip ${groovy_zip}
-  fi
- 
-  if `GROOVY_HOME=${groovy_home} ${bin_dir}/groovysh --version &>/dev/null`; then
-    append_vars "GROOVY_HOME" "${groovy_home}" 
+  $(install_kit "${bin_dir}/bin/groovysh" \
+                "${cmd}" \
+                "${groovy_url}" \
+                "${groovy_home}/${groovy_zip}" \
+                "${bin_dir}") || return 1
+
+  if `${cmd} &>/dev/null`; then
+    append_vars "GROOVY_HOME" "${bin_dir}" 
     append_paths "\${GROOVY_HOME}/bin" "GROOVY_HOME"
     return 0
   fi
