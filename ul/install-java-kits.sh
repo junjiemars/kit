@@ -353,7 +353,7 @@ if \`type -P rlwrap &>/dev/null\`; then
    RLWRAP=rlwrap
 fi
 CLOJURE_HOME=${bin_dir}
-$RLWRAP java -jar "\${CLOJURE_HOME}/${clojure_jar}" \$@
+\$RLWRAP java -jar "\${CLOJURE_HOME}/${clojure_jar}" \$@
 END
     chmod_file "${clojure_sh}" "u+x"
     return 0
