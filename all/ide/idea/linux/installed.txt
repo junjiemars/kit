@@ -1,5 +1,0 @@
-BashSupport
-Lua
-PythonCore
-org.intellij.plugins.markdown
-org.intellij.scala
