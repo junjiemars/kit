@@ -13,24 +13,24 @@ export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
 
 ORA_LD=${ORACLE_HOME%/}
 if [ -d "${ORA_LD}/lib" ]; then
-	ORA_LD=${ORA_LD}/lib
+	ORA_LD="${ORA_LD}/lib"
 fi
 
 ORA_BIN=${ORACLE_HOME%/}
 if [ -d "${ORA_BIN}/bin" ]; then
-	ORA_BIN=${ORA_BIN}/bin
+	ORA_BIN="${ORA_BIN}/bin"
 fi
 
 case $PLATFORM in
 	Darwin)
-		export DYLD_LIBRARY_PATH=${ORA_LD}${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
+		export DYLD_LIBRARY_PATH="${ORA_LD}${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
 		;;
 	*)
-		export LD_LIBRARY_PATH=${ORA_LD}${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+		export LD_LIBRARY_PATH="${ORA_LD}${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 		;;
 esac
 
-export PATH=${ORA_BIN}${PATH:+:$PATH}
+export PATH="${ORA_BIN}${PATH:+:$PATH}"
 
 ORA_USER=${ORA_USER:-system}
 ORA_PASSWD=${ORA_PASSWD:-oracle}

@@ -11,12 +11,14 @@
 * [Tablespaces](#tablespaces)
 * [Tables](#tables)
   * [Drop](#drop)
+* [References](#references)
 
-## SQL*Plus Kits 
+
+## SQL\*Plus Kits 
 If you just want to use [sqlplus](https://docs.oracle.com/cd/B19306_01/server.102/b14357/toc.htm), 
 just download instantclient then use [sqlplu.sh](https://raw.githubusercontent.com/junjiemars/kit/master/oracle/sqlplus.sh) indeed. 
 But what? if you will do imp/exp tasks and don't want to install Oracle, 
-the follwing is for you.
+the follwing hacks is for you.
 
 ### On Windows
 * Download the Oracle installer.
@@ -47,7 +49,7 @@ rpm2cpio <x.rpm> | cpio -i --make-directories
 ```
 
 ### How to Use
-The critical script is [sqlplus.sh](https://raw.githubusercontent.com/junjiemars/kit/master/oracle/sqlplus.sh).
+The critical script at [sqlplus.sh](https://raw.githubusercontent.com/junjiemars/kit/master/oracle/sqlplus.sh).
 [oracle.sh](https://raw.githubusercontent.com/junjiemars/kit/master/oracle/oracle.sh) is a general wrapper for all of Oracle's commands.
 
 * Interactive Mode
@@ -59,14 +61,18 @@ $ sqlplus.sh username/password@host:port/sid
 
 # parameterized 
 $ ORACLE_HOME=<ur-oracle-home> sqlplus.sh username/password@host:port/sid
+$ SQLPATH=<ur-sql-scripts-home> sqlplus.sh username/password@host:port/sid
 
 # general style via oracle.sh
 $ CMD=sqlplus.sh oracle.sh username/password@host:port/sid
 
-SQL> help define
-SQL> define
-SQL> show pagesize
-SQL> show linesize
+# login.sql in $SQLPATH, auto load when sqlplus start
+SQL> set sqlprompt '&_user.@&_connect_identifier.> ';
+
+SYSTEM@localhost:1521/XE> help define
+SYSTEM@localhost:1521/XE> define
+SYSTEM@localhost:1521/XE> show pagesize
+SYSTEM@localhost:1521/XE> show linesize
 ```
 
 * Command Line Mode
@@ -126,3 +132,6 @@ SQL> startup
 ## Tables
 
 ### Drop
+
+## References
+* _Mastering Oracle SQL and SQL\*Plus_ by Lex de Hann.
