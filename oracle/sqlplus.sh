@@ -7,9 +7,9 @@
 
 PLATFORM=`uname -s 2>/dev/null`
 
-export ORACLE_HOME=${ORACLE_HOME:-"/opt/oracle/u01/app/oracle/product/11.2.0/xe"}
-export SQLPATH=${SQLPATH:-"/opt/oracle/sql"}
-export NLS_LANG=${NLS_LANG:-"AMERICAN_AMERICA.UTF8"}
+export ORACLE_HOME="${ORACLE_HOME:-/opt/oracle/u01/app/oracle/product/11.2.0/xe}"
+export SQLPATH="${SQLPATH:-/opt/oracle/sql}"
+export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
 
 ORA_LD=${ORACLE_HOME%/}
 if [ -d "${ORA_LD}/lib" ]; then
