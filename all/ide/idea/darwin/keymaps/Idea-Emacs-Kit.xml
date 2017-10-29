@@ -21,6 +21,10 @@
   <action id="ChangesView.Commit">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="c" />
   </action>
+  <action id="CloseContent">
+    <keyboard-shortcut first-keystroke="ctrl f4" />
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="k" />
+  </action>
   <action id="CloseProject">
     <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="shift ctrl c" />
   </action>
@@ -108,6 +112,10 @@
     <keyboard-shortcut first-keystroke="ctrl home" />
     <keyboard-shortcut first-keystroke="shift alt comma" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift comma" />
+  </action>
+  <action id="EditorToggleStickySelection">
+    <keyboard-shortcut first-keystroke="ctrl space" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 2" />
   </action>
   <action id="EvaluateExpression">
     <keyboard-shortcut first-keystroke="alt f8" />
@@ -233,7 +241,6 @@
     <keyboard-shortcut first-keystroke="shift ctrl s" second-keystroke="t" />
   </action>
   <action id="SurroundWith">
-    <keyboard-shortcut first-keystroke="ctrl alt t" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 9" />
     <keyboard-shortcut first-keystroke="shift alt 9" />
   </action>
