@@ -16,5 +16,6 @@ set serveroutput on
 --set define on;
 --define _editor=/usr/bin/vi;
 --set define off;
+--set sqlblanklines on;
 
 
