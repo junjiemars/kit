@@ -43,7 +43,7 @@ check_java() {
       [ -n "${java_home}" ] && [ -z "$JAVA_HOME" ] && \
 				export JAVA_HOME="${java_home}"
       ;; 
-    MSYS_NT*)
+    MSYS_NT*|MINGW*)
       ;;
     *)
       ;;

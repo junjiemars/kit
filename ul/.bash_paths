@@ -52,22 +52,17 @@ if [ -n "${OPT_RUN}" ]; then
 	LD_LIBRARY_PATH="`append_path ${OPT_RUN}/lib ${LD_LIBRARY_PATH[@]}`"
 fi
 
-## java home
-#case "${PLATFORM}" in
-#  MSYS_NT*|MINGW*)
-#    if [ -n "${JAVA_HOME}" ]; then
-#      java_path=$(to_posix_path "${JAVA_HOME}")
-#      PATH="`append_path ${java_path} $PATH`"
-#			PATH="`append_path ${java_path}/bin $PATH`"
-#    fi
-#    ;;
-#  *)
-#		if [ -n "${JAVA_HOME}" ]; then
-#			PATH="`append_path ${JAVA_HOME} $PATH`"
-#    	PATH="`append_path ${JAVA_HOME}/bin $PATH`"
-#		fi
-#    ;;
-#esac
+# java home
+if [ -n "${JAVA_HOME}" ]; then
+  if `on_windows_nt`; then
+    java_path=$(to_posix_path "${JAVA_HOME}")
+    PATH="`append_path ${java_path} ${PATH[@]}`"
+		PATH="`append_path ${java_path}/bin ${PATH[@]}`"
+  else
+    PATH="`append_path ${JAVA_HOME} $PATH`"
+    PATH="`append_path ${JAVA_HOME}/bin $PATH`"
+  fi
+fi
 
 
 PATH="`uniq_path ${PATH[@]}`"
