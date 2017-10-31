@@ -35,6 +35,17 @@ set_bin_paths() {
   done
 }
 
+on_windows_nt() {
+ case "$PLATFORM" in
+   MSYS_NT*|MINGW*)
+     return 0
+     ;;
+   *)
+     return 1
+     ;;
+ esac
+}
+
 to_posix_path() {
   echo "\\$1" | \
     sed -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' | \
