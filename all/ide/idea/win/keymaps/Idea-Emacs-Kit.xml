@@ -1,4 +1,8 @@
 <keymap version="1" name="Idea-Emacs-Kit" parent="Emacs">
+  <action id="$Copy">
+    <keyboard-shortcut first-keystroke="ctrl insert" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="w" />
+  </action>
   <action id="$Cut">
     <keyboard-shortcut first-keystroke="shift delete" />
   </action>
@@ -130,7 +134,6 @@
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="i" />
   </action>
   <action id="QuickJavaDoc">
-    <keyboard-shortcut first-keystroke="ctrl q" />
     <mouse-shortcut keystroke="alt button2" />
     <keyboard-shortcut first-keystroke="ctrl h" second-keystroke="d" />
   </action>
@@ -165,7 +168,9 @@
     <keyboard-shortcut first-keystroke="shift f10" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
   </action>
-  <action id="SaveAll" />
+  <action id="SaveAll">
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="s" />
+  </action>
   <action id="Scala.RenameJavaToScala" />
   <action id="Scala.RunConsole" />
   <action id="Scala.SendSelectionToConsole" />
@@ -225,6 +230,9 @@
   </action>
   <action id="ToggleMethodBreakpoint">
     <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="m" />
+  </action>
+  <action id="ToggleReadOnlyAttribute">
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl q" />
   </action>
   <action id="TypeHierarchy">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="h" />
