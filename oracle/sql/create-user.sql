@@ -14,6 +14,7 @@ create user &&user_name identified by &&user_password
   account unlock;
 
 grant connect, resource to &&user_name;
+grant unlimited tablespace to &&user_name;
 
 grant create table to &&user_name;
 grant create database link to &&user_name;
