@@ -63,7 +63,7 @@
     <keyboard-shortcut first-keystroke="shift delete" />
   </action>
   <action id="EditorJoinLines">
-    <keyboard-shortcut first-keystroke="shift alt 6" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 6" />
   </action>
   <action id="EditorTextEnd">
     <keyboard-shortcut first-keystroke="ctrl end" />
@@ -107,7 +107,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="u" />
   </action>
   <action id="GotoSymbol">
-    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl s" />
+    <keyboard-shortcut first-keystroke="shift ctrl s" second-keystroke="s" />
   </action>
   <action id="GotoTypeDeclaration">
     <mouse-shortcut keystroke="shift control button1" />
@@ -170,6 +170,9 @@
   </action>
   <action id="SaveAll">
     <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="s" />
+  </action>
+  <action id="SaveDocument">
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl s" />
   </action>
   <action id="Scala.RenameJavaToScala" />
   <action id="Scala.RunConsole" />
