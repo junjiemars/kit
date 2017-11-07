@@ -89,7 +89,7 @@
     "command": "-workbench.action.files.openFolder"
   },
   {
-    "key": "ctrl+x ctrl+k",
+    "key": "ctrl+x k",
     "command": "workbench.action.closeActiveEditor"
   },
   {
