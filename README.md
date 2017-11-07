@@ -3,9 +3,7 @@
 **kit more than code**
 
 Now, a daily working environment can be build via few lines code on the fly.
-And the effetive, stable, beautiful, consistent on multiple platforms features 
-had all been build in it.
-
+And the effetive, stable, beautiful, consistent on multiple platforms.
 
 
 * [Docker](https://github.com/junjiemars/kit/tree/master/docker)
@@ -15,3 +13,4 @@ had all been build in it.
 * [Raspbian](https://github.com/junjiemars/kit/tree/master/raspbian)
 * [Windows](https://github.com/junjiemars/kit/tree/master/win)
 * [Drawin](https://github.com/junjiemars/kit/tree/master/darwin)
+* [IDE](https://github.com/junjiemars/kit/tree/master/all/ide)
