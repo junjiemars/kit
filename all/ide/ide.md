@@ -1,10 +1,58 @@
-# Visual Stuido Code
+# IDE
+
+
+* [Emacs](#emacs)
+* [Vim](#vim)
+* [Intellij IDEA](#intellij-idea)
+* [Visual Studio Code](#visual-studio-code)
+* [SQLDeveloper](#sqldeveloper)
+
+
+## Emacs
+
+
+## Vim
+
+
+## IntelliJ IDEA 
+
+
+### Import/Export Settings
+
+```sh
+# import settings
+idea-jar-kit -a=<where-to-save-settings.jar>
+# via Idea `import settings...'
+```
+
+```sh
+# export settings
+idea-jar-kit -x=<where-idea-exported-settings.jar>
+```
+
+### Console Font
+
+```Settings > Editor > Colors & Fonts > Console Font```
+
+
+### External Tools
+
+Use _Emacs_ as external editor, at ```Settings > Tools > External Tools```:
+* Program: ```<where-emacsclient>```
+* Parameters: ```-c $LineNumber$:$ColumnNumber$ $FilePath$```
+* Working directory: ```$FileDir$```
+
+Then start _Emacs_ as ```daemon``` or eval ```(server-start)``` after run.
+
+
+
+## Visual Stuido Code
 
 * Keep default platform specific settings and keyboard shortcuts;
 * Using Emacs keys for basic commands;
 * Using Vim keys for editing;
 
-## Basic Commands
+### Basic Commands
 
 | command                            | keys           |
 |:-----------------------------------|:---------------|
@@ -24,3 +72,9 @@
 | focus \<n\>th editor group         | C-\<n\>        |
 | toggle integrated terminal         | C-`            |
 | toggle panel                       |                |
+
+
+
+## SQLDeveloper
+
+
