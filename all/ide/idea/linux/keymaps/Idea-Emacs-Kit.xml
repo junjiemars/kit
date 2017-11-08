@@ -296,6 +296,9 @@
   <action id="ToggleMethodBreakpoint">
     <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="m" />
   </action>
+  <action id="ToggleReadOnlyAttribute">
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl q" />
+  </action>
   <action id="TypeHierarchy">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="t" />
   </action>
