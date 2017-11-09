@@ -30,9 +30,12 @@ idea-jar-kit -a=<where-to-save-settings.jar>
 idea-jar-kit -x=<where-idea-exported-settings.jar>
 ```
 
-### Console Font
 
-```Settings > Editor > Colors & Fonts > Console Font```
+### Settings
+
+* switch IDE boot JDK: ```[M-x switch IDE boot JDK]```
+* project JDK: ```[C-S-x s]```
+* console font: ```Settings > Editor > Colors & Fonts > Console Font```
 
 
 ### External Tools
