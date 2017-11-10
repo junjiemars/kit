@@ -84,6 +84,9 @@
   <action id="EditorCut">
     <keyboard-shortcut first-keystroke="shift delete" />
   </action>
+  <action id="EditorHungryBackSpace">
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="back_slash" />
+  </action>
   <action id="EditorJoinLines">
     <keyboard-shortcut first-keystroke="shift ctrl j" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 6" />
