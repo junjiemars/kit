@@ -539,8 +539,9 @@ echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 echo_opts "CATALINA_BASE" "${CATALINA_BASE}"
 
 check_java_env
+retval=$?
+[ 0 -eq $retval ] || exit $retval
 
-retval=
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
   install)
