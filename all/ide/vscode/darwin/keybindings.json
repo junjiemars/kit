@@ -17,7 +17,7 @@
     "command": "workbench.action.files.newUntitledFile"
   },
   {
-    "key": "ctrl+x ctrl+k",
+    "key": "ctrl+x k",
     "command": "workbench.action.closeActiveEditor"
   },
   {
