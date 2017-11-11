@@ -74,6 +74,7 @@ Then start _Emacs_ as ```daemon``` or eval ```(server-start)``` after run.
 | toggle sidebar                     |                |
 | focus \<n\>th editor group         | C-\<n\>        |
 | toggle integrated terminal         | C-`            |
+| focus integrated terminal          | C-0 `          |
 | toggle panel                       |                |
 
 
