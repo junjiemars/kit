@@ -376,6 +376,24 @@ function install_tomcat() {
   fi
 }
 
+
+function check_java_env() {
+	echo -e "+ check \$JAVA_HOME ..."
+  if [ -d "${JAVA_HOME}" ]; then
+    echo -e "# check \$JAVA_HOME=${JAVA_HOME}  =succeed"
+    return 0
+  else
+		. $HOME/.bashrc
+		if [ -d "${JAVA_HOME}" ]; then
+    	echo -e "# check \$JAVA_HOME=${JAVA_HOME}  =succeed"
+			return 0
+		fi
+    echo -e "! check \$JAVA_HOME  =failed"
+    return 1
+  fi
+}
+
+
 function check_catalina_bin() {
   echo -e "+ check CATALINA_BIN ..."
   if [ -x "${CATALINA_BIN}" ]; then
@@ -520,6 +538,7 @@ echo_opts "PREFIX" "${PREFIX}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 echo_opts "CATALINA_BASE" "${CATALINA_BASE}"
 
+check_java_env
 
 retval=
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
