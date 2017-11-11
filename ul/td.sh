@@ -130,6 +130,18 @@ function on_win32() {
 }
 
 
+function on_darwin() {
+	case "$PLATFORM" in
+		Darwin) 
+			return 0
+			;;
+		*)
+			return 1
+			;;
+	esac
+}
+
+
 function gen_docker_sha1sum_sh() {
 
   echo -e "+ generate Shell L[$TD_SHA1SUM_SH] ..."
@@ -269,6 +281,22 @@ function ssh_login_id() {
 function docker_login_id() {
   local id="exec -u $DOCKER_USER $DOCKER_HOST"
   echo "$id"
+}
+
+
+function docker_cp() {
+	local lp="$1"
+	local rp="$2"
+	local t=0
+	
+	if `on_darwin`; then
+		docker cp -a $lp $DOCKER_HOST:$rp
+		t=$?
+		[ 0 -eq $t ] || return $t
+		docker exec -it $DOCKER_HOST chown $DOCKER_USER:$DOCKER_USER $rp		
+	else
+		docker cp $lp $DOCKER_HOST:$rp
+	fi
 }
 
 
@@ -513,7 +541,7 @@ function transport_file() {
       t=$?
       ;;
     docker)
-      docker cp -a $lp $DOCKER_HOST:$rp
+			docker_cp "$lp" "$rp"
       t=$?
       ;;
     *)
