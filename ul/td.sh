@@ -513,7 +513,7 @@ function transport_file() {
       t=$?
       ;;
     docker)
-      docker cp $lp $DOCKER_HOST:$rp
+      docker cp -a $lp $DOCKER_HOST:$rp
       t=$?
       ;;
     *)
