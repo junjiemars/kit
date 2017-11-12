@@ -1,5 +1,6 @@
 {
     "vim.disableAnnoyingNeovimMessage": true,
+    "editor.tabSize": 2,
     "editor.fontSize": 14,
     "editor.fontFamily": "Monaco, Menlo, 'Courier New', monospace",
     "terminal.integrated.fontSize": 14,
