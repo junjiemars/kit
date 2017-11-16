@@ -9,7 +9,6 @@
       "--disable=C0103"
     ],
     "terminal.integrated.shell.windows": "C:\\WINDOWS\\Sysnative\\cmd.exe",
-    "vim.disableAnnoyingNeovimMessage": true,
     "extensions.ignoreRecommendations": false,
     "workbench.activityBar.visible": true
   }
