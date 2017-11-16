@@ -165,11 +165,20 @@ HAS_ALL=YES install-java-kits.sh
 ```
 
 ## Docker for Database
+
+### PostgreSQL
+
+### Oracle
 You can pull it from [Docker Hub](https://hub.docker.com/), 
 
 or build it from [oracle_xe.dockerfile](https://raw.githubusercontent.com/junjiemars/kit/master/docker/db/oracle_xe.dockerfile)
 
-__Issue__: Oracle XE 11g2 could not be downloaded via curl, there needs some hack way to do it.
+Beside, Oracle XE 11g2 could not be downloaded via curl, there needs some hack way to do it.
+
+```sh
+docker pull junjiemars/xe11g2:latest
+docker run --name xe11g2 -p 1521:1521 -p 8080:9000 -d junjiemars/xe11g2:latest
+```
 
 
 ## Docker Machine on Windows 10
