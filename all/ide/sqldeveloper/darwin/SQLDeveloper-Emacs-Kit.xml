@@ -5,65 +5,11 @@
          <value n="context" v="oracle/ideimpl/editor/accelerators.xml"/>
          <list n="mappings">
             <hash>
-               <value n="action" v="DOCUMENT_ASSIGN_5_CMD_ID"/>
+               <value n="action" v="SYSTEM_MENU_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift alt 5"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="DOCUMENT_ASSIGN_2_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift alt 2"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="NAVIGATE_LRU_FILES_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control [61]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="DOCUMENT_9_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="alt 9"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="DOCUMENT_3_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="alt 3"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="DOCUMENT_ASSIGN_7_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift alt 7"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="PREV_PANE_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift F6"/>
+                     <value n="key-1" v="alt [45]"/>
                   </hash>
                </list>
             </hash>
@@ -77,29 +23,29 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="DOCUMENT_5_CMD_ID"/>
+               <value n="action" v="DOCUMENT_ASSIGN_3_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="alt 5"/>
+                     <value n="key-1" v="shift alt 3"/>
                   </hash>
                </list>
             </hash>
             <hash>
-               <value n="action" v="SYSTEM_MENU_CMD_ID"/>
+               <value n="action" v="PREV_PANE_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="alt [45]"/>
+                     <value n="key-1" v="shift F6"/>
                   </hash>
                </list>
             </hash>
             <hash>
-               <value n="action" v="DOCUMENT_4_CMD_ID"/>
+               <value n="action" v="DOCUMENT_ASSIGN_5_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="alt 4"/>
+                     <value n="key-1" v="shift alt 5"/>
                   </hash>
                </list>
             </hash>
@@ -113,65 +59,20 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="DOCUMENT_ASSIGN_9_CMD_ID"/>
+               <value n="action" v="DOCUMENT_ASSIGN_7_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift alt 9"/>
+                     <value n="key-1" v="shift alt 7"/>
                   </hash>
                </list>
             </hash>
             <hash>
-               <value n="action" v="SHOW_DROPDOWN_CMD_ID"/>
+               <value n="action" v="DOCUMENT_ASSIGN_2_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="alt 0"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="NEXT_PANE_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="F6"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="DOCUMENT_6_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="alt 6"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="DOCUMENT_ASSIGN_1_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift alt 1"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="DOCUMENT_1_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="alt 1"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="DOCUMENT_ASSIGN_4_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift alt 4"/>
+                     <value n="key-1" v="shift alt 2"/>
                   </hash>
                </list>
             </hash>
@@ -185,6 +86,24 @@
                </list>
             </hash>
             <hash>
+               <value n="action" v="SHOW_DROPDOWN_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt 0"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DOCUMENT_6_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt 6"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
                <value n="action" v="DOCUMENT_2_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
@@ -194,11 +113,47 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="DOCUMENT_ASSIGN_3_CMD_ID"/>
+               <value n="action" v="DOCUMENT_3_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift alt 3"/>
+                     <value n="key-1" v="alt 3"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DOCUMENT_9_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt 9"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="NEXT_PANE_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="F6"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DOCUMENT_4_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt 4"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DOCUMENT_ASSIGN_1_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift alt 1"/>
                   </hash>
                </list>
             </hash>
@@ -211,162 +166,62 @@
                   </hash>
                </list>
             </hash>
+            <hash>
+               <value n="action" v="DOCUMENT_ASSIGN_9_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift alt 9"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DOCUMENT_ASSIGN_4_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift alt 4"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DOCUMENT_1_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt 1"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="NAVIGATE_LRU_FILES_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control [61]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DOCUMENT_5_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt 5"/>
+                  </hash>
+               </list>
+            </hash>
          </list>
       </hash>
       <hash>
          <value n="context" v="oracle/ide/ceditor/keymap/accelerators.xml"/>
          <list n="mappings">
             <hash>
-               <value n="action" v="page-up"/>
+               <value n="action" v="recenter-line"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="meta V"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control [91]"/>
-                     <value n="key-2" v="V"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="[27]"/>
-                     <value n="key-2" v="V"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="alt V"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="[33]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="caret-forward"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="[39]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control F"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="selection-end-line"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift [35]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="emacs-upcase-word"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="meta U"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control [91]"/>
-                     <value n="key-2" v="U"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="alt U"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="[27]"/>
-                     <value n="key-2" v="U"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="selection-begin-line"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift [36]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="emacs-set-mark"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control [32]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="shift control 2"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control [512]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="insert-tab"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="[9]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="emacs-yank"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control Y"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="shift INSERT"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="page-down"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="[34]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control V"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="caret-begin-line"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="[36]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control A"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="transpose-chars"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control T"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="selection-matching-brace"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift alt [93]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="shift alt [91]"/>
+                     <value n="key-1" v="control L"/>
                   </hash>
                </list>
             </hash>
@@ -391,41 +246,146 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="emacs-yank-pop"/>
+               <value n="action" v="emacs-upcase-word"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
+                     <value n="key-1" v="meta U"/>
+                  </hash>
+                  <hash>
                      <value n="key-1" v="control [91]"/>
-                     <value n="key-2" v="Y"/>
+                     <value n="key-2" v="U"/>
                   </hash>
                   <hash>
-                     <value n="key-1" v="alt Y"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="meta Y"/>
+                     <value n="key-1" v="alt U"/>
                   </hash>
                   <hash>
                      <value n="key-1" v="[27]"/>
-                     <value n="key-2" v="Y"/>
+                     <value n="key-2" v="U"/>
                   </hash>
                </list>
             </hash>
             <hash>
-               <value n="action" v="reverse-tab"/>
+               <value n="action" v="emacs-append-next-kill"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift [9]"/>
+                     <value n="key-1" v="control meta W"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control alt W"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="[27]"/>
+                     <value n="key-2" v="control W"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control [91]"/>
+                     <value n="key-2" v="control W"/>
                   </hash>
                </list>
             </hash>
             <hash>
-               <value n="action" v="emacs-mark-whole-buffer"/>
+               <value n="action" v="selection-down"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift [40]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="emacs-upcase-region"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
                      <value n="key-1" v="control X"/>
-                     <value n="key-2" v="H"/>
+                     <value n="key-2" v="control U"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="cancel"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control G"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="[27]"/>
+                     <value n="key-2" v="[27]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="selection-end-line"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift [35]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="transpose-chars"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control T"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="set-local-tabsize-4"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control 4"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="smart-completion-insight"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control alt [32]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="emacs-set-mark"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control [32]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="shift control 2"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control [512]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="delete-previous"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="[8]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="shift [8]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="toggle-insert-mode"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="INSERT"/>
                   </hash>
                </list>
             </hash>
@@ -467,6 +427,99 @@
                </list>
             </hash>
             <hash>
+               <value n="action" v="caret-begin-line"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="[36]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control A"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="page-down"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="[34]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control V"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="tooltip-insight"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift meta [32]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control X"/>
+                     <value n="key-2" v="shift control [32]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control [91]"/>
+                     <value n="key-2" v="shift [32]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="[27]"/>
+                     <value n="key-2" v="shift [32]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="shift alt [32]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="emacs-yank"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control Y"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="shift INSERT"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="caret-forward"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="[39]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control F"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="insert-break"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift [10]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="[10]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="insert-tab"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="[9]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
                <value n="action" v="emacs-delete-horizontal-space"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
@@ -483,119 +536,6 @@
                   </hash>
                   <hash>
                      <value n="key-1" v="alt [92]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="selection-up"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift [38]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="selection-previous-word-start"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift control [37]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="emacs-kill-ring-save"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="[27]"/>
-                     <value n="key-2" v="W"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control INSERT"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="meta W"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control [91]"/>
-                     <value n="key-2" v="W"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="alt W"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="set-local-tabsize-4"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control 4"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="smart-completion-insight"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control alt [32]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="cancel"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control G"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="[27]"/>
-                     <value n="key-2" v="[27]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="emacs-downcase-word"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="alt L"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control [91]"/>
-                     <value n="key-2" v="L"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="meta L"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="[27]"/>
-                     <value n="key-2" v="L"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="recenter-line"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control L"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="caret-up"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control P"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="[38]"/>
                   </hash>
                </list>
             </hash>
@@ -629,6 +569,68 @@
                </list>
             </hash>
             <hash>
+               <value n="action" v="emacs-backward-kill-word"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="meta [8]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="[27]"/>
+                     <value n="key-2" v="[8]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control [127]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="alt [8]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control [91]"/>
+                     <value n="key-2" v="[8]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="reverse-tab"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift [9]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="selection-begin-line"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift [36]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="caret-up"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control P"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="[38]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="open-line"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control O"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
                <value n="action" v="selection-forward"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
@@ -638,26 +640,229 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="completion-insight"/>
+               <value n="action" v="emacs-mark-whole-buffer"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="alt [32]"/>
+                     <value n="key-1" v="control X"/>
+                     <value n="key-2" v="H"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="selection-up"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift [38]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="selection-matching-brace"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift alt [93]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="shift alt [91]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="emacs-downcase-region"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control X"/>
+                     <value n="key-2" v="control L"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="caret-backward"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control B"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="[37]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="selection-page-up"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift [33]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="emacs-downcase-word"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt L"/>
                   </hash>
                   <hash>
                      <value n="key-1" v="control [91]"/>
-                     <value n="key-2" v="[32]"/>
+                     <value n="key-2" v="L"/>
                   </hash>
                   <hash>
-                     <value n="key-1" v="meta [32]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control X"/>
-                     <value n="key-2" v="control [32]"/>
+                     <value n="key-1" v="meta L"/>
                   </hash>
                   <hash>
                      <value n="key-1" v="[27]"/>
-                     <value n="key-2" v="[32]"/>
+                     <value n="key-2" v="L"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="set-local-tabsize-2"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control 2"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="goto-matching-brace"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt [91]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="alt [93]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="emacs-yank-pop"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control [91]"/>
+                     <value n="key-2" v="Y"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="alt Y"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="meta Y"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="[27]"/>
+                     <value n="key-2" v="Y"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="emacs-kill-region"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift [127]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control W"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="caret-down"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="[40]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control N"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="page-up"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="meta V"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control [91]"/>
+                     <value n="key-2" v="V"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="[27]"/>
+                     <value n="key-2" v="V"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="alt V"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="[33]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="emacs-kill-line"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control K"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="selection-next-word-end"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift control [39]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="toggle-java-comments"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control C"/>
+                     <value n="key-2" v="control C"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="selection-page-down"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift [34]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="emacs-capitalize-word"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt C"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control [91]"/>
+                     <value n="key-2" v="C"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="meta C"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="[27]"/>
+                     <value n="key-2" v="C"/>
                   </hash>
                </list>
             </hash>
@@ -687,6 +892,60 @@
                   <hash>
                      <value n="key-1" v="[27]"/>
                      <value n="key-2" v="F"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="set-local-tabsize-8"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control 8"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="caret-end-line"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="[35]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control E"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="selection-previous-word-start"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift control [37]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="completion-insight"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt [32]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control [91]"/>
+                     <value n="key-2" v="[32]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="meta [32]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control X"/>
+                     <value n="key-2" v="control [32]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="[27]"/>
+                     <value n="key-2" v="[32]"/>
                   </hash>
                </list>
             </hash>
@@ -728,35 +987,11 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="emacs-kill-region"/>
+               <value n="action" v="selection-backward"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift [127]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control W"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="emacs-kill-line"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control K"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="caret-end-line"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="[35]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control E"/>
+                     <value n="key-1" v="shift [37]"/>
                   </hash>
                </list>
             </hash>
@@ -771,260 +1006,25 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="selection-down"/>
+               <value n="action" v="emacs-kill-ring-save"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift [40]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="set-local-tabsize-2"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control 2"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="tooltip-insight"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift meta [32]"/>
+                     <value n="key-1" v="[27]"/>
+                     <value n="key-2" v="W"/>
                   </hash>
                   <hash>
-                     <value n="key-1" v="control X"/>
-                     <value n="key-2" v="shift control [32]"/>
+                     <value n="key-1" v="control INSERT"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="meta W"/>
                   </hash>
                   <hash>
                      <value n="key-1" v="control [91]"/>
-                     <value n="key-2" v="shift [32]"/>
+                     <value n="key-2" v="W"/>
                   </hash>
                   <hash>
-                     <value n="key-1" v="[27]"/>
-                     <value n="key-2" v="shift [32]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="shift alt [32]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="selection-page-down"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift [34]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="delete-previous"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="[8]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="shift [8]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="selection-next-word-end"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift control [39]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="emacs-backward-kill-word"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="meta [8]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="[27]"/>
-                     <value n="key-2" v="[8]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control [127]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="alt [8]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control [91]"/>
-                     <value n="key-2" v="[8]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="toggle-insert-mode"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="INSERT"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="insert-break"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift [10]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="[10]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="caret-backward"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control B"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="[37]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="selection-page-up"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift [33]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="caret-down"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="[40]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control N"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="toggle-java-comments"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control C"/>
-                     <value n="key-2" v="control C"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="goto-matching-brace"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="alt [91]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="alt [93]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="emacs-capitalize-word"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="alt C"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control [91]"/>
-                     <value n="key-2" v="C"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="meta C"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="[27]"/>
-                     <value n="key-2" v="C"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="emacs-downcase-region"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control X"/>
-                     <value n="key-2" v="control L"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="set-local-tabsize-8"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control 8"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="open-line"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control O"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="emacs-upcase-region"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control X"/>
-                     <value n="key-2" v="control U"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="emacs-append-next-kill"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control meta W"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control alt W"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="[27]"/>
-                     <value n="key-2" v="control W"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control [91]"/>
-                     <value n="key-2" v="control W"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="selection-backward"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift [37]"/>
+                     <value n="key-1" v="alt W"/>
                   </hash>
                </list>
             </hash>
@@ -1065,24 +1065,33 @@
          <value n="context" v="oracle/ide/config/accelerators.xml"/>
          <list n="mappings">
             <hash>
-               <value n="action" v="Ide.CLOSE_ALL_CMD_ID"/>
+               <value n="action" v="Ide.PREV_EDITORFRAME_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift control F4"/>
+                     <value n="key-1" v="shift control F6"/>
                   </hash>
                   <hash>
-                     <value n="key-1" v="control X"/>
-                     <value n="key-2" v="control C"/>
+                     <value n="key-1" v="shift control [9]"/>
                   </hash>
                </list>
             </hash>
             <hash>
-               <value n="action" v="Ide.LOG_WINDOW_CMD_ID"/>
+               <value n="action" v="Ide.GOTO_LINE_NUMBER_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift control L"/>
+                     <value n="key-1" v="alt O"/>
+                     <value n="key-2" v="G"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Ide.QUICK_ACTION_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt X"/>
                   </hash>
                </list>
             </hash>
@@ -1097,39 +1106,25 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="Ide.INCREMENTAL_SEARCH_FORWARD_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control S"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Ide.PREVMSG_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="alt F7"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Ide.EXPLORER_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift control S"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
                <value n="action" v="Ide.SAVE_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
                      <value n="key-1" v="control X"/>
                      <value n="key-2" v="control S"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Ide.CLOSE_ALL_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift control F4"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control X"/>
+                     <value n="key-2" v="control C"/>
                   </hash>
                </list>
             </hash>
@@ -1144,20 +1139,23 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="Ide.BACK_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="alt [37]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
                <value n="action" v="Ide.CUT_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
                      <value n="key-1" v="shift [127]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Ide.DELETE_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="[127]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="control D"/>
                   </hash>
                </list>
             </hash>
@@ -1178,52 +1176,11 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="Ide.NEXTMSG_CMD_ID"/>
+               <value n="action" v="Ide.INSPECTOR_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="alt F8"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Ide.SAVE_ALL_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control X"/>
-                     <value n="key-2" v="S"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Ide.FORWARD_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="alt [39]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Ide.DELETE_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="[127]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="control D"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Ide.OPEN_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control X"/>
-                     <value n="key-2" v="control F"/>
+                     <value n="key-1" v="shift control R"/>
                   </hash>
                </list>
             </hash>
@@ -1240,14 +1197,76 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="Ide.PREV_EDITORFRAME_CMD_ID"/>
+               <value n="action" v="Ide.NEXTMSG_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift control F6"/>
+                     <value n="key-1" v="alt F8"/>
                   </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Ide.FORWARD_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift control [9]"/>
+                     <value n="key-1" v="alt [39]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Ide.LOG_WINDOW_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift control L"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Ide.OPEN_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control X"/>
+                     <value n="key-2" v="control F"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Ide.PREVMSG_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt F7"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Ide.LAST_EDIT_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift control [8]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Ide.BACK_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="alt [37]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Ide.SELECT_ALL_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control X"/>
+                     <value n="key-2" v="H"/>
                   </hash>
                </list>
             </hash>
@@ -1262,39 +1281,11 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="Ide.INCREMENTAL_SEARCH_BACKWARD_CMD_ID"/>
+               <value n="action" v="Ide.INCREMENTAL_SEARCH_FORWARD_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="control R"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Ide.INSPECTOR_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift control R"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Ide.LAST_EDIT_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift control [8]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Ide.SELECT_ALL_CMD_ID"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control X"/>
-                     <value n="key-2" v="H"/>
+                     <value n="key-1" v="control S"/>
                   </hash>
                </list>
             </hash>
@@ -1314,12 +1305,30 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="Ide.GOTO_LINE_NUMBER_CMD_ID"/>
+               <value n="action" v="Ide.INCREMENTAL_SEARCH_BACKWARD_CMD_ID"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="alt O"/>
-                     <value n="key-2" v="G"/>
+                     <value n="key-1" v="control R"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Ide.SAVE_ALL_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control X"/>
+                     <value n="key-2" v="S"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Ide.EXPLORER_CMD_ID"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift control S"/>
                   </hash>
                </list>
             </hash>
@@ -1332,23 +1341,11 @@
          <value n="context" v="oracle/ide/ceditor/accelerators.xml"/>
          <list n="mappings">
             <hash>
-               <value n="action" v="ojji.ExpandSelection"/>
+               <value n="action" v="ojji.GotoNextMember"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift control [61]"/>
-                  </hash>
-                  <hash>
-                     <value n="key-1" v="shift control [107]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="ojji.NarrowSelection"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift control [109]"/>
+                     <value n="key-1" v="alt [40]"/>
                   </hash>
                </list>
             </hash>
@@ -1372,6 +1369,27 @@
                </list>
             </hash>
             <hash>
+               <value n="action" v="ojji.NarrowSelection"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift control [109]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="ojji.ExpandSelection"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift control [61]"/>
+                  </hash>
+                  <hash>
+                     <value n="key-1" v="shift control [107]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
                <value n="action" v="ojji.GotoPreviousMember"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
@@ -1380,19 +1398,7 @@
                   </hash>
                </list>
             </hash>
-            <hash>
-               <value n="action" v="ojji.GotoNextMember"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="alt [40]"/>
-                  </hash>
-               </list>
-            </hash>
          </list>
-      </hash>
-      <hash>
-         <value n="context" v="oracle/ide/ceditor/find/accelerators.xml"/>
       </hash>
       <hash>
          <value n="context" v="oracle/ide/explorer/accelerators.xml"/>
@@ -1423,6 +1429,9 @@
       </hash>
       <hash>
          <value n="context" v="oracle/ide/insight/accelerators.xml"/>
+      </hash>
+      <hash>
+         <value n="context" v="oracle/ide/ceditor/find/accelerators.xml"/>
       </hash>
       <hash>
          <value n="context" v="oracle/jdeveloper/history/accelerators.xml"/>
@@ -1474,20 +1483,20 @@
          <value n="context" v="oracle/jdeveloper/compiler/accelerators.xml"/>
          <list n="mappings">
             <hash>
-               <value n="action" v="MAKE_SELECTED"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift control F9"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
                <value n="action" v="REBUILD_PROJECT_AND_DEPENDENCIES"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
                      <value n="key-1" v="alt F9"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="MAKE_SELECTED"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift control F9"/>
                   </hash>
                </list>
             </hash>
@@ -1515,6 +1524,60 @@
          <value n="context" v="oracle/jdevimpl/runner/accelerators.xml"/>
          <list n="mappings">
             <hash>
+               <value n="action" v="DebugStepOutCommand"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift F7"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DebugStepOverCommand"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="F8"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DebugResumeCommand"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="F9"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DebugProjectCommand"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift F9"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DebugCodeEditorToggleBreakpointCommand"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="F5"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="RunSelectionCommand"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control F11"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
                <value n="action" v="DebugStepIntoCommand"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
@@ -1532,80 +1595,26 @@
                   </hash>
                </list>
             </hash>
-            <hash>
-               <value n="action" v="DebugProjectCommand"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift F9"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="RunSelectionCommand"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control F11"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="DebugStepOutCommand"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift F7"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="DebugCodeEditorToggleBreakpointCommand"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="F5"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="DebugResumeCommand"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="F9"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="DebugStepOverCommand"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="F8"/>
-                  </hash>
-               </list>
-            </hash>
          </list>
       </hash>
       <hash>
          <value n="context" v="oracle/jdevimpl/runner/debug/accelerators.xml"/>
          <list n="mappings">
             <hash>
-               <value n="action" v="DebugResetCommand"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control F2"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
                <value n="action" v="DebugContinueStepCommand"/>
                <value n="global" v="true"/>
                <list n="key-strokes">
                   <hash>
                      <value n="key-1" v="shift F8"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DebugResetCommand"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control F2"/>
                   </hash>
                </list>
             </hash>
@@ -1659,15 +1668,6 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="raptor.dataeditor.insert"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="meta I"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
                <value n="action" v="raptor.dataeditor.rollback"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
@@ -1677,11 +1677,29 @@
                </list>
             </hash>
             <hash>
+               <value n="action" v="raptor.dataeditor.insert"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="meta I"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
                <value n="action" v="raptor.dataeditor.commit"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
                      <value n="key-1" v="F11"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="VE_Pin_Editor"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift meta P"/>
                   </hash>
                </list>
             </hash>
@@ -1738,15 +1756,6 @@
          <value n="context" v="oracle/dbtools/worksheet/editor/accelerators.xml"/>
          <list n="mappings">
             <hash>
-               <value n="action" v="Worksheet.Explainplan"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="F10"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
                <value n="action" v="Worksheet.Commit"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
@@ -1756,11 +1765,74 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="Worksheet.UnsharedWorksheet"/>
+               <value n="action" v="Worksheet.Autotrace"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift meta N"/>
+                     <value n="key-1" v="F6"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Worksheet.Rollback"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="F12"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="worksheet.replace_previous_from_history"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="meta [38]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="worksheet.replace_next_from_history"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="meta [40]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Worksheet.Clear"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="meta D"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Worksheet.Explainplan"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="F10"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Worksheet.SQLTuningAdvisor"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="meta F12"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="worksheet.append_next_from_history"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift meta [40]"/>
                   </hash>
                </list>
             </hash>
@@ -1770,6 +1842,15 @@
                <list n="key-strokes">
                   <hash>
                      <value n="key-1" v="shift meta [38]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="Worksheet.UnsharedWorksheet"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift meta N"/>
                   </hash>
                </list>
             </hash>
@@ -1786,74 +1867,11 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="worksheet.replace_next_from_history"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="meta [40]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Worksheet.Rollback"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="F12"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="worksheet.append_next_from_history"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="shift meta [40]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
                <value n="action" v="Worksheet.RunScript"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
                      <value n="key-1" v="F5"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="worksheet.replace_previous_from_history"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="meta [38]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Worksheet.Autotrace"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="F6"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Worksheet.Clear"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="meta D"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Worksheet.SQLTuningAdvisor"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="meta F12"/>
                   </hash>
                </list>
             </hash>
@@ -1866,35 +1884,90 @@
          <value n="context" v="oracle/dbtools/worksheet/commands/dbmsoutput/accelerators.xml"/>
       </hash>
       <hash>
+         <value n="context" v="oracle/ideimpl/palette2/accelerators.xml"/>
+         <list n="mappings">
+            <hash>
+               <value n="action" v="Palette2.viewPalette"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="shift control P"/>
+                  </hash>
+               </list>
+            </hash>
+         </list>
+      </hash>
+      <hash>
+         <value n="context" v="oracle/diagram/res/accelerators.xml"/>
+         <list n="mappings">
+            <hash>
+               <value n="action" v="oracle.diagram.straightenlink"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control L"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="oracle.diagram.editInline"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="F2"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="oracle.diagram.zoom100Percent"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control 0"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="oracle.diagram.zoomOut"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control [109]"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="oracle.diagram.zoomIn"/>
+               <value n="global" v="true"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="control [107]"/>
+                  </hash>
+               </list>
+            </hash>
+         </list>
+      </hash>
+      <hash>
          <value n="context" v="oracle/ide/bookmarks/accelerators.xml"/>
       </hash>
       <hash>
          <value n="context" v="oracle/dbtools/raptor/metrics/viewer/accelerators.xml"/>
          <list n="mappings">
             <hash>
-               <value n="action" v="Metrics.ZOOM_TO_FIT"/>
+               <value n="action" v="Metrics.MOUSE_PAN_ZOOM"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="meta [36]"/>
+                     <value n="key-1" v="meta M"/>
                   </hash>
                </list>
             </hash>
             <hash>
-               <value n="action" v="Metrics.ZOOM_ACTUAL"/>
+               <value n="action" v="Metrics.PAN_UP"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift [36]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="Metrics.PAN_LEFT"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="[37]"/>
+                     <value n="key-1" v="[38]"/>
                   </hash>
                </list>
             </hash>
@@ -1917,11 +1990,11 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="Metrics.PAN_DOWN"/>
+               <value n="action" v="Metrics.ZOOM_ACTUAL"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="[40]"/>
+                     <value n="key-1" v="shift [36]"/>
                   </hash>
                </list>
             </hash>
@@ -1935,20 +2008,20 @@
                </list>
             </hash>
             <hash>
-               <value n="action" v="Metrics.PAN_UP"/>
+               <value n="action" v="Metrics.PAN_LEFT"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="[38]"/>
+                     <value n="key-1" v="[37]"/>
                   </hash>
                </list>
             </hash>
             <hash>
-               <value n="action" v="Metrics.MOUSE_PAN_ZOOM"/>
+               <value n="action" v="Metrics.PAN_DOWN"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="meta M"/>
+                     <value n="key-1" v="[40]"/>
                   </hash>
                </list>
             </hash>
@@ -1961,71 +2034,19 @@
                   </hash>
                </list>
             </hash>
-         </list>
-      </hash>
-      <hash>
-         <value n="context" v="oracle/ideimpl/palette2/accelerators.xml"/>
-         <list n="mappings">
             <hash>
-               <value n="action" v="Palette2.viewPalette"/>
-               <value n="global" v="true"/>
+               <value n="action" v="Metrics.ZOOM_TO_FIT"/>
+               <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
-                     <value n="key-1" v="shift control P"/>
+                     <value n="key-1" v="meta [36]"/>
                   </hash>
                </list>
             </hash>
          </list>
       </hash>
       <hash>
-         <value n="context" v="oracle/diagram/res/accelerators.xml"/>
-         <list n="mappings">
-            <hash>
-               <value n="action" v="oracle.diagram.zoomIn"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control [107]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="oracle.diagram.zoom100Percent"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control 0"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="oracle.diagram.straightenlink"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control L"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="oracle.diagram.zoomOut"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="control [109]"/>
-                  </hash>
-               </list>
-            </hash>
-            <hash>
-               <value n="action" v="oracle.diagram.editInline"/>
-               <value n="global" v="true"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="F2"/>
-                  </hash>
-               </list>
-            </hash>
-         </list>
+         <value n="context" v="oracle/jdevimpl/style/accelerators.xml"/>
       </hash>
       <hash>
          <value n="context" v="oracle/ideimpl/ceditor/tint/accelerators.xml"/>
@@ -2034,35 +2055,32 @@
          <value n="context" v="oracle/ide/ceditor/macrorecorder/accelerators.xml"/>
       </hash>
       <hash>
-         <value n="context" v="oracle/jdevimpl/style/accelerators.xml"/>
-      </hash>
-      <hash>
-         <value n="context" v="oracle/ideimpl/searchbar/accelerators.xml"/>
+         <value n="context" v="/oracle/dbtools/raptor/timesten/accelerators.xml"/>
       </hash>
       <hash>
          <value n="context" v="oracle/jdevimpl/help/startpageaccelerators.xml"/>
       </hash>
       <hash>
-         <value n="context" v="/oracle/dbtools/raptor/timesten/accelerators.xml"/>
+         <value n="context" v="oracle/ideimpl/searchbar/accelerators.xml"/>
       </hash>
       <hash>
          <value n="context" v="oracle/dbtools/raptor/dba/navigator/accelerators.xml"/>
          <list n="mappings">
-            <hash>
-               <value n="action" v="DbaNavigator.GENERATE_REPORT"/>
-               <value n="global" v="false"/>
-               <list n="key-strokes">
-                  <hash>
-                     <value n="key-1" v="meta G"/>
-                  </hash>
-               </list>
-            </hash>
             <hash>
                <value n="action" v="DbaNavigator.TOGGLE_INPUT"/>
                <value n="global" v="false"/>
                <list n="key-strokes">
                   <hash>
                      <value n="key-1" v="meta L"/>
+                  </hash>
+               </list>
+            </hash>
+            <hash>
+               <value n="action" v="DbaNavigator.GENERATE_REPORT"/>
+               <value n="global" v="false"/>
+               <list n="key-strokes">
+                  <hash>
+                     <value n="key-1" v="meta G"/>
                   </hash>
                </list>
             </hash>
