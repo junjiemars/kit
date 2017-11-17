@@ -833,7 +833,7 @@
                <list n="key-strokes">
                   <hash>
                      <value n="key-1" v="control C"/>
-                     <value n="key-2" v="control C"/>
+                     <value n="key-2" v="[59]"/>
                   </hash>
                </list>
             </hash>
@@ -2118,6 +2118,15 @@
       </hash>
       <hash>
          <value n="context" v="ToolManager"/>
+      </hash>
+      <hash>
+         <value n="context" v="oracle/ideimpl/patch/accelerators.xml"/>
+      </hash>
+      <hash>
+         <value n="context" v="Versioning-Properties"/>
+      </hash>
+      <hash>
+         <value n="context" v="oracle/jdevimpl/vcs/accelerators.xml"/>
       </hash>
    </list>
 </profile>
