@@ -28,7 +28,7 @@ PROPERTY_ID=
 
 usage() {
   echo -e "Usage: $(basename $0) [OPTIONS] [COMMANDS] [ARGUMENTS...]\n"
-  echo -e "A tiny tool of Jira' API, using --op=*-meta commands check first, then use --op=* commands\n"
+  echo -e "A tiny tool of Jira' API, using *-meta commands check first, then use * commands\n"
 
   echo -e "Options:"
   echo -e "  --help                 Print this message"
@@ -37,26 +37,25 @@ usage() {
   echo -e "  --dry-run              perform a trial run with no changes made"
   echo -e "  --api-doc              Jira's offical online API's doc\n"
 
-  echo -e "Commands:"
-  echo -e "  --op=create            Create issues"
-  echo -e "  --op=create-meta       Query API's create meta"
-  echo -e "  --op=edit-meta         Query API's edit meta, need check issue-id<N> first"
-  echo -e "  --op=transit-meta      Query API's transition meta"
-  echo -e "  --op=delete            Delete issue and subtasks, need privileges"
-  echo -e "  --op=query             Query issue, need issue-id<KEY>"
-  echo -e "  --op=app-meta          Query application properties, need privileges\n"
-
-  echo -e "Arguments:"
-
   echo -e "  --host                 Jira's host address, default is localhost"
   echo -e "  --port                 Jira's port number, default is 8080\n"
-  echo -e "  --user                 Jira's login account, <username>:<passwd>, required\n"
+  echo -e "  --user                 Jira's login account, <username>:<passwd>, required"
   echo -e "  --project              Jira's project key, case insensitive"
   echo -e "  --issue-id             Jira's issue <ID>s or <KEY>s, case insensitive, <id1,id2, ...>"
   echo -e "  --size                 Issues count, default is 1"
   echo -e "  --trainsition-id       Issues trainsition's state <id>, <id1, id2, ...>"
   echo -e "  --property-id          Jira's property id <ID>s or <KEY>s, case insensitive, <id1,id2, ...>"
-  echo -e "  --json-dir             Json tepmlate dir, default is current working dir"
+  echo -e "  --json-dir             Json tepmlate dir, default is current working dir\n"
+
+  echo -e "Commands:"
+  echo -e "  create                 Create issues"
+  echo -e "  create-meta            Query API's create meta"
+  echo -e "  edit-meta              Query API's edit meta, need check issue-id<N> first"
+  echo -e "  transit                Transit states"
+  echo -e "  transit-meta           Query API's transition meta"
+  echo -e "  delete                 Delete issue and subtasks, need privileges"
+  echo -e "  query                  Query issue, need issue-id<KEY>"
+  echo -e "  app-meta               Query application properties, need privileges"
 }
 
 
@@ -79,7 +78,6 @@ do
     --host=*)   	                   HOST="$value"     				  ;;
     --post=*)   	                   PORT="$value"     				  ;;
 
-    --op=*) 	                   		 COMMAND="$value"      			;;
     --user=*)   	                   JIRA_USER="$value"    			;;
     --project=*)                     PROJECT="$value"     	    ;;
     --issue-id=*)                    ISSUE_ID="$value"     	    ;;
@@ -88,9 +86,7 @@ do
     --json-dir=*)                    JSON_DIR="$value"       		;;
 
     *)
-      echo "$0 [error]: invalid option \"$option\"\n"
-			usage
-      exit 1
+			COMMAND="$option"
     ;;
   esac
 done
@@ -282,7 +278,7 @@ case "$COMMAND" in
 		echo -e "\n"
 		;;
 	*)
-		echo -e "$0 [error]: invalid --op= argument\n"
+		echo -e "$0 [error]: invalid command \"${COMMAND}\"\n"
 		usage
 		exit 1
 		;;
