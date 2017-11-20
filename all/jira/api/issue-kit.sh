@@ -108,7 +108,7 @@ function check_option() {
 	local need_usage=$3
 
 	if [ "x" = "x${arg_value}" ]; then
-		echo -e "$0 [error]: missing --${arg_name}= argument\n"
+		echo "$0 [error]: missing --${arg_name}= argument"
 		[ 1 -eq $need_usage ] || usage
 		return 1
 	else
@@ -116,10 +116,9 @@ function check_option() {
 	fi
 }
 
-
-if ! `check_option "JIRA_USER" "${JIRA_USER}" 1`; then
-	exit 1
-fi
+check_option "JIRA_USER" "${JIRA_USER}" 1
+retval=$?
+[ 0 -eq $retval ] || exit $retval
 
 
 JIRA_FILE=
