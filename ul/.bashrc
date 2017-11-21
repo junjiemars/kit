@@ -21,7 +21,6 @@ if [ -z "$LANG" ]; then
 fi
 
 
-
 # vars, paths, and aliases
 test -f $HOME/.bash_vars && . $HOME/.bash_vars
 
