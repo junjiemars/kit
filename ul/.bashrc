@@ -15,19 +15,23 @@ esac
 # fix set locale failed
 # sudo localedef -i en_US -f UTF-8 en_US.UTF-8
 
+# prologue
+if [ -z "$LANG" ]; then 
+	export LANG=en_US.UTF-8
+fi
 
+
+
+# vars, paths, and aliases
 test -f $HOME/.bash_vars && . $HOME/.bash_vars
 
 test -f $HOME/.bash_paths && . $HOME/.bash_paths
 
 test -f $HOME/.bash_aliases && . $HOME/.bash_aliases 
 
-# customize
+# epilogue
 #---------- 
 
-if [ -z "$LANG" ]; then 
-	export LANG=en_US.UTF-8
-fi
 
 #TMOUT=3000 # seconds
 #readonly TMOUT
