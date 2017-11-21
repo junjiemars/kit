@@ -209,9 +209,8 @@ case "$COMMAND" in
 		[ 0 -eq $retval ] || exit $retval
 		PROJECT="`echo ${PROJECT} | tr [:lower:] [:upper:]`"
 		
-		if [ 0 -ne $(check_required_option "--size" "${SIZE}" 1; echo $?) -o $SIZE -lt 1 ]; then
-			echo -e "$0 [error]: missing --size= option or less than 1\n"
-			usage
+		if [ 1 -gt $SIZE ]; then
+			echo -e "$0 [error]: --size=${SIZE} should be greater or equal than 1\n"
 			exit 1
 		fi
 
