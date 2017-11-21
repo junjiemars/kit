@@ -39,11 +39,11 @@ usage() {
 
   echo -e "  --host                 Jira's host address, default is localhost"
   echo -e "  --port                 Jira's port number, default is 8080\n"
-  echo -e "  --user                 Jira's login account, <username>:<passwd>, required"
+  echo -e "  --user                 Jira's login account, <username:passwd>, or <username1:passwd1,username2:passwd2,...>, required"
   echo -e "  --project              Jira's project key, case insensitive"
   echo -e "  --issue-id             Jira's issue <ID>s or <KEY>s, case insensitive, <id1,id2, ...>"
   echo -e "  --size                 Issues count, default is 1"
-  echo -e "  --trainsition-id       Issues trainsition's state <id>, <id1, id2, ...>"
+  echo -e "  --trainsition-id       Issues trainsition's state <id>, or <id1, id2, ...>"
   echo -e "  --property-id          Jira's property id <ID>s or <KEY>s, case insensitive, <id1,id2, ...>"
   echo -e "  --json-dir             Json tepmlate dir, default is current working dir\n"
 
@@ -102,13 +102,13 @@ if [ "YES" = "$API_DOC" ]; then
 	exit 0
 fi
 
-function check_option() {
+check_required_option() {
 	local arg_name=$1
 	local arg_value=$2 
 	local need_usage=$3
 
 	if [ "x" = "x${arg_value}" ]; then
-		echo "$0 [error]: missing --${arg_name}= argument"
+		echo "$0 [error]: missing ${arg_name}= option"
 		[ 1 -eq $need_usage ] || usage
 		return 1
 	else
@@ -116,7 +116,81 @@ function check_option() {
 	fi
 }
 
-check_option "JIRA_USER" "${JIRA_USER}" 1
+check_option_empty() {
+	local op_name="$1"
+	local op_val="$2"	
+	local op_a=()
+
+	if [ -z "${op_val}" ]; then
+		echo "$0 [error]: ${op_name}= empty size"	
+		return 1
+	fi
+
+	IFS=',' read -a op_a <<< "$op_val"
+	if [ 0 -eq ${#op_a[@]} ]; then
+		echo "$0 [error]: ${op_name}= empty size"	
+		return 1
+	else 
+		return 0
+	fi
+}
+
+check_options_size_eq() {
+	local op_lhs_name="$1"
+	local op_lhs_val="$2"
+	local op_rhs_name="$3"
+	local op_rhs_val="$4"
+	local lhss=()
+	local rhss=()
+	local t=0
+
+	check_option_empty "$op_lhs_name" "$op_lhs_val"
+	t=$?
+	[ 0 -eq $t ] || return $t
+
+	check_option_empty "$op_rhs_name" "$op_rhs_val"
+	t=$?
+	[ 0 -eq $t ] || return $t
+
+	IFS=',' read -a lhss <<< "$op_lhs_val"
+	IFS=',' read -a rhss <<< "$op_rhs_val"
+	if [ ${#lhss[@]} -ne ${#rhss[@]} ]; then
+		echo "$0 [error]: ${op_lhs_name}=${op_lhs_val} and ${op_rhs_name}=${op_rhs_val} mismatch"
+		return 1
+	else
+		return 0
+	fi	
+}
+
+create_template() {
+	local p="$1"
+	local f="$2"
+	
+	[ -n "$f" -a -f "$f" ] && return 0
+
+	cat << END > "$f"
+{
+	"fields": {
+		"project": {
+			"id": "11700"
+		},
+		"summary": "ok, we missing it",
+		"description": "some description",
+		"issuetype": {
+			"id": "118"
+		},
+		"customfield_11200": "<who>"
+	}
+}
+END
+
+	if [ -f "$f" ]; then
+		echo "$0 [aux] create_issue_${p}.json template file had been created"
+	fi
+	return 1
+}
+
+check_required_option "--user" "${JIRA_USER}" 1
 retval=$?
 [ 0 -eq $retval ] || exit $retval
 
@@ -130,15 +204,13 @@ CURL_M=
 COMMAND="`echo $COMMAND | tr [:lower:] [:upper:]`"
 case "$COMMAND" in
 	CREATE)
-		check_option "project" "${PROJECT}" 1
-		if [ 0 -ne $? ]; then
-			exit 1
-		else
-			PROJECT="`echo ${PROJECT} | tr [:lower:] [:upper:]`"
-		fi
+		check_required_option "--project" "${PROJECT}" 1
+		retval=$?
+		[ 0 -eq $retval ] || exit $retval
+		PROJECT="`echo ${PROJECT} | tr [:lower:] [:upper:]`"
 		
-		if [ 0 -ne $(check_option "size" "${SIZE}" 1; echo $?) -o $SIZE -lt 1 ]; then
-			echo -e "$0 [error]: missing --size= argument or less than 1\n"
+		if [ 0 -ne $(check_required_option "--size" "${SIZE}" 1; echo $?) -o $SIZE -lt 1 ]; then
+			echo -e "$0 [error]: missing --size= option or less than 1\n"
 			usage
 			exit 1
 		fi
@@ -147,6 +219,7 @@ case "$COMMAND" in
 		CURL_M="POST"
 		if [ ! -f "$JSON_FILE" ]; then
 			echo -e "$0 [error]: ${JSON_FILE} no found"
+			create_template "${PROJECT}" "${JSON_FILE}"
 			exit 1
 		fi
 
@@ -161,12 +234,10 @@ case "$COMMAND" in
 		done
 		;;
 	CREATE-META)
-		check_option "project" "${PROJECT}" 1
-		if [ 0 -ne $? ]; then
-			exit 1
-		else
-			PROJECT="`echo ${PROJECT} | tr [:lower:] [:upper:]`"
-		fi
+		check_required_option "--project" "${PROJECT}" 1
+		retval=$?
+		[ 0 -eq $retval ] || exit $retval
+		PROJECT="`echo ${PROJECT} | tr [:lower:] [:upper:]`"
 
 		CURL_M="GET"
 		JIRA_META="createmeta?projectKeys=$PROJECT"
@@ -176,12 +247,9 @@ case "$COMMAND" in
 		echo -e "\n"
 		;;
 	EDIT-META)
-		check_option "issue-id" "${ISSUE_ID}" 1
-		if [ 0 -ne $? ]; then
-			exit 1
-		else
-			ISSUE_ID="`echo ${ISSUE_ID} | tr [:lower:] [:upper:]`"
-		fi
+		check_required_option "--issue-id" "${ISSUE_ID}" 1
+		[ 0 -eq $retval ] || exit $retval
+		ISSUE_ID="`echo ${ISSUE_ID} | tr [:lower:] [:upper:]`"
 
 		CURL_M="GET"
 		JIRA_META="$ISSUE_ID/editmata"
@@ -194,12 +262,10 @@ case "$COMMAND" in
 		fi
 		;;
 	TRANSIT-META)
-		check_option "issue-id" "${ISSUE_ID}" 1
-		if [ 0 -ne $? ]; then
-			exit 1
-		else
-			ISSUE_ID="`echo ${ISSUE_ID} | tr [:lower:] [:upper:]`"
-		fi
+		check_required_option "--issue-id" "${ISSUE_ID}" 1
+		retvall=$?
+		[ 0 -eq $retval ] || exit $retval
+		ISSUE_ID="`echo ${ISSUE_ID} | tr [:lower:] [:upper:]`"
 
 		CURL_M="GET"
 		JIRA_META="$ISSUE_ID/transitions?expand=transitions.fields"
@@ -208,13 +274,15 @@ case "$COMMAND" in
 		echo -e "\n"
 		;;
 	DELETE)
-		check_option "issue-id" "${ISSUE_ID}" 1
-		if [ 0 -ne $? ]; then
-			exit 1
-		else
-			ISSUE_ID="`echo ${ISSUE_ID} | tr [:lower:] [:upper:]`"
-		fi
+		check_required_option "--issue-id" "${ISSUE_ID}" 1
+		retval=$?
+		[ 0 -eq $retval ] || exit $retval
+		ISSUE_ID="`echo ${ISSUE_ID} | tr [:lower:] [:upper:]`"
 
+		check_option_empty "--issue-id" "${ISSUE_ID}"
+		retval=$?
+		[ 0 -eq $retval ] || exit $retval
+		
 		CURL_M="DELETE"
 		IFS=',' read -a ISSUE_ID_RANGE <<< "$ISSUE_ID"
 		for i in "${ISSUE_ID_RANGE[@]}"; do
@@ -230,38 +298,49 @@ case "$COMMAND" in
 		done
 		;;
 	TRANSIT)
-		check_option "issue-id" "${ISSUE_ID}" 1
-		if [ 0 -ne $? ]; then
-			exit 1
-		else
-			ISSUE_ID="`echo ${ISSUE_ID} | tr [:lower:] [:upper:]`"
-		fi
+		check_required_option "issue-id" "${ISSUE_ID}" 1
+		retval=$?
+		[ 0 -eq $retval ] || exit $retval
+		ISSUE_ID="`echo ${ISSUE_ID} | tr [:lower:] [:upper:]`"
+
+		check_required_option "transition-id" "${TRANSITION_ID}" 1
+		retval=$?
+		[ 0 -eq $retval ] || exit $retval
+
+		check_options_size_eq "--user" "$JIRA_USER" "--transition-id" "$TRANSITION_ID"
+		retval=$?
+		[ 0 -eq $retval ] || exit $retval
 
 		CURL_M="POST"
+		IFS=',' read -a USER_ID_RANGE <<< "$JIRA_USER"
+		IFS=',' read -a TRANSITION_ID_RANGE <<< "$TRANSITION_ID"
+
 		IFS=',' read -a ISSUE_ID_RANGE <<< "$ISSUE_ID"
 		for i in "${ISSUE_ID_RANGE[@]}"; do
 			JIRA_META="${i}/transitions"
-			IFS=',' read -a TRANSITION_ID_RANGE <<< "$TRANSITION_ID"
-			echo "$TRANSITION_ID_RANGE"
-			for j in "${TRANSITION_ID_RANGE[@]}"; do
-				JSON_RAW="{\"transition\":{\"id\":"${j}"}}"
-				echo -e "\n"
-				if [ "YES" = "$DRY_RUN" ]; then
-					echo curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" -d"$JSON_RAW" "$JIRA_ISSUE_URL/${JIRA_META}"
-				else
-					curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" -d"$JSON_RAW" "$JIRA_ISSUE_URL/${JIRA_META}"
+			for ((u = 0; u < ${#USER_ID_RANGE[@]}; u++)); do
+				IFS=':' read -a TRANSITION_ID_VAL <<< "${TRANSITION_ID_RANGE[${u}]}"
+				if [ -n "$VERBOSE" ]; then
+					echo "TRANSIT: ${USER_ID_RANGE[${u}]}'s ${TRANSITION_ID_VAL[@]}"
 				fi
-				echo -e "$0 [TRANSIT: $?K]: => ${j}\n"
+				for j in "${TRANSITION_ID_VAL[@]}"; do
+					JSON_RAW="{\"transition\":{\"id\":"${j}"}}"
+					echo -e "\n"
+					if [ "YES" = "$DRY_RUN" ]; then
+						echo curl $IPV6 $DUMP_HEADER $VERBOSE -u ${USER_ID_RANGE[${u}]} -X$CURL_M -H "$CURL_H" -d"$JSON_RAW" "$JIRA_ISSUE_URL/${JIRA_META}"
+					else
+						curl $IPV6 $DUMP_HEADER $VERBOSE -u ${USER_ID_RANGE[${u}]} -X$CURL_M -H "$CURL_H" -d"$JSON_RAW" "$JIRA_ISSUE_URL/${JIRA_META}"
+					fi
+					echo -e "$0 [TRANSIT: $?K]: => ${j}\n"
+				done
 			done
 		done
 		;;
 	QUERY)
-		check_option "issue-id" "${ISSUE_ID}" 1
-		if [ 0 -ne $? ]; then
-			exit 1
-		else
-			ISSUE_ID="`echo ${ISSUE_ID} | tr [:lower:] [:upper:]`"
-		fi
+		check_required_option "issue-id" "${ISSUE_ID}" 1
+		retval=$?
+		[ 0 -eq $retval ] || exit $retval
+		ISSUE_ID="`echo ${ISSUE_ID} | tr [:lower:] [:upper:]`"
 
 		CURL_M="GET"
 		JIRA_META="$ISSUE_ID"
