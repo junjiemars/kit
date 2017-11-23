@@ -56,6 +56,7 @@ usage() {
   echo -e "  delete                 Delete issue and subtasks, need privileges"
   echo -e "  query                  Query issue, need issue-id<KEY>"
   echo -e "  app-meta               Query application properties, need privileges"
+  echo -e "  project-meta           Query API's project meta"
 }
 
 
@@ -101,6 +102,10 @@ if [ "YES" = "$API_DOC" ]; then
 	echo "$API_DOC_URL"
 	exit 0
 fi
+
+check_is_id() {
+	[[ $1 =~ ^[0-9]+$ ]]
+}
 
 check_required_option() {
 	local arg_name=$1
@@ -239,7 +244,19 @@ case "$COMMAND" in
 		PROJECT="`echo ${PROJECT} | tr [:lower:] [:upper:]`"
 
 		CURL_M="GET"
-		JIRA_META="createmeta?projectKeys=$PROJECT"
+		JIRA_META="createmeta"
+		if `check_is_id "${PROJECT}"`; then
+			JIRA_META="${JIRA_META}?projectIds=${PROJECT}"
+		else
+			JIRA_META="${JIRA_META}?projectKeys=${PROJECT}"
+		fi
+		if [ -n "${ISSUE_ID}" ]; then
+			if `check_is_id "${ISSUE_ID}"`; then
+				JIRA_META="${JIRA_META}&issuetypeIds=${ISSUE_ID}"
+			else
+				JIRA_META="${JIRA_META}&issuetypeNames=${ISSUE_ID}"
+			fi
+		fi
 		JIRA_FIELDS="&expand=projects.issuetypes.fields"
 		echo -e "\n"
 		curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" "$JIRA_ISSUE_URL/${JIRA_META}${JIRA_FIELDS}"
@@ -316,6 +333,7 @@ case "$COMMAND" in
 
 		IFS=',' read -a ISSUE_ID_RANGE <<< "$ISSUE_ID"
 		for i in "${ISSUE_ID_RANGE[@]}"; do
+			[ "." = ".${i}" -o ".," = ".${i}" ] && continue
 			JIRA_META="${i}/transitions"
 			for ((u = 0; u < ${#USER_ID_RANGE[@]}; u++)); do
 				IFS=':' read -a TRANSITION_ID_VAL <<< "${TRANSITION_ID_RANGE[${u}]}"
@@ -323,14 +341,19 @@ case "$COMMAND" in
 					echo "TRANSIT: ${USER_ID_RANGE[${u}]}'s ${TRANSITION_ID_VAL[@]}"
 				fi
 				for j in "${TRANSITION_ID_VAL[@]}"; do
-					JSON_RAW="{\"transition\":{\"id\":"${j}"}}"
+					IFS='|' read -a T_ID_ASSIGNEE <<< "${j}"
+					if [ 1 -ge ${#T_ID_ASSIGNEE[@]} ]; then
+						JSON_RAW="{\"transition\":{\"id\":"${j}"}}"
+					else
+						JSON_RAW="{\"transition\":{\"id\":"${T_ID_ASSIGNEE[1]}"},\"fields\":{\"assignee\":{\"name\":\"${T_ID_ASSIGNEE[0]}\"}}}"
+					fi
 					echo -e "\n"
 					if [ "YES" = "$DRY_RUN" ]; then
 						echo curl $IPV6 $DUMP_HEADER $VERBOSE -u ${USER_ID_RANGE[${u}]} -X$CURL_M -H "$CURL_H" -d"$JSON_RAW" "$JIRA_ISSUE_URL/${JIRA_META}"
 					else
 						curl $IPV6 $DUMP_HEADER $VERBOSE -u ${USER_ID_RANGE[${u}]} -X$CURL_M -H "$CURL_H" -d"$JSON_RAW" "$JIRA_ISSUE_URL/${JIRA_META}"
 					fi
-					echo -e "$0 [TRANSIT: $?K]: => ${j}\n"
+					echo -e "$0 [TRANSIT[${i}]: $?K]: => ${j}\n"
 				done
 			done
 		done
@@ -350,6 +373,18 @@ case "$COMMAND" in
 	APP-META)
 		CURL_M="GET"
 		JIRA_META="application-properties"
+		echo -e "\n"
+		curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" "$JIRA_URL/${JIRA_META}"
+		echo -e "\n"
+		;;
+	PROJECT-META)
+		check_required_option "--project" "${PROJECT}" 1
+		retval=$?
+		[ 0 -eq $retval ] || exit $retval
+		PROJECT="`echo ${PROJECT} | tr [:lower:] [:upper:]`"
+
+		CURL_M="GET"
+		JIRA_META="project/${PROJECT}"
 		echo -e "\n"
 		curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" "$JIRA_URL/${JIRA_META}"
 		echo -e "\n"
