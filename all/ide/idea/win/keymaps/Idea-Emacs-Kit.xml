@@ -189,7 +189,6 @@
   <action id="Scala.RunConsole" />
   <action id="Scala.SendSelectionToConsole" />
   <action id="ShowBookmarks">
-    <keyboard-shortcut first-keystroke="shift f11" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="x" />
   </action>
   <action id="ShowProjectStructureSettings">
@@ -226,11 +225,9 @@
     <keyboard-shortcut first-keystroke="shift alt up" />
   </action>
   <action id="ToggleBookmark">
-    <keyboard-shortcut first-keystroke="f11" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="b" />
   </action>
   <action id="ToggleBookmarkWithMnemonic">
-    <keyboard-shortcut first-keystroke="ctrl f11" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="m" />
   </action>
   <action id="ToggleBreakpointEnabled">
