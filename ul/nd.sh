@@ -3,9 +3,12 @@
 # require: bash env
 # target : nginx maker
 # author : junjiemars@gmail.com
+# url    : https://raw.githubusercontent.com/junjiemars/kit/master/ul/nd.sh
 #------------------------------------------------
 
 VERSION=${VER:-0.1.1}
+OPT_OPEN=${OPT_OPEN:-`pwd`}
+OPT_RUN=${OPT_RUN:-`pwd`/run}
 
 NGX_TARGET=( raw http https stream dns )
 NGX_IDX=${NGX_TARGET[0]}
@@ -131,13 +134,13 @@ fi
 # setup env vars
 
 if [ -n "$ngx_home" ]; then
-	if [ -d "$ngx_home" ]; then
-  	NGX_HOME="$ngx_home"
-	else
-    echo -e "! --home=$ngx_home  =invalid"
-		exit 1
-	fi
+	NGX_HOME="$ngx_home"
 fi
+if [ ! -d "$NGX_HOME" ]; then
+	echo -e "! --home=$NGX_HOME  =invalid"
+	exit 1
+fi
+
 
 if [ -n "$ngx_run_dir" ]; then
 	[ -d "$ngx_run_dir" ] || mkdir -p "$ngx_run_dir"
