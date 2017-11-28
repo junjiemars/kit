@@ -13,6 +13,7 @@ NGX_TARGET=( raw http https stream dns )
 NGX_IDX=${NGX_TARGET[0]}
 NGX_HOME=${NGX_HOME:-`pwd`/`ls | grep 'nginx\-release'`}
 NGX_RUN_DIR=${NGX_RUN_DIR:-$OPT_RUN}
+NGX_CONF_DIR=${NGX_CONF_DIR:-${NGX_RUN_DIR%/}/conf}
 NGX_LOG_DIR=${NGX_LOG_DIR:-${NGX_RUN_DIR%/}/var/nginx}
 NGX_OPTIONS=${NGX_OPTIONS}
 
@@ -46,6 +47,7 @@ function usage() {
   echo -e "  --target=\t\t\twhat nginx [${NGX_TARGET[@]}] do, default is '${NGX_IDX}'"
   echo -e "  --home=\t\t\tnginx source dir, NGX_HOME='${NGX_HOME}'"
   echo -e "  --run-dir=\t\t\twhere nginx run, NGX_RUN_DIR='${NGX_RUN_DIR}'"
+  echo -e "  --conf-dir=\t\t\twhere nginx conf, NGX_CONF_DIR='${NGX_CONF_DIR}'"
   echo -e "  --log-dir=\t\t\twhere nginx log store, NGX_LOG_DIR='${NGX_LOG_DIR}'"
   echo -e "  --options=\t\t\tnginx auto/configure options, NGX_OPTIONS='${NGX_OPTIONS}'"
 
@@ -88,6 +90,7 @@ do
     --target=*)             				ngx_target=( $value ) 	  				 ;;
     --home=*)                				ngx_home="$value"    							 ;;
 		--run-dir=*)             				ngx_run_dir="$value"       				 ;;
+		--conf-dir=*)             			ngx_conf_dir="$value"     				 ;;
 		--log-dir=*)             				ngx_log_dir="$value"       				 ;;
 		--options=*)             				ngx_options="$value"       				 ;;
 
@@ -131,6 +134,7 @@ if [ "$version" = "yes" ]; then
 fi
 
 # setup env vars
+retval=0
 
 if [ -n "$ngx_home" ]; then
 	NGX_HOME="$ngx_home"
@@ -142,13 +146,33 @@ fi
 
 
 if [ -n "$ngx_run_dir" ]; then
-	[ -d "$ngx_run_dir" ] || mkdir -p "$ngx_run_dir"
   NGX_RUN_DIR="$ngx_run_dir"
+fi
+if [ ! -d "$NGX_RUN_DIR" ]; then
+	echo -e "! --run-dir=$NGX_RUN_DIR  =invalid, try to create ..."
+	mkdir -p "$NGX_RUN_DIR"
+	retval=$?
+	[ 0 -eq $retval ] || exit $retval
+fi
+
+if [ -n "$ngx_conf_dir" ]; then
+	NGX_CONF_DIR="$ngx_conf_dir"
+fi
+if [ ! -d "$NGX_CONF_DIR" ]; then
+	echo -e "! --conf-dir=$NGX_CONF_DIR  =invalid, try to create ..."
+	mkdir -p "$NGX_CONF_DIR"	
+	retval=$?
+	[ 0 -eq $retval ] || exit $retval
 fi
 
 if [ -n "$ngx_log_dir" ]; then
-	[ -d "$ngx_log_dir" ] || mkdir -p "$ngx_log_dir"	
 	NGX_LOG_DIR="$ngx_log_dir"
+fi
+if [ ! -d "$NGX_LOG_DIR" ]; then
+	echo -e "! --log-dir=$NGX_LOG_DIR  =invalid, try to create ..."
+	mkdir -p "$NGX_LOG_DIR"	
+	retval=$?
+	[ 0 -eq $retval ] || exit $retval
 fi
 
 if [ -n "$ngx_options" ]; then
@@ -454,11 +478,11 @@ END
 		gen_conf_section "gen_${i}_section"
 	done
 
-	local d="${NGX_RUN_DIR%/}/conf"
-	if [ -f "$d/$NGX_CONF" ]; then
-		mv $d/$NGX_CONF $d/$NGX_CONF.b0
+	local f="${NGX_CONF_DIR%/}/$NGX_CONF"
+	if [ -f "${f}" ]; then
+		mv $d/$NGX_CONF ${f}.b0
 	fi
-	cp $NGX_CONF $d/$NGX_CONF
+	cp $NGX_CONF ${f}
 }
 
 
