@@ -11,7 +11,7 @@ OPT_RUN=${OPT_RUN:-`pwd`/run}
 
 NGX_TARGET=( raw http https stream dns )
 NGX_IDX=${NGX_TARGET[0]}
-NGX_HOME=${NGX_HOME:-`pwd`/`ls | grep 'nginx\-release'`}
+NGX_HOME=${NGX_HOME:-${PWD}/`ls | grep 'nginx\-release'`}
 NGX_RUN_DIR=${NGX_RUN_DIR:-$OPT_RUN}
 NGX_CONF_DIR=${NGX_CONF_DIR:-${NGX_RUN_DIR%/}/conf}
 NGX_LOG_DIR=${NGX_LOG_DIR:-${NGX_RUN_DIR%/}/var/nginx}
@@ -36,6 +36,26 @@ OPT_UPSTREAM=
 OPT_SERVER_NAME=localhost
 OPT_SERVER_TOKENS=( on off )
 
+function opt_prompt() {
+	echo "[$@]" | tr ' ' '|'
+}
+
+function opt_check() {
+	local a=( "$@" )
+	if [ 0 -eq ${#a[@]} ]; then
+		return 1
+	fi
+
+	for i in ${a[@]:1}; do
+		local opt="`echo ${a[0]} | tr [:upper:] [:lower:]`"
+		if [ ".$opt" = ".$i" ]; then
+			echo "$opt"
+			return 0
+		fi
+	done
+	return 1
+}
+
 
 function usage() {
   echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
@@ -44,25 +64,25 @@ function usage() {
   echo -e "  --help\t\t\tPrint this message"
   echo -e "  --version\t\t\tPrint version information and quit"
   echo -e ""
-  echo -e "  --target=\t\t\twhat nginx [${NGX_TARGET[@]}] do, default is '${NGX_IDX}'"
+  echo -e "  --target=\t\t\twhat nginx `opt_prompt ${NGX_TARGET[@]}` do, NGX_TARGET='$NGX_TARGET'"
   echo -e "  --home=\t\t\tnginx source dir, NGX_HOME='${NGX_HOME}'"
   echo -e "  --run-dir=\t\t\twhere nginx run, NGX_RUN_DIR='${NGX_RUN_DIR}'"
   echo -e "  --conf-dir=\t\t\twhere nginx conf, NGX_CONF_DIR='${NGX_CONF_DIR}'"
   echo -e "  --log-dir=\t\t\twhere nginx log store, NGX_LOG_DIR='${NGX_LOG_DIR}'"
   echo -e "  --options=\t\t\tnginx auto/configure options, NGX_OPTIONS='${NGX_OPTIONS}'"
 
-  echo -e "  --chained\t\t\tchained commands, '${NGX_CHAINED}'"
-  echo -e "  --gen-conf\t\t\tgenerate nginx.conf, default is '$NGX_GEN_CONF'"
-  echo -e "  --gen-shell\t\t\tgenerate nginx.sh, default is '$NGX_GEN_SHELL'"
+  echo -e "  --chained=`opt_prompt ${NGX_CHAINED[@]}`\t\tchained commands, NGX_CHAINED='$NGX_CHAINED'"
+  echo -e "  --gen-conf=`opt_prompt ${NGX_GEN_CONF[@]}`\t\tgenerate nginx.conf, NGX_GEN_CONF='$NGX_GEN_CONF'"
+  echo -e "  --gen-shell=`opt_prompt ${NGX_GEN_SHELL[@]}`\t\tgenerate nginx.sh, NGX_GEN_SHELL='$NGX_GEN_SHELL'"
   echo -e ""
   echo -e "  --opt-processes=\t\toption: worker_processes, default is '$OPT_CPU_N'"
   echo -e "  --opt-connections=\t\toption: worker_connections, default is '$OPT_CON_N'"
   echo -e "  --opt-listen-port=\t\toption: listen_port, default is '$OPT_LISTEN_PORT'"
   echo -e "  --opt-upstream=\t\toption: upstream backends"
   echo -e "  --opt-server-name=\t\toption: server_name, default is '$OPT_SERVER_NAME'"
-  echo -e "  --opt-server-tokens=\t\toption: server_tokens [${OPT_SERVER_TOKENS[@]}], default is '$OPT_SERVER_TOKENS'"
+  echo -e "  --opt-server-tokens=\t\toption: server_tokens `opt_prompt ${OPT_SERVER_TOKENS[@]}`, default is '$OPT_SERVER_TOKENS'"
 	echo -e ""
-  echo -e "A nginx configuration and shell maker"
+  echo -e "A nginx configurator and shell maker"
 	echo -e ""
   echo -e "Commands:"
   echo -e "  configure\t\t\tconfigure nginx build env"
@@ -94,9 +114,9 @@ do
 		--log-dir=*)             				ngx_log_dir="$value"       				 ;;
 		--options=*)             				ngx_options="$value"       				 ;;
 
-		--chained)               				NGX_CHAINED="yes"          				 ;;
-		--gen-conf)               			NGX_GEN_CONF="no"         				 ;;
-		--gen-shell)               			NGX_GEN_SHELL="no"         				 ;;
+		--chained=*)            				ngx_chained="$value"       				 ;;
+		--gen-conf=*)               		ngx_gen_conf="$value"      				 ;;
+		--gen-shell=*)               		ngx_gen_shell="$value"     				 ;;
 
 		--opt-processes=*)     					OPT_CPU_N="$value"      		       ;;
 		--opt-connections=*)     				OPT_CON_N="$value"       		       ;;
@@ -149,7 +169,7 @@ if [ -n "$ngx_run_dir" ]; then
   NGX_RUN_DIR="$ngx_run_dir"
 fi
 if [ ! -d "$NGX_RUN_DIR" ]; then
-	echo -e "! --run-dir=$NGX_RUN_DIR  =invalid, try to create ..."
+	echo -e "! --run-dir=$NGX_RUN_DIR  =invalid, try to create '$NGX_RUN_DIR' ..."
 	mkdir -p "$NGX_RUN_DIR"
 	retval=$?
 	[ 0 -eq $retval ] || exit $retval
@@ -159,7 +179,7 @@ if [ -n "$ngx_conf_dir" ]; then
 	NGX_CONF_DIR="$ngx_conf_dir"
 fi
 if [ ! -d "$NGX_CONF_DIR" ]; then
-	echo -e "! --conf-dir=$NGX_CONF_DIR  =invalid, try to create ..."
+	echo -e "! --conf-dir=$NGX_CONF_DIR  =invalid, try to create '$NGX_CONF_DIR'..."
 	mkdir -p "$NGX_CONF_DIR"	
 	retval=$?
 	[ 0 -eq $retval ] || exit $retval
@@ -169,7 +189,7 @@ if [ -n "$ngx_log_dir" ]; then
 	NGX_LOG_DIR="$ngx_log_dir"
 fi
 if [ ! -d "$NGX_LOG_DIR" ]; then
-	echo -e "! --log-dir=$NGX_LOG_DIR  =invalid, try to create ..."
+	echo -e "! --log-dir=$NGX_LOG_DIR  =invalid, try to create '$NGX_LOG_DIR' ..."
 	mkdir -p "$NGX_LOG_DIR"	
 	retval=$?
 	[ 0 -eq $retval ] || exit $retval
@@ -179,17 +199,39 @@ if [ -n "$ngx_options" ]; then
 	NGX_OPTIONS="$ngx_options"
 fi
 
-if [ -n "$ngx_target" ]; then
-	for i in "${NGX_TARGET[@]}"; do
-		if [ ".$ngx_target" = ".$i" ]; then
-			NGX_IDX="$i"
-			break
-		fi
-	done
+if [ -n "$ngx_chained" ]; then
+	NGX_CHAINED=`opt_check $ngx_chained ${NGX_CHAINED[@]}`
+	retval=$?
+	if [ 0 -ne $retval ]; then
+		echo -e "! --target=\"$ngx_chained\"  =invalid"
+		exit $retval
+	fi	
+fi
 
-	if [ "$ngx_target" != "$NGX_IDX" ]; then
-    echo -e "! --target=\"$ngx_target\"  =invalid"
-    exit 1
+if [ -n "$ngx_gen_conf" ]; then
+	NGX_GEN_CONF=`opt_check $ngx_gen_conf ${NGX_GEN_CONF[@]}`
+	retval=$?
+	if [ 0 -ne $retval ]; then
+		echo -e "! --target=\"$ngx_gen_conf\"  =invalid"
+		exit $retval
+	fi
+fi
+
+if [ -n "$ngx_gen_shell" ]; then
+	NGX_GEN_SHELL=`opt_check $ngx_gen_shell ${NGX_GEN_SHELL[@]}`
+	retval=$?
+	if [ 0 -ne $retval ]; then
+		echo -e "! --target=\"$ngx_gen_shell\"  =invalid"
+		exit $retval
+	fi
+fi
+
+if [ -n "$ngx_target" ]; then
+	NGX_IDX=`opt_check $ngx_target ${NGX_TARGET[@]}`
+	retval=$?
+	if [ 0 -ne $retval ]; then
+		echo -e "! --target=\"$ngx_target\"  =invalid"
+		exit $retval
 	fi
 fi
 
@@ -258,7 +300,7 @@ function do_configure() {
 	fi
 
 	cd $NGX_HOME
-auto/configure $c
+	auto/configure $c
 }
 
 
@@ -474,13 +516,11 @@ function gen_conf() {
 `gen_conf_header`
 END
 
-	for i in "${NGX_IDX[@]}"; do
-		gen_conf_section "gen_${i}_section"
-	done
+	gen_conf_section "gen_${NGX_IDX}_section"
 
 	local f="${NGX_CONF_DIR%/}/$NGX_CONF"
 	if [ -f "${f}" ]; then
-		mv $d/$NGX_CONF ${f}.b0
+		mv ${f} ${f}.b0
 	fi
 	cp $NGX_CONF ${f}
 }
