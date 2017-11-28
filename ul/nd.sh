@@ -7,12 +7,11 @@
 #------------------------------------------------
 
 VERSION=${VER:-0.1.1}
-OPT_OPEN=${OPT_OPEN:-`pwd`}
 OPT_RUN=${OPT_RUN:-`pwd`/run}
 
 NGX_TARGET=( raw http https stream dns )
 NGX_IDX=${NGX_TARGET[0]}
-NGX_HOME=${NGX_HOME:-$OPT_OPEN/nginx}
+NGX_HOME=${NGX_HOME:-`pwd`/`ls | grep 'nginx\-release'`}
 NGX_RUN_DIR=${NGX_RUN_DIR:-$OPT_RUN}
 NGX_LOG_DIR=${NGX_LOG_DIR:-${NGX_RUN_DIR%/}/var/nginx}
 NGX_OPTIONS=${NGX_OPTIONS}
