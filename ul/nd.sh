@@ -7,11 +7,13 @@
 #------------------------------------------------
 
 VERSION="0.1.1"
-OPT_RUN=${OPT_RUN:-`pwd`/run}
+
+OPT_DEP="${OPT_DEP:-$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)}"
+OPT_RUN="${OPT_RUN:-${OPT_DEP}/run}"
 
 NGX_TARGET=( raw http https stream dns )
 NGX_IDX=${NGX_TARGET[0]}
-NGX_HOME=${NGX_HOME:-${PWD}/`ls | grep 'nginx\-release'`}
+NGX_HOME=${NGX_HOME:-${OPT_DEP%/}/`ls $OPT_DEP | grep 'nginx\-release'`}
 NGX_RUN_DIR=${NGX_RUN_DIR:-$OPT_RUN}
 NGX_CONF_DIR=${NGX_CONF_DIR:-${NGX_RUN_DIR%/}/conf}
 NGX_LOG_DIR=${NGX_LOG_DIR:-${NGX_RUN_DIR%/}/var/nginx}
