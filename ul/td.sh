@@ -808,29 +808,31 @@ function make_td_debug_shell() {
 	cat << END >> "$tds"
 # debug env
 
-DEP="${DEP:-\$(cd \`dirname \${BASH_SOURCE[0]}\`; pwd -P)}"
+DEP="\${DEP:-\$(cd \`dirname \${BASH_SOURCE[0]}\`; pwd -P)}"
 OPT_RUN="\${OPT_RUN:-\${DEP%/}/run}"
 
 VER=\${VER:-8.5.16}
 W3=\${W3:-\${OPT_RUN%/}/www/tomcat}
 
-\$td ${L_PREFIX:+--local-prefix=${L_PREFIX}} \\
+\${td} \\
+	${L_PREFIX:+--local-prefix=${L_PREFIX}} \\
 	${R_PREFIX:+--remote-prefix=\${W3}} \\
 	${VER:+--tomcat-version=\${VER}} \\
 	${CLEAN:+--tomcat-clean=${CLEAN}} \\
-	--local-war-path=\${L_WAR_PATH} \\
 	--java-options="\${JAVA_OPTS}" \\
+	--local-war-path=\${L_WAR_PATH} \\
 	--listen-on=${LISTEN_ON[2]} \\
-	${IP_VER:+--ip-version=${IP_VER}} \\
-	${SSH_USER:+--ssh-user=${SSH_USER}} \\
-	${SSH_HOST:+--ssh-host=${SSH_HOST}} \\
-	${DOCKER_USER:+--docker-user=${DOCKER_USER}} \\
-	${DOCKER_HOST:+--docker-host=${DOCKER_HOST}} \\
+	--ip-version=${IP_VER} \\
+	--ssh-user=${SSH_USER} \\
+	--ssh-host=${SSH_HOST} \\
+	--docker-user=${DOCKER_USER} \\
+	--docker-host=${DOCKER_HOST} \\
 	${BUILD_DIR:+--build-dir=${BUILD_DIR}} \\
 	${BUILD_CMD:+--build-cmd=${BUILD_CMD}} \\
 	${STOP_TIMEOUT:+--stop-timeout=${STOP_TIMEOUT}} \\
 	${START_PORT:+--start-port=${START_PORT}} \\
 	${STOP_PORT:+--stop-port=${STOP_PORT}} \\
+	--debug \\
 	${JPDA_PORT:+--jpda-port=${JPDA_PORT}} \\
 	"\$@"
 END
