@@ -829,6 +829,7 @@ W3=\${W3:-\${OPT_RUN%/}/www/tomcat}
 	--docker-host=${DOCKER_HOST} \\
 	${BUILD_DIR:+--build-dir=${BUILD_DIR}} \\
 	${BUILD_CMD:+--build-cmd=${BUILD_CMD}} \\
+	${BUILD_OPTS:+--build-options=${BUILD_OPTS}} \\
 	${STOP_TIMEOUT:+--stop-timeout=${STOP_TIMEOUT}} \\
 	${START_PORT:+--start-port=${START_PORT}} \\
 	${STOP_PORT:+--stop-port=${STOP_PORT}} \\
