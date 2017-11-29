@@ -6,7 +6,7 @@
 # url    : https://raw.githubusercontent.com/junjiemars/kit/master/ul/nd.sh
 #------------------------------------------------
 
-VERSION=${VER:-0.1.1}
+VERSION="0.1.1"
 OPT_RUN=${OPT_RUN:-`pwd`/run}
 
 NGX_TARGET=( raw http https stream dns )
@@ -143,12 +143,12 @@ do
 done
 
 
-if [ "$help" = "yes" -o 0 -eq $# ]; then
+if [ "yes" = "$help" -o 0 -eq $# ]; then
 	usage
 	exit 0
 fi
 
-if [ "$version" = "yes" ]; then
+if [ "yes" = "$version" ]; then
 	echo -e "$VERSION"
 	exit 0
 fi
@@ -307,7 +307,7 @@ function do_configure() {
 function do_make() {
 	local t=0
 
-	if [ "$NGX_CHAINED" = "yes" ]; then
+	if [ "yes" = "$NGX_CHAINED" ]; then
 		do_configure	
 		t=$?
 		[ 0 -eq $t ] || exit $t
@@ -343,7 +343,7 @@ function do_clean() {
 function do_modules() {
 	local t=0
 
-	if [ "$NGX_CHAINED" = "yes" ]; then
+	if [ "yes" = "$NGX_CHAINED" ]; then
 		do_configure	
 		t=$?
 		[ 0 -eq $t ] || exit $t
