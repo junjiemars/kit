@@ -47,10 +47,10 @@ BUILD_DIR="${BUILD_DIR:-.}"
 BUILD_OPTS="${BUILD_OPTS:-build}"
 
 
-SSH_USER="${SSH_USER:-`logname`}"
+SSH_USER="${SSH_USER:-`whoami`}"
 SSH_HOST="${SSH_HOST}"
 
-DOCKER_USER="${DOCKER_USER:-`logname`}"
+DOCKER_USER="${DOCKER_USER:-`whoami`}"
 DOCKER_HOST="${DOCKER_HOST}"
 
 TD_SHA1SUM_SH="td_sha1sum.sh"
@@ -806,7 +806,9 @@ function make_td_debug_shell() {
 	local td="$2"
 
 	cat << END >> "$tds"
-DEP="${DEP:-\$(cd \`dirname ${BASH_SOURCE[0]}\`; pwd -P)}"
+# debug env
+
+DEP="${DEP:-\$(cd \`dirname \${BASH_SOURCE[0]}\`; pwd -P)}"
 OPT_RUN="\${OPT_RUN:-\${DEP%/}/run}"
 
 VER=\${VER:-8.5.16}
@@ -839,53 +841,51 @@ function make_td_cluster_shell() {
 	local td="$2"
 
 	cat << END >> "$tds"
-DEP="${DEP:-\$(cd \`dirname ${BASH_SOURCE[0]}\`; pwd -P)}"
+# cluster env
+
+DEP="\${DEP:-\$(cd \`dirname \${BASH_SOURCE[0]}\`; pwd -P)}"
 OPT_RUN="\${OPT_RUN:-\${DEP%/}/run}"
 
-NODE=( ${NODE:-`seq 9601 2 9608`} )
-UPORT=( ${UPORT:-${NODE[@]}} )
-DPORT=( ${DPORT:-`for n in ${NODE[@]}; do echo $(( n-1 )); done`} )
-VER=${VER:-8.5.16}
-W3="${W3:-$OPT_RUN/www}"
-JOPT=${JOPT:--Didx.prefix=${W3}/idx -Ddb.user=xwsunified -Ddb.passwd=xwsunified -Ddb.url=jdbc:oracle:thin:@10.32.229.17:1521/pecpdb3}
+NODE=( \${NODE:-\`seq 9601 2 9604\`} )
+UPORT=( \${UPORT:-\${NODE[@]}} )
+DPORT=( \${DPORT:-\`for n in \${NODE[@]}; do echo \$(( n-1 )); done\`} )
+VER=\${VER:-8.5.16}
+W3="\${W3:-\${OPT_RUN%/}/www}"
+JOPT=\${JOPT}
+WAR=\${WAR}
 
-
-for n in "${!NODE[@]}"; do
-	NODE[n]="n${NODE[n]}"
+for n in "\${!NODE[@]}"; do
+	NODE[n]="n\${NODE[n]}"
 done
 
-echo "NODE=(${NODE[@]})"
-echo "UPORT=(${UPORT[@]})"
-echo "DPORT=(${DPORT[@]})"
-echo "VER=$VER"
-echo "W3=${W3}"
+echo "NODE=(\${NODE[@]})"
+echo "UPORT=(\${UPORT[@]})"
+echo "DPORT=(\${DPORT[@]})"
+echo "VER=\$VER"
+echo "W3=\${W3}"
+echo "WAR=\${WAR}"
 
 
-for n in ${!NODE[@]}; do
+for n in \${!NODE[@]}; do
 	echo -e "---------------------------------"
-	echo -e "${NODE[$n]}:${UPORT[$n]}:${DPORT[$n]}"
+	echo -e "\${NODE[\$n]}:\${UPORT[\$n]}:\${DPORT[\$n]}"
 	echo -e "---------------------------------"
 
-	[ -d "${W3}/${NODE[$n]}" ] || mkdir -p "${W3}/${NODE[$n]}"
+	[ -d "\${W3}/\${NODE[\$n]}" ] || mkdir -p "\${W3}/\${NODE[\$n]}"
 
-	$td --local-prefix=${DEP} \
-		--remote-prefix=${W3}/${NODE[$n]} \
-		--tomcat-version=${VER} \
-		--tomcat-clean=yes \
-		--local-war-path=${DEP}/xws.war \
-		--listen-on=localhost \
-		--ip-version=4 \
-		--ssh-user=USER \
-		 \
-		--docker-user=webapp \
-		 \
-		--build-dir=. \
-		--build-cmd=gradlew \
-		--java-options="${JOPT}" \
-		--stop-timeout=5 \
-		--start-port=${UPORT[$n]} \
-		--stop-port=${DPORT[$n]} \
-		"$@"
+	\${td} \\
+		 --local-prefix=\${DEP} \\
+		--remote-prefix=\${W3}/\${NODE[\$n]} \\
+		--tomcat-version=\${VER} \\
+		--tomcat-clean=yes \\
+		--local-war-path=\${DEP}/\${WAR} \\
+		--listen-on=localhost \\
+		--ip-version=4 \\
+		--java-options="\${JOPT}" \\
+		--stop-timeout=5 \\
+		--start-port=\${UPORT[\$n]} \\
+		--stop-port=\${DPORT[\$n]} \\
+		"\$@"
 done
 END
 }
@@ -948,7 +948,7 @@ function download_td_sh() {
 }
 
 td=\$(download_td_sh "td.sh" "$VERSION")
-[ 0 -eq $? ] || echo "! missing td.sh" 
+[ 0 -eq \$? ] || echo "! missing td.sh" 
 
 END
 

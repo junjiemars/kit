@@ -24,3 +24,4 @@ all/ide/idea/darwin/options/
 all/ide/idea/*/options/
 .vscode/
 *.bak
+**/td_kit_shell.sh
