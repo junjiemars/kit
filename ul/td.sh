@@ -801,6 +801,94 @@ function control_tomcat() {
   return $t
 }
 
+function make_td_debug_shell() {
+	local tds="$1"
+	local td="$2"
+
+	cat << END >> "$tds"
+DEP="${DEP:-\$(cd \`dirname ${BASH_SOURCE[0]}\`; pwd -P)}"
+OPT_RUN="\${OPT_RUN:-\${DEP%/}/run}"
+
+VER=\${VER:-8.5.16}
+W3=\${W3:-\${OPT_RUN%/}/www/tomcat}
+
+\$td ${L_PREFIX:+--local-prefix=${L_PREFIX}} \\
+	${R_PREFIX:+--remote-prefix=\${W3}} \\
+	${VER:+--tomcat-version=\${VER}} \\
+	${CLEAN:+--tomcat-clean=${CLEAN}} \\
+	--local-war-path=\${L_WAR_PATH} \\
+	--java-options="\${JAVA_OPTS}" \\
+	--listen-on=${LISTEN_ON[2]} \\
+	${IP_VER:+--ip-version=${IP_VER}} \\
+	${SSH_USER:+--ssh-user=${SSH_USER}} \\
+	${SSH_HOST:+--ssh-host=${SSH_HOST}} \\
+	${DOCKER_USER:+--docker-user=${DOCKER_USER}} \\
+	${DOCKER_HOST:+--docker-host=${DOCKER_HOST}} \\
+	${BUILD_DIR:+--build-dir=${BUILD_DIR}} \\
+	${BUILD_CMD:+--build-cmd=${BUILD_CMD}} \\
+	${STOP_TIMEOUT:+--stop-timeout=${STOP_TIMEOUT}} \\
+	${START_PORT:+--start-port=${START_PORT}} \\
+	${STOP_PORT:+--stop-port=${STOP_PORT}} \\
+	${JPDA_PORT:+--jpda-port=${JPDA_PORT}} \\
+	"\$@"
+END
+}
+
+function make_td_cluster_shell() {
+	local tds="$1"
+	local td="$2"
+
+	cat << END >> "$tds"
+DEP="${DEP:-\$(cd \`dirname ${BASH_SOURCE[0]}\`; pwd -P)}"
+OPT_RUN="\${OPT_RUN:-\${DEP%/}/run}"
+
+NODE=( ${NODE:-`seq 9601 2 9608`} )
+UPORT=( ${UPORT:-${NODE[@]}} )
+DPORT=( ${DPORT:-`for n in ${NODE[@]}; do echo $(( n-1 )); done`} )
+VER=${VER:-8.5.16}
+W3="${W3:-$OPT_RUN/www}"
+JOPT=${JOPT:--Didx.prefix=${W3}/idx -Ddb.user=xwsunified -Ddb.passwd=xwsunified -Ddb.url=jdbc:oracle:thin:@10.32.229.17:1521/pecpdb3}
+
+
+for n in "${!NODE[@]}"; do
+	NODE[n]="n${NODE[n]}"
+done
+
+echo "NODE=(${NODE[@]})"
+echo "UPORT=(${UPORT[@]})"
+echo "DPORT=(${DPORT[@]})"
+echo "VER=$VER"
+echo "W3=${W3}"
+
+
+for n in ${!NODE[@]}; do
+	echo -e "---------------------------------"
+	echo -e "${NODE[$n]}:${UPORT[$n]}:${DPORT[$n]}"
+	echo -e "---------------------------------"
+
+	[ -d "${W3}/${NODE[$n]}" ] || mkdir -p "${W3}/${NODE[$n]}"
+
+	$td --local-prefix=${DEP} \
+		--remote-prefix=${W3}/${NODE[$n]} \
+		--tomcat-version=${VER} \
+		--tomcat-clean=yes \
+		--local-war-path=${DEP}/xws.war \
+		--listen-on=localhost \
+		--ip-version=4 \
+		--ssh-user=USER \
+		 \
+		--docker-user=webapp \
+		 \
+		--build-dir=. \
+		--build-cmd=gradlew \
+		--java-options="${JOPT}" \
+		--stop-timeout=5 \
+		--start-port=${UPORT[$n]} \
+		--stop-port=${DPORT[$n]} \
+		"$@"
+done
+END
+}
 
 function make_td_shell() {
   local tds="td_$(basename $PWD)_shell.sh"
@@ -862,25 +950,13 @@ function download_td_sh() {
 td=\$(download_td_sh "td.sh" "$VERSION")
 [ 0 -eq $? ] || echo "! missing td.sh" 
 
-\$td ${L_PREFIX:+--local-prefix=${L_PREFIX}} \\
-	${R_PREFIX:+--remote-prefix=${R_PREFIX}} \\
-	${VER:+--tomcat-version=${VER}} \\
-	${CLEAN:+--tomcat-clean=${CLEAN}} \\
-	${L_WAR_PATH:+--local-war-path=${L_WAR_PATH}} \\
-	${LISTEN_ON:+--listen-on=${LISTEN_ON}} \\
-	${IP_VER:+--ip-version=${IP_VER}} \\
-	${SSH_USER:+--ssh-user=${SSH_USER}} \\
-	${SSH_HOST:+--ssh-host=${SSH_HOST}} \\
-	${DOCKER_USER:+--docker-user=${DOCKER_USER}} \\
-	${DOCKER_HOST:+--docker-host=${DOCKER_HOST}} \\
-	${BUILD_DIR:+--build-dir=${BUILD_DIR}} \\
-	${BUILD_CMD:+--build-cmd=${BUILD_CMD}} \\
-	${STOP_TIMEOUT:+--stop-timeout=${STOP_TIMEOUT}} \\
-	${START_PORT:+--start-port=${START_PORT}} \\
-	${STOP_PORT:+--stop-port=${STOP_PORT}} \\
-	${JPDA_PORT:+--jpda-port=${JPDA_PORT}} \\
-	"\$@"
 END
+
+	if [ "yes" = "$DEBUG" ]; then
+		make_td_debug_shell "$tds" "$td"
+	else
+		make_td_cluster_shell "$tds" "$td"
+	fi
 
   chmod u+x "${PWD%/}/$tds"
 }
