@@ -242,9 +242,10 @@ function configure() {
 	case "$1" in
 
 		raw)
-			echo $NGX_OPTIONS
 echo "\
---prefix=$NGX_RUN_DIR"
+--prefix=$NGX_RUN_DIR                             \
+`echo ${NGX_OPTIONS[@]}`
+"
 
 		;;
 
@@ -257,7 +258,8 @@ echo "\
 --without-http_memcached_module  				           \
 --without-http_fastcgi_module    				           \
 --without-http_scgi_module                         \
---without-http_rewrite_module
+--without-http_rewrite_module                      \
+`echo ${NGX_OPTIONS[@]}`
 "
 
 		;;
@@ -279,7 +281,9 @@ echo "\
 --without-mail_imap_module       				          \
 --without-mail_smtp_module       				          \
 --without-stream_geo_module      				          \
---without-stream_map_module"
+--without-stream_map_module                       \
+`echo ${NGX_OPTIONS[@]}`
+"
 
 		;;
 
