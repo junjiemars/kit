@@ -309,7 +309,7 @@ function do_configure() {
 	local c="`configure_prefix | tr -s ' '`"
 
 	for i in "${NGX_IDX[@]}"; do
-		c="$c `configure_option ${i} | tr -s ''`"
+		c="${c} `configure_option ${i} | tr -s ''`"
 	done
 
 	if [ "yes" = "$NGX_GEN_SHELL" ]; then
@@ -321,7 +321,7 @@ function do_configure() {
 	fi
 
 	cd $NGX_HOME
-	auto/configure $c
+	auto/configure ${c}
 }
 
 
