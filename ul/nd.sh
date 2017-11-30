@@ -61,7 +61,7 @@ function opt_check() {
 
 function usage() {
   echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
-  echo -e "       $(basename $0) [ -h | --help | -v | --version ]\n"
+  echo -e "       $(basename $0) [ --help | --version ]\n"
   echo -e "Options:"
   echo -e "  --help\t\t\tPrint this message"
   echo -e "  --version\t\t\tPrint version information and quit"
@@ -87,7 +87,7 @@ function usage() {
   echo -e "A nginx configurator and shell maker"
 	echo -e ""
   echo -e "Commands:"
-  echo -e "  list\t\t\tlist nginx configure options"
+  echo -e "  list\t\t\t\tlist nginx configure options"
   echo -e "  configure\t\t\tconfigure nginx build env"
   echo -e "  make\t\t\t\tmake nginx"
   echo -e "  install\t\t\tinstall nginx"
