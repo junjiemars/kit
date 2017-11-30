@@ -80,7 +80,7 @@ function usage() {
   echo -e "  --opt-processes=\t\toption: worker_processes, default is '$OPT_CPU_N'"
   echo -e "  --opt-connections=\t\toption: worker_connections, default is '$OPT_CON_N'"
   echo -e "  --opt-listen-port=\t\toption: listen_port, default is '$OPT_LISTEN_PORT'"
-  echo -e "  --opt-upstream=\t\toption: upstream backends, <upstream1 upstream2 ...>"
+  echo -e "  --opt-upstream=\t\toption: upstream backends, ='upstream1 upstream2 ...'"
   echo -e "  --opt-server-name=\t\toption: server_name, default is '$OPT_SERVER_NAME'"
   echo -e "  --opt-server-tokens=\t\toption: server_tokens `opt_prompt ${OPT_SERVER_TOKENS[@]}`, default is '$OPT_SERVER_TOKENS'"
 	echo -e ""
