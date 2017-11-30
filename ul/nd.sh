@@ -12,7 +12,7 @@ DEP="${DEP:-$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)}"
 OPT_RUN="${OPT_RUN:-${DEP%/}/run}"
 
 NGX_TARGET=( raw http https stream dns )
-NGX_IDX=${NGX_TARGET[0]}
+NGX_IDX=( ${NGX_TARGET[0]} )
 NGX_HOME=${NGX_HOME:-${DEP%/}/`ls $DEP | grep 'nginx\-release'`}
 NGX_RUN_DIR=${NGX_RUN_DIR:-$OPT_RUN}
 NGX_CONF_DIR=${NGX_CONF_DIR:-${NGX_RUN_DIR%/}/conf}
@@ -229,17 +229,28 @@ if [ -n "$ngx_gen_shell" ]; then
 fi
 
 if [ -n "$ngx_target" ]; then
-	NGX_IDX=`opt_check $ngx_target ${NGX_TARGET[@]}`
-	retval=$?
-	if [ 0 -ne $retval ]; then
-		echo -e "! --target=\"$ngx_target\"  =invalid"
-		exit $retval
-	fi
+	NGX_IDX=
+	for i in "${ngx_target[@]}"; do
+		j=`opt_check "${i}" "${NGX_TARGET[@]}"`
+		retval=$?
+		if [ 0 -ne $retval ]; then
+			echo -e "! --target=\"${i}\"  =invalid"
+			exit $retval
+		fi
+		NGX_IDX+=( "${j}" )
+	done
+	#NGX_IDX=`opt_check $ngx_target ${NGX_TARGET[@]}`
+	#retval=$?
+	#if [ 0 -ne $retval ]; then
+	#	echo -e "! --target=\"$ngx_target\"  =invalid"
+	#	exit $retval
+	#fi
 fi
 
+echo "xyz:${NGX_IDX[@]}"
 
 function configure_prefix() {
-	echo "\
+echo "\
 --prefix=$NGX_RUN_DIR                             \
 --error-log-path=${NGX_LOG_DIR%/}/$NGX_ERR_LOG    \
 --pid-path=${NGX_LOG_DIR%/}/$NGX_PID_LOG          \
@@ -297,7 +308,10 @@ echo "\
 
 function do_configure() {
 	local c="`configure_prefix | tr -s ' '`"
-	c="$c `configure_option $NGX_IDX | tr -s ''`"
+
+	for i in "${NGX_IDX[@]}"; do
+		c="$c `configure_option ${i} | tr -s ''`"
+	done
 
 	if [ "yes" = "$NGX_GEN_SHELL" ]; then
 		gen_shell
@@ -528,7 +542,9 @@ function gen_conf() {
 `gen_conf_header`
 END
 
-	gen_conf_section "gen_${NGX_IDX}_section"
+	for i in "${NGX_IDX[@]}"; do
+		gen_conf_section "gen_${i}_section"
+	done
 
 	local f="${NGX_CONF_DIR%/}/$NGX_CONF"
 	if [ -f "${f}" ]; then
