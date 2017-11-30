@@ -6,10 +6,73 @@
 #------------------------------------------------
 
 PLATFORM=`uname -s 2>/dev/null`
+PWD_DIR="$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)"
 
-export ORACLE_HOME="${ORACLE_HOME:-/opt/oracle/u01/app/oracle/product/11.2.0/xe}"
-export SQLPATH="${SQLPATH:-/opt/oracle/sql}"
+function sqlplus_name() {
+  case "$PLATFORM" in
+    MSYS_NT*|MINGW*)
+			echo "sqlplus.exe"
+     ;;
+    *)
+			echo "sqlplus"
+		;;
+  esac
+}
+
+function check_oracle_home() {
+	local n="`sqlplus_name`"
+	local h=( 
+		"$PWD_DIR"
+		"/u01/app/oracle/product"
+		"/u02/app/oracle/product"
+		"/oracle"
+		"/opt/oracle"
+		"/c/oracle"
+	)
+
+	local p=
+	local d=
+
+	for i in "${h[@]}"; do
+		[ -n "$i" -o -d "$i" ] || continue
+		p="`find $i -type f -name $n`"
+		if [ 0 -eq $? -a -n "$p" ]; then
+			d=$(basename `dirname "$p"`)
+			if [ "bin" == "$d" ]; then
+				echo "$(dirname `dirname $p`)"
+			else
+				echo "`dirname $p`"
+			fi
+			return 0
+		fi
+	done
+	return 1
+}
+
+function check_sql_path() {
+	local sql=(
+		"$PWD_DIR"
+		"$ORACLE_HOME"
+		"$OPT_RUN"
+	)
+	local p=
+	local f=	
+
+	for i in "${sql[@]}"; do
+		[ -n "$i" -o -d "$i" ] || continue
+		f="`find $i -type f -name '*.sql' -print -quit`"
+		if [ 0 -eq $? -a -n "$f" ]; then
+			p="`dirname $f`${p:+:$p}"
+		fi
+	done
+	echo "$p"
+}
+
+
+export ORACLE_HOME="${ORACLE_HOME:-`check_oracle_home`}"
+export SQLPATH="${SQLPATH:-`check_sql_path`}"
 export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
+
 
 ORA_LD=${ORACLE_HOME%/}
 if [ -d "${ORA_LD}/lib" ]; then
