@@ -238,12 +238,19 @@ if [ -n "$ngx_target" ]; then
 fi
 
 
-function configure() {
+function configure_prefix() {
+	echo "\
+--prefix=$NGX_RUN_DIR                             \
+--error-log-path=${NGX_LOG_DIR%/}/$NGX_ERR_LOG    \
+--pid-path=${NGX_LOG_DIR%/}/$NGX_PID_LOG          \
+"
+}
+
+function configure_option() {
 	case "$1" in
 
 		raw)
 echo "\
---prefix=$NGX_RUN_DIR                             \
 `echo ${NGX_OPTIONS[@]}`
 "
 
@@ -251,9 +258,6 @@ echo "\
 
 		http)
 echo "\
---prefix=$NGX_RUN_DIR                              \
---error-log-path=${NGX_LOG_DIR%/}/$NGX_ERR_LOG     \
---pid-path=${NGX_LOG_DIR%/}/$NGX_PID_LOG           \
 --http-log-path=${NGX_LOG_DIR%/}/access.log        \
 --without-http_memcached_module  				           \
 --without-http_fastcgi_module    				           \
@@ -266,9 +270,6 @@ echo "\
 
 		stream|dns)
 echo "\
---prefix=$NGX_RUN_DIR                             \
---error-log-path=${NGX_LOG_DIR%/}/$NGX_ERR_LOG    \
---pid-path=${NGX_LOG_DIR%/}/$NGX_PID_LOG          \
 --with-stream                    				          \
 --without-http_geo_module        				          \
 --without-http_map_module        				          \
@@ -295,7 +296,8 @@ echo "\
 
 
 function do_configure() {
-	local c="`configure $NGX_IDX | tr -s ' '`"
+	local c="`configure_prefix | tr -s ' '`"
+	c="$c `configure_option $NGX_IDX | tr -s ''`"
 
 	if [ "yes" = "$NGX_GEN_SHELL" ]; then
 		gen_shell
@@ -387,6 +389,10 @@ events {
 "
 }
 
+
+function gen_raw_section() {
+	return 0
+}
 
 function gen_http_section() {
 echo "
