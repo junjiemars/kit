@@ -52,20 +52,28 @@ function check_oracle_home() {
 function check_sql_path() {
 	local sql=(
 		"$PWD_DIR"
+		"$PWD_DIR/oracle"
+		"$PWD_DIR/db"
 		"$ORACLE_HOME"
-		"$OPT_RUN"
 	)
 	local p=
 	local f=	
 
+	if [ -n "$OPT_RUN" -a -d "$OPT_RUN" ]; then
+		sql+=( "$OPT_RUN" )
+		sql+=( "`dirname ${OPT_RUN%/}`/apps/kit" )
+		sql+=( "${HOME%/}/apps/kit" )
+	fi
+
 	for i in "${sql[@]}"; do
-		[ -n "$i" -o -d "$i" ] || continue
-		f="`find $i -type f -name '*.sql' -print -quit`"
-		if [ 0 -eq $? -a -n "$f" ]; then
-			p="`dirname $f`${p:+:$p}"
+		[ -n "$i" -a -d "$i" ] || continue
+		p="$i${p:+\n$p}"
+		f="`find $i -type f -name 'login.sql' -print -quit`"
+		if [ -n "$f" -a -f "$f" ]; then
+			p="`dirname ${f}`${p:+\n$p}"
 		fi
 	done
-	echo "$p"
+	echo -e "$p" | uniq | tr '\n' ':' | sed -e 's_:$__g'
 }
 
 
