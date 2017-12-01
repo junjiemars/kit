@@ -4,10 +4,12 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
+VERSION="1.2.2"
 PLATFORM="`uname -s 2>/dev/null`"
-OPT_RUN="${OPT_RUN:-/opt/run}"
+
+DEP="${DEP:-$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)}"
+OPT_RUN="${OPT_RUN:-${DEP%/}/run}"
 PREFIX="${PREFIX:-${OPT_RUN%/}/www/tomcat}"
-VERSION="1.2.1"
 
 VER="${VER:-8.5.16}"
 CATALINA_BASE="${CATALINA_BASE:-${PREFIX%/}/${VER}}"
@@ -30,7 +32,7 @@ JPDA_PORT=${JPDA_PORT:-8000}
 DOWNLOAD_ONLY=("no" "yes")
 
 
-usage() {
+function usage() {
   echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
   echo -e "       $(basename $0) [ -h | --help | -v | --version ]\n"
   echo -e "Options:"
@@ -155,7 +157,6 @@ function unix_path() {
 }
 
 
-
 function check_env() {
   local pid="`get_pid`"
   local run="Stopped"
@@ -251,7 +252,14 @@ function download_file() {
   local t=
 
   echo -e "+ download Tomcat[$rf] ..."
-	[ ! -d "$d" ] || mkdir -p "$d"
+	if [ ! -d "$d" ]; then
+    mkdir -p "$d"
+    t=$?
+    if [ 0 -ne $t ]; then
+      echo -e "! download Tomcat[$rf]  =failed"
+      return $t
+    fi
+  fi
 
   cd "$d" && curl -sL -o"${lf}" -C - "${rf}"
   t=$?
@@ -479,7 +487,17 @@ do
     --jpda-port=*)           JPDA_PORT="$value"  			  ;;
 
     *)
-      command="$option"
+			case "$option" in
+				-*)
+					echo "$0: error: invalid option \"$option\""
+					usage
+					exit 1
+				;;
+
+				*) 
+      		command="$option"
+				;;
+			esac
     ;;
   esac
 done
