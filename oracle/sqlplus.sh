@@ -40,7 +40,7 @@ function check_oracle_home() {
 		"/u02/app/oracle/product"
 		"/oracle"
 	)
-	if [ -d "$OPT_RUN" ]; then
+	if [ -n "$OPT_RUN" -a -d "$OPT_RUN" ]; then
 		h+=( "$OPT_RUN" )
 		h+=( "`dirname ${OPT_RUN%/}`/oracle" )
 	fi
