@@ -490,7 +490,6 @@ do
 			case "$option" in
 				-*)
 					echo "$0: error: invalid option \"$option\""
-					usage
 					exit 1
 				;;
 
@@ -503,12 +502,12 @@ do
 done
 
 
-if [ "$help" = "yes" -o 0 -eq $# ]; then
+if [ "yes" = "$help" -o 0 -eq $# ]; then
 	usage
 	exit 0
 fi
 
-if [ "$version" = "yes" ]; then
+if [ "yes" = "$version" ]; then
 	echo -e "$VERSION"
 	exit 0
 fi
@@ -615,7 +614,6 @@ case "$command" in
     ;;
   *)
     echo "$0: error: invalid command \"$command\""
-		usage
     exit 1    
     ;;
 esac
