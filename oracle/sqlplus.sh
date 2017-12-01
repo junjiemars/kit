@@ -105,6 +105,23 @@ esac
 
 export PATH="${ORA_BIN}${PATH:+:$PATH}"
 
+if ! `sqlplus_name -V &>/dev/null`; then
+	echo -e "! `sqlplus_name`  =invalid"
+	echo -e "# ORACLE_HOME=$ORACLE_HOME"
+	echo -e "# SQLPATH=$SQLPATH"
+	echo -e "# PATH=$PATH"
+	case $PLATFORM in
+		Darwin)
+			echo -e "# DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
+			;;
+		*)
+			echo -e "# LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+			;;
+	esac
+	exit 1
+fi
+
+
 ORA_USER=${ORA_USER:-system}
 ORA_PASSWD=${ORA_PASSWD:-oracle}
 HOST=${HOST:-localhost}
@@ -112,7 +129,7 @@ PORT=${PORT:-1521}
 SID=${SID:-'XE'}
 USERID=${USERID:-${HOST}:${PORT}/${SID}}
 
-if [ 0 -eq `type -p rlwrap &>/dev/null; echo $?` ]; then
+if `hash rlwrap &>/dev/null`; then
 	RLWRAP='rlwrap'
 fi	
 
@@ -128,4 +145,3 @@ else
 	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID} $1
  $1
 fi
-
