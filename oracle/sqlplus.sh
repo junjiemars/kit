@@ -156,5 +156,4 @@ elif [ 1 -le $# ]; then
   fi
 else
 	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID} $1
- $1
 fi
