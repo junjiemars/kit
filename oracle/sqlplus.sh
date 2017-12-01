@@ -26,16 +26,18 @@ function check_oracle_home() {
 		"/u01/app/oracle/product"
 		"/u02/app/oracle/product"
 		"/oracle"
-		"/opt/oracle"
-		"/c/oracle"
 	)
+	if [ -d "$OPT_RUN" ]; then
+		h+=( "$OPT_RUN" )
+		h+=( "`dirname ${OPT_RUN%/}`/oracle" )
+	fi
 
 	local p=
 	local d=
 
 	for i in "${h[@]}"; do
-		[ -n "$i" -o -d "$i" ] || continue
-		p="`find $i -type f -name $n`"
+		[ -n "$i" -a -d "$i" ] || continue
+		p="`find $i -type f -name $n -print -quit`"
 		if [ 0 -eq $? -a -n "$p" ]; then
 			d=$(basename `dirname "$p"`)
 			if [ "bin" == "$d" ]; then
