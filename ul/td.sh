@@ -868,6 +868,10 @@ echo "VER=\$VER"
 echo "W3=\${W3}"
 echo "WAR=\${WAR}"
 
+if [ \${#NODE[@]} -ne \${#UPORT[@]} -o \${#NODE[@]} -ne \${#DPORT[@]} ]; then
+	echo -e "! size of NODE, UPORT and DPORT  =mismatch"
+	exit 1
+fi
 
 for n in \${!NODE[@]}; do
 	echo -e "---------------------------------"
