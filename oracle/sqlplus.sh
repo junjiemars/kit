@@ -19,9 +19,22 @@ function sqlplus_name() {
   esac
 }
 
+function check_sqlplus_path() {
+	local p=
+	local t=
+
+	p="`which sqlplus 2>/dev/null`"
+	t=$?
+
+	[ 0 -eq $t -a -n "$p" ] || return $t
+	echo "`dirname $p`"
+}
+
 function check_oracle_home() {
 	local n="`sqlplus_name`"
+	local s="`check_sqlplus_path`"
 	local h=( 
+		"$s"
 		"$PWD_DIR"
 		"/u01/app/oracle/product"
 		"/u02/app/oracle/product"
