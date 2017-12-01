@@ -38,6 +38,7 @@ function check_oracle_home() {
 		"$PWD_DIR"
 		"/u01/app/oracle/product"
 		"/u02/app/oracle/product"
+		"/c/u01/app/oracle/product"
 		"/oracle"
 	)
 	if [ -n "$OPT_RUN" -a -d "$OPT_RUN" ]; then
@@ -70,6 +71,8 @@ function check_sql_path() {
 		"$PWD_DIR/oracle"
 		"$PWD_DIR/db"
 		"$ORACLE_HOME"
+		"$ORACLE_BASE"
+		"${HOME%/}/product"
 	)
 	local p=
 	local f=	
