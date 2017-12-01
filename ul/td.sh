@@ -965,8 +965,6 @@ END
 }
 
 
-
-
 for option
 do
   opt="$opt `echo $option | sed -e \"s/\(--[^=]*=\)\(.* .*\)/\1'\2'/\"`"
