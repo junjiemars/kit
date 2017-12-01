@@ -17,10 +17,10 @@ R_OPT_RUN="${OPT_RUN:-/opt/run}"
 R_PREFIX="${R_PREFIX:-${R_OPT_RUN%/}/www/tomcat}"
 
 JAVA_OPTS=
-DEBUG=(${DEBUG:+$DEBUG} "no" "yes")
+DEBUG=("no" "yes")
 
 VER=${VER:-"8.5.16"}
-CLEAN=( "no" "yes" )
+CLEAN=("no" "yes")
 TC_OPTS=
 TC_SH="tc.sh"
 
@@ -41,7 +41,7 @@ L_WAR_PATH="${L_WAR_PATH}"
 R_WAR_PATH=
 R_TC_PATH=
 
-BUILD=(${BUILD:+$BUILD} "no" "yes")
+BUILD=("no" "yes")
 BUILD_CMD=("gradlew" "gradle" "ant" "mvn")
 BUILD_DIR="${BUILD_DIR:-.}"
 BUILD_OPTS="${BUILD_OPTS:-build}"
@@ -57,7 +57,7 @@ TD_SHA1SUM_SH="td_sha1sum.sh"
 TD_SHELL_BAT="td_shell.bat"
 
 
-usage() {
+function usage() {
   echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
   echo -e "       $(basename $0) [ -h | --help | -v | --version ]\n"
   echo -e "Options:"
@@ -103,9 +103,24 @@ usage() {
   echo -e "  make\t\t\t\t\tmake [$(basename $0)'s shell]"
 }
 
+function opt_check() {
+	local a=( "$@" )
+	if [ 0 -eq ${#a[@]} ]; then
+		return 1
+	fi
+
+	for i in ${a[@]:1}; do
+		local opt="`echo ${a[0]} | tr [:upper:] [:lower:]`"
+		if [ ".$opt" = ".$i" ]; then
+			echo "$opt"
+			return 0
+		fi
+	done
+	return 1
+}
 
 
-export_java_opts() {
+function export_java_opts() {
 	local opts="`echo $@ | tr -s ' '`"
   export JAVA_OPTS="$opts"
 }
@@ -822,13 +837,14 @@ DEP="\${DEP:-\$(cd \`dirname \${BASH_SOURCE[0]}\`; pwd -P)}"
 OPT_RUN="\${OPT_RUN:-\${DEP%/}/run}"
 
 VER=\${VER:-8.5.16}
-W3=\${W3:-\${OPT_RUN%/}/www/tomcat}
+R_PREFIX=\${R_PREFIX:-\${OPT_RUN%/}/www/tomcat}
+L_WAR_PATH=\${L_WAR_PATH=:-}
 
 \${td} \\
 	${L_PREFIX:+--local-prefix=${L_PREFIX}} \\
-	${R_PREFIX:+--remote-prefix=\${W3}} \\
+	${R_PREFIX:+--remote-prefix=\${R_PREFIX}} \\
 	${VER:+--tomcat-version=\${VER}} \\
-	${CLEAN:+--tomcat-clean=${CLEAN}} \\
+	--tomcat-clean=${CLEAN} \\
 	--java-options="\${JAVA_OPTS}" \\
 	--local-war-path=\${L_WAR_PATH} \\
 	--listen-on=${LISTEN_ON[2]} \\
@@ -837,14 +853,16 @@ W3=\${W3:-\${OPT_RUN%/}/www/tomcat}
 	--ssh-host=${SSH_HOST} \\
 	--docker-user=${DOCKER_USER} \\
 	--docker-host=${DOCKER_HOST} \\
+	--build=${BUILD} \\
 	${BUILD_DIR:+--build-dir=${BUILD_DIR}} \\
 	${BUILD_CMD:+--build-cmd=${BUILD_CMD}} \\
 	${BUILD_OPTS:+--build-options=${BUILD_OPTS}} \\
 	${STOP_TIMEOUT:+--stop-timeout=${STOP_TIMEOUT}} \\
 	${START_PORT:+--start-port=${START_PORT}} \\
 	${STOP_PORT:+--stop-port=${STOP_PORT}} \\
-	--debug \\
+	--debug=${DEBUG[1]} \\
 	${JPDA_PORT:+--jpda-port=${JPDA_PORT}} \\
+  --where=${where} \\
 	"\$@"
 END
 }
@@ -1012,7 +1030,7 @@ do
     --local-prefix=*)        l_prefix="$value"   		    ;;
     --remote-prefix=*)       r_prefix="$value"   		    ;;
     --java-options=*)        java_opts="${java_opts:+$java_opts }$value"		      ;;
-    --debug)                 DEBUG=yes    		          ;;
+    --debug=*)               opt_debug="$value"         ;;
     
     --where=*)               where="$value"		          ;;
     --local-war-path=*)      L_WAR_PATH="$value"	      ;;
@@ -1021,13 +1039,13 @@ do
     --docker-user=*)         DOCKER_USER="$value"       ;;
     --docker-host=*)         DOCKER_HOST="$value"	      ;;
 
-    --build)                 BUILD=yes    		          ;;
+    --build=*)               opt_build="$value"         ;;
     --build-dir=*)           build_dir="$value"	        ;;
     --build-cmd=*)           build_cmd="$value"	        ;;
     --build-options=*)       BUILD_OPTS="$value"	      ;;
 
     --tomcat-version=*)      VER="$value"      			    ;;
-    --tomcat-clean=*)        clean="$value"     		    ;;
+    --tomcat-clean=*)        opt_clean="$value"     	  ;;
     --tc-options=*)          tc_opts="$value"		        ;;
 
     --listen-on=*)           LISTEN_ON="$value"		      ;;
@@ -1055,6 +1073,7 @@ if [ "$version" = "yes" ]; then
 fi
 
 # setup env vars
+retval=0
 
 if [ -n "$l_prefix" ]; then
   L_PREFIX="$l_prefix"
@@ -1068,6 +1087,15 @@ if [ -n "$tc_opts" ]; then
   TC_OPTS="${TC_OPTS:+$TC_OPTS }${tc_opts}"
 fi
 
+if [ -n "$opt_build" ]; then
+	BUILD=`opt_check $BUILD ${BUILD[@]}`
+	retval=$?
+	if [ 0 -ne $retval ]; then
+		echo -e "! --build=\"$opt_build\"  =invalid"
+		exit $retval
+	fi	
+fi
+
 if [ -n "$build_dir" ]; then
   BUILD_DIR="`eval echo $build_dir`"
 fi
@@ -1076,13 +1104,22 @@ if [ -n "$build_cmd" ]; then
   BUILD_CMD="$build_cmd"
 fi
 
-if [ -n "$clean" ]; then
-	for i in "${CLEAN[@]}"; do
-		if [ "$clean" = "$i" ]; then
-			CLEAN=$clean
-			break;
-		fi
-	done
+if [ -n "$opt_debug" ]; then
+	DEBUG=`opt_check $opt_debug ${DEBUG[@]}`
+	retval=$?
+	if [ 0 -ne $retval ]; then
+		echo -e "! --debug=\"$opt_debug\"  =invalid"
+		exit $retval
+	fi	
+fi
+
+if [ -n "$opt_clean" ]; then
+	CLEAN=`opt_check $opt_clean ${CLEAN[@]}`
+	retval=$?
+	if [ 0 -ne $retval ]; then
+		echo -e "! --tomcat-clean=\"$opt_clean\"  =invalid"
+		exit $retval
+	fi	
 fi
 
 if [ -n "$L_WAR_PATH" ]; then
@@ -1106,12 +1143,18 @@ echo_opts "java_opts" "${java_opts}"
 export_java_opts "${java_opts}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 
-retval=0
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
 
   build)
-    build_war "$L_WAR_PATH"
+    if [ "yes" = "$BUILD" ]; then
+      build_war "$L_WAR_PATH"
+    else
+      if [ ! -f "$L_WAR_PATH" ]; then
+        echo -e "! --local-war-path='${L_WAR_PATH}'  =invalid"
+        exit 1
+      fi
+    fi
     ;;
   start)
     if [ -z "$L_WAR_PATH" ]; then
