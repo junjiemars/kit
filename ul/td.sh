@@ -862,7 +862,7 @@ L_WAR_PATH=\${L_WAR_PATH=:-}
 	${STOP_PORT:+--stop-port=${STOP_PORT}} \\
 	--debug=${DEBUG[1]} \\
 	${JPDA_PORT:+--jpda-port=${JPDA_PORT}} \\
-  --where=${where} \\
+  --where=${TO_WHERE} \\
 	"\$@"
 END
 }
@@ -1143,31 +1143,25 @@ echo_opts "java_opts" "${java_opts}"
 export_java_opts "${java_opts}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 
+function do_build() {
+  if [ "yes" = "$BUILD" ]; then
+    build_war "$L_WAR_PATH"
+  else
+    if [ ! -f "$L_WAR_PATH" ]; then
+      echo -e "! --local-war-path='${L_WAR_PATH}'  =invalid"
+      exit 1
+    fi
+  fi
+}
+
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
 
   build)
-    if [ "yes" = "$BUILD" ]; then
-      build_war "$L_WAR_PATH"
-    else
-      if [ ! -f "$L_WAR_PATH" ]; then
-        echo -e "! --local-war-path='${L_WAR_PATH}'  =invalid"
-        exit 1
-      fi
-    fi
+    do_build
     ;;
   start)
-    if [ -z "$L_WAR_PATH" ]; then
-      echo -e "! missing --local-war-path=* options."
-      usage
-      exit 1
-    fi
-    
-    if [ ! -f "$L_WAR_PATH" -o "yes" = "$BUILD" ]; then
-      build_war "$L_WAR_PATH"
-      retval=$?
-      [ 0 -eq $retval ] || exit $retval
-    fi
+    do_build
 
     check_exist "${TO_WHERE[$TW_IDX]}"
     retval=$?
