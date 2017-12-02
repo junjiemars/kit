@@ -119,19 +119,16 @@ function opt_check() {
 	return 1
 }
 
-
 function export_java_opts() {
 	local opts="`echo $@ | tr -s ' '`"
   export JAVA_OPTS="$opts"
 }
-
 
 function echo_opts() {
 	local name="$1"
 	local opts="${@:2}"
 	echo "@|1[$name]:$opts"
 }
-
 
 function on_win32() {
   case "$PLATFORM" in
@@ -144,7 +141,6 @@ function on_win32() {
   esac
 }
 
-
 function on_darwin() {
 	case "$PLATFORM" in
 		Darwin) 
@@ -155,7 +151,6 @@ function on_darwin() {
 			;;
 	esac
 }
-
 
 function gen_docker_sha1sum_sh() {
 
@@ -175,7 +170,6 @@ END
     return 1
   fi
 }
-
 
 function gen_docker_shell_bat() {
   local cmd="$1"
@@ -198,12 +192,10 @@ END
   fi
 }
 
-
 function local_src_path() {
   local p="${L_PREFIX%/}"
   echo "$p"
 }
-
 
 function local_dst_path() {
 	local lp="${1%}"
@@ -292,12 +284,10 @@ function ssh_login_id() {
   echo "$id"
 }
 
-
 function docker_login_id() {
   local id="exec -u $DOCKER_USER $DOCKER_HOST"
   echo "$id"
 }
-
 
 function docker_cp() {
 	local lp="$1"
@@ -314,6 +304,15 @@ function docker_cp() {
 	fi
 }
 
+function local_cp() {
+	local lp1="$1"
+	local lp2="$2"
+	
+	[ "$lp1" = "$lp2" ] && return 0
+
+	dir_mk "`dirname $lp2`" "${TO_WHERE[$TW_IDX_LOCAL]}" || return $?
+	cp "$lp1" "$lp2"
+}
 
 function where_abbrev() {
   local w="$1"
@@ -394,6 +393,13 @@ function check_console() {
       let t=$t+$?
       ;;
     *)
+			dir_mk "`local_src_path`" "$w"
+			t=$?
+			if [ 0 -ne $t ]; then
+        echo -e "! check Console $wa[$VER]  =failed"
+				return $t
+			fi
+
       tc="`local_bin_path $TC_SH $VERSION`"
       t=$?
       ;;
@@ -489,8 +495,8 @@ function dir_mk() {
       t=$?
       ;;
     *)
-      echo -e "# mkdir $wa[$d]: in local  =skipped"
-      t=0
+			[ -d "$d" ] || mkdir -p "$d"
+      t=$?
       ;;
   esac
 
@@ -560,12 +566,8 @@ function transport_file() {
       t=$?
       ;;
     *)
-			if [ "$lp" == "$rp" ]; then
-				t=0
-			else
-	    	cp $lp $rp
-      	t=$?
-			fi
+			local_cp "$lp" "$rp"
+			t=$?
       ;;
   esac
   if [ 0 -eq $t ]; then
