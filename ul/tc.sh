@@ -574,6 +574,7 @@ echo_opts "PREFIX" "${PREFIX}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 echo_opts "CATALINA_BASE" "${CATALINA_BASE}"
 echo_opts "CATALINA_OPTS" "${CATALINA_OPTS}"
+echo_opts "CATALINA_BIN" "${CATALINA_BIN}"
 
 
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
