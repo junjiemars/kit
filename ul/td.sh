@@ -393,13 +393,6 @@ function check_console() {
       let t=$t+$?
       ;;
     *)
-			dir_mk "`local_src_path`" "$w"
-			t=$?
-			if [ 0 -ne $t ]; then
-        echo -e "! check Console $wa[$VER]  =failed"
-				return $t
-			fi
-
       tc="`local_bin_path $TC_SH $VERSION`"
       t=$?
       ;;
@@ -501,9 +494,9 @@ function dir_mk() {
   esac
 
   if [ 0 -eq $t ]; then
-    echo -e "+ mkdir $wa[$d]  =succeed"
+    echo -e "# mkdir $wa[$d]  =succeed"
   else
-    echo -e "- mkdir $wa[$d]  =failed"
+    echo -e "! mkdir $wa[$d]  =failed"
   fi
   return $t
 }
