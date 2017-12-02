@@ -35,6 +35,7 @@ JPDA_PORT="${JPDA_PORT:-8000}"
 TO_WHERE=("local" "ssh" "docker")
 TW_IDX=
 TW_IDX_LOCAL=0
+TW_IDX_DOCKER=2
 
 
 L_WAR_PATH="${L_WAR_PATH}"
@@ -294,10 +295,10 @@ function docker_cp() {
 	local rp="$2"
 	local t=0
 	
+	dir_mk "`dirname $rp`" "${TO_WHERE[$TW_IDX_DOCKER]}" || return $?
+
 	if `on_darwin`; then
-		docker cp -a $lp $DOCKER_HOST:$rp
-		t=$?
-		[ 0 -eq $t ] || return $t
+		docker cp -a $lp $DOCKER_HOST:$rp || return $?
 		docker exec -it $DOCKER_HOST chown $DOCKER_USER:$DOCKER_USER $rp		
 	else
 		docker cp $lp $DOCKER_HOST:$rp
