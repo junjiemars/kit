@@ -82,9 +82,9 @@ function export_alias() {
 
 function export_java_opts() {
   local opts="-Dstart.port=${START_PORT}      \
-							-Dstop.port=${STOP_PORT}        \
-							-Dlisten.address=${LISTEN_ON}   \
-							${IP_OPTS[$IP_IDX]}             \
+              -Dstop.port=${STOP_PORT}        \
+              -Dlisten.address=${LISTEN_ON}   \
+              ${IP_OPTS[$IP_IDX]}             \
 							$@"
 	opts="`echo $opts | tr -s ' '`"
   export JAVA_OPTS="${opts}"
@@ -97,7 +97,7 @@ function export_catalina_opts() {
 
 function export_catalina_base() {
 	export CATALINA_BASE="${PREFIX%/}/${VER}"
-  export CATALINA_PID="${CATALINA_BASE%/}/logs/pid}"
+  export CATALINA_PID="${CATALINA_BASE%/}/logs/pid"
 	CATALINA_BIN="${CATALINA_BASE}/bin/catalina.sh"
 }
 
@@ -541,7 +541,7 @@ if [ -n "$tomcat_ver" ]; then
 fi
 
 if [ -n "$download_only" ]; then
-	DOWNLOAD_ONLY=`opt_check $DOWNLOAD_ONLY ${DOWNLOAD_ONLY[@]}`
+	DOWNLOAD_ONLY=`opt_check $download_only ${DOWNLOAD_ONLY[@]}`
 	retval=$?
 	if [ 0 -ne $retval ]; then
 		echo -e "! --download-only='$DOWNLOAD_ONLY'  =invalid"
@@ -555,15 +555,11 @@ fi
 
 
 if [ -n "$ip_ver" ]; then
-  for i in "${!IP_VER[@]}"; do
-    if [ "$ip_ver" = "${IP_VER[$i]}" ]; then
-      IP_IDX=$i
-      break;
-    fi
-  done
-  if [ -z "$IP_IDX" ]; then
-    echo -e "! --ip-version=$ip_ver  =invalid"
-    exit 1
+	IP_VER=`opt_check $ip_ver ${IP_VER[@]}`
+	retval=$?
+  if [ 0 -ne $retval ]; then
+    echo -e "! --ip-version='$ip_ver'  =invalid"
+    exit $retval
   fi
 fi
 
