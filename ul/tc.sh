@@ -75,6 +75,7 @@ function export_cmd_alias() {
 			export sha1sum="shasum -a1"
 			;;
     *)
+			export sha1sum=sha1sum
       ;;
   esac
 }
@@ -179,7 +180,7 @@ function unix_path() {
 }
 
 
-function check_env() {
+function do_check_env() {
   local pid="`get_pid`"
   local run="Stopped"
   local t=
@@ -204,7 +205,7 @@ function check_env() {
 }
 
 
-function check_pid() {
+function do_check_pid() {
   local pid="`get_pid`"
   local t=
 
@@ -217,12 +218,12 @@ function check_pid() {
 }
 
 
-function check_exist() {
+function do_check_exist() {
   ${CATALINA_BIN} version &>/dev/null
 }
 
 
-function clean_apps() {
+function do_clean() {
 	local base="${1%/}/webapps"
 	local apps=("docs" "examples" "host-manager" "manager" "ROOT")
 	
@@ -308,25 +309,15 @@ function download_tomcat() {
   local rtgz_sha1="$5"
   local t=
 
-  do_verify "$ltgz" "$ltgz_sha1"
-  t=$?
-	[ 0 -eq $t ] && return $t
+  do_verify "$ltgz" "$ltgz_sha1" && return 0 
 
-	download_file "$d" "$ltgz_sha1" "$rtgz_sha1"
-	t=$?
-	[ 0 -eq $t ] || return $t
+	download_file "$d" "$ltgz_sha1" "$rtgz_sha1" && return 0
 
-	do_verify "$ltgz" "$ltgz_sha1"
-	t=$?
-	[ 0 -ne $t ] || return $t
+	do_verify "$ltgz" "$ltgz_sha1" && return 0
 
-	download_file "$d" "$ltgz" "$rtgz"
-	t=$?
-	[ 0 -eq $t ] || return $t
+	download_file "$d" "$ltgz" "$rtgz" || return $?
 	
-	do_verify "$ltgz" "$ltgz_sha1"
-	t=$?
-	return $t
+	do_verify "$ltgz" "$ltgz_sha1" 
 }
 
 
@@ -380,7 +371,7 @@ function do_install() {
   fi
 
   echo -e "+ check Tomcat[$VER] existing ..."
-  if `check_exist`; then
+  if `do_check_exist`; then
     echo -e "# check Tomcat[$VER] existing  =succeed"
     echo -e "# install Tomcat[$VER]  =succeed"
     return 0
@@ -397,7 +388,7 @@ function do_install() {
   [ -d "${CATALINA_BASE}" ] || mkdir -p "${CATALINA_BASE}"
   tar -xf "`unix_path ${ltgz}`" -C "${CATALINA_BASE}" --strip-components=1
 
-  if `check_exist`; then
+  if `do_check_exist`; then
     echo -e "# install Tomcat[$VER]  =succeed"
     return 0
   else
@@ -407,20 +398,21 @@ function do_install() {
 }
 
 
-function check_java_env() {
+function check_env_java() {
 	echo -e "+ check \$JAVA_HOME ..."
   if [ -d "${JAVA_HOME}" ]; then
     echo -e "# check \$JAVA_HOME=${JAVA_HOME}  =succeed"
     return 0
-  else
-		. $HOME/.bashrc
-		if [ -d "${JAVA_HOME}" ]; then
-    	echo -e "# check \$JAVA_HOME=${JAVA_HOME}  =succeed"
-			return 0
-		fi
-    echo -e "! check \$JAVA_HOME  =failed"
-    return 1
-  fi
+	fi
+
+	. $HOME/.bashrc
+	if [ -d "${JAVA_HOME}" ]; then
+		echo -e "# check \$JAVA_HOME=${JAVA_HOME}  =succeed"
+		return 0
+	fi
+
+	echo -e "! check \$JAVA_HOME  =failed"
+	return 1
 }
 
 
@@ -445,7 +437,7 @@ function get_pid() {
 }
 
 
-function stop_tomcat() {
+function do_stop() {
   local pid="`get_pid`"
   local t=
   echo -e "+ stop Tomcat[$pid] ..."
@@ -460,12 +452,12 @@ function stop_tomcat() {
 }
 
 
-function start_tomcat() {
+function do_start() {
   "${CATALINA_BIN}" start
 }
 
 
-function debug_tomcat() {
+function do_debug() {
   local t=
   echo -e "+ debug Tomcat ..."
 
@@ -535,6 +527,7 @@ if [ "yes" = "$version" ]; then
 fi
 
 # setup env vars
+retval=0
 
 if [ -n "$prefix" ]; then
   PREFIX="$prefix"
@@ -586,13 +579,13 @@ echo_opts "PREFIX" "${PREFIX}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 echo_opts "CATALINA_BASE" "${CATALINA_BASE}"
 
-#check_java_env
 retval=$?
 [ 0 -eq $retval ] || exit $retval
 
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
   install)
+		check_env_java || exit $?
     do_install
     ;;
   verify)
@@ -602,46 +595,39 @@ case "$command" in
     do_parameterize "$CATALINA_BASE"
 		;;
 	clean)
-		clean_apps "$CATALINA_BASE"
+		do_clean "$CATALINA_BASE"
     ;;
   check-env)
-    check_env
+		check_env_java || exit $?
+    do_check_env
     ;;
   check-pid)
-    check_pid
+    do_check_pid
     ;;
   check-exist)
-    check_exist
+		check_env_java || exit $?
+    do_check_exist
     ;;
   start)
-    do_parameterize "$CATALINA_BASE"
-    retval=$?
-    [ 0 -eq $retval ] || exit $retval
-    check_catalina_bin
-    retval=$?
-    [ 0 -eq $retval ] || exit $retval
-
-    start_tomcat
+    do_parameterize "$CATALINA_BASE" || exit $?
+		check_env_java || exit $?
+    check_catalina_bin || exit $?
+    do_start
     ;;
   stop)
-    check_catalina_bin
-    retval=$?
-    [ 0 -eq $retval ] || exit $retval
-
-    stop_tomcat
+		check_env_java || exit $?
+    check_catalina_bin || exit $?
+    do_stop
     ;;
   debug)
-    do_parameterize "$CATALINA_BASE"
-    retval=$?
-    [ 0 -eq $retval ] || exit $retval
-    check_catalina_bin
-    retval=$?
-    [ 0 -eq $retval ] || exit $retval
+    do_parameterize "$CATALINA_BASE" || exit $?
+		check_env_java || exit $?
+    check_catalina_bin || exit $?
 
     CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }-XX:+HeapDumpOnOutOfMemoryError"
     CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }-XX:HeapDumpPath=${CATALINA_BASE}/logs"
     export_catalina_opts
-    debug_tomcat
+    do_debug
     ;;
   *)
     echo "$0: error: invalid command \"$command\""

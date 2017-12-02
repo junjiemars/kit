@@ -172,7 +172,7 @@ function gen_docker_sha1sum_sh() {
 
   cat << END > "$TD_SHA1SUM_SH"
 #!/bin/bash
-test -f \$1 && $sha1sum \$1 | cut -d' ' -f1
+test -f \$1 && sha1sum \$1 | cut -d' ' -f1
 END
   chmod u+x "$TD_SHA1SUM_SH"
 
@@ -306,17 +306,19 @@ function docker_login_id() {
 function ssh_cp() {
 	local lp="$1"
 	local rp="$2"
+	local w="$3"
 
-	dir_mk "`dirname $rp`" "${TO_WHERE[$TW_IDX_SSH]}" || return $?
+	dir_mk "`dirname $rp`" "$w" || return $?
 	scp $lp `ssh_login_id`:$rp
 }
 
 function docker_cp() {
 	local lp="$1"
 	local rp="$2"
+	local w="$3"
 	local t=0
 	
-	dir_mk "`dirname $rp`" "${TO_WHERE[$TW_IDX_DOCKER]}" || return $?
+	dir_mk "`dirname $rp`" "$w" || return $?
 
 	if `on_darwin`; then
 		docker cp -a $lp $DOCKER_HOST:$rp || return $?
@@ -329,10 +331,11 @@ function docker_cp() {
 function local_cp() {
 	local lp1="$1"
 	local lp2="$2"
+	local w="$3"
 	
 	[ "$lp1" = "$lp2" ] && return 0
 
-	dir_mk "`dirname $lp2`" "${TO_WHERE[$TW_IDX_LOCAL]}" || return $?
+	dir_mk "`dirname $lp2`" "$w" || return $?
 	cp "$lp1" "$lp2"
 }
 
@@ -393,13 +396,13 @@ function check_console() {
       t=$?
       ;;
     docker)
-      dir_mk "`remote_ver_path`/bin" "$w"
-      t=$?
-      if [ 0 -ne $t ]; then
-        echo -e "! check Console $wa[$VER]  =failed"
-        return $t
-      fi
-      
+      #dir_mk "`remote_ver_path`/bin" "$w"
+      #t=$?
+      #if [ 0 -ne $t ]; then
+      #  echo -e "! check Console $wa[$VER]  =failed"
+      #  return $t
+      #fi
+      #
       tc="`remote_bin_path $TC_SH`"
       transport_file "`local_bin_path $TC_SH $VERSION`" "$tc" "$w"
       t=$?
@@ -566,15 +569,15 @@ function transport_file() {
 
   case "$w" in
     ssh)
-	  	ssh_cp "$lp" "$rp"
+	  	ssh_cp "$lp" "$rp" "$w"
       t=$?
       ;;
     docker)
-			docker_cp "$lp" "$rp"
+			docker_cp "$lp" "$rp" "$w"
       t=$?
       ;;
     *)
-			local_cp "$lp" "$rp"
+			local_cp "$lp" "$rp" "$w"
 			t=$?
       ;;
   esac
@@ -777,7 +780,7 @@ function control_tomcat() {
           --stop-port=$STOP_PORT                     \
           --stop-timeout=$STOP_TIMEOUT               \
 					--java-options=\'"${JAVA_OPTS}"\'          \
-					${opts[@]}
+          ${opts[@]}
       t=$?
       ;;
     docker)
@@ -790,7 +793,8 @@ function control_tomcat() {
                --start-port=$START_PORT                \
                --stop-port=$STOP_PORT                  \
                --stop-timeout=$STOP_TIMEOUAT           \
-							 --java-options=\"${JAVA_OPTS}\""           
+							 --java-options=\"${JAVA_OPTS}\""        \
+               ${opts[@]}
         cmd_args="`echo $cmd_args | tr -s ' '`"
         gen_docker_shell_bat "`remote_bin_path $TC_SH`" "$cmd_args"
         t=$?
@@ -809,7 +813,8 @@ function control_tomcat() {
                --start-port=$START_PORT                \
                --stop-port=$STOP_PORT                  \
                --stop-timeout=$STOP_TIMEOUT            \
-							 --java-options="${JAVA_OPTS}"           
+							 --java-options="${JAVA_OPTS}"           \
+               ${opts[@]}
         t=$?
       fi
       ;;
@@ -824,7 +829,7 @@ function control_tomcat() {
           --stop-port=$STOP_PORT               									\
           --stop-timeout=$STOP_TIMEOUT         									\
 					--java-options="${JAVA_OPTS}"                         \
-					${opts[@]}	
+          ${opts[@]}	
       t=$?
       ;;
   esac
