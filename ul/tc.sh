@@ -69,12 +69,21 @@ function usage() {
 }
 
 
+function export_cmd_alias() {
+  case "$PLATFORM" in
+		Darwin)
+			export sha1sum="shasum -a1"
+			;;
+    *)
+      ;;
+  esac
+}
+
 function export_catalina_opts() {
   export CATALINA_OPTS="`echo ${CATALINA_OPTS} | tr -s ' '`"
 }
 
-
-function parameterize() {
+function do_parameterize() {
   local base_dir="$1"
   local server_xml="${base_dir%/}/conf/server.xml"
   echo -e "+ parameterize Tomcat[server.xml] ..."
@@ -230,7 +239,7 @@ function clean_apps() {
 }
 
 
-function verify_tgz() {
+function do_verify() {
   local lhs="$1"
   local rhs="$2"
 
@@ -247,7 +256,7 @@ function verify_tgz() {
    return 1
   fi
 
-  local lsha1="`sha1sum $lhs 2>/dev/null | cut -d' ' -f1`"
+  local lsha1="`$sha1sum $lhs 2>/dev/null | cut -d' ' -f1`"
   if [ "$lsha1" = "$rsha1" ]; then
     echo -e "# verify Tomcat[$rhs]  =succeed"
     return 0
@@ -299,7 +308,7 @@ function download_tomcat() {
   local rtgz_sha1="$5"
   local t=
 
-  verify_tgz "$ltgz" "$ltgz_sha1"
+  do_verify "$ltgz" "$ltgz_sha1"
   t=$?
 	[ 0 -eq $t ] && return $t
 
@@ -307,7 +316,7 @@ function download_tomcat() {
 	t=$?
 	[ 0 -eq $t ] || return $t
 
-	verify_tgz "$ltgz" "$ltgz_sha1"
+	do_verify "$ltgz" "$ltgz_sha1"
 	t=$?
 	[ 0 -ne $t ] || return $t
 
@@ -315,7 +324,7 @@ function download_tomcat() {
 	t=$?
 	[ 0 -eq $t ] || return $t
 	
-	verify_tgz "$ltgz" "$ltgz_sha1"
+	do_verify "$ltgz" "$ltgz_sha1"
 	t=$?
 	return $t
 }
@@ -351,7 +360,7 @@ function tomcat_tgz_sha1_path() {
 }
 
 
-function install_tomcat() {
+function do_install() {
   local tgz="`tomcat_tgz ${VER}`"
   local tgz_sha1="`tomcat_tgz_sha1 ${VER}`"
   local major="${VER%%.*}"
@@ -569,7 +578,7 @@ if [ -n "$ip_ver" ]; then
   fi
 fi
 
-
+export_cmd_alias
 export_pid_var
 echo_opts "java_opts" "${java_opts}"
 export_java_opts "$java_opts"
@@ -577,20 +586,20 @@ echo_opts "PREFIX" "${PREFIX}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 echo_opts "CATALINA_BASE" "${CATALINA_BASE}"
 
-check_java_env
+#check_java_env
 retval=$?
 [ 0 -eq $retval ] || exit $retval
 
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
   install)
-    install_tomcat
+    do_install
     ;;
   verify)
-    verify_tgz "`tomcat_tgz_path $PREFIX $VER`" "`tomcat_tgz_sha1_path $PREFIX $VER`"
+    do_verify "`tomcat_tgz_path $PREFIX $VER`" "`tomcat_tgz_sha1_path $PREFIX $VER`"
     ;;
   parameterize)
-    parameterize "$CATALINA_BASE"
+    do_parameterize "$CATALINA_BASE"
 		;;
 	clean)
 		clean_apps "$CATALINA_BASE"
@@ -605,7 +614,7 @@ case "$command" in
     check_exist
     ;;
   start)
-    parameterize "$CATALINA_BASE"
+    do_parameterize "$CATALINA_BASE"
     retval=$?
     [ 0 -eq $retval ] || exit $retval
     check_catalina_bin
@@ -622,7 +631,7 @@ case "$command" in
     stop_tomcat
     ;;
   debug)
-    parameterize "$CATALINA_BASE"
+    do_parameterize "$CATALINA_BASE"
     retval=$?
     [ 0 -eq $retval ] || exit $retval
     check_catalina_bin

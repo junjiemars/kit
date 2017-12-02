@@ -35,6 +35,7 @@ JPDA_PORT="${JPDA_PORT:-8000}"
 TO_WHERE=("local" "ssh" "docker")
 TW_IDX=
 TW_IDX_LOCAL=0
+TW_IDX_SSH=1
 TW_IDX_DOCKER=2
 
 
@@ -104,6 +105,18 @@ function usage() {
   echo -e "  make\t\t\t\t\tmake [$(basename $0)'s shell]"
 }
 
+
+function export_cmd_alias() {
+  case "$PLATFORM" in
+		Darwin)
+			export sha1sum="shasum -a1"
+			;;
+    *)
+			export sha1sum=sha1sum
+      ;;
+  esac
+}
+
 function opt_check() {
 	local a=( "$@" )
 	if [ 0 -eq ${#a[@]} ]; then
@@ -159,7 +172,7 @@ function gen_docker_sha1sum_sh() {
 
   cat << END > "$TD_SHA1SUM_SH"
 #!/bin/bash
-test -f \$1 && sha1sum \$1 | cut -d' ' -f1
+test -f \$1 && $sha1sum \$1 | cut -d' ' -f1
 END
   chmod u+x "$TD_SHA1SUM_SH"
 
@@ -290,6 +303,14 @@ function docker_login_id() {
   echo "$id"
 }
 
+function ssh_cp() {
+	local lp="$1"
+	local rp="$2"
+
+	dir_mk "`dirname $rp`" "${TO_WHERE[$TW_IDX_SSH]}" || return $?
+	scp $lp `ssh_login_id`:$rp
+}
+
 function docker_cp() {
 	local lp="$1"
 	local rp="$2"
@@ -367,13 +388,6 @@ function check_console() {
 
   case "$w" in
     ssh)
-      dir_mk "`remote_ver_path`/bin" "$w"
-      t=$?
-      if [ 0 -ne $t ]; then
-        echo -e "! check Console $wa[$VER]  =failed"
-        return $t
-      fi
-      
       tc="`remote_bin_path $TC_SH`"
       transport_file "`local_bin_path $TC_SH $VERSION`" "$tc" "$w"
       t=$?
@@ -424,12 +438,12 @@ function file_eq() {
   fi
   echo -e "# check L[$lp] existing  =succeed"
 
-  local lh="`sha1sum $lp | cut -d' ' -f1`"
+  local lh="`$sha1sum $lp | cut -d' ' -f1`"
   local rh=
 
   case "$w" in
     ssh)
-		  rh=`ssh $(ssh_login_id) "test -f $rp && sha1sum $rp 2>/dev/null | cut -d' ' -f1"`
+		  rh=`ssh $(ssh_login_id) "test -f $rp && $sha1sum $rp 2>/dev/null | cut -d' ' -f1"`
       ;;
     docker)
       local rbp="`remote_bin_path $TD_SHA1SUM_SH`"
@@ -448,7 +462,7 @@ function file_eq() {
       fi
       ;;
     *)
-      rh="`test -f "$rp" && sha1sum "$rp" | cut -d' ' -f1`"
+      rh="`test -f "$rp" && $sha1sum "$rp" | cut -d' ' -f1`"
       ;;
   esac
 
@@ -552,7 +566,7 @@ function transport_file() {
 
   case "$w" in
     ssh)
-	  	scp $lp `ssh_login_id`:$rp
+	  	ssh_cp "$lp" "$rp"
       t=$?
       ;;
     docker)
@@ -686,7 +700,8 @@ function install_tomcat() {
   local tgz="apache-tomcat-$VER.tar.gz"
   local ltgz=(
 		"`local_src_path`/$tgz" 
-		"./$tgz" "/tmp/$tgz" 
+		"./$tgz" 
+		"/tmp/$tgz" 
 		"${HOME%/}/Downloads/$tgz"
 	)
 	local ltgz_x=
@@ -707,7 +722,7 @@ function install_tomcat() {
     $tc install                              \
         --download-only=yes                  \
         --tomcat-version="$VER"              \
-        --prefix="`dirname $ltgz_x`"
+        --prefix=.
     t=$?
     if [ 0 -ne $t ]; then
       echo -e "! install Tomcat $wa[$VER]  =failed"
@@ -761,7 +776,8 @@ function control_tomcat() {
           --start-port=$START_PORT                   \
           --stop-port=$STOP_PORT                     \
           --stop-timeout=$STOP_TIMEOUT               \
-					--java-options=\'"${JAVA_OPTS}"\'           
+					--java-options=\'"${JAVA_OPTS}"\'          \
+					${opts[@]}
       t=$?
       ;;
     docker)
@@ -841,33 +857,29 @@ function make_td_debug_shell() {
 DEP="\${DEP:-\$(cd \`dirname \${BASH_SOURCE[0]}\`; pwd -P)}"
 OPT_RUN="\${OPT_RUN:-\${DEP%/}/run}"
 
-VER=\${VER:-8.5.16}
-R_PREFIX=\${R_PREFIX:-\${OPT_RUN%/}/www/tomcat}
-L_WAR_PATH=\${L_WAR_PATH=:-}
-
 \${td} \\
-	${L_PREFIX:+--local-prefix=${L_PREFIX}} \\
-	${R_PREFIX:+--remote-prefix=\${R_PREFIX}} \\
-	${VER:+--tomcat-version=\${VER}} \\
-	--tomcat-clean=${CLEAN} \\
-	--java-options="\${JAVA_OPTS}" \\
-	--local-war-path=\${L_WAR_PATH} \\
-	--listen-on=${LISTEN_ON[2]} \\
-	--ip-version=${IP_VER} \\
-	--ssh-user=${SSH_USER} \\
-	--ssh-host=${SSH_HOST} \\
-	--docker-user=${DOCKER_USER} \\
-	--docker-host=${DOCKER_HOST} \\
-	--build=${BUILD} \\
-	${BUILD_DIR:+--build-dir=${BUILD_DIR}} \\
-	${BUILD_CMD:+--build-cmd=${BUILD_CMD}} \\
-	${BUILD_OPTS:+--build-options=${BUILD_OPTS}} \\
-	${STOP_TIMEOUT:+--stop-timeout=${STOP_TIMEOUT}} \\
-	${START_PORT:+--start-port=${START_PORT}} \\
-	${STOP_PORT:+--stop-port=${STOP_PORT}} \\
-	--debug=${DEBUG[1]} \\
-	${JPDA_PORT:+--jpda-port=${JPDA_PORT}} \\
-  --where=${TO_WHERE} \\
+	--local-prefix=\${L_PREFIX:-$L_PREFIX} \\
+	--remote-prefix=\${R_PREFIX:-$R_PREFIX} \\
+	--tomcat-version=\${VER:-$VER} \\
+	--tomcat-clean=\${CLEAN:-${CLEAN[0]}} \\
+	--java-options="\${JAVA_OPTS:-${JAVA_OPTS[@]}}" \\
+	--local-war-path=\${L_WAR_PATH:-$L_WAR_PATH} \\
+	--listen-on=\${LISTEN_ON:-${LISTEN_ON[2]}} \\
+	--ip-version=\${IP_VER:-${IP_VER[0]}} \\
+	--ssh-user=\${SSH_USER:-${SSH_USER[@]}} \\
+	--ssh-host=\${SSH_HOST:-${SSH_HOST[@]}} \\
+	--docker-user=\${DOCKER_USER:-$DOCKER_USER} \\
+	--docker-host=\${DOCKER_HOST:-$DOCKER_HOST} \\
+	--build=\${BUILD:-${BUILD[0]}} \\
+	--build-dir=\${BUILD_DIR:-$BUILD_DIR} \\
+	--build-cmd=\${BUILD_CMD:-$BUILD_CMD} \\
+	--build-options=\${BUILD_OPTS:-$BUILD_OPTS} \\
+	--stop-timeout=\${STOP_TIMEOUT:-$STOP_TIMEOUT} \\
+	--start-port=\${START_PORT:-$START_PORT} \\
+	--stop-port=\${STOP_PORT:-$STOP_PORT} \\
+	--debug=\${DEBUG:-${DEBUG[1]}} \\
+	--jpda-port=\${JPDA_PORT:-$JPDA_PORT} \\
+  --where=${TO_WHERE[$TW_IDX]} \\
 	"\$@"
 END
 }
@@ -1144,6 +1156,7 @@ if [ -n "$where" ]; then
   fi
 fi
 
+export_cmd_alias
 echo_opts "java_opts" "${java_opts}"
 export_java_opts "${java_opts}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
@@ -1176,12 +1189,12 @@ case "$command" in
       [ 0 -eq $retval ] || exit $retval
     fi
 
-		if [ "$CLEAN" = "yes" ]; then
+		if [ "yes" = "$CLEAN" ]; then
 			control_tomcat clean "${TO_WHERE[$TW_IDX]}"
 		fi
 
     transport_war "$L_WAR_PATH" "${TO_WHERE[$TW_IDX]}"
-    if [ "$DEBUG" = "yes" ]; then
+    if [ "yes" = "$DEBUG" ]; then
       export JPDA_PORT="$JPDA_PORT"
       control_tomcat debug "${TO_WHERE[$TW_IDX]}"
     else
