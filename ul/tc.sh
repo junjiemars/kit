@@ -69,7 +69,7 @@ function usage() {
 }
 
 
-function export_cmd_alias() {
+function export_alias() {
   case "$PLATFORM" in
 		Darwin)
 			export sha1sum="shasum -a1"
@@ -80,8 +80,23 @@ function export_cmd_alias() {
   esac
 }
 
+function export_java_opts() {
+  local opts="-Dstart.port=${START_PORT}      \
+							-Dstop.port=${STOP_PORT}        \
+							-Dlisten.address=${LISTEN_ON}   \
+							${IP_OPTS[$IP_IDX]}             \
+							$@"
+	opts="`echo $opts | tr -s ' '`"
+  export JAVA_OPTS="${opts}"
+}
+
+function export_pid_var() {
+  export CATALINA_PID="${CATALINA_PID:-${CATALINA_BASE%/}/logs/pid}"
+}
+
 function export_catalina_opts() {
-  export CATALINA_OPTS="`echo ${CATALINA_OPTS} | tr -s ' '`"
+	local opts="${CATALINA_OPTS} $@"
+  export CATALINA_OPTS="`echo $opts | tr -s ' '`"
 }
 
 function do_parameterize() {
@@ -123,19 +138,10 @@ function do_parameterize() {
 }
 
 
-function export_java_opts() {
-  local opts="-Dstart.port=${START_PORT}      \
-							-Dstop.port=${STOP_PORT}        \
-							-Dlisten.address=${LISTEN_ON}   \
-							${IP_OPTS[$IP_IDX]} "
-	opts="$(echo $opts $@ | tr -s ' ')"
-  export JAVA_OPTS="${opts}"
-}
-
 function echo_opts() {
 	local name="$1"
 	local opts="${@:2}"
-	echo "@|0[$name]:$opts"
+	echo "@|0[$name]:${opts[@]}"
 }
 
 function opt_check() {
@@ -152,10 +158,6 @@ function opt_check() {
 		fi
 	done
 	return 1
-}
-
-function export_pid_var() {
-  export CATALINA_PID="${CATALINA_PID:-${CATALINA_BASE%/}/logs/pid}"
 }
 
 function on_win32() {
@@ -417,23 +419,22 @@ function check_env_java() {
 
 
 function check_catalina_bin() {
-  echo -e "+ check CATALINA_BIN ..."
+  echo -e "+ check \$CATALINA_BIN ..."
   if [ -x "${CATALINA_BIN}" ]; then
-    echo -e "# check CATALINA_BIN  =succeed"
+    echo -e "# check \$CATALINA_BIN=${CATALINA_BIN}  =succeed"
     return 0
   else
-    echo -e "! check CATALINA_BIN  =failed"
+    echo -e "! check \$CATALINA_BIN  =failed"
     return 1
   fi
 }
 
 
 function get_pid() {
-	if [ -f "${CATALINA_PID}" ]; then
-		cat "${CATALINA_PID}" 2>/dev/null
-	else
+	if [ ! -f "${CATALINA_PID}" ]; then
 		return 1
 	fi
+	cat "${CATALINA_PID}" 2>/dev/null
 }
 
 
@@ -554,10 +555,6 @@ fi
 
 CATALINA_BIN="${CATALINA_BASE}/bin/catalina.sh"
 
-if [ -n "$catalina_opts" ]; then
-  CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }${catalina_opts}"
-fi
-
 if [ -n "$ip_ver" ]; then
   for i in "${!IP_VER[@]}"; do
     if [ "$ip_ver" = "${IP_VER[$i]}" ]; then
@@ -571,16 +568,18 @@ if [ -n "$ip_ver" ]; then
   fi
 fi
 
-export_cmd_alias
+
+export_alias
 export_pid_var
-echo_opts "java_opts" "${java_opts}"
 export_java_opts "$java_opts"
+export_catalina_opts "$catalina_opts"
+
+echo_opts "VER" "${VER}"
 echo_opts "PREFIX" "${PREFIX}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 echo_opts "CATALINA_BASE" "${CATALINA_BASE}"
+echo_opts "CATALINA_OPTS" "${CATALINA_OPTS}"
 
-retval=$?
-[ 0 -eq $retval ] || exit $retval
 
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
 case "$command" in
@@ -624,9 +623,9 @@ case "$command" in
 		check_env_java || exit $?
     check_catalina_bin || exit $?
 
-    CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }-XX:+HeapDumpOnOutOfMemoryError"
-    CATALINA_OPTS="${CATALINA_OPTS:+$CATALINA_OPTS }-XX:HeapDumpPath=${CATALINA_BASE}/logs"
-    export_catalina_opts
+    catalina_opts="${catalina_opts:+$catalina_opts }-XX:+HeapDumpOnOutOfMemoryError"
+    catalina_opts="${catalina_opts:+$catalina_opts }-XX:HeapDumpPath=${CATALINA_BASE}/logs"
+    export_catalina_opts "$catalina_opts"
     do_debug
     ;;
   *)
