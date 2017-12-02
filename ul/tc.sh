@@ -90,13 +90,15 @@ function export_java_opts() {
   export JAVA_OPTS="${opts}"
 }
 
-function export_pid_var() {
-  export CATALINA_PID="${CATALINA_PID:-${CATALINA_BASE%/}/logs/pid}"
-}
-
 function export_catalina_opts() {
 	local opts="${CATALINA_OPTS} $@"
   export CATALINA_OPTS="`echo $opts | tr -s ' '`"
+}
+
+function export_catalina_base() {
+	export CATALINA_BASE="${PREFIX%/}/${VER}"
+  export CATALINA_PID="${CATALINA_BASE%/}/logs/pid}"
+	CATALINA_BIN="${CATALINA_BASE}/bin/catalina.sh"
 }
 
 function do_parameterize() {
@@ -532,12 +534,10 @@ retval=0
 
 if [ -n "$prefix" ]; then
   PREFIX="$prefix"
-  CATALINA_BASE="${PREFIX%/}/${VER}"
 fi
 
 if [ -n "$tomcat_ver" ]; then
   VER="$tomcat_ver"
-  CATALINA_BASE="${PREFIX%/}/${VER}"
 fi
 
 if [ -n "$download_only" ]; then
@@ -553,7 +553,6 @@ if [ -n "$catalina_base" ]; then
   CATALINA_BASE="${catalina_base}"
 fi
 
-CATALINA_BIN="${CATALINA_BASE}/bin/catalina.sh"
 
 if [ -n "$ip_ver" ]; then
   for i in "${!IP_VER[@]}"; do
@@ -570,9 +569,9 @@ fi
 
 
 export_alias
-export_pid_var
 export_java_opts "$java_opts"
 export_catalina_opts "$catalina_opts"
+export_catalina_base 
 
 echo_opts "VER" "${VER}"
 echo_opts "PREFIX" "${PREFIX}"
