@@ -5,7 +5,7 @@
 # author : junjiemars@gmail.com
 #------------------------------------------------
 
-VERSION="1.2.1"
+VERSION="1.2.2"
 PLATFORM=${PLATFORM:-`uname -s 2>/dev/null`}
 
 DEP=${DEP:-$(cd `dirname ${BASH_SOURCE[@]}`; pwd -P)}
@@ -688,23 +688,30 @@ function install_tomcat() {
   echo -e "+ install Tomcat $wa[$VER] ..."
 
   local tgz="apache-tomcat-$VER.tar.gz"
-  local ltgz=("`local_src_path`/$tgz" "/tmp/$tgz" "./$tgz")
+  local ltgz=(
+		"`local_src_path`/$tgz" 
+		"./$tgz" "/tmp/$tgz" 
+		"${HOME%/}/Downloads/$tgz"
+	)
+	local ltgz_x=
   local rtgz="`remote_root_path`/$tgz"
 
   for f in "${ltgz[@]}"; do
     if [ -f "$f" ]; then
-      ltgz="$f"
-      break;
+      control_tomcat verify "${TO_WHERE[$TW_IDX_LOCAL]}" "--prefix=`dirname $f`"
+      t=$?
+      if [ 0 -eq $t ]; then
+        ltgz_x="$f"
+        break;
+      fi
     fi
   done
 
-  control_tomcat verify "${TO_WHERE[$TW_IDX_LOCAL]}"
-  t=$?
-  if [ 0 -ne $t ]; then
+  if [ -z "$ltgz_x" ]; then
     $tc install                              \
-        --download-only                      \
+        --download-only=yes                  \
         --tomcat-version="$VER"              \
-        --prefix="`dirname ${ltgz[0]}`"
+        --prefix="`dirname $ltgz_x`"
     t=$?
     if [ 0 -ne $t ]; then
       echo -e "! install Tomcat $wa[$VER]  =failed"
@@ -712,15 +719,15 @@ function install_tomcat() {
     fi
   fi
 
-  transport_file "${ltgz[0]}" "$rtgz" "$w"
-  file_eq "${ltgz[0]}" "$rtgz" "$w"
+  transport_file "$ltgz_x" "$rtgz" "$w"
+  file_eq "$ltgz_x" "$rtgz" "$w"
   t=$?
   if [ 0 -ne $t ]; then
      echo -e "! install Tomcat $wa[$VER]  =failed"
      return $t
   fi
 
-  local ltgz_sha1="${ltgz[0]}.sha1"
+  local ltgz_sha1="${ltgz_x}.sha1"
   local rtgz_sha1="${rtgz}.sha1"
 
   transport_file "$ltgz_sha1" "$rtgz_sha1" "$w"
@@ -738,13 +745,14 @@ function install_tomcat() {
 function control_tomcat() {
   local cmd="$1"
   local w="$2"
-  local opts="$3"
+  local opts=("${@:3}")
   local wa="`where_abbrev $w`"
   local tc=
   local t=
 
   echo -e "+ control Tomcat => $wa[$cmd] ..."
 	echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
+	echo_opts "aux*opts" "${opts[@]}"
 
   case "$w" in
     ssh)
@@ -803,7 +811,8 @@ function control_tomcat() {
           --start-port=$START_PORT             									\
           --stop-port=$STOP_PORT               									\
           --stop-timeout=$STOP_TIMEOUT         									\
-					--java-options="${JAVA_OPTS}"           
+					--java-options="${JAVA_OPTS}"                         \
+					${opts[@]}	
       t=$?
       ;;
   esac

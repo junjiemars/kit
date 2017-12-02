@@ -122,18 +122,31 @@ function export_java_opts() {
   export JAVA_OPTS="${opts}"
 }
 
-
 function echo_opts() {
 	local name="$1"
 	local opts="${@:2}"
 	echo "@|0[$name]:$opts"
 }
 
+function opt_check() {
+	local a=( "$@" )
+	if [ 0 -eq ${#a[@]} ]; then
+		return 1
+	fi
+
+	for i in ${a[@]:1}; do
+		local opt="`echo ${a[0]} | tr [:upper:] [:lower:]`"
+		if [ ".$opt" = ".$i" ]; then
+			echo "$opt"
+			return 0
+		fi
+	done
+	return 1
+}
 
 function export_pid_var() {
   export CATALINA_PID="${CATALINA_PID:-${CATALINA_BASE%/}/logs/pid}"
 }
-
 
 function on_win32() {
   case "$PLATFORM" in
@@ -477,7 +490,7 @@ do
     --tomcat-version=*)      tomcat_ver="$value"        ;;
     --catalina-base=*)       catalina_base="$value"     ;;
     --catalina-options=*)    catalina_opts="$value"		  ;;
-    --download-only)         DOWNLOAD_ONLY=yes      	  ;;
+    --download-only=*)       download_only="$value"     ;;
 
     --listen-on=*)           LISTEN_ON="$value"         ;;
     --ip-version=*)          ip_ver="$value"            ;;
@@ -522,6 +535,15 @@ fi
 if [ -n "$tomcat_ver" ]; then
   VER="$tomcat_ver"
   CATALINA_BASE="${PREFIX%/}/${VER}"
+fi
+
+if [ -n "$download_only" ]; then
+	DOWNLOAD_ONLY=`opt_check $DOWNLOAD_ONLY ${DOWNLOAD_ONLY[@]}`
+	retval=$?
+	if [ 0 -ne $retval ]; then
+		echo -e "! --download-only='$DOWNLOAD_ONLY'  =invalid"
+		exit $retval
+	fi	
 fi
 
 if [ -n "$catalina_base" ]; then
