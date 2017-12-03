@@ -19,7 +19,7 @@ JAVA_OPTS=
 VER=${VER:-"8.5.16"}
 CLEAN=("no" "yes")
 DEBUG=("no" "yes")
-LISTEN_ON=("localhost" "127.0.0.1" "0.0.0.0")
+LISTEN_ON=("0.0.0.0" "localhost" "127.0.0.1")
 IP_VER=("4" "6")
 STOP_TIMEOUT="${STOP_TIMEOUT:-5}"
 START_PORT="${START_PORT:-8080}"
@@ -34,7 +34,7 @@ TW_IDX_DOCKER=2
 
 BUILD=("no" "yes")
 BUILD_CMD=("gradlew" "gradle" "ant" "mvn")
-BUILD_DIR="${BUILD_DIR:-.}"
+BUILD_DIR="${BUILD_DIR:-$DEP}"
 BUILD_OPTS="${BUILD_OPTS:-build}"
 
 SSH_USER="${SSH_USER:-`whoami`}"
@@ -521,13 +521,13 @@ function build_war() {
   fi
 
   if [ ! -x "$cmd" ]; then
-    echo -e "! build L[$lwp]: build command no found  =failed"
+    echo -e "! build L[$lwp]: --build-cmd=$cmd no found  =failed"
     return 1
   fi
 
   cd "$BUILD_DIR" && "$cmd" ${BUILD_OPTS}
   local t=$?
-  
+
   if [ 0 -eq $t -a -f "$lwp" ]; then
     echo -e "# build L[$lwp] via [$cmd:${BUILD_OPTS}]  =succeed"
     return 0
@@ -680,7 +680,6 @@ function install_tomcat() {
   local tgz="apache-tomcat-$VER.tar.gz"
   local ltgz=(
 		"`local_src_path`/$tgz" 
-		"./$tgz" 
 		"/tmp/$tgz" 
 		"${HOME%/}/Downloads/$tgz"
 	)
@@ -842,7 +841,7 @@ function gen_td_debug_sh() {
 	--tomcat-clean=\${CLEAN:-${CLEAN[0]}} \\
 	--java-options="\${JAVA_OPTS:-${JAVA_OPTS[@]}}" \\
 	--local-war-path=\${L_WAR_PATH:-$L_WAR_PATH} \\
-	--listen-on=\${LISTEN_ON:-${LISTEN_ON[2]}} \\
+	--listen-on=\${LISTEN_ON:-${LISTEN_ON[0]}} \\
 	--ip-version=\${IP_VER:-${IP_VER[0]}} \\
 	--ssh-user=\${SSH_USER:-${SSH_USER[@]}} \\
 	--ssh-host=\${SSH_HOST:-${SSH_HOST[@]}} \\
@@ -920,7 +919,7 @@ for n in \${!NODE[@]}; do
 		--tomcat-clean=\${CLEAN:-${CLEAN[1]}} \\
 		--java-options="\${JAVA_OPTS:-${JAVA_OPTS[@]}}" \\
 		--local-war-path=\${L_WAR_PATH:-$L_WAR_PATH} \\
-		--listen-on=\${LISTEN_ON:-${LISTEN_ON[0]}} \\
+		--listen-on=\${LISTEN_ON:-${LISTEN_ON[2]}} \\
 		--ip-version=\${IP_VER:-${IP_VER[0]}} \\
 		--stop-timeout=\${STOP_TIMEOUT:-$STOP_TIMEOUT} \\
 		--start-port=\${UPORT[\$n]} \\
@@ -1075,7 +1074,7 @@ if [ -n "$r_prefix" ]; then
 fi
 
 if [ -n "$opt_build" ]; then
-	BUILD=`opt_check $BUILD ${BUILD[@]}`
+	BUILD=`opt_check $opt_build ${BUILD[@]}`
 	retval=$?
 	if [ 0 -ne $retval ]; then
 		echo -e "! --build=\"$opt_build\"  =invalid"
@@ -1131,14 +1130,19 @@ export_java_opts "${java_opts}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 
 function do_build() {
+	if [ -z "$L_WAR_PATH" ]; then
+		echo -e "! --local-war-path='${L_WAR_PATH}'  =invalid"
+		exit
+	fi			
+
   if [ "yes" = "$BUILD" ]; then
-    build_war "$L_WAR_PATH"
-  else
-    if [ ! -f "$L_WAR_PATH" ]; then
-      echo -e "! --local-war-path='${L_WAR_PATH}'  =invalid"
-      exit 1
-    fi
-  fi
+    build_war "$L_WAR_PATH" || exit $?
+	fi
+
+	if [ ! -f "$L_WAR_PATH" ]; then
+		echo -e "! --local-war-path='${L_WAR_PATH}'  =invalid"
+		exit 1
+	fi
 }
 
 command="`echo $command | tr '[:upper:]' '[:lower:]'`"
