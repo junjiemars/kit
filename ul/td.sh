@@ -151,6 +151,29 @@ function echo_opts() {
 	echo "@|1[$name]:$opts"
 }
 
+function check_where() {
+	local w="$1"
+
+	case "$w" in
+		ssh)
+			if [ -z "$SSH_USER" ]; then
+				echo -e "! --ssh-user=''  =invalid"
+				exit 1
+			fi
+			;;
+		docker)
+			if [ -z "$DOCKER_USER" ]; then
+				echo -e "! --docker-user=''  =invalid"
+				exit 1
+			fi
+			if [ -z "$DOCKER_HOST" ]; then
+				echo -e "! --docker-host=''  =invalid"
+				exit 1
+			fi
+			;;
+	esac	
+}
+
 function export_java_opts() {
 	local opts="`echo $@ | tr -s ' '`"
   export JAVA_OPTS="$opts"
@@ -1109,6 +1132,8 @@ if [ -n "$to_where" ]; then
 		exit $retval
 	fi
 fi
+
+check_where "$TW_IDX" || exit $?
 
 export_alias
 export_java_opts "${java_opts}"
