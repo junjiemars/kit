@@ -42,7 +42,6 @@ function usage() {
   echo -e "  --prefix=\t\t\t\tcatalina prefix dir, PREFIX='${PREFIX}'"
   echo -e "  --java-options=\t\t\tjava options, JAVA_OPTS='${JAVA_OPTS}'"
   echo -e "  --tomcat-version=\t\t\ttomcat version, VER${VER:+='$VER'}"
-  echo -e "  --catalina-base=\t\t\tcatalina base dir, CATALINA_BASE='${CATALINA_BASE}'"
   echo -e "  --catalina-options=\t\t\tcatalina options, CATALINA_OPTS='${CATALINA_OPTS}'"
   echo -e "  --download-only\t\t\tdownload tomcat tgz file only, DOWNLOAD_ONLY='$DOWNLOAD_ONLY'"
   echo -e ""
@@ -489,11 +488,10 @@ do
     --help)                  help=yes                   ;;
     --version)               version=yes      			    ;;
 
-    --prefix=*)              prefix="$value"   			    ;;
-    --java-options=*)        java_opts="$value"		      ;;
+    --prefix=*)              prefix="$value"            ;;
+    --java-options=*)        java_opts="$value"         ;;
     --tomcat-version=*)      tomcat_ver="$value"        ;;
-    --catalina-base=*)       catalina_base="$value"     ;;
-    --catalina-options=*)    catalina_opts="$value"		  ;;
+    --catalina-options=*)    catalina_opts="$value"     ;;
     --download-only=*)       download_only="$value"     ;;
 
     --listen-on=*)           LISTEN_ON="$value"         ;;
@@ -548,11 +546,6 @@ if [ -n "$download_only" ]; then
 		exit $retval
 	fi	
 fi
-
-if [ -n "$catalina_base" ]; then
-  CATALINA_BASE="${catalina_base}"
-fi
-
 
 if [ -n "$ip_ver" ]; then
 	IP_VER=`opt_check $ip_ver ${IP_VER[@]}`
