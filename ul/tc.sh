@@ -590,7 +590,6 @@ export_catalina_base "${PREFIX}" "${VER}"
 
 echo_opts "VER" "${VER}"
 echo_opts "PREFIX" "${PREFIX}"
-echo_opts "JAVA_HOME" "${JAVA_HOME}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 echo_opts "CATALINA_BASE" "${CATALINA_BASE}"
 echo_opts "CATALINA_OPTS" "${CATALINA_OPTS}"
