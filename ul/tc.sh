@@ -12,7 +12,7 @@ OPT_RUN="${OPT_RUN:-${DEP%/}/run}"
 PREFIX="${PREFIX:-${OPT_RUN%/}/www/tomcat}"
 
 VER="${VER:-8.5.16}"
-CATALINA_BASE="${CATALINA_BASE:-${PREFIX%/}/${VER}}"
+CATALINA_BASE=
 CATALINA_OPTS="${CATALINA_OPTS}"
 
 JAVA_OPTS=
@@ -95,7 +95,10 @@ function export_catalina_opts() {
 }
 
 function export_catalina_base() {
-	export CATALINA_BASE="${PREFIX%/}/${VER}"
+	local prefix="$1"
+	local ver="$2"
+
+	export CATALINA_BASE="${prefix%/}/${ver}"
   export CATALINA_PID="${CATALINA_BASE%/}/logs/pid"
 	CATALINA_BIN="${CATALINA_BASE}/bin/catalina.sh"
 }
@@ -560,7 +563,7 @@ fi
 export_alias
 export_java_opts "$java_opts"
 export_catalina_opts "$catalina_opts"
-export_catalina_base 
+export_catalina_base "${PREFIX}" "${VER}"
 
 echo_opts "VER" "${VER}"
 echo_opts "PREFIX" "${PREFIX}"
