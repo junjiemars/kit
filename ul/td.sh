@@ -346,7 +346,7 @@ function where_abbrev() {
 }
 
 
-function check_exist() {
+function do_check_exist() {
   local w="$1"
   local wa="`where_abbrev $w`"
   local t=
@@ -1172,7 +1172,7 @@ case "$command" in
   start)
     do_build
 
-    check_exist "${TO_WHERE[$TW_IDX]}"
+    do_check_exist "${TO_WHERE[$TW_IDX]}"
     retval=$?
     if [ 0 -ne $retval ]; then
       install_tomcat "${TO_WHERE[$TW_IDX]}"
@@ -1193,28 +1193,22 @@ case "$command" in
     fi
     ;;
   stop)
-    check_exist "${TO_WHERE[$TW_IDX]}"
-    retval=$?
-    [ 0 -eq $retval ] || exit $t
+    do_check_exist "${TO_WHERE[$TW_IDX]}" || exit $?
     control_tomcat stop "${TO_WHERE[$TW_IDX]}"
     ;;
   check-console)
     check_console "${TO_WHERE[$TW_IDX]}"
     ;;
   check-env)
-    check_exist "${TO_WHERE[$TW_IDX]}"
-    retval=$?
-    [ 0 -eq $retval ] || exit $t
+    do_check_exist "${TO_WHERE[$TW_IDX]}" || exit $?
     control_tomcat check-env "${TO_WHERE[$TW_IDX]}"
     ;;
   check-pid)
-    check_exist "${TO_WHERE[$TW_IDX]}"
-    retval=$?
-    [ 0 -eq $retval ] || exit $t
+    do_check_exist "${TO_WHERE[$TW_IDX]}" || exit $?
     control_tomcat check-pid "${TO_WHERE[$TW_IDX]}"
     ;;
   check-exist)
-    check_exist "${TO_WHERE[$TW_IDX]}"
+    do_check_exist "${TO_WHERE[$TW_IDX]}"
     ;;
   make)
     do_make
