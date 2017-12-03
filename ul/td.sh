@@ -9,10 +9,9 @@ VERSION="1.2.2"
 PLATFORM=${PLATFORM:-`uname -s 2>/dev/null`}
 
 DEP=${DEP:-$(cd `dirname ${BASH_SOURCE[@]}`; pwd -P)}
-OPT_RUN=${OPT_RUN:-${DEP%/}/run}
 
-L_PREFIX="${L_PREFIX:-${OPT_RUN%/}/www/tomcat}"
-R_PREFIX="${R_PREFIX:-${OPT_RUN%/}/www/tomcat}"
+L_PREFIX="${L_PREFIX:-$DEP}"
+R_PREFIX="${R_PREFIX:-${DEP%/}/run/www/tomcat}"
 L_WAR_PATH="${L_WAR_PATH}"
 
 JAVA_OPTS=
@@ -97,7 +96,7 @@ function usage() {
 }
 
 
-function export_cmd_alias() {
+function export_alias() {
   case "$PLATFORM" in
 		Darwin)
 			export sha1sum="shasum -a1"
@@ -106,33 +105,6 @@ function export_cmd_alias() {
 			export sha1sum=sha1sum
       ;;
   esac
-}
-
-function opt_check() {
-	local a=( "$@" )
-	if [ 0 -eq ${#a[@]} ]; then
-		return 1
-	fi
-
-	for i in ${a[@]:1}; do
-		local opt="`echo ${a[0]} | tr [:upper:] [:lower:]`"
-		if [ ".$opt" = ".$i" ]; then
-			echo "$opt"
-			return 0
-		fi
-	done
-	return 1
-}
-
-function export_java_opts() {
-	local opts="`echo $@ | tr -s ' '`"
-  export JAVA_OPTS="$opts"
-}
-
-function echo_opts() {
-	local name="$1"
-	local opts="${@:2}"
-	echo "@|1[$name]:$opts"
 }
 
 function on_win32() {
@@ -155,6 +127,33 @@ function on_darwin() {
 			return 1
 			;;
 	esac
+}
+
+function opt_check() {
+	local a=( "$@" )
+	if [ 0 -eq ${#a[@]} ]; then
+		return 1
+	fi
+
+	for i in ${a[@]:1}; do
+		local opt="`echo ${a[0]} | tr [:upper:] [:lower:]`"
+		if [ ".$opt" = ".$i" ]; then
+			echo "$opt"
+			return 0
+		fi
+	done
+	return 1
+}
+
+function echo_opts() {
+	local name="$1"
+	local opts="${@:2}"
+	echo "@|1[$name]:$opts"
+}
+
+function export_java_opts() {
+	local opts="`echo $@ | tr -s ' '`"
+  export JAVA_OPTS="$opts"
 }
 
 function gen_docker_sha1sum_sh() {
@@ -890,7 +889,6 @@ function gen_td_cluster_sh() {
 ## UPORT=( 9601 9603 )
 ## DPORT=( 9600 9602 )
 
-DEP="\${DEP:-\$(cd \`dirname \${BASH_SOURCE[0]}\`; pwd -P)}"
 
 NODE=( \${NODE} )
 UPORT=( \${UPORT:-\${NODE[@]}} )
@@ -948,7 +946,7 @@ END
 }
 
 function do_make() {
-  local tds="`backup_file tds.sh`"
+  local tds="`backup_file ${L_PREFIX%/}/tds.sh`"
   local tdp="$(dirname $0)"
   local td="${tdp%/}/$(basename $0)"
 
@@ -969,7 +967,7 @@ function check_version() {
 function download_td_sh() {
   local bin="\$1"
 	local ver="\$2"
-	local dir="\${PWD%/}"
+	local dir="\$3"
 	local sbin=
 	local sdir=
   local t=
@@ -1004,7 +1002,10 @@ function download_td_sh() {
   return 0
 }
 
-td=\$(download_td_sh "td.sh" "$VERSION")
+
+DEP="\${DEP:-\$(cd \`dirname \${BASH_SOURCE[0]}\`; pwd -P)}"
+
+td=\$(download_td_sh "td.sh" "$VERSION" "\$DEP")
 [ 0 -eq \$? ] || echo "! missing td.sh" 
 
 END
@@ -1015,7 +1016,7 @@ END
 		gen_td_cluster_sh "$tds" "$td"
 	fi
 
-  chmod u+x "${PWD%/}/$tds"
+  chmod u+x "$tds"
 }
 
 
@@ -1139,8 +1140,7 @@ if [ -n "$where" ]; then
   fi
 fi
 
-export_cmd_alias
-echo_opts "java_opts" "${java_opts}"
+export_alias
 export_java_opts "${java_opts}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 
@@ -1178,7 +1178,7 @@ case "$command" in
 
     transport_war "$L_WAR_PATH" "${TO_WHERE[$TW_IDX]}"
     if [ "yes" = "$DEBUG" ]; then
-      export JPDA_PORT="$JPDA_PORT"
+			export JPDA_PORT="$JPDA_PORT"
       control_tomcat debug "${TO_WHERE[$TW_IDX]}"
     else
       control_tomcat start "${TO_WHERE[$TW_IDX]}"
