@@ -411,10 +411,33 @@ function check_env_java() {
     return 0
 	fi
 
-	. $HOME/.bashrc
-	if [ -d "${JAVA_HOME}" ]; then
-		echo -e "# check \$JAVA_HOME=${JAVA_HOME}  =succeed"
-		return 0
+	local java_home=
+
+  case "${PLATFORM}" in
+    Darwin)
+      java_home='/usr/libexec/java_home'
+      [ -L "${java_home}" ] && export JAVA_HOME=`${java_home} 2>/dev/null`
+      ;;
+
+    Linux)
+      local javac=`type -p javac 2>/dev/null`
+      [ -n "${javac}" ] && \
+				java_home=$(readlink -f "${javac}" | sed 's:/bin/javac::')
+      [ -n "${java_home}" ] && export JAVA_HOME="${java_home}"
+      ;; 
+
+    MSYS_NT*|MINGW*)
+      ;;
+
+    *)
+      ;;
+  esac
+
+	if [ -f "${JAVA_HOME%/}/bin/java" ]; then
+		if `${JAVA_HOME%/}/bin/java -version &>/dev/null`; then
+			echo -e "# check \$JAVA_HOME=${JAVA_HOME}  =succeed"
+			return 0
+		fi
 	fi
 
 	echo -e "! check \$JAVA_HOME  =failed"
@@ -567,6 +590,7 @@ export_catalina_base "${PREFIX}" "${VER}"
 
 echo_opts "VER" "${VER}"
 echo_opts "PREFIX" "${PREFIX}"
+echo_opts "JAVA_HOME" "${JAVA_HOME}"
 echo_opts "JAVA_OPTS" "${JAVA_OPTS}"
 echo_opts "CATALINA_BASE" "${CATALINA_BASE}"
 echo_opts "CATALINA_OPTS" "${CATALINA_OPTS}"
