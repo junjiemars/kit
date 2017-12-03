@@ -74,7 +74,7 @@ function usage() {
   echo -e "  --build-options=\t\t\tbuilding options, BUILD_OPTS='${BUILD_OPTS}'"
   echo -e ""
   echo -e "  --tomcat-version=\t\t\ttomcat version, VER='$VER'"
-  echo -e "  --tomcat-clean=\t\t\tclean tomcat [${CLEAN[@]}], CLEAN='$CLEAN'"
+  echo -e "  --tomcat-clean=\t\t\tclean tomcat, CLEAN='$CLEAN'"
   echo -e "  --debug=\t\t\t\tstart tomcat in debug mode, DEBUG='${DEBUG}'"  
   echo -e ""
   echo -e "  --listen-on=\t\t\t\tlisten on what address, LISTEN_ON='$LISTEN_ON'"
@@ -92,7 +92,7 @@ function usage() {
   echo -e "  check-console\t\t\t\tcheck [$(basename $0)'s console] runtime"
   echo -e "  check-pid\t\t\t\tcheck the pid of the tomcat instance"
   echo -e "  check-exist\t\t\t\tcheck existing of tomcat installation"
-  echo -e "  make\t\t\t\t\tmake [$(basename $0)'s shell]"
+  echo -e "  make\t\t\t\t\tmake [$(basename $0)' (s)hell]"
 }
 
 
