@@ -11,20 +11,15 @@ PLATFORM=${PLATFORM:-`uname -s 2>/dev/null`}
 DEP=${DEP:-$(cd `dirname ${BASH_SOURCE[@]}`; pwd -P)}
 OPT_RUN=${OPT_RUN:-${DEP%/}/run}
 
-L_OPT_RUN="${OPT_RUN:-/opt/run}"
-L_PREFIX="${L_PREFIX:-${L_OPT_RUN%/}/www/tomcat}"
-R_OPT_RUN="${OPT_RUN:-/opt/run}"
-R_PREFIX="${R_PREFIX:-${R_OPT_RUN%/}/www/tomcat}"
+L_PREFIX="${L_PREFIX:-${OPT_RUN%/}/www/tomcat}"
+R_PREFIX="${R_PREFIX:-${OPT_RUN%/}/www/tomcat}"
+L_WAR_PATH="${L_WAR_PATH}"
 
 JAVA_OPTS=
-DEBUG=("no" "yes")
 
 VER=${VER:-"8.5.16"}
 CLEAN=("no" "yes")
-TC_OPTS=
-TC_SH="tc.sh"
-
-
+DEBUG=("no" "yes")
 LISTEN_ON=("localhost" "127.0.0.1" "0.0.0.0")
 IP_VER=("4" "6")
 STOP_TIMEOUT="${STOP_TIMEOUT:-5}"
@@ -38,16 +33,10 @@ TW_IDX_LOCAL=0
 TW_IDX_SSH=1
 TW_IDX_DOCKER=2
 
-
-L_WAR_PATH="${L_WAR_PATH}"
-R_WAR_PATH=
-R_TC_PATH=
-
 BUILD=("no" "yes")
 BUILD_CMD=("gradlew" "gradle" "ant" "mvn")
 BUILD_DIR="${BUILD_DIR:-.}"
 BUILD_OPTS="${BUILD_OPTS:-build}"
-
 
 SSH_USER="${SSH_USER:-`whoami`}"
 SSH_HOST="${SSH_HOST}"
@@ -55,6 +44,8 @@ SSH_HOST="${SSH_HOST}"
 DOCKER_USER="${DOCKER_USER:-`whoami`}"
 DOCKER_HOST="${DOCKER_HOST}"
 
+TC_OPTS=
+TC_SH="tc.sh"
 TD_SHA1SUM_SH="td_sha1sum.sh"
 TD_SHELL_BAT="td_shell.bat"
 
@@ -964,7 +955,7 @@ done
 END
 }
 
-function make_td_shell() {
+function do_make() {
   local tds="`backup_file tds.sh`"
   local tdp="$(dirname $0)"
   local td="${tdp%/}/$(basename $0)"
@@ -1231,7 +1222,7 @@ case "$command" in
     check_exist "${TO_WHERE[$TW_IDX]}"
     ;;
   make)
-    make_td_shell
+    do_make
     ;;
   *)
     echo "$0: error: invalid command \"$command\""
