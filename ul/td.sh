@@ -841,7 +841,7 @@ function backup_file() {
   echo "$f"
 }
 
-function gen_td_debug_shell() {
+function gen_td_debug_sh() {
 	local tds="$1"
 	local td="$2"
 
@@ -875,7 +875,7 @@ function gen_td_debug_shell() {
 END
 }
 
-function gen_td_cluster_shell() {
+function gen_td_cluster_sh() {
 	local tds="$1"
 	local td="$2"
 
@@ -1008,9 +1008,9 @@ td=\$(download_td_sh "td.sh" "$VERSION")
 END
 
 	if [ "yes" = "$DEBUG" ]; then
-		gen_td_debug_shell "$tds" "$td"
+		gen_td_debug_sh "$tds" "$td"
 	else
-		gen_td_cluster_shell "$tds" "$td"
+		gen_td_cluster_sh "$tds" "$td"
 	fi
 
   chmod u+x "${PWD%/}/$tds"
