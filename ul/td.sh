@@ -856,7 +856,7 @@ function gen_td_debug_sh() {
 	--stop-port=\${STOP_PORT:-$STOP_PORT} \\
 	--debug=\${DEBUG:-${DEBUG[1]}} \\
 	--jpda-port=\${JPDA_PORT:-$JPDA_PORT} \\
-  --where=${TO_WHERE[$TW_IDX]} \\
+  --where=${TW_IDX} \\
 	"\$@"
 END
 }
@@ -1022,7 +1022,7 @@ do
     --remote-prefix=*)       r_prefix="$value"   		    ;;
     --java-options=*)        java_opts="${java_opts:+$java_opts }$value"		      ;;
     
-    --where=*)               where="$value"		          ;;
+    --where=*)               to_where="$value"          ;;
     --local-war-path=*)      L_WAR_PATH="$value"	      ;;
     --ssh-user=*)            SSH_USER="$value"	        ;;
     --ssh-host=*)            SSH_HOST="$value"	        ;;
@@ -1103,7 +1103,7 @@ if [ -n "$opt_clean" ]; then
 	CLEAN=`opt_check $opt_clean ${CLEAN[@]}`
 	retval=$?
 	if [ 0 -ne $retval ]; then
-		echo -e "! --tomcat-clean=\"$opt_clean\"  =invalid"
+		echo -e "! --tomcat-clean='$opt_clean'  =invalid"
 		exit $retval
 	fi	
 fi
@@ -1112,17 +1112,13 @@ if [ -n "$L_WAR_PATH" ]; then
   L_WAR_PATH="`eval echo $L_WAR_PATH`"
 fi
 
-if [ -n "$where" ]; then
-  for i in "${!TO_WHERE[@]}"; do
-    if [ "${TO_WHERE[$i]}" = "$where" ]; then
-      TW_IDX=$i
-      break;
-    fi
-  done
-  if [ -z "$TW_IDX" ]; then
-    echo -e "! --where=$where  =invalid"
-    exit 1
-  fi
+if [ -n "$to_where" ]; then
+	TW_IDX="`opt_check $to_where ${TO_WHERE[@]}`"
+	retval=$?
+	if [ 0 -ne $retval ]; then
+		echo -e "! --where='$to_where'  =invalid"
+		exit $retval
+	fi
 fi
 
 export_alias
@@ -1154,43 +1150,43 @@ case "$command" in
   start)
     do_build
 
-    do_check_exist "${TO_WHERE[$TW_IDX]}"
+    do_check_exist "$TW_IDX"
     retval=$?
     if [ 0 -ne $retval ]; then
-      install_tomcat "${TO_WHERE[$TW_IDX]}"
+      install_tomcat "$TW_IDX"
       retval=$?
       [ 0 -eq $retval ] || exit $retval
     fi
 
 		if [ "yes" = "$CLEAN" ]; then
-			control_tomcat clean "${TO_WHERE[$TW_IDX]}"
+			control_tomcat clean "$TW_IDX"
 		fi
 
-    transport_war "$L_WAR_PATH" "${TO_WHERE[$TW_IDX]}"
+    transport_war "$L_WAR_PATH" "$TW_IDX"
     if [ "yes" = "$DEBUG" ]; then
 			export JPDA_PORT="$JPDA_PORT"
-      control_tomcat debug "${TO_WHERE[$TW_IDX]}"
+      control_tomcat debug "$TW_IDX"
     else
-      control_tomcat start "${TO_WHERE[$TW_IDX]}"
+      control_tomcat start "$TW_IDX"
     fi
     ;;
   stop)
-    do_check_exist "${TO_WHERE[$TW_IDX]}" || exit $?
-    control_tomcat stop "${TO_WHERE[$TW_IDX]}"
+    do_check_exist "$TW_IDX" || exit $?
+    control_tomcat stop "$TW_IDX"
     ;;
   check-console)
-    check_console "${TO_WHERE[$TW_IDX]}"
+    check_console "$TW_IDX"
     ;;
   check-env)
-    do_check_exist "${TO_WHERE[$TW_IDX]}" || exit $?
-    control_tomcat check-env "${TO_WHERE[$TW_IDX]}"
+    do_check_exist "$TW_IDX" || exit $?
+    control_tomcat check-env "$TW_IDX"
     ;;
   check-pid)
-    do_check_exist "${TO_WHERE[$TW_IDX]}" || exit $?
-    control_tomcat check-pid "${TO_WHERE[$TW_IDX]}"
+    do_check_exist "$TW_IDX" || exit $?
+    control_tomcat check-pid "$TW_IDX"
     ;;
   check-exist)
-    do_check_exist "${TO_WHERE[$TW_IDX]}"
+    do_check_exist "$TW_IDX"
     ;;
   make)
     do_make
