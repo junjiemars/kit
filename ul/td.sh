@@ -44,7 +44,6 @@ SSH_HOST="${SSH_HOST}"
 DOCKER_USER="${DOCKER_USER:-`whoami`}"
 DOCKER_HOST="${DOCKER_HOST}"
 
-TC_OPTS=
 TC_SH="tc.sh"
 TD_SHA1SUM_SH="td_sha1sum.sh"
 TD_SHELL_BAT="td_shell.bat"
@@ -57,33 +56,32 @@ function usage() {
   echo -e "  --help\t\t\t\tPrint this message"
   echo -e "  --version\t\t\t\tPrint version information and quit"
   echo -e ""
-  echo -e "  --local-prefix=\t\t\tlocal catalina prefix dir, L_PREFIX='${L_PREFIX}'"
-  echo -e "  --remote-prefix=\t\t\tremote catalina prefix dir, R_PREFIX='${R_PREFIX}'"
-  echo -e "  --java-options=\t\t\tjava options, JAVA_OPTS='${JAVA_OPTS}'"
-  echo -e "  --debug\t\t\t\tstart tomcat in debug mode, default is '${DEBUG}'"  
+  echo -e "  --local-prefix=\t\t\tlocal catalina prefix dir, \n\t\t\t\t\tL_PREFIX='${L_PREFIX}'\n"
+  echo -e "  --remote-prefix=\t\t\tremote catalina prefix dir, \n\t\t\t\t\tR_PREFIX='${R_PREFIX}'\n"
+  echo -e "  --java-options=\t\t\tjava options, \n\t\t\t\t\tJAVA_OPTS='${JAVA_OPTS}'"
+	echo -e ""
+  echo -e "  --where=\t\t\t\twhere to deploy, TO_WHERE='$TO_WHERE'"  
+  echo -e "  --local-war-path=\t\t\tthe local path of the war, L_WAR_PATH='${L_WAR_PATH}'"
+  echo -e "  --ssh-user=\t\t\t\tssh login user, SSH_USER='${SSH_USER}'"
+  echo -e "  --ssh-host=\t\t\t\twhich ssh host to login, SSH_HOST='${SSH_HOST}'"
+  echo -e "  --docker-user=\t\t\tdocker container user, DOCKER_USER='${DOCKER_USER}'"
+  echo -e "  --docker-host=\t\t\tdocker container name, DOCKER_HOST='${DOCKER_HOST}'"
   echo -e ""
-  echo -e "  --where=\t\t\t\twhere to deploy: `echo ${TO_WHERE[@]}|tr ' ' ','`, default is '$TO_WHERE'"  
-  echo -e "  --local-war-path=\t\t\tthe local path of the war"
-  echo -e "  --ssh-user=\t\t\t\tssh login user, default SSH_USER='${SSH_USER}'"
-  echo -e "  --ssh-host=\t\t\t\twhich ssh host to login"
-  echo -e "  --docker-user=\t\t\tdocker container user, default DOCKER_USER='${DOCKER_USER}'"
-  echo -e "  --docker-host=\t\t\tdocker container name"
+  echo -e "  --build=\t\t\t\tforce to build, BUILD='${BUILD}'"
+  echo -e "  --build-dir=\t\t\t\tbuilding in where, BUILD_DIR='${BUILD_DIR}'"
+  echo -e "  --build-cmd=\t\t\t\twhich building tool to use, BUILD_CMD='${BUILD_CMD}'"
+  echo -e "  --build-options=\t\t\tbuilding options, BUILD_OPTS='${BUILD_OPTS}'"
   echo -e ""
-  echo -e "  --build\t\t\t\tforce to build, default is '${BUILD}'"
-  echo -e "  --build-dir=\t\t\t\tbuilding in where, default is '${BUILD_DIR}'"
-  echo -e "  --build-cmd=\t\t\t\twhich building tool to use, default BUILD_CMD='${BUILD_CMD}'"
-  echo -e "  --build-options=\t\t\tbuilding options, default BUILD_OPTS='${BUILD_OPTS}'"
+  echo -e "  --tomcat-version=\t\t\ttomcat version, VER='$VER'"
+  echo -e "  --tomcat-clean=\t\t\tclean tomcat [${CLEAN[@]}], CLEAN='$CLEAN'"
+  echo -e "  --debug=\t\t\t\tstart tomcat in debug mode, DEBUG='${DEBUG}'"  
   echo -e ""
-  echo -e "  --tomcat-version=\t\t\ttomcat version, default is '$VER'"
-  echo -e "  --tomcat-clean=\t\t\tclean tomcat [${CLEAN[@]}], default is '$CLEAN'"
-  echo -e "  --tc-options=\t\t\t\ttc.sh options"
-  echo -e ""
-  echo -e "  --listen-on=\t\t\t\tlisten on what address: `echo ${LISTEN_ON[@]}|tr ' ' ','`, etc., default is '$LISTEN_ON'"
-  echo -e "  --ip-version=\t\t\t\tprefered IP version: `echo ${IP_VER[@]}|tr ' ' ','`"
+  echo -e "  --listen-on=\t\t\t\tlisten on what address, LISTEN_ON='$LISTEN_ON'"
+  echo -e "  --ip-version=\t\t\t\tprefered IP version, IP_VER='${IP_VER}'"
   echo -e "  --stop-timeout=\t\t\tforce stop waiting most ${STOP_TIMEOUT} seconds"
-  echo -e "  --start-port=\t\t\t\ttomcat start port, default START_PORT='$START_PORT'"
-  echo -e "  --stop-port=\t\t\t\ttomcat stop port, default STOP_PORT='$STOP_PORT'"
-  echo -e "  --jpda-port=\t\t\t\ttomcat debug port, default JPDA_PORT='$JPDA_PORT'"
+  echo -e "  --start-port=\t\t\t\ttomcat start port, START_PORT='$START_PORT'"
+  echo -e "  --stop-port=\t\t\t\ttomcat stop port, STOP_PORT='$STOP_PORT'"
+  echo -e "  --jpda-port=\t\t\t\ttomcat debug port, JPDA_PORT='$JPDA_PORT'"
   echo -e ""
   echo -e "A deploy & debug console for tomcat.\n"
   echo -e "Commands:"
@@ -1035,7 +1033,6 @@ do
     --local-prefix=*)        l_prefix="$value"   		    ;;
     --remote-prefix=*)       r_prefix="$value"   		    ;;
     --java-options=*)        java_opts="${java_opts:+$java_opts }$value"		      ;;
-    --debug=*)               opt_debug="$value"         ;;
     
     --where=*)               where="$value"		          ;;
     --local-war-path=*)      L_WAR_PATH="$value"	      ;;
@@ -1051,7 +1048,7 @@ do
 
     --tomcat-version=*)      VER="$value"      			    ;;
     --tomcat-clean=*)        opt_clean="$value"     	  ;;
-    --tc-options=*)          tc_opts="$value"		        ;;
+    --debug=*)               opt_debug="$value"         ;;
 
     --listen-on=*)           LISTEN_ON="$value"		      ;;
     --ip-version=*)          IP_VER="$value"	   	      ;;
@@ -1086,10 +1083,6 @@ fi
 
 if [ -n "$r_prefix" ]; then
   R_PREFIX="$r_prefix"
-fi
-
-if [ -n "$tc_opts" ]; then
-  TC_OPTS="${TC_OPTS:+$TC_OPTS }${tc_opts}"
 fi
 
 if [ -n "$opt_build" ]; then
