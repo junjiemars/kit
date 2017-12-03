@@ -212,13 +212,11 @@ function local_dst_path() {
 	fi
 }
 
-
 function local_check_version() {
 	local lhs="$1"
 	local rhs="$2"
 	[ "$lhs" == "$($rhs --version 2>/dev/null)" ]
 }
-
 
 function local_bin_path() {
   local bin="$1"
@@ -274,7 +272,6 @@ function remote_war_path() {
   local p="`remote_ver_path`/webapps/`basename $L_WAR_PATH`"
   echo "$p"
 }
-
 
 function remote_bin_path() {
   local p="`remote_ver_path`/bin/$1"
