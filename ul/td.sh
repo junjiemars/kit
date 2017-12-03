@@ -258,7 +258,6 @@ function local_bin_path() {
   return 0
 }
 
-
 function remote_root_path() {
   local p="${R_PREFIX%/}"
   echo "$p"
@@ -281,7 +280,6 @@ function remote_bin_path() {
   local p="`remote_ver_path`/bin/$1"
   echo "$p"
 }
-
 
 function ssh_login_id() {
   local id="${SSH_USER}${SSH_HOST:+@$SSH_HOST}"
@@ -344,7 +342,6 @@ function where_abbrev() {
   esac
 }
 
-
 function do_check_exist() {
   local w="$1"
   local wa="`where_abbrev $w`"
@@ -369,7 +366,6 @@ function do_check_exist() {
 
   return $t
 }
-
 
 function check_console() {
   local w="$1"
@@ -413,8 +409,6 @@ function check_console() {
   fi
   return $t
 }
-
-
 
 function file_eq() {
   local lp="$1"
@@ -468,7 +462,6 @@ function file_eq() {
   fi
 }
 
-
 function dir_mk() {
   local d="$1"
   local w="$2"
@@ -509,7 +502,6 @@ function dir_mk() {
   return $t
 }
 
-
 function build_war() {
   local lwp="$1"
   local cmd=
@@ -544,7 +536,6 @@ function build_war() {
   return 1
 }
 
-
 function transport_file() {
   local lp="$1"
   local rp="$2"
@@ -578,7 +569,6 @@ function transport_file() {
   fi
   return $t
 }
-
 
 function delete_war_dir() {
   local lf="$1"
@@ -653,14 +643,12 @@ function delete_war_dir() {
   return $t
 }
 
-
 function transport_war() {
   local lf="$1"
   local w="$2"
   local wa="`where_abbrev $w`"
   local rf="`remote_war_path`"
   local t=
-
 
 	delete_war_dir "$lf" "$w"
 
@@ -680,7 +668,6 @@ function transport_war() {
   esac
   return $t
 }
-
 
 function install_tomcat() {
   local w="$1"
@@ -744,7 +731,6 @@ function install_tomcat() {
 
   control_tomcat install "$w"
 }
-
 
 function control_tomcat() {
   local cmd="$1"
