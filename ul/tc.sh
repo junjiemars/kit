@@ -13,7 +13,7 @@ PREFIX="${PREFIX:-${OPT_RUN%/}/www/tomcat}"
 
 VER="${VER:-8.5.16}"
 CATALINA_BASE=
-CATALINA_OPTS="${CATALINA_OPTS}"
+CATALINA_OPTS=
 
 JAVA_OPTS=
 
@@ -90,7 +90,7 @@ function export_java_opts() {
 }
 
 function export_catalina_opts() {
-	local opts="${CATALINA_OPTS} $@"
+	local opts="$@"
   export CATALINA_OPTS="`echo $opts | tr -s ' '`"
 }
 
