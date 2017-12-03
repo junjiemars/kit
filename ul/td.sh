@@ -850,9 +850,6 @@ function gen_td_debug_shell() {
 	cat << END >> "$tds"
 # debug env
 
-DEP="\${DEP:-\$(cd \`dirname \${BASH_SOURCE[0]}\`; pwd -P)}"
-OPT_RUN="\${OPT_RUN:-\${DEP%/}/run}"
-
 \${td} \\
 	--local-prefix=\${L_PREFIX:-$L_PREFIX} \\
 	--remote-prefix=\${R_PREFIX:-$R_PREFIX} \\
