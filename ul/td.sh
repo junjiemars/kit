@@ -959,23 +959,15 @@ function download_td_sh() {
 
 	sbin="\${dir}/\$bin"
   if [ -f "\$sbin" ] && \$(check_version \$ver "\$sbin"); then
+		chmod u+x "\$sbin"
     echo "\$sbin"
 		return 0
 	fi
 
-	sdir="\$( cd "\$( dirname "\${BASH_SOURCE[0]}" )" && pwd )"
-	sbin="\${sdir%/}/\$bin"
-	if [ -f "\$sbin" ] && \$(check_version \$ver "\$sbin"); then
+	sbin="\$(type -P \$bin 2>/dev/null)"	
+	if \$(check_version \$ver "\$sbin"); then
 		echo "\$sbin"
 		return 0
-	fi
-
-	if [ -f "\$(type -P \$bin 2>/dev/null)" ]; then
-		sbin="\$(type -P \$bin 2>/dev/null)"	
-		if \$(check_version \$ver "\$sbin"); then
-			echo "\$sbin"
-			return 0
-		fi
 	fi
 
 	curl -qL -O\$bin https://raw.githubusercontent.com/junjiemars/kit/master/ul/\$bin
