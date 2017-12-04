@@ -787,7 +787,7 @@ function control_tomcat() {
                --ip-version=$IP_VER                    \
                --start-port=$START_PORT                \
                --stop-port=$STOP_PORT                  \
-               --stop-timeout=$STOP_TIMEOUAT           \
+               --stop-timeout=$STOP_TIMEOUT            \
 							 --java-options=\"${JAVA_OPTS}\""        \
                ${opts[@]}
         cmd_args="`echo $cmd_args | tr -s ' '`"
