@@ -27,10 +27,10 @@ STOP_PORT="${STOP_PORT:-8005}"
 JPDA_PORT="${JPDA_PORT:-8000}"
 
 TO_WHERE=("local" "ssh" "docker")
-TW_IDX=
 TW_IDX_LOCAL=0
 TW_IDX_SSH=1
 TW_IDX_DOCKER=2
+TW_IDX=${TO_WHERE[TW_IDX_LOCAL]}
 
 BUILD=("no" "yes")
 BUILD_CMD=("gradlew" "gradle" "ant" "mvn")
@@ -855,7 +855,7 @@ function gen_td_debug_sh() {
 # debug env
 
 \${td} \\
-	--local-prefix=\${L_PREFIX:-$L_PREFIX} \\
+	--local-prefix=\${DEP} \\
 	--remote-prefix=\${R_PREFIX:-$R_PREFIX} \\
 	--tomcat-version=\${VER:-$VER} \\
 	--tomcat-clean=\${CLEAN:-${CLEAN[0]}} \\
@@ -868,7 +868,7 @@ function gen_td_debug_sh() {
 	--docker-user=\${DOCKER_USER:-$DOCKER_USER} \\
 	--docker-host=\${DOCKER_HOST:-$DOCKER_HOST} \\
 	--build=\${BUILD:-${BUILD[0]}} \\
-	--build-dir=\${BUILD_DIR:-$BUILD_DIR} \\
+	--build-dir=\${BUILD_DIR:-\${DEP}} \\
 	--build-cmd=\${BUILD_CMD:-$BUILD_CMD} \\
 	--build-options=\${BUILD_OPTS:-$BUILD_OPTS} \\
 	--stop-timeout=\${STOP_TIMEOUT:-$STOP_TIMEOUT} \\
