@@ -1,1 +1,2 @@
-select 1+2 from dual;
+define x =&1
+select 1+2+&x from dual;
