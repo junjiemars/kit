@@ -10,5 +10,9 @@
     ],
     "terminal.integrated.shell.windows": "C:\\WINDOWS\\Sysnative\\cmd.exe",
     "extensions.ignoreRecommendations": false,
-    "workbench.activityBar.visible": true
+    "workbench.activityBar.visible": true,
+    "workbench.panel.location": "bottom",
+    "workbench.statusBar.visible": true,
+    "window.menuBarVisibility": "toggle",
+    "markdown.preview.fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif, 微软雅黑"
   }
