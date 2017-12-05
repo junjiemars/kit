@@ -34,8 +34,8 @@ function check_oracle_home() {
 	local n="`sqlplus_name`"
 	local s="`check_sqlplus_path`"
 	local h=( 
-		"$s"
 		"$PWD_DIR"
+		"$s"
 		"/u01/app/oracle/product"
 		"/u02/app/oracle/product"
 		"/c/u01/app/oracle/product"
