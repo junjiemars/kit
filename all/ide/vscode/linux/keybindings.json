@@ -77,5 +77,13 @@
   {
     "key": "ctrl+shift+g",
     "command": "-workbench.view.scm"
+  },
+  {
+    "key": "ctrl+0 `",
+    "command": "workbench.action.terminal.focus"
+  },
+  {
+    "key": "ctrl+9 `",
+    "command": "workbench.action.quickOpenTerm"
   }
 ]
