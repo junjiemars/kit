@@ -50,6 +50,7 @@ HAS_CLOJURESCRIPT=${HAS_CLOJURESCRIPT:-0}
 HAS_GROOVY=${HAS_GROOVY:-0}
 HAS_SCALA=${HAS_SCALA:-0}
 HAS_SCALA_VIM=${HAS_SCALA_VIM:-0}
+HAS_STORM=${HAS_STORM:-0}
 
 JDK_VER=("${JDK_U:-8u121} ${JDK_B:-b13}")
 ABCL_VER="${ABCL_VER:-1.5.0}"
@@ -61,6 +62,7 @@ CLOJURE_VER="${CLOJURE_VER:-1.8.0}"
 CLOJURESCRIPT_VER="${CLOJURESCRIPT_VER:-1.9.946}"
 GROOVY_VER="${GROOVY_VER:-2.4.12}"
 SCALA_VER="${SCALA_VER:-2.12.4}"
+STORM_VER="${STORM_VER:-1.1.0}"
 
 declare -a KITS=()
 
@@ -535,6 +537,31 @@ install_scala() {
   return 1
 }
 
+install_storm() {
+  local storm_tgz="apachestorm-${STORM_VER}.tgz"
+  local storm_url="http://www.apache.org/dyn/closer.lua/storm/${storm_tgz}"
+  local storm_home="${OPEN_DIR}/storm"
+  local bin_dir="${storm_home}/${STORM_VER}"
+  local cmd="${bin_dir}/bin/storm version"
+  local storm_sh="${RUN_DIR}/bin/storm"
+
+  `check_kit "storm version" "${storm_home}"` && return 0
+
+  install_kit "${bin_dir}/bin/storm" \
+              "${cmd}" \
+              "${storm_url}" \
+              "${storm_home}/${storm_tgz}" \
+              "${bin_dir}"
+  [ 0 -eq $? ] || return 1
+  
+  if `${cmd} &>/dev/null`; then
+    append_vars "STORM_HOME" "${bin_dir}"
+    append_paths "\${STORM_HOME}/bin" "STORM_HOME"
+    return 0
+  fi
+  return 1
+}
+
 
 if [ "YES" == "${HAS_ALL}" ]; then
   #HAS_JDK=1  # exclude JDK
@@ -549,6 +576,7 @@ if [ "YES" == "${HAS_ALL}" ]; then
   HAS_CLOJURESCRIPT=1
   HAS_GROOVY=1
   HAS_SCALA=1
+  HAS_STORM=1
 fi
 
 [ 0 -lt "${HAS_JDK}" ]            && KITS+=('install_jdk')
@@ -564,6 +592,7 @@ fi
 [ 0 -lt "${HAS_GROOVY}" ]         && KITS+=('install_groovy')
 [ 0 -lt "${HAS_SCALA}" ]          && KITS+=('install_scala')
 [ 0 -lt "${HAS_SCALA_VIM}" ]      && KITS+=('install_scala_vim')
+[ 0 -lt "${HAS_STORM}" ]          && KITS+=('install_storm')
 
 for i in "${KITS[@]}"; do
   echo -e "# ${i} ..." 
