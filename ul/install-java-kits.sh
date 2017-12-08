@@ -35,6 +35,7 @@ RUN_DIR="${RUN_DIR:-${PREFIX}/run}"
 OPEN_DIR="${OPEN_DIR:-${PREFIX}/open}"
 SOCKS="${SOCKS}"
 GITHUB_SH="https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh"
+APACHE_DIST="https://archive.apache.org/dist"
 
 HAS_ALL=${HAS_ALL:-NO}
 HAS_JDK=${HAS_JDK:-0}
@@ -63,6 +64,7 @@ CLOJURESCRIPT_VER="${CLOJURESCRIPT_VER:-1.9.946}"
 GROOVY_VER="${GROOVY_VER:-2.4.12}"
 SCALA_VER="${SCALA_VER:-2.12.4}"
 STORM_VER="${STORM_VER:-1.1.1}"
+ZOOKEEPER_VER="${ZOOKEEPER:-3.4.10}"
 
 declare -a KITS=()
 
@@ -562,6 +564,31 @@ install_storm() {
   return 1
 }
 
+install_zookeeper() {
+  local zookeeper_tgz="zookeeper-${ZOOKEEPER_VER}.tar.gz"
+  local zookeeper_url="${APACHE_DIST}/zookeeper/stable/${zookeeper_tgz}"
+  local zookeeper_home="${OPEN_DIR}/zookeeper"
+  local bin_dir="${zookeeper_home}/${ZOOKEEPER_VER}"
+  local cmd="${bin_dir}/bin/zkCli.sh"
+  local zookeeper_sh="${RUN_DIR}/bin/storm"
+
+  [ -x "${cmd}" ] && return 0
+
+  install_kit "${bin_dir}/bin/zookeeper" \
+              "${cmd}" \
+              "${zookeeper_url}" \
+              "${zookeeper_home}/${zookeeper_tgz}" \
+              "${bin_dir}"
+  [ 0 -eq $? ] || return 1
+  
+  if [ -x "${cmd}" ]; then
+    append_vars "ZOOKEEPER_HOME" "${bin_dir}"
+    append_paths "\${ZOOKEEPER_HOME}/bin" "ZOOKEEPER_HOME"
+    return 0
+  fi
+  return 1
+}
+
 
 if [ "YES" == "${HAS_ALL}" ]; then
   #HAS_JDK=1  # exclude JDK
@@ -577,6 +604,7 @@ if [ "YES" == "${HAS_ALL}" ]; then
   HAS_GROOVY=1
   HAS_SCALA=1
   HAS_STORM=1
+  HAS_ZOOKEEPER=1
 fi
 
 [ 0 -lt "${HAS_JDK}" ]            && KITS+=('install_jdk')
@@ -593,6 +621,7 @@ fi
 [ 0 -lt "${HAS_SCALA}" ]          && KITS+=('install_scala')
 [ 0 -lt "${HAS_SCALA_VIM}" ]      && KITS+=('install_scala_vim')
 [ 0 -lt "${HAS_STORM}" ]          && KITS+=('install_storm')
+[ 0 -lt "${HAS_ZOOKEEPER}" ]      && KITS+=('install_zookeeper')
 
 for i in "${KITS[@]}"; do
   echo -e "# ${i} ..." 
