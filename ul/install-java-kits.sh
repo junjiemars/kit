@@ -62,7 +62,7 @@ CLOJURE_VER="${CLOJURE_VER:-1.8.0}"
 CLOJURESCRIPT_VER="${CLOJURESCRIPT_VER:-1.9.946}"
 GROOVY_VER="${GROOVY_VER:-2.4.12}"
 SCALA_VER="${SCALA_VER:-2.12.4}"
-STORM_VER="${STORM_VER:-1.1.0}"
+STORM_VER="${STORM_VER:-1.1.1}"
 
 declare -a KITS=()
 
@@ -538,8 +538,8 @@ install_scala() {
 }
 
 install_storm() {
-  local storm_tgz="apachestorm-${STORM_VER}.tgz"
-  local storm_url="http://www.apache.org/dyn/closer.lua/storm/${storm_tgz}"
+  local storm_tgz="apache-storm-${STORM_VER}.tar.gz"
+  local storm_url="https://archive.apache.org/dist/storm/apache-storm-${STORM_VER}/${storm_tgz}"
   local storm_home="${OPEN_DIR}/storm"
   local bin_dir="${storm_home}/${STORM_VER}"
   local cmd="${bin_dir}/bin/storm version"
