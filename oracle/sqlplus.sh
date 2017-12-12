@@ -211,16 +211,17 @@ function check_oracle_env() {
 	gen_oracle_env_file "$env_file"
 }
 
+
+ORACLE_HOME="${ORACLE_HOME:-}"
+SQLPATH="${SQLPATH:-}"
+export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
+
 check_oracle_env
 if [ 0 -ne $? ]; then
 	echo "ORACLE_HOME=$ORACLE_HOME"
 	echo "PATH=$PATH"
 	echo "! ORACLE environment  =invalid"
 fi
-
-export ORACLE_HOME="${ORACLE_HOME:-}"
-export SQLPATH="${SQLPATH:-}"
-export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
 
 ORA_USER=${ORA_USER:-system}
 ORA_PASSWD=${ORA_PASSWD:-oracle}
