@@ -150,7 +150,10 @@ function find_oracle_home() {
 }
 
 function find_sqlpath() {
-	[ -n "$SQLPATH" ] && return 0
+	if [ -n "$SQLPATH" ]; then
+		echo "$SQLPATH"
+		return 0
+	fi
 
 	local sql=(
 		"$PWD_DIR"
