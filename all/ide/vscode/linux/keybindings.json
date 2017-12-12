@@ -85,5 +85,14 @@
   {
     "key": "ctrl+9 `",
     "command": "workbench.action.quickOpenTerm"
+  },
+  {
+    "key": "ctrl+f",
+    "command": "-actions.find"
+  },
+  {
+    "key": "ctrl+f",
+    "command": "-workbench.action.terminal.focusFindWidget",
+    "when": "terminalFocus"
   }
 ]
