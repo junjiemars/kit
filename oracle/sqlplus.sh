@@ -182,14 +182,17 @@ function find_sqlpath() {
 
 function check_oracle_env() {
 	local t=0
+	local env_file="${PWD_DIR%/}/.oracle.env"
 
 	validate_oracle_home
 	t=$?
 	if [ 0 -eq $t ]; then
+		SQLPATH="`find_sqlpath`"
+		export SQLPATH
+		gen_oracle_env_file "$env_file"
 		return 0
 	fi
 
-	local env_file="${PWD_DIR%/}/.oracle.env"
 
 	[ -f "$env_file" ] && . "$env_file"
 	
@@ -202,81 +205,42 @@ function check_oracle_env() {
 		[ 0 -eq $t ] || return $t
 	fi
 
-	#SQLPATH="`find_sqlpath`"
+	SQLPATH="`find_sqlpath`"
+	export SQLPATH
+
 	gen_oracle_env_file "$env_file"
-	[ -f "$env_file" ] && . "$env_file"
 }
 
 check_oracle_env
-if [ 0 -eq $? ]; then
+if [ 0 -ne $? ]; then
 	echo "ORACLE_HOME=$ORACLE_HOME"
 	echo "PATH=$PATH"
-	sqlplus "$@"
+	echo "! ORACLE environment  =invalid"
 fi
 
-#export ORACLE_HOME="${ORACLE_HOME:-`find_oracle_home`}"
-#export SQLPATH="${SQLPATH:-`find_sqlpath`}"
-#export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
-#
-#
-#ORA_LD=${ORACLE_HOME%/}
-#if [ -d "${ORA_LD}/lib" ]; then
-#	ORA_LD="${ORA_LD}/lib"
-#fi
-#
-#ORA_BIN=${ORACLE_HOME%/}
-#if [ -d "${ORA_BIN}/bin" ]; then
-#	ORA_BIN="${ORA_BIN}/bin"
-#fi
-#
-#case $PLATFORM in
-#	Darwin)
-#		export DYLD_LIBRARY_PATH="${ORA_LD}${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
-#		;;
-#	*)
-#		export LD_LIBRARY_PATH="${ORA_LD}${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-#		;;
-#esac
-#
-#export PATH="${ORA_BIN}${PATH:+:$PATH}"
-#
-#if ! `sqlplus_name -V &>/dev/null`; then
-#	echo -e "! `sqlplus_name`  =invalid"
-#	echo -e "# ORACLE_HOME=$ORACLE_HOME"
-#	echo -e "# SQLPATH=$SQLPATH"
-#	echo -e "# PATH=$PATH"
-#	case $PLATFORM in
-#		Darwin)
-#			echo -e "# DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
-#			;;
-#		*)
-#			echo -e "# LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
-#			;;
-#	esac
-#	exit 1
-#fi
-#
-#
-#ORA_USER=${ORA_USER:-system}
-#ORA_PASSWD=${ORA_PASSWD:-oracle}
-#HOST=${HOST:-localhost}
-#PORT=${PORT:-1521}
-#SID=${SID:-'XE'}
-#USERID=${USERID:-${HOST}:${PORT}/${SID}}
-#
-#if `hash rlwrap &>/dev/null`; then
-#	RLWRAP='rlwrap'
-#fi	
-#
-#if [ 0 -eq $# ] ; then
-#	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID}
-#elif [ 1 -le $# ]; then
-#	if `echo $1|grep .*@.*[:/][0-9]*[:/].* &>/dev/null`; then
-#		${RLWRAP} sqlplus $1 ${@:2}
-#  else
-#		${RLWRAP} sqlplus $1@${USERID} ${@:2}
-#  fi
-#else
-#	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID} $1
-#fi
-#
+export ORACLE_HOME="${ORACLE_HOME:-}"
+export SQLPATH="${SQLPATH:-}"
+export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
+
+ORA_USER=${ORA_USER:-system}
+ORA_PASSWD=${ORA_PASSWD:-oracle}
+HOST=${HOST:-localhost}
+PORT=${PORT:-1521}
+SID=${SID:-'XE'}
+USERID=${USERID:-${HOST}:${PORT}/${SID}}
+
+if `hash rlwrap &>/dev/null`; then
+	RLWRAP='rlwrap'
+fi	
+
+if [ 0 -eq $# ] ; then
+	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID}
+elif [ 1 -le $# ]; then
+	if `echo $1|grep .*@.*[:/][0-9]*[:/].* &>/dev/null`; then
+		${RLWRAP} sqlplus $1 ${@:2}
+  else
+		${RLWRAP} sqlplus $1@${USERID} ${@:2}
+  fi
+else
+	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID} $1
+fi
