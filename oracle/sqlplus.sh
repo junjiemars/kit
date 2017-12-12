@@ -19,7 +19,7 @@ function sqlplus_name() {
   esac
 }
 
-function check_sqlplus_path() {
+function find_sqlplus_path() {
 	local p=
 	local t=
 
@@ -30,9 +30,93 @@ function check_sqlplus_path() {
 	echo "`dirname $p`"
 }
 
-function check_oracle_home() {
+function gen_oracle_env_file() {
+	local env_file="$@"
+	local ori_file="${env_file}.ori"
+
+	if [ ! -f "$ori_file" -a -f "$env_file" ]; then
+		mv "$env_file" "$ori_file"
+	fi
+
+	cat << END > "$env_file" 
+export ORACLE_HOME="${ORACLE_HOME}"
+export SQLPATH="${SQLPATH}"
+END
+}
+
+function validate_oracle_home() {
+	[ -n "$ORACLE_HOME" ] || return 1
+
+	ORACLE_HOME="${ORACLE_HOME%/}"
+	if `sqlplus -V &>/dev/null`; then
+		return 0 
+	fi
+
+	local lib_path="${ORACLE_HOME}"
+	local bin_path="${ORACLE_HOME}"
+
+	if [ -d "${ORACLE_HOME}/lib" ]; then
+		lib_path="${ORACLE_HOME}/lib"
+	fi
+
+	if [ -d "${ORACLE_HOME}/bin" ]; then
+		bin_path="${ORACLE_HOME}/bin"
+	fi
+
+
+	bin_path="${bin_path}${PATH:+:$PATH}"
+
+	local t=0
+	case $PLATFORM in
+    MSYS_NT*|MINGW*)
+			bin_path="${lib_path}:${bin_path}"
+
+			PATH="$bin_path" sqlplus -V &>/dev/null
+			t=$?
+
+			if [ 0 -eq $t ]; then
+				export ORACLE_HOME="$ORACLE_HOME"
+				export PATH="$bin_path"
+				return 0
+			fi
+			;;
+
+		Darwin)
+			lib_path="${lib_path}${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
+
+			PATH="${bin_path}" DYLD_LIBRARY_PATH="${lib_path}" \
+			sqlplus -V &>/dev/null
+			t=$?
+
+			if [ 0 -eq $t ]; then
+				export ORACLE_HOME="$ORACLE_HOME"
+				export DYLD_LIBRARY_PATH="$lib_path"
+				export PATH="$bin_path"
+				return 0
+			fi
+			;;
+
+		*)
+			lib_path="${lib_path}${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
+			PATH="${bin_path}" LD_LIBRARY_PATH="${lib_path}" \
+			sqlplus -V &>/dev/null
+			t=$?
+
+			if [ 0 -eq $t ]; then
+				export ORACLE_HOME="$ORACLE_HOME"
+				export LD_LIBRARY_PATH="$lib_path"
+				export PATH="$bin_path"
+				return 0
+			fi	
+			;;
+	esac	
+	return $t 
+}
+
+function find_oracle_home() {
 	local n="`sqlplus_name`"
-	local s="`check_sqlplus_path`"
+	local s="`find_sqlplus_path`"
 	local h=( 
 		"$PWD_DIR"
 		"$s"
@@ -65,7 +149,9 @@ function check_oracle_home() {
 	return 1
 }
 
-function check_sql_path() {
+function find_sqlpath() {
+	[ -n "$SQLPATH" ] && return 0
+
 	local sql=(
 		"$PWD_DIR"
 		"$PWD_DIR/oracle"
@@ -85,78 +171,112 @@ function check_sql_path() {
 
 	for i in "${sql[@]}"; do
 		[ -n "$i" -a -d "$i" ] || continue
-		p="$i${p:+\n$p}"
+		p="${p:+$p\n}${i}"
 		f="`find $i -type f -name 'login.sql' -print -quit`"
 		if [ -n "$f" -a -f "$f" ]; then
-			p="`dirname ${f}`${p:+\n$p}"
+			p="${p:+$p\n}`dirname ${f}`"
 		fi
 	done
 	echo -e "$p" | uniq | tr '\n' ':' | sed -e 's_:$__g'
 }
 
+function check_oracle_env() {
+	local t=0
 
-export ORACLE_HOME="${ORACLE_HOME:-`check_oracle_home`}"
-export SQLPATH="${SQLPATH:-`check_sql_path`}"
-export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
+	validate_oracle_home
+	t=$?
+	if [ 0 -eq $t ]; then
+		return 0
+	fi
 
+	local env_file="${PWD_DIR%/}/.oracle.env"
 
-ORA_LD=${ORACLE_HOME%/}
-if [ -d "${ORA_LD}/lib" ]; then
-	ORA_LD="${ORA_LD}/lib"
+	[ -f "$env_file" ] && . "$env_file"
+	
+	validate_oracle_home
+	t=$?
+	if [ 0 -ne $t ]; then
+		ORACLE_HOME="`find_oracle_home`"
+		validate_oracle_home
+		t=$?
+		[ 0 -eq $t ] || return $t
+	fi
+
+	#SQLPATH="`find_sqlpath`"
+	gen_oracle_env_file "$env_file"
+	[ -f "$env_file" ] && . "$env_file"
+}
+
+check_oracle_env
+if [ 0 -eq $? ]; then
+	echo "ORACLE_HOME=$ORACLE_HOME"
+	echo "PATH=$PATH"
+	sqlplus "$@"
 fi
 
-ORA_BIN=${ORACLE_HOME%/}
-if [ -d "${ORA_BIN}/bin" ]; then
-	ORA_BIN="${ORA_BIN}/bin"
-fi
-
-case $PLATFORM in
-	Darwin)
-		export DYLD_LIBRARY_PATH="${ORA_LD}${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
-		;;
-	*)
-		export LD_LIBRARY_PATH="${ORA_LD}${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-		;;
-esac
-
-export PATH="${ORA_BIN}${PATH:+:$PATH}"
-
-if ! `sqlplus_name -V &>/dev/null`; then
-	echo -e "! `sqlplus_name`  =invalid"
-	echo -e "# ORACLE_HOME=$ORACLE_HOME"
-	echo -e "# SQLPATH=$SQLPATH"
-	echo -e "# PATH=$PATH"
-	case $PLATFORM in
-		Darwin)
-			echo -e "# DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
-			;;
-		*)
-			echo -e "# LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
-			;;
-	esac
-	exit 1
-fi
-
-
-ORA_USER=${ORA_USER:-system}
-ORA_PASSWD=${ORA_PASSWD:-oracle}
-HOST=${HOST:-localhost}
-PORT=${PORT:-1521}
-SID=${SID:-'XE'}
-USERID=${USERID:-${HOST}:${PORT}/${SID}}
-
-if `hash rlwrap &>/dev/null`; then
-	RLWRAP='rlwrap'
-fi	
-
-if [ 0 -eq $# ] ; then
-	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID}
-elif [ 1 -le $# ]; then
-	if `echo $1|grep .*@.*[:/][0-9]*[:/].* &>/dev/null`; then
-		${RLWRAP} sqlplus $1 ${@:2}
-  else
-		${RLWRAP} sqlplus $1@${USERID} ${@:2}
-  fi
-else
-	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID} $1
-fi
+#export ORACLE_HOME="${ORACLE_HOME:-`find_oracle_home`}"
+#export SQLPATH="${SQLPATH:-`find_sqlpath`}"
+#export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
+#
+#
+#ORA_LD=${ORACLE_HOME%/}
+#if [ -d "${ORA_LD}/lib" ]; then
+#	ORA_LD="${ORA_LD}/lib"
+#fi
+#
+#ORA_BIN=${ORACLE_HOME%/}
+#if [ -d "${ORA_BIN}/bin" ]; then
+#	ORA_BIN="${ORA_BIN}/bin"
+#fi
+#
+#case $PLATFORM in
+#	Darwin)
+#		export DYLD_LIBRARY_PATH="${ORA_LD}${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
+#		;;
+#	*)
+#		export LD_LIBRARY_PATH="${ORA_LD}${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+#		;;
+#esac
+#
+#export PATH="${ORA_BIN}${PATH:+:$PATH}"
+#
+#if ! `sqlplus_name -V &>/dev/null`; then
+#	echo -e "! `sqlplus_name`  =invalid"
+#	echo -e "# ORACLE_HOME=$ORACLE_HOME"
+#	echo -e "# SQLPATH=$SQLPATH"
+#	echo -e "# PATH=$PATH"
+#	case $PLATFORM in
+#		Darwin)
+#			echo -e "# DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
+#			;;
+#		*)
+#			echo -e "# LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+#			;;
+#	esac
+#	exit 1
+#fi
+#
+#
+#ORA_USER=${ORA_USER:-system}
+#ORA_PASSWD=${ORA_PASSWD:-oracle}
+#HOST=${HOST:-localhost}
+#PORT=${PORT:-1521}
+#SID=${SID:-'XE'}
+#USERID=${USERID:-${HOST}:${PORT}/${SID}}
+#
+#if `hash rlwrap &>/dev/null`; then
+#	RLWRAP='rlwrap'
+#fi	
+#
+#if [ 0 -eq $# ] ; then
+#	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID}
+#elif [ 1 -le $# ]; then
+#	if `echo $1|grep .*@.*[:/][0-9]*[:/].* &>/dev/null`; then
+#		${RLWRAP} sqlplus $1 ${@:2}
+#  else
+#		${RLWRAP} sqlplus $1@${USERID} ${@:2}
+#  fi
+#else
+#	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID} $1
+#fi
+#
