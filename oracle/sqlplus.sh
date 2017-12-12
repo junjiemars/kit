@@ -236,12 +236,12 @@ fi
 
 if [ 0 -eq $# ] ; then
 	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID}
-elif [ 1 -le $# ]; then
-	if `echo $1|grep .*@.*[:/][0-9]*[:/].* &>/dev/null`; then
-		${RLWRAP} sqlplus $1 ${@:2}
-  else
-		${RLWRAP} sqlplus $1@${USERID} ${@:2}
-  fi
 else
-	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID} $1
+	if [[ $1 =~ ..*/..*@..*:[0-9][0-9]*[:/]..* ]]; then
+		${RLWRAP} sqlplus $1 ${@:2}
+	elif [[ $1 =~ ..*/..* ]]; then
+			${RLWRAP} sqlplus $1@${USERID} ${@:2}
+  else
+		${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID} $@
+  fi
 fi
