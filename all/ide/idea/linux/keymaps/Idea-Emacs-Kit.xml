@@ -29,6 +29,7 @@
     <keyboard-shortcut first-keystroke="shift alt f9" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="equals" />
   </action>
+  <action id="CloseAllEditors" />
   <action id="CloseProject">
     <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="shift ctrl c" />
   </action>
@@ -144,8 +145,7 @@
     <keyboard-shortcut first-keystroke="alt x" />
   </action>
   <action id="GotoClass">
-    <keyboard-shortcut first-keystroke="shift alt g" />
-    <keyboard-shortcut first-keystroke="shift ctrl s" second-keystroke="c" />
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl c" />
   </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
@@ -160,8 +160,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="u" />
   </action>
   <action id="GotoSymbol">
-    <keyboard-shortcut first-keystroke="shift ctrl alt n" />
-    <keyboard-shortcut first-keystroke="shift ctrl s" second-keystroke="s" />
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl s" />
   </action>
   <action id="GotoTypeDeclaration">
     <mouse-shortcut keystroke="shift control button1" />
@@ -218,6 +217,9 @@
   <action id="RunClass">
     <keyboard-shortcut first-keystroke="shift ctrl f10" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
+  </action>
+  <action id="SaveAll">
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="s" />
   </action>
   <action id="Scala.RenameJavaToScala" />
   <action id="Scala.RunConsole" />
