@@ -14,19 +14,32 @@ services:
       - zookeeper
     links:
       - zookeeper
-    # restart: always
     ports:
       - 6627:6627
+    # restart: always
 
+  ui:
+    image: storm
+    container_name: ui
+    command: storm ui
+    depends_on:
+      - nimbus
+    links:
+      - nimbus
+    ports:
+      - 8080:
+    # restart: always
+      
   supervisor:
     image: storm
     container_name: supervisor
     command: storm supervisor
     depends_on:
+      - ui
       - nimbus
       - zookeeper
     links:
       - nimbus
       - zookeeper
-    restart: always
+    #restart: always
 

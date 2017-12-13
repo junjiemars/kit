@@ -32,10 +32,10 @@ function find_sqlplus_path() {
 
 function gen_oracle_env_file() {
 	local env_file="$@"
-	local ori_file="${env_file}.ori"
+	local pre_file="${env_file}.pre"
 
-	if [ ! -f "$ori_file" -a -f "$env_file" ]; then
-		mv "$env_file" "$ori_file"
+	if [ -f "$env_file" ]; then
+		mv "$env_file" "$pre_file"
 	fi
 
 	cat << END > "$env_file" 
