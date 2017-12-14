@@ -572,14 +572,15 @@ install_zookeeper() {
   local cmd="${bin_dir}/bin/zkCli.sh"
   local zookeeper_sh="${RUN_DIR}/bin/storm"
 
-  [ -x "${cmd}" ] && return 0
+  if [ -x "${cmd}" -a `type -P zkCli.sh &>/dev/null` ]; then
+    return 0
+  fi
 
   install_kit "${bin_dir}/bin/zookeeper" \
               "${cmd}" \
               "${zookeeper_url}" \
               "${zookeeper_home}/${zookeeper_tgz}" \
-              "${bin_dir}"
-  [ 0 -eq $? ] || return 1
+              "${bin_dir}" || return 1
   
   if [ -x "${cmd}" ]; then
     append_vars "ZOOKEEPER_HOME" "${bin_dir}"
