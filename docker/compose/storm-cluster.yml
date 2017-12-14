@@ -3,12 +3,12 @@ version: '2.0'
 services:
   zookeeper:
     image: zookeeper
-    container_name: zookeeper
+    container_name: storm-zookeeper
     # restart: always
     
   nimbus:
     image: storm
-    container_name: nimbus
+    container_name: storm-nimbus
     command: storm nimbus
     depends_on:
       - zookeeper
@@ -20,7 +20,7 @@ services:
 
   ui:
     image: storm
-    container_name: ui
+    container_name: storm-ui
     command: storm ui
     depends_on:
       - nimbus
@@ -32,7 +32,7 @@ services:
       
   supervisor:
     image: storm
-    container_name: supervisor
+    container_name: storm-supervisor
     command: storm supervisor
     depends_on:
       - ui
