@@ -53,6 +53,11 @@ RUN chown -R ${SUDOUSER}:${SUDOUSER} ${UR_HOME} && \
     mkdir -p /opt/apps && chown -R ${SUDOUSER}:${SUDOUSER} /opt/apps && \
     mkdir -p /opt/lab  && chown -R ${SUDOUSER}:${SUDOUSER} /opt/lab
 
+# generate ssh keys
+RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key && \
+    ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key && \
+    ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
+
 # switch to ${SUDOUSER}
 USER ${SUDOUSER}
 
@@ -66,6 +71,7 @@ RUN cd ${UR_HOME} && \
     echo 'export TERM=xterm' >> .bashrc 
 RUN test -f ${UR_HOME}/.emacs && rm ${UR_HOME}/.emacs
 
+
 # switch back to root
 USER root
 
@@ -77,5 +83,3 @@ CMD ["/usr/sbin/sshd", "-D"]
 
 EXPOSE 22
 EXPOSE 53
-EXPOSE 80
-EXPOSE 8080-8090

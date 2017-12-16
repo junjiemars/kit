@@ -1,0 +1,11 @@
+version: '2.0'
+
+services:
+  centos-dev:
+    image: junjiemars/centos-dev:latest
+    container_name: bone-centos-dev
+    hostname: centos
+    privileged: true
+    working_dir: /home/u
+    ports:
+      - 9601:9601
