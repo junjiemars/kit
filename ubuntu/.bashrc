@@ -57,13 +57,17 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 git_prompt() {
-	git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1) /'
+	local prompt="`git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1) /'`"
+	if [ "x${prompt}" != "x" ]; then
+		prompt="${prompt}"$'\n'
+	fi
+	echo "${prompt}\$"
 }
 
 if [ "$color_prompt" = "yes" ]; then
-	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w$(git_prompt)\$\[\033[00m\] '
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w$(git_prompt)\[\033[00m\] '
 else
-	PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w$(git_prompt)\$ '
+	PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w$(git_prompt) '
 fi
 unset color_prompt force_color_prompt
 
