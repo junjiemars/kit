@@ -65,5 +65,9 @@
   {
     "key": "ctrl+9 `",
     "command": "workbench.action.quickOpenTerm"
+  },
+  {
+    "key": "ctrl+x d",
+    "command": "workbench.action.addRootFolder"
   }
 ]
