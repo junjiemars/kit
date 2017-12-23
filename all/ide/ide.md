@@ -59,7 +59,7 @@ Then start _Emacs_ as ```daemon``` or eval ```(server-start)``` after run.
 
 | command                            | keys           |
 |:-----------------------------------|:---------------|
-| open folder                        | C-x d          |
+| add folder into workspace          | C-x d          |
 | close workspace                    |                |
 | open untitled file                 | C-x C-f        |
 | switch buffer (quick open)         | C-x b          |
