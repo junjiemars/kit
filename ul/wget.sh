@@ -25,13 +25,13 @@ function usage() {
   echo -e "  --encode\t\t\tinput encoding"
   echo -e "  --decode\t\t\toutput encoding"
   echo -e "  --decode-dir\t\t\tdecode dir"
-  echo -e "  --decode-filter\t\t\tdecode files on filter"
+  echo -e "  --decode-filter\t\tdecode files on filter"
   echo -e "  --wget-options\t\twget options"
 
 	echo -e ""
 	echo -e "Commands:"
   echo -e "  mirror\t\t\tmirror a website"
-  echo -e "  decode\t\t\tdecode the website"
+  echo -e "  decode\t\t\tdecode the mirrored website"
 }
 
 function mirror() {
