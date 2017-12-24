@@ -71,11 +71,6 @@
     "command": "workbench.action.addRootFolder"
   },
   {
-    "key": "ctrl+h d",
-    "command": "editor.action.showHover",
-    "when": "editorTextFocus"
-  },
-  {
     "key": "cmd+k cmd+i",
     "command": "-editor.action.showHover",
     "when": "editorTextFocus"
