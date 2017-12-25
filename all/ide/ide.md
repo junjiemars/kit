@@ -79,6 +79,8 @@ Then start _Emacs_ as ```daemon``` or eval ```(server-start)``` after run.
 | focus active editor group          | C-0 ~          |
 | toggle panel                       |                |
 | show hover                         | vim: g h       |
+| go to symbol in file               | M-x @          |
+| go to symbol in workspace          | M-x #          |
 
 
 
