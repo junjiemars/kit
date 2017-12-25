@@ -81,10 +81,6 @@
     "command": "-workbench.view.explorer"
   },
   {
-    "key": "ctrl+x d",
-    "command": "workbench.action.files.openFolder"
-  },
-  {
     "key": "ctrl+k ctrl+o",
     "command": "-workbench.action.files.openFolder"
   },
@@ -133,5 +129,9 @@
   {
     "key": "ctrl+9 `",
     "command": "workbench.action.quickOpenTerm"
+  },
+  {
+    "key": "ctrl+x d",
+    "command": "workbench.action.addRootFolder"
   }
 ]
