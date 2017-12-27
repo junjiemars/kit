@@ -94,5 +94,9 @@
     "key": "ctrl+f",
     "command": "-workbench.action.terminal.focusFindWidget",
     "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+0 shift+`",
+    "command": "workbench.action.focusActiveEditorGroup"
   }
 ]
