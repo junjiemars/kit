@@ -8,13 +8,13 @@ MAINTAINER Junjie Mars <junjiemars@gmail.com>
 
 ENV TERM=xterm
 
-# choose mirror based on geo
-RUN sed -i.ori 's#http:\/\/archive.ubuntu.com\/ubuntu\/#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#' /etc/apt/sources.list && \
-    apt-get -y update && \
-    apt-get -y install curl
+# # choose mirror based on geo
+# RUN sed -i.ori 's#http:\/\/archive.ubuntu.com\/ubuntu\/#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#' /etc/apt/sources.list && \
+#     apt-get -y update && \
+#     apt-get -y install curl
 
-RUN curl -s ipinfo.io | grep '"country": "CN",' && \
-    sed -i 's#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#http:\/\/jp.archive.ubuntu.com\/ubuntu\/#' /etc/apt/sources.list 
+# RUN curl -s ipinfo.io | grep '"country": "CN",' && \
+#     sed -i 's#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#http:\/\/jp.archive.ubuntu.com\/ubuntu\/#' /etc/apt/sources.list 
 
 RUN apt-get -y update && \
     apt-get -y install \
@@ -67,15 +67,14 @@ RUN cd ${UR_HOME} && \
 # switch to ${SUDOUSER}
 USER ${SUDOUSER}
 
-# cofigure bash env
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${UR_HOME}/.bashrc && \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${UR_HOME} bash 
+# configure bash env
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh \
+    | HOME=${UR_HOME} bash 
 
 # configure emacs
 RUN cd ${UR_HOME} ; \
-    git clone --depth=1 --branch=master https://github.com/junjiemars/.emacs.d.git  && \
-    echo 'export TERM=xterm' >> .bashrc
-#RUN test -f ${UR_HOME}/.emacs && rm ${UR_HOME}/.emacs
+    git clone --depth=1 --branch=master https://github.com/junjiemars/.emacs.d.git
+
 
 # switch back to ${SUDOUSER}
 USER root
@@ -86,16 +85,7 @@ RUN mkdir /var/run/sshd && \
 CMD ["/usr/sbin/sshd", "-D"]
 
 # run script
-# ...
 #
-
-# set locale
-#RUN locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8
-#ENV LANGUAGE en_US:en
-#ENV LC_ALL en_US.UTF-8
 
 EXPOSE 22
 EXPOSE 53
-EXPOSE 80
-EXPOSE 8080-8090

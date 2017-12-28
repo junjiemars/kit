@@ -61,7 +61,7 @@ RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key && \
 # switch to ${SUDOUSER}
 USER ${SUDOUSER}
 
-# cofigure bash env
+# configure bash env
 RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh \
     | HOME=${UR_HOME} bash 
 
