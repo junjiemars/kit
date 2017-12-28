@@ -62,14 +62,13 @@ RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key && \
 USER ${SUDOUSER}
 
 # cofigure bash env
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/.bashrc -o ${UR_HOME}/.bashrc && \
-    curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh | HOME=${UR_HOME} bash 
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh \
+    | HOME=${UR_HOME} bash 
 
 # configure emacs
 RUN cd ${UR_HOME} && \
     git clone --depth=1 --branch=master https://github.com/junjiemars/.emacs.d.git && \
-    echo 'export TERM=xterm' >> .bashrc 
-RUN test -f ${UR_HOME}/.emacs && rm ${UR_HOME}/.emacs
+    test ! -f ${UR_HOME}/.emacs || rm ${UR_HOME}/.emacs
 
 
 # switch back to root
