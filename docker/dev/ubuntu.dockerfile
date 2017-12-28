@@ -20,6 +20,7 @@ RUN apt-get -y update && \
     apt-get -y install \
 	    bc \
 	    build-essential \
+      curl \
 	    coreutils \
 	    dnsutils \
 	    emacs-nox \
