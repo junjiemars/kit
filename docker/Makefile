@@ -22,5 +22,7 @@ remove: $(compose_file) stop
 clean: $(compose_file) remove
 	docker rmi $(image_tag)
 
+push: build
+	docker push $(image_tag)
 
-.PHONY: build start stop remove clean
+.PHONY: build start stop remove clean push
