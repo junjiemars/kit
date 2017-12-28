@@ -3,7 +3,7 @@
 export HOME=${HOME%/}
 
 check_docker_env() {
-  [ ".$INSIDE_DOCKER" = ".1" ] && return 1
+  [ ".$INSIDE_DOCKER" = ".1" ] && return 0
   [ -f /proc/1/cgroup ] || return 1
   cat /proc/1/cgroup | grep '/docker/' >/dev/null
 }
