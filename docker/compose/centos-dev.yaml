@@ -7,5 +7,7 @@ services:
     hostname: centos
     privileged: true
     working_dir: /home/u
+    environment:
+      - INSIDE_DOCKER=1
     ports:
       - 9601:9601

@@ -3,11 +3,12 @@
 export HOME=${HOME%/}
 
 check_docker_env() {
+  [ ".$INSIDE_DOCKER" = ".1" ] && return 1
   [ -f /proc/1/cgroup ] || return 1
   cat /proc/1/cgroup | grep '/docker/' >/dev/null
 }
 
-if `check_docker_env` && test -n "$PROMPT_COMMAND" ; then
+if test -n "$PROMPT_COMMAND" && `check_docker_env`; then
   export PROMPT_COMMAND=''
 fi
 
