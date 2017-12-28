@@ -2,6 +2,15 @@
 
 export HOME=${HOME%/}
 
+check_docker_env() {
+  [ -f /proc/1/cgroup ] || return 1
+  cat /proc/1/cgroup | grep '/docker/' >/dev/null
+}
+
+if `check_docker_env` && test -n "$PROMPT_COMMAND" ; then
+  export PROMPT_COMMAND=''
+fi
+
 case ".$PS1" in
 	.|.\\s*|.[\\*|.\\h:*)
 		PS1="\u@\h:\w\$ "
