@@ -10,7 +10,7 @@ image_tag := junjiemars/$(IMAGE_NAME)-dev:latest
 build: $(docker_file)
 	docker build -t $(image_tag) -f $< .
 
-start: $(compose_file) build
+start: $(compose_file) stop build
 	docker-compose -f $<  up -d
 
 stop: $(compose_file)
