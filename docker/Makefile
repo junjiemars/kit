@@ -1,6 +1,5 @@
 
 IMAGE_NAME ?= centos
-CONTAINER_NAME ?= bone-$(IMAGE_NAME)-dev
 
 docker_file := dev/$(IMAGE_NAME).dockerfile
 compose_file := compose/$(IMAGE_NAME)-dev.yaml
