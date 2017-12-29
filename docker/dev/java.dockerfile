@@ -1,6 +1,6 @@
 FROM centos:latest
 
-MAINTAINER Junjie Mars <junjiemars@gmail.com>
+LABEL authors="Junjie Mars <junjiemars@gmail.com>"
 
 # pre-requirements
 #...

@@ -17,7 +17,7 @@ if test -n "$PROMPT_COMMAND" && `check_docker_env`; then
 fi
 
 case ".$PS1" in
-	.|.\\s*|.\\[\\*|.\\h:*)
+	.|.\\s*|.[*|.\\[\\*|.\\h:*)
 		PS1="\u@\h:\w\$ "
 		;;
 	*)
