@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-MAINTAINER Junjie Mars <junjiemars@gmail.com>
+LABEL authors="Junjie Mars <junjiemars@gmail.com>"
 
 # pre-requirements
 # ...
@@ -31,6 +31,8 @@ RUN apt-get -y update && \
 	    info \
 	    initscripts \
 	    install-info \
+		locales \
+		locales-all \
 	    man-db \
 	    manpages \
 	    manpages-dev \
@@ -64,6 +66,10 @@ RUN chown -R ${SUDOUSER}:${SUDOUSER} ${UR_HOME} && \
 # configure gdb
 RUN cd ${UR_HOME} && \
     echo 'set disable-randomization off' >> .gdbinit
+
+# default locale 
+RUN locale-gen en_US.UTF-8
+
 
 # switch to ${SUDOUSER}
 USER ${SUDOUSER}
