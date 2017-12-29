@@ -71,16 +71,6 @@ else
 fi
 unset color_prompt force_color_prompt
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-	xterm*|rxvt*)
-		PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-		;;
-	*)
-		;;
-esac
-
-
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
 	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
@@ -112,6 +102,7 @@ if ! shopt -oq posix; then
 fi
 
 PATH=$PATH:/opt/open/yarn/bin:${HOME%/}/.yarn/bin
+
 
 #LD_LIBRARY_PATH=${OPT_RUN}/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 #export LD_LIBRARY_PATH
