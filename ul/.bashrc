@@ -5,7 +5,11 @@ export HOME=${HOME%/}
 check_docker_env() {
   [ ".$INSIDE_DOCKER" = ".1" ] && return 0
   [ -f /proc/1/cgroup ] || return 1
-  cat /proc/1/cgroup | grep '/docker/' >/dev/null
+  if `cat /proc/1/cgroup | grep '/docker/' >/dev/null`; then
+		export INSIDE_DOCKER=1
+	else
+		export INSIDE_DOCKER=0
+	fi 
 }
 
 if test -n "$PROMPT_COMMAND" && `check_docker_env`; then
@@ -13,7 +17,7 @@ if test -n "$PROMPT_COMMAND" && `check_docker_env`; then
 fi
 
 case ".$PS1" in
-	.|.\\s*|.[\\*|.\\h:*)
+	.|.\\s*|.\\[\\*|.\\h:*)
 		PS1="\u@\h:\w\$ "
 		;;
 	*)
