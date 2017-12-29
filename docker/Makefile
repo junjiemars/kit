@@ -28,4 +28,7 @@ clean: $(compose_file) remove
 push: build
 	docker push $(image_tag)
 
-.PHONY: build start stop remove clean push
+pull:
+	docker pull $(image_tag)
+
+.PHONY: build start stop remove clean push pull
