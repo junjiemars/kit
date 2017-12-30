@@ -257,6 +257,7 @@ $ sudo ssh-keygen -t dsa -f /etc/ssh/ssh_hosts_dsa_key
 ```
 
 ### Tips
+
 * Container's IP address
 ```sh
 # on default bridge network
@@ -265,9 +266,15 @@ $ docker inspect --format "{{.NetworkSettings.IPAddress}}" <container-id|contain
 # on specified network
 docker inspect --format "{{.NetworkSettings.Networks.<your-network>.IPAddress}}" <container-id|container-name>
 ```
+
 * Link to Another Containers (/etc/hosts)
 ```sh
 $ docker run --name n2 --link=n0 --link=n1 -d <docker-image>
+```
+
+* Mirror
+```json
+"registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]
 ```
 
 ## Storage
