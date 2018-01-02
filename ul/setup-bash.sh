@@ -61,6 +61,23 @@ to_posix_path() {
     sed -e 's# #\ #g'
 }
 
+function delete_tail_lines() {
+	local h="$1"
+	local f="$2"
+  local t=0
+
+	sed_i_0="-i.pre"
+	[ "Darwin" = "$PLATFORM" ] && sed_i_0="-i .pre"
+
+  if [ -f "$f" ]; then
+    local line_no=`grep -m1 -n "^${h}" $f | cut -d':' -f1`
+    t=$?
+    if [ 0 -eq $t -a $line_no -gt 0 ]; then
+      sed $sed_i_0 -e "$line_no,\$d" $f
+    fi
+  fi
+}
+
 set_vim_path_var() {
   local f=$1
   shift
@@ -69,15 +86,9 @@ set_vim_path_var() {
   local cc_header="\" cc include path"
   local t=0
 
-  if [ -f "$f" ]; then
-    local line_no=`grep -m1 -n "^${cc_header}" $f | cut -d':' -f1`
-    t=$?
-    if [ 0 -eq $t -a $line_no -gt 0 ]; then
-      sed -i.pre -e "$line_no,\$d" $f
-    fi
-  fi
+  delete_tail_lines "${cc_header}" $f
 
-  echo -e "\n${cc_header} :check_cc_include" >> $f
+  echo -e "${cc_header} :check_cc_include" >> $f
   for i in "${inc_lns[@]}"; do
 		local ln=$(echo "$i" | sed 's_ _\\\\\\ _g')
     echo "set path+=${ln}" >> $f
