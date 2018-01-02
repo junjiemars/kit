@@ -129,7 +129,7 @@ find_vctools() {
  	local vstools="`env|grep 'VS[0-9][0-9]*COMNTOOLS'|sed 's#^VS[0-9]*COMNTOOLS=\(.*\)$#\1#g'`"
 
   if [ -n "$vstools" ]; then
-    vstools="`( cd "$vstools/../../VC" && pwd )`"
+    vstools="`( cd "$vstools\..\..\VC\Auxiliary\Build" && pwd )`"
     vstools="`echo "$vstools" | sed -e 's#^\/\([a-z]\)#\u\1:#'`"
     if [ -d "$vstools" ]; then
       echo "$vstools"
@@ -156,9 +156,11 @@ check_win_cc_include() {
 	local inc_list="$1"
   local vimrc="$2"
   local inc_bat="$3"
+  local t=0
 
 	local vstools="`find_vctools`"
-	[ -n "$vstools" ] || return 0
+  t=$?
+	[ 0 -eq $t -a -n "${vstools[@]}" ] || return 0
 
   cat <<END > "$inc_bat"
 @echo off
