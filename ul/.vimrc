@@ -50,3 +50,4 @@ set shell=bash\ --rcfile\ ~/.bashrc
 
 " search subdirs
 set path+=**
+
