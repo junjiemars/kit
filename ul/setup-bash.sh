@@ -63,7 +63,8 @@ to_posix_path() {
 
 function delete_tail_lines() {
 	local h="$1"
-	local f="$2"
+  local lines="$2"
+	local f="$3"
   local t=0
 
 	sed_i_0="-i.pre"
@@ -73,7 +74,11 @@ function delete_tail_lines() {
     local line_no=`grep -m1 -n "^${h}" $f | cut -d':' -f1`
     t=$?
     if [ 0 -eq $t -a $line_no -gt 0 ]; then
-      sed $sed_i_0 -e "$line_no,\$d" $f
+      if [ "yes" = "$lines" ]; then
+        sed $sed_i_0 -e "$line_no,\$d" $f
+      else  
+        sed $sed_i_0 -e "${line_no}d" $f
+      fi
     fi
   fi
 }
@@ -86,7 +91,7 @@ set_vim_path_var() {
   local cc_header="\" cc include path"
   local t=0
 
-  delete_tail_lines "${cc_header}" $f
+  delete_tail_lines "${cc_header}" "yes" "$f"
 
   echo -e "${cc_header} :check_cc_include" >> $f
   for i in "${inc_lns[@]}"; do
@@ -204,21 +209,6 @@ END
  	set_vim_path_var "${vimrc}" "${inc_lns[@]}"
 }
 
-function delete_tail_line() {
-	local os="$1" 
-	local r="$2"
-	local f="$3"
-
-	sed_i_0="-i''"
-	[ "Darwin" = "$os" ] && sed_i_0="-i ''"
-	if [ -f "$f" ]; then
-		if `tail -n1 $f | grep "$r" &>/dev/null`; then
-			sed $sed_i_0 -e '$d' "$f"
-		fi
-	fi
-}
-
-
 
 BEGIN=`date +%s`
 echo "setup $PLATFORM bash env ..."
@@ -243,10 +233,9 @@ case ${PLATFORM} in
 		[ "Darwin" = "$PLATFORM" ] && sed_i_0="-i ''"
 		${curl} ${GITHUB_H}/ul/.bashrc -o $HOME/.bash_init
 		
-		delete_tail_line "`uname -s 2>/dev/null`" 'LD_LIBRARY_PATH' "$HOME/.bashrc" 
-		delete_tail_line "`uname -s 2>/dev/null`" 'export\ * PATH' "$HOME/.bashrc" 
-		delete_tail_line "`uname -s 2>/dev/null`" 'test -f.*\.bash_init' "$HOME/.bashrc" 
+		delete_tail_lines '# call .bash_init' "yes" "$HOME/.bashrc" 
 
+    echo -e "# call .bash_init" >> $HOME/.bashrc
 		cat << END >> $HOME/.bashrc
 test -f \${HOME%/}/.bash_init && . \${HOME%/}/.bash_init
 export PATH
