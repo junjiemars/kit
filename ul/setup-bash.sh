@@ -66,8 +66,18 @@ set_vim_path_var() {
   shift
   local inc_lns=("${@}")
   local inc_ln="${#inc_lns[@]}"
+  local cc_header="\" cc include path :check_cc_include"
+  local t=0
 
-  echo -e "\n\" cc include path :checkpath" >> $f
+  if [ -f "$f" ]; then
+    local line_no=`grep -m1 -n "^${cc_header}" $f | cut -d':' -f1`
+    t=$?
+    if [ 0 -eq $t -a $line_no -gt 0 ]; then
+      sed -i.pre -e "$line_no,\$d" $f
+    fi
+  fi
+
+  echo -e "\n${cc_header}" >> $f
   for i in "${inc_lns[@]}"; do
 		local ln=$(echo "$i" | sed 's_ _\\\\\\ _g')
     echo "set path+=${ln}" >> $f
