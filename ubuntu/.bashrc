@@ -104,8 +104,7 @@ fi
 PATH=$PATH:/opt/open/yarn/bin:${HOME%/}/.yarn/bin
 
 
-#LD_LIBRARY_PATH=${OPT_RUN}/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-#export LD_LIBRARY_PATH
+# call .bash_init
 test -f ${HOME%/}/.bash_init && . ${HOME%/}/.bash_init
 export PATH
 export LD_LIBRARY_PATH
