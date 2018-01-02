@@ -73,7 +73,7 @@ function delete_tail_lines() {
   if [ -f "$f" ]; then
     local line_no=`grep -m1 -n "^${h}" $f | cut -d':' -f1`
     t=$?
-    if [ 0 -eq $t -a $line_no -gt 0 ]; then
+    if [ 0 -eq $t -a "$line_no" != "" -a $line_no -gt 0 ]; then
       if [ "yes" = "$lines" ]; then
         sed $sed_i_0 -e "$line_no,\$d" $f
       else  
