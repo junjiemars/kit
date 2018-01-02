@@ -194,7 +194,7 @@ END
 	[ -f "$inc_bat" ] || return 1
 	chmod u+x "$inc_bat"
 
- 	local include=$($inc_bat) 
+ 	local include=$($inc_bat | tail -n1) 
 	[ -n "$include" ] || return 1
 
 	cat /dev/null > "$inc_list"
