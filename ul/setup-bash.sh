@@ -65,20 +65,20 @@ function delete_tail_lines() {
 	local h="$1"
   local lines="$2"
 	local f="$3"
-  local t=0
 
 	sed_i_0="-i.pre"
 	[ "Darwin" = "$PLATFORM" ] && sed_i_0="-i .pre"
 
-  if [ -f "$f" ]; then
-    local line_no=`grep -m1 -n "^${h}" $f | cut -d':' -f1`
-    t=$?
-    if [ 0 -eq $t -a "$line_no" != "" -a $line_no -gt 0 ]; then
-      if [ "yes" = "$lines" ]; then
-        sed $sed_i_0 -e "$line_no,\$d" $f
-      else  
-        sed $sed_i_0 -e "${line_no}d" $f
-      fi
+  [ -f "$f" ] || return 1
+
+  local line_no=`grep -m1 -n "^${h}" $f | cut -d':' -f1`
+  [[ $line_no =~ ^[0-9]+$ ]] || return 1
+
+  if [ 0 -lt $line_no ]; then
+    if [ "yes" = "$lines" ]; then
+      sed $sed_i_0 -e "$line_no,\$d" $f
+    else  
+      sed $sed_i_0 -e "${line_no}d" $f
     fi
   fi
 }
