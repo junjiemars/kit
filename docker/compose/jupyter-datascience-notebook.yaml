@@ -1,0 +1,9 @@
+version: '2.0'
+
+services:
+  datascience-notebook:
+    image: jupyter/datascience-notebook
+    container_name: datascience-notebook
+    # restart: always
+    ports:
+      - 8888:8888
