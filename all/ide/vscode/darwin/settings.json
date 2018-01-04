@@ -6,7 +6,7 @@
     "terminal.integrated.fontSize": 14,
     "terminal.integrated.lineHeight": 1.2,
     "window.zoomLevel": 0,
-    "python.linting.pylintArgs": [
-        "--extension-pkg-whitelist=numpy"
-    ]
+    "python.venvPath": "${workspaceRoot}",
+    "python.pythonPath": "${workspaceRoot}/bin/python",
+    "extensions.ignoreRecommendations": false,
 }
