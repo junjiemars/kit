@@ -1,5 +1,6 @@
 // Place your settings in this file to overwrite the default settings
 {
+    "window.title": "${dirty}${activeEditorLong}${separator}${rootName}${separator}${appName}",
     "editor.tabSize": 2,
     "editor.fontFamily": "'Monaco', 'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
     "editor.fontSize": 15,
@@ -9,5 +10,5 @@
     "workbench.statusBar.visible": true,
     "workbench.sideBar.location": "left",
     "window.menuBarVisibility": "toggle",
-    "markdown.preview.fontFamily":"-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif"
+    "markdown.preview.fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif",
 }
