@@ -37,7 +37,7 @@ SOCKS="${SOCKS}"
 GITHUB_SH="https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh"
 APACHE_DIST="https://archive.apache.org/dist"
 
-HAS_ALL=${HAS_ALL:-NO}
+HAS_ALL=${HAS_ALL:-0}
 HAS_JDK=${HAS_JDK:-0}
 HAS_ABCL=${HAS_ABCL:-0}
 HAS_ANT=${HAS_ANT:-0}
@@ -591,7 +591,7 @@ install_zookeeper() {
 }
 
 
-if [ "YES" == "${HAS_ALL}" ]; then
+if [ 1 -eq ${HAS_ALL} ]; then
   #HAS_JDK=1  # exclude JDK
   HAS_ANT=1
   HAS_ABCL=1
