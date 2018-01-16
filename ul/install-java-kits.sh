@@ -608,21 +608,21 @@ if [ "YES" = "${HAS_ALL}" ]; then
   # HAS_ZOOKEEPER=1
 fi
 
-[ 0 -lt "${HAS_JDK}" ]            && KITS+=('install_jdk')
-[ 0 -lt "${HAS_ANT}" ]            && KITS+=('install_ant')
-[ 0 -lt "${HAS_ABCL}" ]           && KITS+=('install_abcl')
-[ 0 -lt "${HAS_MAVEN}" ]          && KITS+=('install_maven')
-[ 0 -lt "${HAS_BOOT}" ]           && KITS+=('install_boot')
-[ 0 -lt "${HAS_LEIN}" ]           && KITS+=('install_lein')
-[ 0 -lt "${HAS_GRADLE}" ]         && KITS+=('install_gradle')
-[ 0 -lt "${HAS_SBT}" ]            && KITS+=('install_sbt')
-[ 0 -lt "${HAS_CLOJURE}" ]        && KITS+=('install_clojure')
-[ 0 -lt "${HAS_CLOJURESCRIPT}" ]  && KITS+=('install_clojurescript')
-[ 0 -lt "${HAS_GROOVY}" ]         && KITS+=('install_groovy')
-[ 0 -lt "${HAS_SCALA}" ]          && KITS+=('install_scala')
-[ 0 -lt "${HAS_SCALA_VIM}" ]      && KITS+=('install_scala_vim')
-[ 0 -lt "${HAS_STORM}" ]          && KITS+=('install_storm')
-[ 0 -lt "${HAS_ZOOKEEPER}" ]      && KITS+=('install_zookeeper')
+[ 0 -lt ${HAS_JDK} ]            && KITS+=('install_jdk')
+[ 0 -lt ${HAS_ANT} ]            && KITS+=('install_ant')
+[ 0 -lt ${HAS_ABCL} ]           && KITS+=('install_abcl')
+[ 0 -lt ${HAS_MAVEN} ]          && KITS+=('install_maven')
+[ 0 -lt ${HAS_BOOT} ]           && KITS+=('install_boot')
+[ 0 -lt ${HAS_LEIN} ]           && KITS+=('install_lein')
+[ 0 -lt ${HAS_GRADLE} ]         && KITS+=('install_gradle')
+[ 0 -lt ${HAS_SBT} ]            && KITS+=('install_sbt')
+[ 0 -lt ${HAS_CLOJURE} ]        && KITS+=('install_clojure')
+[ 0 -lt ${HAS_CLOJURESCRIPT} ]  && KITS+=('install_clojurescript')
+[ 0 -lt ${HAS_GROOVY} ]         && KITS+=('install_groovy')
+[ 0 -lt ${HAS_SCALA} ]          && KITS+=('install_scala')
+[ 0 -lt ${HAS_SCALA_VIM} ]      && KITS+=('install_scala_vim')
+[ 0 -lt ${HAS_STORM} ]          && KITS+=('install_storm')
+[ 0 -lt ${HAS_ZOOKEEPER} ]      && KITS+=('install_zookeeper')
 
 
 
