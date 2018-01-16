@@ -605,7 +605,7 @@ if [ "YES" == "${HAS_ALL}" ]; then
   HAS_GROOVY=1
   HAS_SCALA=1
   HAS_STORM=1
-  HAS_ZOOKEEPER=1
+  # HAS_ZOOKEEPER=1
 fi
 
 [ 0 -lt "${HAS_JDK}" ]            && KITS+=('install_jdk')
@@ -624,7 +624,9 @@ fi
 [ 0 -lt "${HAS_STORM}" ]          && KITS+=('install_storm')
 [ 0 -lt "${HAS_ZOOKEEPER}" ]      && KITS+=('install_zookeeper')
 
-for i in "${KITS[@]}"; do
+
+
+  for i in "${KITS[@]}"; do
   echo -e "# ${i} ..." 
   [ -d "${OPEN_DIR}" ] || mkdir "${OPEN_DIR}" && ${i}  
   if [ 0 -eq `${i} &>/dev/null; echo $?` ]; then

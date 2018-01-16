@@ -1,7 +1,7 @@
 
 IMAGE_NAME ?= centos
 
-BUILD_FLAGS ?=
+BUILD_FLAGS ?= --rm
 START_FLAGS ?= -d
 REMOVE_FLAGS ?= --force
 

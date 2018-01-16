@@ -59,11 +59,12 @@ RUN useradd -m -s/bin/bash ${SUDOUSER} && \
 
 # chown home opt dirs
 RUN chown -R ${SUDOUSER}:${SUDOUSER} ${UR_HOME} && \
-    mkdir -p /opt/run/{bin,sbin,conf} && \
-    chown -R ${SUDOUSER}:${SUDOUSER} /opt/run && \
-    mkdir -p /opt/open && chown -R ${SUDOUSER}:${SUDOUSER} /opt/open && \
-    mkdir -p /opt/apps && chown -R ${SUDOUSER}:${SUDOUSER} /opt/apps && \
-    mkdir -p /opt/lab  && chown -R ${SUDOUSER}:${SUDOUSER} /opt/lab
+    mkdir -p /opt/run/bin && \
+    mkdir -p /opt/run/sbin && \
+    mkdir -p /opt/open && \
+    mkdir -p /opt/apps && \
+    mkdir -p /opt/lab  && \
+    chown -R ${SUDOUSER}:${SUDOUSER} /opt
 
 # configure gdb
 RUN cd ${UR_HOME} && \
@@ -86,7 +87,7 @@ RUN cd ${UR_HOME} ; \
 
 # install java kits
 RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh \
-    | PREFIX=/opt HAS_ALL=YES bash 
+    | PREFIX=/opt HAS_ABCL=1 bash 
 
 
 # switch back to ${SUDOUSER}
