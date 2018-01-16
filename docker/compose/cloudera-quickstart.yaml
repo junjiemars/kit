@@ -1,0 +1,14 @@
+version: "2"
+
+services:
+  cloudera-quickstart:
+    image: cloudera/quickstart
+    # restart: always
+    hostname: quickstart.cloudera
+    privileged: true
+    command: ["/usr/bin/docker-quickstart"]
+    ports:
+      - 7180:7180 # cloudera manager port
+      - 7200:80 # guide tutorial port
+      - 8888:8888 # hue port
+
