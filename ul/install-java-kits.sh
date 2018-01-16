@@ -231,7 +231,7 @@ install_abcl() {
   local cmd="java -jar ${bin_dir}/abcl.jar --batch"
   local abcl_sh="${RUN_DIR}/bin/abcl"
 
-  `check_kit "abcl.sh --batch" "${abcl_home}"` && return 0
+  `check_kit "abcl --batch" "${abcl_home}"` && return 0
 
   $(install_kit "${bin_dir}/abcl.jar" \
                 "${cmd}" \
