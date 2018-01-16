@@ -87,7 +87,7 @@ RUN cd ${UR_HOME} ; \
 
 # install java kits
 RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh \
-    | PREFIX=/opt HAS_ABCL=1 bash 
+    | PREFIX=/opt HAS_ALL=YES bash 
 
 
 # switch back to ${SUDOUSER}
