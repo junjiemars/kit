@@ -636,4 +636,4 @@ fi
   fi
 done
 
-[ 0 -lt "${#KITS[@]}" ] && . "$HOME/.bashrc"
+[ 0 -lt ${#KITS[@]} ] && . "$HOME/.bashrc"
