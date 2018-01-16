@@ -64,7 +64,7 @@ CLOJURESCRIPT_VER="${CLOJURESCRIPT_VER:-1.9.946}"
 GROOVY_VER="${GROOVY_VER:-2.4.12}"
 SCALA_VER="${SCALA_VER:-2.12.4}"
 STORM_VER="${STORM_VER:-1.1.1}"
-ZOOKEEPER_VER="${ZOOKEEPER:-3.4.10}"
+# ZOOKEEPER_VER="${ZOOKEEPER:-3.4.10}"
 
 declare -a KITS=()
 
@@ -564,31 +564,31 @@ install_storm() {
   return 1
 }
 
-install_zookeeper() {
-  local zookeeper_tgz="zookeeper-${ZOOKEEPER_VER}.tar.gz"
-  local zookeeper_url="${APACHE_DIST}/zookeeper/stable/${zookeeper_tgz}"
-  local zookeeper_home="${OPEN_DIR}/zookeeper"
-  local bin_dir="${zookeeper_home}/${ZOOKEEPER_VER}"
-  local cmd="${bin_dir}/bin/zkCli.sh"
-  local zookeeper_sh="${RUN_DIR}/bin/storm"
+# install_zookeeper() {
+#   local zookeeper_tgz="zookeeper-${ZOOKEEPER_VER}.tar.gz"
+#   local zookeeper_url="${APACHE_DIST}/zookeeper/stable/${zookeeper_tgz}"
+#   local zookeeper_home="${OPEN_DIR}/zookeeper"
+#   local bin_dir="${zookeeper_home}/${ZOOKEEPER_VER}"
+#   local cmd="${bin_dir}/bin/zkCli.sh"
+#   local zookeeper_sh="${RUN_DIR}/bin/storm"
 
-  if [ -x "${cmd}" -a `type -P zkCli.sh &>/dev/null` ]; then
-    return 0
-  fi
+#   if [ -x "${cmd}" -a `type -P zkCli.sh &>/dev/null` ]; then
+#     return 0
+#   fi
 
-  install_kit "${bin_dir}/bin/zookeeper" \
-              "${cmd}" \
-              "${zookeeper_url}" \
-              "${zookeeper_home}/${zookeeper_tgz}" \
-              "${bin_dir}" || return 1
+#   install_kit "${bin_dir}/bin/zookeeper" \
+#               "${cmd}" \
+#               "${zookeeper_url}" \
+#               "${zookeeper_home}/${zookeeper_tgz}" \
+#               "${bin_dir}" || return 1
   
-  if [ -x "${cmd}" ]; then
-    append_vars "ZOOKEEPER_HOME" "${bin_dir}"
-    append_paths "\${ZOOKEEPER_HOME}/bin" "ZOOKEEPER_HOME"
-    return 0
-  fi
-  return 1
-}
+#   if [ -x "${cmd}" ]; then
+#     append_vars "ZOOKEEPER_HOME" "${bin_dir}"
+#     append_paths "\${ZOOKEEPER_HOME}/bin" "ZOOKEEPER_HOME"
+#     return 0
+#   fi
+#   return 1
+# }
 
 
 if [ "YES" = "${HAS_ALL}" ]; then
@@ -622,7 +622,7 @@ fi
 [ 0 -lt ${HAS_SCALA} ]          && KITS+=('install_scala')
 [ 0 -lt ${HAS_SCALA_VIM} ]      && KITS+=('install_scala_vim')
 [ 0 -lt ${HAS_STORM} ]          && KITS+=('install_storm')
-[ 0 -lt ${HAS_ZOOKEEPER} ]      && KITS+=('install_zookeeper')
+# [ 0 -lt ${HAS_ZOOKEEPER} ]      && KITS+=('install_zookeeper')
 
 
 
