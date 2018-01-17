@@ -272,9 +272,14 @@ docker inspect --format "{{.NetworkSettings.Networks.<your-network>.IPAddress}}"
 $ docker run --name n2 --link=n0 --link=n1 -d <docker-image>
 ```
 
-* Mirror
+* Registry
+[Registry as a pull through cache](https://docs.docker.com/registry/recipes/mirror/)
+
 ```json
-"registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]
+"registry-mirrors": [
+    "https://registry.docker-cn.com",
+    "https://docker.mirrors.ustc.edu.cn"
+]
 ```
 
 ## Storage

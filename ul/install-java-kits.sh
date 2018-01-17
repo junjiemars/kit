@@ -101,10 +101,8 @@ chmod_file() {
 	local o="$2"
 
 	if [ -n "$f" ] && [ -n "$o" ] && [ -f "$f" ]; then
-    echo -e "#! ccc"
 		chmod "$o" "$f"
 	else
-    echo -e "#! ddd"
 		return 1
 	fi
 }
@@ -255,10 +253,9 @@ ABCL_HOME=${bin_dir}
 \$RLWRAP java -jar \${ABCL_HOME}/abcl.jar \$@
 END
     chmod_file "${abcl_sh}" "u+x"
-    return $?
+  else
+    return 1
   fi
-
-  return 1
 }
 
 install_ant() {
@@ -318,14 +315,10 @@ install_boot() {
   `${cmd} &>/dev/null` && return 0
 
   if `download_kit "${boot_url}" "${boot_sh}"`; then
-    echo -e "!# xxx"
-    # chmod_file "${boot_sh}" "u+x"
-    chmod u+x "${boot_sh}"
-    echo -e "!# xxx"
-    return $?
+    chmod_file "${boot_sh}" "u+x"
+  else
+    return 1
   fi
-  echo -e "!# yyy"
-  return 1
 }
 
 install_lein() {
@@ -338,9 +331,9 @@ install_lein() {
 
   if `download_kit "${lein_url}" "${lein_sh}"`; then
     chmod_file "${lein_sh}" "u+x"
-    return $?
+  else
+    return 1
   fi
-  return 1
 }
 
 install_clojure() {
@@ -374,9 +367,9 @@ CLOJURE_HOME=${bin_dir}
 \$RLWRAP java -jar "\${CLOJURE_HOME}/${clojure_jar}" \$@
 END
     chmod_file "${clojure_sh}" "u+x"
-    return $?
+  else
+    return 1
   fi
-  return 1
 }
 
 install_clojurescript() {
@@ -409,9 +402,9 @@ CLOJURESCRIPT_HOME=${bin_dir}
 \$RLWRAP java -jar "\${CLOJURESCRIPT_HOME}/${cljs_jar}" \$@
 END
     chmod_file "${cljs_sh}" "u+x"
-    return $?
+  else
+    return 1
   fi  
-  return 1
 }
 
 install_gradle() {
@@ -441,9 +434,9 @@ GRADLE_HOME=${bin_dir}
 \${GRADLE_HOME}/bin/gradle \$@
 END
 		chmod_file "${gradle_sh}" "u+x"
-		return $?
+  else
+		return 1
   fi
-  return 1
 }
 
 install_sbt() {
@@ -474,9 +467,9 @@ SBT_HOME=${bin_dir}
 \${SBT_HOME}/bin/sbt \$@
 END
     chmod_file "${sbt_sh}" "u+x"
-    return $?
+  else
+    return 1
   fi
-  return 1
 }
 
 install_groovy() {

@@ -9,15 +9,12 @@ LABEL authors="Junjie Mars <junjiemars@gmail.com>"
 
 ENV TERM=xterm
 
-# # choose mirror based on geo
-# RUN sed -i.ori 's#http:\/\/archive.ubuntu.com\/ubuntu\/#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#' /etc/apt/sources.list && \
-#     apt-get -y update && \
-#     apt-get -y install curl
-
-# RUN curl -s ipinfo.io | grep '"country": "CN",' && \
-#     sed -i 's#mirror:\/\/mirrors.ubuntu.com\/mirrors.txt#http:\/\/jp.archive.ubuntu.com\/ubuntu\/#' /etc/apt/sources.list 
 
 RUN apt-get -y update && \
+    apt-get -y install netselect-apt && \
+    mv /etc/apt/sources.list /etc/apt/sources.list.ori && \
+    netselect-apt -o /etc/apt/sources.list && \
+    apt-get -y update && \
     apt-get -y install \
 	    bc \
 	    build-essential \
