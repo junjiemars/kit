@@ -33,7 +33,7 @@ SED_OPT_I="-i''"
 
 RUN_DIR="${RUN_DIR:-${PREFIX}/run}"
 OPEN_DIR="${OPEN_DIR:-${PREFIX}/open}"
-SOCKS="${SOCKS}"
+CURL_OPTS="${CURL_OPTS:---connect-time=60}"
 GITHUB_SH="https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh"
 APACHE_DIST="https://archive.apache.org/dist"
 
@@ -125,7 +125,7 @@ install_jdk() {
       local jdk_url="${ora_url}/${JDK_VER[0]}-${JDK_VER[1]}/${jdk_file}"
       local jdk_home="${RUN_DIR}/jdk/${JDK_VER[0]}"
       [ -d "${jdk_home}" ] || mkdir -p "${jdk_home}"
-      curl $SOCKS -skL -H"${ora_cookie}" -O -C - "${jdk_url}" && \
+      curl $CURL_OPTS -skL -H"${ora_cookie}" -O -C - "${jdk_url}" && \
         tar xf "${jdk_file}" -C "${jdk_home}" --strip-components=1
       if [ 0 -eq `${jdk_home}/bin/javac -version &>/dev/null; echo $?` ]; then
         append_vars "JAVA_HOME" "${jdk_home}"
@@ -146,13 +146,13 @@ download_kit() {
   local fn="$2"
   local t=0
 
-  curl $SOCKS -L -o "${fn}" -C - "${url}"
+  curl $CURL_OPTS -L -o "${fn}" -C - "${url}"
   t=$?
   if [ 33 -eq $t ]; then
-    curl $SOCKS -L -o "${fn}" "${url}"
+    curl $CURL_OPTS -L -o "${fn}" "${url}"
   elif [ 60 -eq $t ]; then
     [ -f "${fn}" ] && rm "${fn}"
-    curl $SOCKS -k -L -o "${fn}" "${url}"
+    curl $CURL_OPTS -k -L -o "${fn}" "${url}"
   else
     return $t
   fi
