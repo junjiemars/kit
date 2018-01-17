@@ -33,7 +33,7 @@ SED_OPT_I="-i''"
 
 RUN_DIR="${RUN_DIR:-${PREFIX}/run}"
 OPEN_DIR="${OPEN_DIR:-${PREFIX}/open}"
-CURL_OPTS="${CURL_OPTS:---connect-time=60}"
+CURL_OPTS="${CURL_OPTS:---connect-timeout=60}"
 GITHUB_SH="https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh"
 APACHE_DIST="https://archive.apache.org/dist"
 
