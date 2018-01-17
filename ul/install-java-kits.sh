@@ -2,7 +2,7 @@
 #------------------------------------------------
 # target: install java programming environment
 # author: junjiemars@gmail.com
-#------------------------------------------------
+n#------------------------------------------------
 
 PLATFORM=`uname -s 2>/dev/null`
 
@@ -51,9 +51,10 @@ HAS_CLOJURESCRIPT=${HAS_CLOJURESCRIPT:-0}
 HAS_GROOVY=${HAS_GROOVY:-0}
 HAS_SCALA=${HAS_SCALA:-0}
 HAS_SCALA_VIM=${HAS_SCALA_VIM:-0}
-# HAS_STORM=${HAS_STORM:-0}
+HAS_STORM=${HAS_STORM:-0}
+HAS_ZOOKEEPER=${HAS_ZOOKEEPER:-0}
 
-JDK_VER=("${JDK_U:-8u121} ${JDK_B:-b13}")
+JDK_VER=("${JDK_U:-8u152} ${JDK_B:-b16}")
 ABCL_VER="${ABCL_VER:-1.5.0}"
 ANT_VER="${ANT_VER:-1.10.1}"
 MAVEN_VER="${MAVEN_VER:-3.5.2}"
@@ -63,8 +64,8 @@ CLOJURE_VER="${CLOJURE_VER:-1.8.0}"
 CLOJURESCRIPT_VER="${CLOJURESCRIPT_VER:-1.9.946}"
 GROOVY_VER="${GROOVY_VER:-2.4.12}"
 SCALA_VER="${SCALA_VER:-2.12.4}"
-# STORM_VER="${STORM_VER:-1.1.1}"
-# ZOOKEEPER_VER="${ZOOKEEPER:-3.4.10}"
+STORM_VER="${STORM_VER:-1.1.1}"
+ZOOKEEPER_VER="${ZOOKEEPER:-3.4.10}"
 
 declare -a KITS=()
 
@@ -539,56 +540,56 @@ install_scala() {
   return 1
 }
 
-# install_storm() {
-#   local storm_tgz="apache-storm-${STORM_VER}.tar.gz"
-#   local storm_url="https://archive.apache.org/dist/storm/apache-storm-${STORM_VER}/${storm_tgz}"
-#   local storm_home="${OPEN_DIR}/storm"
-#   local bin_dir="${storm_home}/${STORM_VER}"
-#   local cmd="${bin_dir}/bin/storm version"
-#   local storm_sh="${RUN_DIR}/bin/storm"
+install_storm() {
+  local storm_tgz="apache-storm-${STORM_VER}.tar.gz"
+  local storm_url="https://archive.apache.org/dist/storm/apache-storm-${STORM_VER}/${storm_tgz}"
+  local storm_home="${OPEN_DIR}/storm"
+  local bin_dir="${storm_home}/${STORM_VER}"
+  local cmd="${bin_dir}/bin/storm version"
+  local storm_sh="${RUN_DIR}/bin/storm"
 
-#   `check_kit "storm version" "${storm_home}"` && return 0
+  `check_kit "storm version" "${storm_home}"` && return 0
 
-#   install_kit "${bin_dir}/bin/storm" \
-#               "${cmd}" \
-#               "${storm_url}" \
-#               "${storm_home}/${storm_tgz}" \
-#               "${bin_dir}"
-#   [ 0 -eq $? ] || return 1
+  install_kit "${bin_dir}/bin/storm" \
+              "${cmd}" \
+              "${storm_url}" \
+              "${storm_home}/${storm_tgz}" \
+              "${bin_dir}"
+  [ 0 -eq $? ] || return 1
   
-#   if `${cmd} &>/dev/null`; then
-#     append_vars "STORM_HOME" "${bin_dir}"
-#     append_paths "\${STORM_HOME}/bin" "STORM_HOME"
-#     return 0
-#   fi
-#   return 1
-# }
+  if `${cmd} &>/dev/null`; then
+    append_vars "STORM_HOME" "${bin_dir}"
+    append_paths "\${STORM_HOME}/bin" "STORM_HOME"
+    return 0
+  fi
+  return 1
+}
 
-# install_zookeeper() {
-#   local zookeeper_tgz="zookeeper-${ZOOKEEPER_VER}.tar.gz"
-#   local zookeeper_url="${APACHE_DIST}/zookeeper/stable/${zookeeper_tgz}"
-#   local zookeeper_home="${OPEN_DIR}/zookeeper"
-#   local bin_dir="${zookeeper_home}/${ZOOKEEPER_VER}"
-#   local cmd="${bin_dir}/bin/zkCli.sh"
-#   local zookeeper_sh="${RUN_DIR}/bin/storm"
+install_zookeeper() {
+  local zookeeper_tgz="zookeeper-${ZOOKEEPER_VER}.tar.gz"
+  local zookeeper_url="${APACHE_DIST}/zookeeper/stable/${zookeeper_tgz}"
+  local zookeeper_home="${OPEN_DIR}/zookeeper"
+  local bin_dir="${zookeeper_home}/${ZOOKEEPER_VER}"
+  local cmd="${bin_dir}/bin/zkCli.sh"
+  local zookeeper_sh="${RUN_DIR}/bin/storm"
 
-#   if [ -x "${cmd}" -a `type -P zkCli.sh &>/dev/null` ]; then
-#     return 0
-#   fi
+  if [ -x "${cmd}" -a `type -P zkCli.sh &>/dev/null` ]; then
+    return 0
+  fi
 
-#   install_kit "${bin_dir}/bin/zookeeper" \
-#               "${cmd}" \
-#               "${zookeeper_url}" \
-#               "${zookeeper_home}/${zookeeper_tgz}" \
-#               "${bin_dir}" || return 1
+  install_kit "${bin_dir}/bin/zookeeper" \
+              "${cmd}" \
+              "${zookeeper_url}" \
+              "${zookeeper_home}/${zookeeper_tgz}" \
+              "${bin_dir}" || return 1
   
-#   if [ -x "${cmd}" ]; then
-#     append_vars "ZOOKEEPER_HOME" "${bin_dir}"
-#     append_paths "\${ZOOKEEPER_HOME}/bin" "ZOOKEEPER_HOME"
-#     return 0
-#   fi
-#   return 1
-# }
+  if [ -x "${cmd}" ]; then
+    append_vars "ZOOKEEPER_HOME" "${bin_dir}"
+    append_paths "\${ZOOKEEPER_HOME}/bin" "ZOOKEEPER_HOME"
+    return 0
+  fi
+  return 1
+}
 
 
 if [ "YES" = "${HAS_ALL}" ]; then
@@ -604,8 +605,8 @@ if [ "YES" = "${HAS_ALL}" ]; then
   HAS_CLOJURESCRIPT=1
   HAS_GROOVY=1
   HAS_SCALA=1
-  # HAS_STORM=1
-  # HAS_ZOOKEEPER=1
+  HAS_STORM=1
+  HAS_ZOOKEEPER=1
 fi
 
 [ 0 -lt ${HAS_JDK} ]            && KITS+=('install_jdk')
@@ -621,8 +622,8 @@ fi
 [ 0 -lt ${HAS_GROOVY} ]         && KITS+=('install_groovy')
 [ 0 -lt ${HAS_SCALA} ]          && KITS+=('install_scala')
 [ 0 -lt ${HAS_SCALA_VIM} ]      && KITS+=('install_scala_vim')
-# [ 0 -lt ${HAS_STORM} ]          && KITS+=('install_storm')
-# [ 0 -lt ${HAS_ZOOKEEPER} ]      && KITS+=('install_zookeeper')
+[ 0 -lt ${HAS_STORM} ]          && KITS+=('install_storm')
+[ 0 -lt ${HAS_ZOOKEEPER} ]      && KITS+=('install_zookeeper')
 
 
 
