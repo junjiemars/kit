@@ -101,8 +101,10 @@ chmod_file() {
 	local o="$2"
 
 	if [ -n "$f" ] && [ -n "$o" ] && [ -f "$f" ]; then
+    echo -e "#! ccc"
 		chmod "$o" "$f"
 	else
+    echo -e "#! ddd"
 		return 1
 	fi
 }
