@@ -319,7 +319,8 @@ install_boot() {
 
   if `download_kit "${boot_url}" "${boot_sh}"`; then
     echo -e "!# xxx"
-    chmod_file "${boot_sh}" "u+x"
+    # chmod_file "${boot_sh}" "u+x"
+    chmod u+x "${boot_sh}"
     echo -e "!# xxx"
     return $?
   fi
