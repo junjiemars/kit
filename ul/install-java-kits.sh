@@ -308,7 +308,7 @@ install_maven() {
 }
 
 install_boot() {
-  local boot_url='https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh '
+  local boot_url='https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh'
   local bin_dir="${RUN_DIR}/bin"
   local boot_sh="${bin_dir}/boot"
   local cmd="boot -v"
@@ -316,11 +316,11 @@ install_boot() {
   `${cmd} &>/dev/null` && return 0
 
   if `download_kit "${boot_url}" "${boot_sh}"`; then
-    echo "! xxx"
+    echo -e "!# xxx"
     chmod_file "${boot_sh}" "u+x"
     return $?
   fi
-  echo "! yyy"
+  echo -e "!# yyy"
   return 1
 }
 
