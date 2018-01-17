@@ -4,8 +4,9 @@ services:
   cloudera-quickstart:
     image: cloudera/quickstart
     # restart: always
-    hostname: quickstart.cloudera
+    hostname: "quickstart.cloudera"
     privileged: true
+    mem_limit: 10g
     command: ["/usr/bin/docker-quickstart"]
     ports:
       - 7180:7180 # cloudera manager port
