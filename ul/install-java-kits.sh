@@ -2,7 +2,7 @@
 #------------------------------------------------
 # target: install java programming environment
 # author: junjiemars@gmail.com
-n#------------------------------------------------
+#------------------------------------------------
 
 PLATFORM=`uname -s 2>/dev/null`
 
