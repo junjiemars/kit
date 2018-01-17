@@ -316,9 +316,11 @@ install_boot() {
   `${cmd} &>/dev/null` && return 0
 
   if `download_kit "${boot_url}" "${boot_sh}"`; then
+    echo "! xxx"
     chmod_file "${boot_sh}" "u+x"
     return $?
   fi
+  echo "! yyy"
   return 1
 }
 
