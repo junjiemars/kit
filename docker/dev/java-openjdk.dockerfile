@@ -16,6 +16,7 @@ RUN apt-get -y update && \
     netselect-apt -o /etc/apt/sources.list && \
     apt-get -y update && \
     apt-get -y install \
+      ant \
       automake \
 	    bc \
 	    build-essential \
@@ -25,6 +26,7 @@ RUN apt-get -y update && \
       dialog \
 	    dnsutils \
 	    emacs-nox \
+      gradle \
 	    gdb \
 	    git \
 	    inetutils-ping \
@@ -40,6 +42,7 @@ RUN apt-get -y update && \
 	    man-db \
 	    manpages \
 	    manpages-dev \
+      maven \
 	    mtr-tiny \
 	    netcat \
 	    net-tools \
