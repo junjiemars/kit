@@ -103,7 +103,11 @@ chmod_file() {
 
 	if [ -n "$f" ] && [ -n "$o" ] && [ -f "$f" ]; then
     echo -e "!which chmod:`which chmod`"
-		chmod "$o" "$f" && return 0
+    if [ ".$INSIDE_DOCKER" = ".1" ]; then
+		  sudo chmod "$o" "$f" && return 0
+    else
+      chmod "$o" "$f" && return 0
+    fi
 	fi
 	return 1
 }
