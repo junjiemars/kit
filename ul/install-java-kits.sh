@@ -34,7 +34,7 @@ SED_OPT_I="-i''"
 
 RUN_DIR="${RUN_DIR:-${PREFIX}/run}"
 OPEN_DIR="${OPEN_DIR:-${PREFIX}/open}"
-CURL_OPTS="${CURL_OPTS:---connect-timeout 60}"
+CURL_OPTS="${CURL_OPTS:--f--connect-timeout 60}"
 GITHUB_SH="https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh"
 APACHE_DIST="https://archive.apache.org/dist"
 
@@ -316,8 +316,7 @@ install_boot() {
   `${cmd} &>/dev/null` && return 0
 
   if `download_kit "${boot_url}" "${boot_sh}"`; then
-    chmod "u+x" "${boot_sh}"
-    # chmod_file "${boot_sh}" "u+x"
+    chmod_file "${boot_sh}" "u+x"
   else
     return 1
   fi

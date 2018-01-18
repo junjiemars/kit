@@ -94,16 +94,15 @@ RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.s
 RUN cd ${UR_HOME} ; \
     git clone --depth=1 --branch=master https://github.com/junjiemars/.emacs.d.git
 
-# # download java kits script
-# RUN curl -o ${UR_HOME}/install-java-kits.sh \
-#     https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh
-# # install java kits
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/docker/ul/install-java-kits.sh \
-    | PREFIX=/opt HAS_ALL=YES bash
+# download java kits script
+RUN curl -o ${UR_HOME}/install-java-kits.sh \
+    https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh && \
+    chmod u+x ${UR_HOME}/install-java-kits.sh
 
 
 # switch back to ${SUDOUSER}
 USER root
+
 
 # start sshd service
 RUN mkdir /var/run/sshd && \
