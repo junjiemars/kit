@@ -102,10 +102,9 @@ chmod_file() {
 	local o="$2"
 
 	if [ -n "$f" ] && [ -n "$o" ] && [ -f "$f" ]; then
-		chmod "$o" "$f"
-	else
-		return 1
+		chmod "$o" "$f" && return 0
 	fi
+	return 1
 }
 
 install_jdk() {
@@ -316,7 +315,7 @@ install_boot() {
   `${cmd} &>/dev/null` && return 0
 
   if `download_kit "${boot_url}" "${boot_sh}"`; then
-    chmod_file "${boot_sh}" "u+x"
+    chmod_file "${boot_sh}" 644
   else
     return 1
   fi
@@ -331,7 +330,7 @@ install_lein() {
   `${cmd} &>/dev/null` && return 0
 
   if `download_kit "${lein_url}" "${lein_sh}"`; then
-    chmod_file "${lein_sh}" "u+x"
+    chmod_file "${lein_sh}" 644
   else
     return 1
   fi
