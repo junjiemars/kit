@@ -103,15 +103,10 @@ chmod_file() {
 
 	if [ -n "$f" ] && [ -n "$o" ] && [ -f "$f" ]; then
     echo -e "!which chmod:`which chmod`"
-    if [ ".$INSIDE_DOCKER" = ".1" ]; then
-      echo -e "! inside docker"
-		  sudo chmod "$o" "$f" && return 0
-    else
-      echo -e "! xxx"
-      chmod "$o" "$f" && return 0
-    fi
+    chmod "$o" "$f"
+  else
+    return 1
 	fi
-	return 1
 }
 
 install_jdk() {
