@@ -13,6 +13,7 @@ image_tag := junjiemars/$(IMAGE_NAME)-dev:latest
 build: $(docker_file)
 	docker build $(BUILD_FLAGS) -t $(image_tag) -f $< .
 
+# make IMAGE_NAME=ubuntu LINES=$LINES COLUMNS=$COLUMNS TERM=$TERM start
 start: $(compose_file) stop
 	docker-compose -f $<  up $(START_FLAGS)
 
