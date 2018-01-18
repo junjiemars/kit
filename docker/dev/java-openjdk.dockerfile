@@ -16,8 +16,10 @@ RUN apt-get -y update && \
     netselect-apt -o /etc/apt/sources.list && \
     apt-get -y update && \
     apt-get -y install \
+      automake \
 	    bc \
 	    build-essential \
+      cmake \
       curl \
 	    coreutils \
       dialog \
@@ -30,6 +32,9 @@ RUN apt-get -y update && \
 	    info \
 	    initscripts \
 	    install-info \
+      libssl-dev \
+      libtool \
+      libtool-bin \
 		  locales \
 		  locales-all \
 	    man-db \
@@ -40,8 +45,15 @@ RUN apt-get -y update && \
 	    net-tools \
 	    nmap \
 	    openssh-server \
+      python \ 
+      python2.7-dev \
+      python-setuptools \
+      software-properties-common \
 	    sudo \
-	    vim-nox && \
+      unzip \
+	    vim-nox \
+      wget \
+      zip && \
 	    rm -rf /var/lib/apt/lists/* 
 
 
@@ -82,9 +94,12 @@ RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.s
 RUN cd ${UR_HOME} ; \
     git clone --depth=1 --branch=master https://github.com/junjiemars/.emacs.d.git
 
-# install java kits
-RUN curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh \
-    | PREFIX=/opt HAS_ALL=YES bash 
+# # download java kits script
+# RUN curl -o ${UR_HOME}/install-java-kits.sh \
+#     https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh
+# # install java kits
+RUN curl https://raw.githubusercontent.com/junjiemars/kit/docker/ul/install-java-kits.sh \
+    | PREFIX=/opt HAS_ALL=YES bash
 
 
 # switch back to ${SUDOUSER}

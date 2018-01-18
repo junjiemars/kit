@@ -2,6 +2,7 @@
 #------------------------------------------------
 # target: install java programming environment
 # author: junjiemars@gmail.com
+# source: https://github.com/junjiemars/kits
 #------------------------------------------------
 
 PLATFORM=`uname -s 2>/dev/null`
