@@ -102,6 +102,7 @@ chmod_file() {
 	local o="$2"
 
 	if [ -n "$f" ] && [ -n "$o" ] && [ -f "$f" ]; then
+    echo -e "!which chmod:`which chmod`"
 		chmod "$o" "$f" && return 0
 	fi
 	return 1
@@ -315,6 +316,7 @@ install_boot() {
   `${cmd} &>/dev/null` && return 0
 
   if `download_kit "${boot_url}" "${boot_sh}"`; then
+    echo -e "! precall chmod_file ${boot_sh}"
     chmod_file "${boot_sh}" 644
   else
     return 1
