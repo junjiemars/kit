@@ -10,5 +10,6 @@ services:
     working_dir: /home/u
     environment:
       - INSIDE_DOCKER=1
+      - SHELL=/bin/bash
     ports:
       - 9601:9601
