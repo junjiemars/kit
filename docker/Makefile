@@ -8,6 +8,7 @@ REMOVE_FLAGS ?= --force
 docker_file := dev/$(IMAGE_NAME).dockerfile
 compose_file := compose/$(IMAGE_NAME)-dev.yaml
 image_tag := junjiemars/$(IMAGE_NAME)-dev:latest
+bone_dev_container := bone-$(IMAGE_NAME)-dev
 
 
 build: $(docker_file)
@@ -19,6 +20,13 @@ start: $(compose_file) stop
 
 stop: $(compose_file)
 	docker-compose -f $<  stop
+
+exec: start
+	docker exec -e LINES=$(LINES) \
+							-e COLUMNS=$(COLUMNS) \
+							-e TERM=$(TERM) \
+							-it -u u \
+							$(bone_dev_container) /bin/bash
 
 remove: $(compose_file) stop
 	docker-compose -f $<  rm $(REMOVE_FLAGS)
@@ -32,4 +40,4 @@ push: build
 pull:
 	docker pull $(image_tag)
 
-.PHONY: build start stop remove clean push pull
+.PHONY: build start stop exec remove clean push pull
