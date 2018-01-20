@@ -20,6 +20,7 @@ RUN apt-get -y update && \
       automake \
 	    bc \
 	    build-essential \
+      clang \
       cmake \
       curl \
 	    coreutils \
@@ -32,11 +33,12 @@ RUN apt-get -y update && \
 	    inetutils-ping \
 	    inetutils-traceroute \
 	    info \
-	    initscripts \
 	    install-info \
       libssl-dev \
       libtool \
       libtool-bin \
+      lldb \
+      llvm \
 		  locales \
 		  locales-all \
 	    man-db \
@@ -48,9 +50,11 @@ RUN apt-get -y update && \
 	    net-tools \
 	    nmap \
 	    openssh-server \
-      python \ 
+      python \
+      python-pip \
       python2.7-dev \
       python-setuptools \
+      rsync \
       software-properties-common \
 	    sudo \
       unzip \
@@ -98,9 +102,9 @@ RUN cd ${UR_HOME} ; \
     git clone --depth=1 --branch=master https://github.com/junjiemars/.emacs.d.git
 
 # download java kits script
-RUN curl -o ${UR_HOME}/install-java-kits.sh \
+RUN curl -o /opt/run/bin/install-java-kits.sh \
     https://raw.githubusercontent.com/junjiemars/kit/master/ul/install-java-kits.sh && \
-    chmod u+x ${UR_HOME}/install-java-kits.sh
+    chmod u+x /opt/run/bin/install-java-kits.sh
 
 
 # switch back to ${SUDOUSER}

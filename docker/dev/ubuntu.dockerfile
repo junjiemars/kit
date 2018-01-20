@@ -20,7 +20,8 @@ RUN apt-get -y update && \
     apt-get -y install \
 	    bc \
 	    build-essential \
-      	curl \
+      clang \
+      curl \
 	    coreutils \
 	    dnsutils \
 	    emacs-nox \
@@ -29,10 +30,11 @@ RUN apt-get -y update && \
 	    inetutils-ping \
 	    inetutils-traceroute \
 	    info \
-	    initscripts \
 	    install-info \
-		locales \
-		locales-all \
+      llvm \
+      lldb \
+		  locales \
+		  locales-all \
 	    man-db \
 	    manpages \
 	    manpages-dev \
