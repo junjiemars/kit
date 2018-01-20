@@ -13,6 +13,6 @@ services:
       - SHELL=/bin/bash
     volumes:
       - /opt/open/:/opt/open/
-      # - /opt/lab/:/opt/lab/
+      - /opt/lab/:/opt/lab/
     ports:
       - 9601:9601
