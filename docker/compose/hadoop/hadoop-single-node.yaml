@@ -1,9 +1,9 @@
 version: '2.0'
 
 services:
-  bone-hadoop-single-node-dev:
+  hadoop-single-node-dev:
     image: junjiemars/java-openjdk-dev:latest
-    container_name: bone-hadoop-single-node-dev
+    container_name: hadoop-single-node-dev
     hostname: openjdk
     privileged: true
     working_dir: /home/u
