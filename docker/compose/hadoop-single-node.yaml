@@ -1,9 +1,9 @@
 version: '2.0'
 
 services:
-  java-openjdk-dev:
+  bone-hadoop-single-node-dev:
     image: junjiemars/java-openjdk-dev:latest
-    container_name: bone-java-openjdk-dev
+    container_name: bone-hadoop-single-node-dev
     hostname: openjdk
     privileged: true
     working_dir: /home/u
@@ -14,4 +14,5 @@ services:
       - /opt/open/:/opt/open/
       - /opt/lab/:/opt/lab/
     ports:
-      - 9701:9701
+      - 9870:9870
+      - 8088:8088
