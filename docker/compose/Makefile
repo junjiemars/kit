@@ -7,6 +7,7 @@ exec-hadoop-single-node: start-hadoop-single-node
 							-e COLUMNS=$(COLUMNS) \
 							-e TERM=$(TERM) \
 							-e OPT_LAB=$(OPT_LAB) \
+							-e M2_DIR=$(M2_DIR) \
 							-it -u u \
 							hadoop-single-node-dev /bin/bash
 

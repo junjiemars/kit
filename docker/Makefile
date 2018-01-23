@@ -24,6 +24,7 @@ exec: start
 	docker exec -e LINES=$(LINES) \
 							-e COLUMNS=$(COLUMNS) \
 							-e TERM=$(TERM) \
+							-e OPT_OPEN=$(OPT_OPEN) \
 							-it -u u \
 							$(bone_dev_container) /bin/bash
 
