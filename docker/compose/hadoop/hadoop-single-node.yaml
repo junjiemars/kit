@@ -13,7 +13,7 @@ services:
     volumes:
       - /opt/open/:/opt/open/
       - ${OPT_LAB}:/opt/lab/
-      - ${M2_DIR}:/home/${USER}/.m2
+      - ${M2_DIR}:/home/u/.m2
     ports:
       - 9870:9870
       - 8088:8088
