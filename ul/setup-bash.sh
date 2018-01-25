@@ -24,34 +24,15 @@ declare -a BASH_S=(\
 
 save_as() {
   local f="$HOME/$1"
-	local ori=$f.ori
-  case "${PLATFORM}" in
-    MSYS_NT*|MINGW*) 
-      local find='/usr/bin/find' 
-      local sort='/usr/bin/sort'
-      ;;
-    *) 
-      local find='find' 
-      local sort='sort'
-      ;;
-  esac
+	local ori="${f}.ori"
+  local pre="${f}.pre"
 
   if [ -f ${f} ]; then
-		[ -f ${ori} ] || cp $f $ori
-    local l=`$find $HOME -maxdepth 1 -mindepth 1 -type f -name "$1.b?" \
-            |$sort -r|head -n1`
-    if [ "_${l}" == "_" ]; then
-      local n=0
+		if [ -f ${ori} ]; then
+      cp $f $pre
     else
-      local c="${l:$(( ${#l}-1 )):1}"
-      local n=$(( ${c}+1 ))
-      if [[ ${n} -gt 2 ]]; then
-        let n=0
-        [ -f "${f}.b1" ] && mv "${f}.b1" "${f}.b2"
-        [ -f "${f}.b0" ] && mv "${f}.b0" "${f}.b1"
-      fi
+      cp $f $ori
     fi
-    cp "${f}" "${f}.b${n}"
   fi
 }
 
