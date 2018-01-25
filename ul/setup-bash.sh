@@ -43,7 +43,7 @@ to_posix_path() {
     sed -e 's# #\ #g'
 }
 
-function delete_tail_lines() {
+delete_tail_lines() {
 	local h="$1"
   local lines="$2"
 	local f="$3"
