@@ -627,7 +627,7 @@ fi
 
 
 
-  for i in "${KITS[@]}"; do
+for i in "${KITS[@]}"; do
   echo -e "# ${i} ..." 
   [ -d "${OPEN_DIR}" ] || mkdir "${OPEN_DIR}" && ${i}  
   if [ 0 -eq `${i} &>/dev/null; echo $?` ]; then
