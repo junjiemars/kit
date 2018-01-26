@@ -46,12 +46,17 @@ on_windows_nt() {
  esac
 }
 
-to_posix_path() {
-  echo "\\$1" | \
-    sed -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' | \
-    sed -e 's#\\#\/#g' 
+posix_path() {
+  local p="$@"
+  if [[ $p =~ ^[a-zA-Z]:[\/\\].*$ ]]; then
+    echo "\\$p" | \
+      sed -e 's#^\\\([a-zA-Z]\):\\#\\\1\\#' | \
+      sed -e 's#\\#\/#g' | \
+      sed -e 's# #\\ #g'
+  else
+    echo "$p"
+  fi
 }
-
 
 set_bin_paths
 
@@ -66,7 +71,7 @@ fi
 # java home
 if [ -n "${JAVA_HOME}" ]; then
   if `on_windows_nt`; then
-    JAVA_HOME=$(to_posix_path "${JAVA_HOME}")
+    JAVA_HOME=$(posix_path "${JAVA_HOME}")
   fi
   PATH="`append_path \"${JAVA_HOME}\" $PATH`"
   PATH="`append_path \"${JAVA_HOME}/bin\" $PATH`"

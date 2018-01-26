@@ -36,11 +36,16 @@ save_as() {
   fi
 }
 
-to_posix_path() {
-  echo "\\$@" | \
-    sed -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' | \
-    sed -e 's#\\#\/#g' | \
-    sed -e 's# #\ #g'
+posix_path() {
+  local p="$@"
+  if [[ $p =~ ^[a-zA-Z]:[\/\\].*$ ]]; then
+    echo "\\$p" | \
+      sed -e 's#^\\\([a-zA-Z]\):\\#\\\1\\#' | \
+      sed -e 's#\\#\/#g' | \
+      sed -e 's# #\\ #g'
+  else
+    echo "$p"
+  fi
 }
 
 delete_tail_lines() {
@@ -119,7 +124,7 @@ find_vctools() {
     fi
   fi
 
-  local vswhere="`to_posix_path \"${PROGRAMFILES} (x86)/Microsoft Visual Studio/Installer/vswhere.exe\"`"
+  local vswhere="`posix_path \"${PROGRAMFILES} (x86)/Microsoft Visual Studio/Installer/vswhere.exe\"`"
   if [ -f "${vswhere}" ]; then
     vctools="`cd \"$(dirname \"${vswhere}\")\"; ./vswhere.exe -latest -property installationPath`"
     if [ -n "$vctools" ]; then
