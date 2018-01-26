@@ -192,10 +192,11 @@ install_netcat() {
 }
 
 install_gmake() {
-	local gm_bin_zip="make-3.81-bin.zip"
-  local gm_url="https://sourceforge.net/projects/gnuwin32/files/make/3.81"
+  local gm_ver="3.8.1"
+	local gm_bin_zip="make-${gm_ver}-bin.zip"
+  local gm_url="https://sourceforge.net/projects/gnuwin32/files/make/${gm_ver}"
 	local gm_bin_url="${gm_url}/${gm_bin_zip}/download"
-	local gm_dep_zip="make-3.81-dep.zip"
+	local gm_dep_zip="make-${gm_ver}-dep.zip"
 	local gm_dep_url="${gm_url}/${gm_dep_zip}/download"
 	local bin_dir="${OPT_RUN}/gmake"
 	local gm_tmp="$HOME/Downloads"
