@@ -2,7 +2,7 @@
 IMAGE_NAME ?= centos
 
 BUILD_FLAGS ?= --rm
-START_FLAGS ?= -d
+START_FLAGS ?= -d --remove-orphans
 REMOVE_FLAGS ?= --force
 
 docker_file := dev/$(IMAGE_NAME).dockerfile
