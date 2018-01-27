@@ -19,7 +19,6 @@ declare -a BASH_S=(\
   '.bash_profile' \
   '.bash_logout' \
   '.vimrc' \
-  '_vimrc' \
   )
 
 save_as() {
