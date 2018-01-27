@@ -454,7 +454,11 @@ set_bin_paths
 if [ -n "\${OPT_RUN}" ]; then
 	PATH="\`append_path \${OPT_RUN}/bin \${PATH[@]}\`"
 	PATH="\`append_path \${OPT_RUN}/sbin \${PATH[@]}\`"
-	LD_LIBRARY_PATH="\`append_path \${OPT_RUN}/lib \${LD_LIBRARY_PATH[@]}\`"
+`
+  if ! on_windows_nt; then
+	  echo "  LD_LIBRARY_PATH=\"\\$(append_path \\${OPT_RUN}/lib \\${LD_LIBRARY_PATH[@]})\""
+  fi
+`
 fi
 
 # java home
@@ -473,10 +477,10 @@ PATH="\$(uniq_path \${PATH[@]})"
 `
 if on_windows_nt; then
   echo "PATH=\"\\$(sort_path \\${PATH[@]})\""
+else
+  echo "LD_LIBRARY_PATH=\"\\$(uniq_path \${LD_LIBRARY_PATH[@]})\""
 fi
 `
-LD_LIBRARY_PATH="\`uniq_path \${LD_LIBRARY_PATH[@]}\`"
-
 
 # other paths
 
@@ -649,7 +653,12 @@ echo -e "# call .bash_init" >> $HOME/.bashrc
 cat << END >> $HOME/.bashrc
 test -f \${HOME%/}/.bash_init && . \${HOME%/}/.bash_init
 export PATH
-export LD_LIBRARY_PATH
+`
+if ! on_windows_nt; then
+  echo "  export LD_LIBRARY_PATH"
+fi
+`
+
 END
 
 gen_dot_bash_aliases $HOME/.bash_aliases
