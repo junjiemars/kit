@@ -459,15 +459,17 @@ fi
 
 # java home
 if [ -n "\${JAVA_HOME}" ]; then
-  if \`on_windows_nt\`; then
-    JAVA_HOME=\$(posix_path "\${JAVA_HOME}")
+`
+  if on_windows_nt; then
+    echo "  JAVA_HOME=\\$(posix_path \"\\${JAVA_HOME}\")"
   fi
+`
   PATH="\`append_path \"\${JAVA_HOME}\" \$PATH\`"
   PATH="\`append_path \"\${JAVA_HOME}/bin\" \$PATH\`"
 fi
 
 
-PATH="\`uniq_path \${PATH[@]}\`"
+PATH="\$(uniq_path \${PATH[@]})"
 `
 if on_windows_nt; then
   echo "PATH=\"\\$(sort_path \\${PATH[@]})\""
