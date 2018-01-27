@@ -383,14 +383,19 @@ OPT_OPEN="\${OPT_OPEN:-\${PREFIX}/open}"
 [ -d "\${OPT_OPEN}" ] && export OPT_OPEN=\${OPT_OPEN}
 
 check_java_env() {
-	if \`on_darwin\`; then
-      local java_home='/usr/libexec/java_home'
-      [ -L "\${java_home}" ] && export JAVA_HOME=\`\${java_home} 2>/dev/null\`
-	elif \`on_linux\`; then
-      local javac=\`type -p javac 2>/dev/null\`
-      [ -n "\${javac}" ] && local java_home=\$(readlink -f "\${javac}" | sed 's:/bin/javac::')
-      [ -n "\${java_home}" ] && [ -z "\$JAVA_HOME" ] && export JAVA_HOME="\${java_home}"
+`
+	if on_darwin; then
+    echo "  local java_home='/usr/libexec/java_home'"
+    echo "  [ -L \"\\${java_home}\" ] && export JAVA_HOME=\\$(\\${java_home} 2>/dev/null)"
+	elif on_linux; then
+    echo "  local javac=\\$(type -p javac 2>/dev/null)"
+    echo "  [ -n \"\\${javac}\" ] && local java_home=\\$(readlink -f \"\\${javac}\" | sed 's:/bin/javac::')"
+    echo "  [ -n \"\\${java_home}\" ] && [ -z \"\\$JAVA_HOME\" ] && export JAVA_HOME=\"\\${java_home}\""
+  else
+    # nop
+    :;
 	fi
+`
 }
 
 check_java_env
