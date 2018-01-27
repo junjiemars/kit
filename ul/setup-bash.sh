@@ -182,6 +182,24 @@ inside_emacs_p() {
   test -n "\$INSIDE_EMACS"
 }
 
+pretty_ps1() {
+  local o="\$@"
+  local ps1="\u@\h:\w\\$ "
+  if [ -z "\${o}" ]; then
+    echo "\$ps1"
+  elif [[ \${o} =~ ^\\h.*\$ ]]; then
+    echo "\$ps1"
+  elif [[ \${o} =~ ^\\\[.*\$ ]]; then
+    if \`inside_emacs_p\`; then
+      echo "\$ps1"
+    else
+      echo "\$o"
+    fi    
+  else
+    echo "\$o"
+  fi
+}
+
 `
 declare -f on_windows_nt
 `
@@ -194,23 +212,18 @@ declare -f on_darwin
 declare -f on_linux
 `
 
-
 if test -n "\$PROMPT_COMMAND"; then
   if \`inside_docker_p\` || \`inside_emacs_p\`; then
     export PROMPT_COMMAND=''
   fi
 fi
 
-case ".\$PS1" in
-	.|.\\s*|.[*|.\\[\\*|.\\h:*)
-		PS1="\u@\h:\w\$ "
-		;;
-	*)
-		;;
-esac
+export PS1="\$(pretty_ps1 $PS1)"
 
 if test -z "\$TERM" || test "dumb" = "\$TERM"; then
-  export TERM="xterm"
+  if ! \`inside_emacs_p\`; then
+    export TERM="xterm"
+  fi
 fi
 
 
