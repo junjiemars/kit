@@ -227,19 +227,6 @@ pretty_prompt_command() {
   echo "\$o"
 }
 
-pretty_term() {
-  local o="\$1"
-  local t="xterm"
-
-  if test -z "\${o}" || test "dumb" = "\${o}"; then
-    if ! \`inside_emacs_p\`; then
-      echo "\$t"
-      return
-    fi
-  fi
-  echo "\$o"
-}
-
 
 PROMPT_COMMAND="\$(pretty_prompt_command \${PROMPT_COMMAND[@]})"
 export PROMPT_COMMAND
@@ -247,8 +234,13 @@ export PROMPT_COMMAND
 PS1="\$(pretty_ps1 \${PS1[@]})"
 export PS1="\${PS1% } "
 
-TERM="\$(pretty_term \${TERM})"
-export TERM
+if test -z "\$TERM" || test "dumb" = "\$TERM"; then
+  export TERM="xterm"
+  if ! \`inside_emacs_p\`; then
+    export TERM="xterm"
+  fi
+fi
+
 
 
 #PREFIX=/opt
