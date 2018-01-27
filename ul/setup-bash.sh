@@ -247,7 +247,7 @@ export PROMPT_COMMAND
 PS1="\$(pretty_ps1 \${PS1[@]})"
 export PS1="\${PS1% } "
 
-TERM="\$(pretty_term ${TERM})"
+TERM="\$(pretty_term \${TERM})"
 export TERM
 
 
