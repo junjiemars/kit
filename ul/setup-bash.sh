@@ -388,11 +388,17 @@ check_java_env() {
 `
 	if on_darwin; then
     echo "  local java_home='/usr/libexec/java_home'"
-    echo "  [ -L \"\\${java_home}\" ] && export JAVA_HOME=\\$(\\${java_home} 2>/dev/null)"
+    echo "  if [ -L \"\\${java_home}\" ]; then"
+    echo "    export JAVA_HOME=\\$(\\${java_home} 2>/dev/null)"
+    echo "  fi"
 	elif on_linux; then
     echo "  local javac=\\$(type -p javac 2>/dev/null)"
-    echo "  [ -n \"\\${javac}\" ] && local java_home=\\$(readlink -f \"\\${javac}\" | sed 's:/bin/javac::')"
-    echo "  [ -n \"\\${java_home}\" ] && [ -z \"\\$JAVA_HOME\" ] && export JAVA_HOME=\"\\${java_home}\""
+    echo "  if [ -n \"\\${javac}\" ]; then"
+    echo "    local java_home=\\$(readlink -f \"\\${javac}\" | sed 's:/bin/javac::')"
+    echo "    if [ -n \"\\${java_home}\" -a -z \"\\$JAVA_HOME\" ]; then"
+    echo "      export JAVA_HOME=\"\\${java_home}\""
+    echo "    fi"
+    echo "  fi"
   else
     # nop
     :;
