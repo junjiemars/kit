@@ -69,6 +69,27 @@ posix_path() {
   fi
 }
 
+sort_path() {
+  # Windows: let MSYS_NT and user defined commands first
+	local awk='/bin/awk'
+	local tr='/usr/bin/tr'
+	local grep='/usr/bin/grep'
+	local paths="$1"
+	local opt_p="`/usr/bin/dirname $OPT_RUN`"
+	local opt=
+	local win_p="^/c/"
+
+	opt="`echo -n "$paths" | $tr ':' '\n' | \
+		$grep "$opt_p" | $tr '\n' ':' `"
+  local car="`echo -n "$paths" | $tr ':' '\n' | \
+		$grep -v "$opt_p" | $grep -v "$win_p" | $tr '\n' ':' `"
+  local cdr="`echo -n "$paths" | $tr ':' '\n' | \
+    $grep "$win_p" | $tr '\n' ':' `"
+  local new="`echo -n "${car}${opt:+$opt }${cdr}" | \
+		$awk '!xxx[$0]++' | sed -e 's#:$##' -e 's#:\  *\/#:\/#g' `"
+  echo -n "${new}" 
+}
+
 delete_tail_lines() {
 	local h="$1"
   local lines="$2"
@@ -404,6 +425,12 @@ uniq_path() {
 declare -f posix_path
 `
 
+`
+if \`on_windows_nt\`; then
+  declare -f sort_path
+fi
+`
+
 set_bin_paths() {
   local paths=(
     '/usr/local/bin'
@@ -441,7 +468,13 @@ fi
 
 
 PATH="\`uniq_path \${PATH[@]}\`"
+`
+if on_windows_nt; then
+  echo "PATH=\"\\$(sort_path \\${PATH[@]})\""
+fi
+`
 LD_LIBRARY_PATH="\`uniq_path \${LD_LIBRARY_PATH[@]}\`"
+
 
 # other paths
 
