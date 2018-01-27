@@ -74,8 +74,8 @@ delete_tail_lines() {
   local lines="$2"
 	local f="$3"
 
-	sed_i_0="-i.pre"
-	[ "Darwin" = "$PLATFORM" ] && sed_i_0="-i .pre"
+	sed_opt_i="-i.pre"
+	`on_darwin` && sed_opt_i="-i .pre"
 
   [ -f "$f" ] || return 1
 
@@ -84,9 +84,9 @@ delete_tail_lines() {
 
   if [ 0 -lt $line_no ]; then
     if [ "yes" = "$lines" ]; then
-      sed $sed_i_0 -e "$line_no,\$d" $f
+      sed $sed_opt_i -e "$line_no,\$d" "$f"
     else  
-      sed $sed_i_0 -e "${line_no}d" $f
+      sed $sed_opt_i -e "${line_no}d" "$f"
     fi
   fi
 }
@@ -583,10 +583,8 @@ done
 if `on_windows_nt`; then
   ${curl} ${GITHUB_H}/win/.bashrc -o $HOME/.bashrc
 else
-	sed_i_0="-i''"
-	[ "Darwin" = "$PLATFORM" ] && sed_i_0="-i ''"
 	gen_dot_bash_init $HOME/.bash_init
-
+  
 	delete_tail_lines '# call .bash_init' "yes" "$HOME/.bashrc" 
 
   echo -e "# call .bash_init" >> $HOME/.bashrc
