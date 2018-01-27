@@ -218,7 +218,7 @@ if test -n "\$PROMPT_COMMAND"; then
   fi
 fi
 
-export PS1="\$(pretty_ps1 $PS1)"
+export PS1="\$(pretty_ps1 \$PS1)"
 
 if test -z "\$TERM" || test "dumb" = "\$TERM"; then
   if ! \`inside_emacs_p\`; then
