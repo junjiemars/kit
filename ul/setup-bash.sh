@@ -265,27 +265,29 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
-function exist_p() {
-    type -p \${1} &>/dev/null; echo \$?
+exist_p() {
+  type -p \${1} &>/dev/null; echo \$?
 }
 
-function diff_p() {
-    diff \${1} \${2} &>/dev/null; echo \$?
+diff_p() {
+  diff \${1} \${2} &>/dev/null; echo \$?
 }
 
 has_rlwrap=\$(exist_p 'rlwrap')
 
-if \`on_darwin\`; then
-  alias ls='ls -G'
-  alias ll='ls -lh -G'
-  alias l='ls -CF -G'
-  alias tailf='tail -f'
-  alias stat='stat -x'
+`
+if on_darwin; then
+  echo "alias ls='ls -G'"
+  echo "alias ll='ls -lh -G'"
+  echo "alias l='ls -CF -G'"
+  echo "alias tailf='tail -f'"
+  echo "alias stat='stat -x'"
 else
-  alias ls='ls --color=auto'
-  alias ll='ls -lh --color=auto'
-  alias l='ls -CF --color=auto'
+  echo "alias ls='ls --color=auto'"
+  echo "alias ll='ls -lh --color=auto'"
+  echo "alias l='ls -CF --color=auto'"
 fi
+`
 
 alias_racket() {
 	if [ 0 -eq \$has_rlwrap ]; then
