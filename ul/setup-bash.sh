@@ -654,7 +654,7 @@ test -f \${HOME%/}/.bash_init && . \${HOME%/}/.bash_init
 export PATH
 `
 if ! on_windows_nt; then
-  echo "  export LD_LIBRARY_PATH"
+  echo "export LD_LIBRARY_PATH"
 fi
 `
 
