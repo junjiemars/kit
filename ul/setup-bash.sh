@@ -200,9 +200,9 @@ pretty_ps1() {
 
   if [ -z "\${o}" ]; then
     echo "\$ps1"
-  elif [[ \${o} =~ ^\\h.*\$ ]]; then
+  elif [[ \${o} =~ ^\\\h.*\$ ]]; then
     echo "\$ps1"
-  elif [[ \${o} =~ ^\\\[.*\$ ]]; then
+  elif [[ \${o} =~ ^\\\\\\[.*\$ ]]; then
     if \`inside_emacs_p\`; then
       echo "\$ps1"
     else
