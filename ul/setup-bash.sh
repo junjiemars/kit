@@ -360,6 +360,10 @@ uniq_path() {
   echo "\$paths"
 }
 
+`
+declare -f posix_path
+`
+
 set_bin_paths() {
   local paths=(
     '/usr/local/bin'
