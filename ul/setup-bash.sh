@@ -228,7 +228,7 @@ pretty_prompt_command() {
 }
 
 pretty_term() {
-  local o="$1"
+  local o="\$1"
   local t="xterm"
 
   if test -z "\${o}" || test "dumb" = "\${o}"; then
