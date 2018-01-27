@@ -182,9 +182,22 @@ inside_emacs_p() {
   test -n "\$INSIDE_EMACS"
 }
 
+`
+declare -f on_windows_nt
+`
+
+`
+declare -f on_darwin
+`
+
+`
+declare -f on_linux
+`
+
 pretty_ps1() {
   local o="\$@"
   local ps1="\u@\h:\w\\$"
+
   if [ -z "\${o}" ]; then
     echo "\$ps1"
   elif [[ \${o} =~ ^\\h.*\$ ]]; then
@@ -200,32 +213,42 @@ pretty_ps1() {
   fi
 }
 
-`
-declare -f on_windows_nt
-`
+pretty_prompt_command() {
+  local o="\$@"
+  local pc1=''
 
-`
-declare -f on_darwin
-`
+  if test -n "\${o}"; then
+    if \`inside_docker_p\` || \`inside_emacs_p\`; then
+      echo "\$pc1"
+      return
 
-`
-declare -f on_linux
-`
-
-if test -n "\$PROMPT_COMMAND"; then
-  if \`inside_docker_p\` || \`inside_emacs_p\`; then
-    export PROMPT_COMMAND=''
+    fi
   fi
-fi
+  echo "\$o"
+}
+
+pretty_term() {
+  local o="$1"
+  local t="xterm"
+
+  if test -z "\${o}" || test "dumb" = "\${o}"; then
+    if ! \`inside_emacs_p\`; then
+      echo "\$t"
+      return
+    fi
+  fi
+  echo "\$o"
+}
+
+
+PROMPT_COMMAND="\$(pretty_prompt_command \${PROMPT_COMMAND[@]})"
+export PROMPT_COMMAND
 
 PS1="\$(pretty_ps1 \${PS1[@]})"
 export PS1="\${PS1% } "
 
-if test -z "\$TERM" || test "dumb" = "\$TERM"; then
-  if ! \`inside_emacs_p\`; then
-    export TERM="xterm"
-  fi
-fi
+TERM="\$(pretty_term ${TERM})"
+export TERM
 
 
 #PREFIX=/opt
