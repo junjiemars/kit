@@ -131,18 +131,6 @@ inside_emacs_p() {
   test -n "\$INSIDE_EMACS"
 }
 
-if test -n "\$PROMPT_COMMAND" && \`inside_docker_p\`; then
-  export PROMPT_COMMAND=''
-fi
-
-case ".\$PS1" in
-	.|.\\s*|.[*|.\\[\\*|.\\h:*)
-		PS1="\u@\h:\w\$ "
-		;;
-	*)
-		;;
-esac
-
 `
 declare -f on_windows_nt
 `
@@ -155,13 +143,33 @@ declare -f on_darwin
 declare -f on_linux
 `
 
+
+if test -n "\$PROMPT_COMMAND"; then
+  if \`inside_docker_p\` || \`inside_emacs_p\`; then
+    export PROMPT_COMMAND=''
+  fi
+fi
+
+case ".\$PS1" in
+	.|.\\s*|.[*|.\\[\\*|.\\h:*)
+		PS1="\u@\h:\w\$ "
+		;;
+	*)
+		;;
+esac
+
+if test -z "\$TERM" || test "dumb" = "\$TERM"; then
+  export TERM="xterm"
+fi
+
+
 #PREFIX=/opt
 
 # fix set locale failed
 # sudo localedef -i en_US -f UTF-8 en_US.UTF-8
 
 # prologue
-if [ -z "\$LANG" ]; then 
+if test -z "\$LANG"; then 
 	export LANG=en_US.UTF-8
 fi
 
@@ -315,48 +323,24 @@ else
   PREFIX="\${PREFIX:-/opt}"
 fi
 
-
 OPT_RUN="\${OPT_RUN:-\${PREFIX}/run}"
 OPT_OPEN="\${OPT_OPEN:-\${PREFIX}/open}"
 
+[ -d "\${OPT_RUN}" ] && export OPT_RUN=\${OPT_RUN}
+[ -d "\${OPT_OPEN}" ] && export OPT_OPEN=\${OPT_OPEN}
 
-opt_basis_dirs() {
-  [ -d "\${OPT_RUN}" ] && export OPT_RUN=\${OPT_RUN}
-  [ -d "\${OPT_OPEN}" ] && export OPT_OPEN=\${OPT_OPEN}
-}
-
-check_java() {
-  case "\${PLATFORM}" in
-    Darwin)
+check_java_env() {
+	if \`on_darwin\`; then
       local java_home='/usr/libexec/java_home'
       [ -L "\${java_home}" ] && export JAVA_HOME=\`\${java_home} 2>/dev/null\`
-      ;;
-    Linux)
+	elif \`on_linux\`; then
       local javac=\`type -p javac 2>/dev/null\`
-      [ -n "\${javac}" ] && \
-        local java_home=\$(readlink -f "\${javac}" | sed 's:/bin/javac::')
-      [ -n "\${java_home}" ] && [ -z "\$JAVA_HOME" ] && \
-				export JAVA_HOME="\${java_home}"
-      ;; 
-    MSYS_NT*|MINGW*)
-      ;;
-    *)
-      ;;
-  esac
+      [ -n "\${javac}" ] && local java_home=\$(readlink -f "\${javac}" | sed 's:/bin/javac::')
+      [ -n "\${java_home}" ] && [ -z "\$JAVA_HOME" ] && export JAVA_HOME="\${java_home}"
+	fi
 }
 
-check_term() {
-  if [ -z "\$TERM" ] || [ "dumb" == "\$TERM" ]; then
-    export TERM="xterm"
-  fi
-}
-
-
-opt_basis_dirs
-
-check_java
-
-check_term
+check_java_env
 
 # declare vars
 
