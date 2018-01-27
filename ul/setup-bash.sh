@@ -73,7 +73,7 @@ sort_path() {
 	local awk='/bin/awk'
 	local tr='/usr/bin/tr'
 	local grep='/usr/bin/grep'
-	local paths="$1"
+	local paths="$@"
 	local opt_p="`/usr/bin/dirname $OPT_RUN`"
 	local opt=
 	local win_p="^/c/"
@@ -429,8 +429,8 @@ check_java_env() {
     echo "    fi"
     echo "  fi"
   else
-    # nop
-    :;
+    echo "  # nop"
+    echo "  :;"
 	fi
 `
 }
