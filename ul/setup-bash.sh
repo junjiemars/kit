@@ -221,12 +221,30 @@ pretty_prompt_command() {
     if \`inside_docker_p\` || \`inside_emacs_p\`; then
       echo "\$pc1"
       return
-
     fi
   fi
   echo "\$o"
 }
 
+pretty_term() {
+  local o="\$1"
+  local t="xterm"
+
+  if test -z "\$o"; then
+    echo "\$t"
+    return
+  fi
+
+  if test "dumb" = "\$o"; then
+    if \`inside_emacs_p\`; then
+      echo "\$o"
+    else
+      echo "\$t"
+    fi
+  else
+    echo "\$o"
+  fi
+}
 
 PROMPT_COMMAND="\$(pretty_prompt_command \${PROMPT_COMMAND[@]})"
 export PROMPT_COMMAND
@@ -234,13 +252,7 @@ export PROMPT_COMMAND
 PS1="\$(pretty_ps1 \${PS1[@]})"
 export PS1="\${PS1% } "
 
-if test -z "\$TERM" || test "dumb" = "\$TERM"; then
-  export TERM="xterm"
-  if ! \`inside_emacs_p\`; then
-    export TERM="xterm"
-  fi
-fi
-
+export TERM="\$(pretty_term \$TERM)"
 
 
 #PREFIX=/opt
