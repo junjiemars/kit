@@ -205,9 +205,12 @@ pretty_ps1() {
   elif [[ \$o =~ ^\\\\\[.*$ ]]; then
     if \`inside_emacs_p\`; then
       echo "\$ps1"
-    fi    
+    else
+      echo "\$o"
+    fi
+  else
+    echo "\$o"
   fi
-  echo "\$o"
 }
 
 pretty_prompt_command() {
