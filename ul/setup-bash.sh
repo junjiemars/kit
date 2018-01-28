@@ -6,7 +6,6 @@
 
 HOME=${HOME%/}
 PLATFORM=`uname -s 2>/dev/null`
-ARCH=`uname -m 2>/dev/null`
 GITHUB_H="${GITHUB_H:-https://raw.githubusercontent.com/junjiemars/kit/master}"
 curl='curl -sL '
 BASH_S=(
@@ -695,9 +694,9 @@ check_win_cc_include() {
   t=$?
 	[ 0 -eq $t -a -n "${vctools[@]}" ] || return 0
 
-  local warch=$ARCH
+  local warch=$MACHINE
   local warch64=
-  if `echo $ARCH | grep 64 &>/dev/null`; then
+  if `echo $MACHINE | grep 64 &>/dev/null`; then
     warch64=64
     warch=x64
   else
