@@ -271,7 +271,7 @@ if on_windows_nt; then
   echo -e "chcp.com 65001 &>/dev/null"
   echo -e "export LANG=en_US.UTF-8"
 else
-  echo -e "if test -z \"\$LANG\"; then"
+  echo -e "if test -z \"\\$LANG\"; then"
   echo -e "  export LANG=en_US.UTF-8"
   echo -e "fi"
 fi
