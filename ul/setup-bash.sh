@@ -535,7 +535,7 @@ PATH="\$(uniq_path \${PATH[@]})"
 if on_windows_nt; then
   echo "PATH=\"\\$(sort_path \\${PATH[@]})\""
 else
-  echo "LD_LIBRARY_PATH=\"\\$(uniq_path \${LD_LIBRARY_PATH[@]})\""
+  echo "LD_LIBRARY_PATH=\"\\$(uniq_path \\${LD_LIBRARY_PATH[@]})\""
 fi
 `
 
