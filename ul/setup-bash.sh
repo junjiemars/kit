@@ -9,17 +9,17 @@ PLATFORM=`uname -s 2>/dev/null`
 ARCH=`uname -m 2>/dev/null`
 GITHUB_H="${GITHUB_H:-https://raw.githubusercontent.com/junjiemars/kit/master}"
 curl='curl -sL '
-declare -a BASH_S=(\
-	'.bash_init' \
-  '.bash_aliases' \
-  '.bash_vars' \
-  '.bash_paths' \
-  '.bashrc' \
-  '.profile' \
-  '.bash_profile' \
-  '.bash_logout' \
-  '.vimrc' \
-  )
+BASH_S=(
+	'.bash_init'
+  '.bash_aliases'
+  '.bash_vars'
+  '.bash_paths'
+  '.bashrc'
+  '.profile'
+  '.bash_profile'
+  '.bash_logout'
+  '.vimrc'
+)
 
 save_as() {
   local f="$HOME/$1"
