@@ -529,8 +529,6 @@ if [ -n "\${JAVA_HOME}" ]; then
   PATH="\`append_path \"\${JAVA_HOME}/bin\" \$PATH\`"
 fi
 
-
-PATH="\$(uniq_path \${PATH[@]})"
 `
 if on_windows_nt; then
   echo "PATH=\"\\$(sort_path \\${PATH[@]})\""
@@ -538,6 +536,7 @@ else
   echo "LD_LIBRARY_PATH=\"\\$(uniq_path \\${LD_LIBRARY_PATH[@]})\""
 fi
 `
+PATH="\$(uniq_path \${PATH[@]})"
 
 # other paths
 
