@@ -763,6 +763,7 @@ END
 
 gen_dot_bash_cc() {
   cat << END > "$1"
+#!/bin/bash
 #------------------------------------------------
 # target: .bash_cc for cc dev
 # author: junjiemars@gmail.com
