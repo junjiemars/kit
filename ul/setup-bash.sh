@@ -252,7 +252,9 @@ export PROMPT_COMMAND
 PS1="\$(pretty_ps1 \${PS1[@]})"
 export PS1="\${PS1% } "
 
-export TERM="\$(pretty_term \$TERM)"
+if [ "\$(pretty_term \$TERM)" != "\$TERM" ]; then
+  export TERM="\$(pretty_term \$TERM)"
+fi
 
 
 #PREFIX=/opt
