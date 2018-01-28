@@ -780,9 +780,9 @@ if on_linux; then
   echo "#check_linux_cc_include \\$HOME/.cc-inc.list \\$HOME/.vimrc"
   echo ""
 elif on_windows_nt; then
-  declare -f check_win_cc_include
-  echo ""
   declare -f find_vctools
+  echo ""
+  declare -f check_win_cc_include
   echo ""
   echo "#check_win_cc_include \\$HOME/.cc-inc.list \\$HOME/.vimrc \\$HOME/.vc-inc.bat"
   echo ""
