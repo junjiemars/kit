@@ -200,17 +200,14 @@ pretty_ps1() {
 
   if [ -z "\${o}" ]; then
     echo "\$ps1"
-  elif \$(echo \$o | grep -E '^\\\(h|s).*$' &>/dev/null); then
+  elif [[ \$o =~ ^\\\(h|s).*$ ]]; then
     echo "\$ps1"
-  elif \$(echo \$o | grep -E '^\\\\\[.*$' &>/dev/null); then
+  elif [[ \$o =~ ^\\\\\[.*$ ]]; then
     if \`inside_emacs_p\`; then
       echo "\$ps1"
-    else
-      echo "\$o"
     fi    
-  else
-    echo "\$o"
   fi
+  echo "\$o"
 }
 
 pretty_prompt_command() {
