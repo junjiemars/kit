@@ -68,16 +68,6 @@ posix_path() {
   fi
 }
 
-split_path() {
-  local p="$@"
-  echo "${p[@]}" | tr ':' '\n'
-}
-
-concat_path() {
-  local p="$@"
-  echo "${p[@]}" | tr '\n' ':' | sed -e 's#:$##'
-}
-
 sort_path() {
   # Windows: let MSYS_NT and user defined commands first
 	local awk='/bin/awk'
