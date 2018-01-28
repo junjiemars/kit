@@ -75,18 +75,21 @@ sort_path() {
 	local grep='/usr/bin/grep'
 	local paths="$@"
 	local opt_p="`/usr/bin/dirname $OPT_RUN`"
-	local opt=
 	local win_p="^/c/"
+  local opt=
+  local ori=
+  local win=
+  local sorted=
 
-	opt="`echo -n "$paths" | $tr ':' '\n' | \
-		$grep "$opt_p" | $tr '\n' ':' `"
-  local car="`echo -n "$paths" | $tr ':' '\n' | \
-		$grep -v "$opt_p" | $grep -v "$win_p" | $tr '\n' ':' `"
-  local cdr="`echo -n "$paths" | $tr ':' '\n' | \
-    $grep "$win_p" | $tr '\n' ':' `"
-  local new="`echo -n "${car}${opt:+$opt }${cdr}" | \
-		$awk '!xxx[$0]++' | sed -e 's#:$##' -e 's#:\  *\/#:\/#g' `"
-  echo -n "${new}" 
+	opt="`echo -n "$paths" | $tr ':' '\n' | $grep "$opt_p" | $tr '\n' ':' `"
+  
+  ori="`echo -n "$paths" | $tr ':' '\n' | $grep -v "$opt_p" | $grep -v "$win_p" | $tr '\n' ':' `"
+  
+  win="`echo -n "$paths" | $tr ':' '\n' | $grep "$win_p" | $tr '\n' ':' `"
+  
+  sorted="`echo -n "${ori}${opt:+$opt }${win}" | $awk '!xxx[$0]++' | sed -e 's#:$##' -e 's#:\  *\/#:\/#g' `"
+  
+  echo -n "${sorted}" 
 }
 
 delete_tail_lines() {
