@@ -60,17 +60,9 @@ posix_path() {
   local p="$@"
   if [[ $p =~ ^[a-zA-Z]:[\/\\].*$ ]]; then
     echo "\\$p" | \
-      sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#' | \
-      sed -e 's#\\#\/#g' | \
-      sed -e 's# #\\ #g' | \
-      sed -e 's#(#\\(#g' | \
-      sed -e 's#)#\\)#g'
+      sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#' | sed -e 's#\\#\/#g'
   else
-    echo "$p" | \
-      sed -e 's#\\#\/#g' | \
-      sed -e 's# #\\ #g' | \
-      sed -e 's#(#\\(#g' | \
-      sed -e 's#)#\\)#g'
+    echo "$p" | sed -e 's#\\#\/#g'
   fi
 }
 
