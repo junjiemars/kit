@@ -701,11 +701,10 @@ cd /d "$vctools"
 
 if "%1" == "" goto :$MACHINE
 if "%1" == "x86" goto :x86
-if "%1" == "x64" goto :x86_64
 if "%1" == "x86_64" goto :x86_64
 
 :x86
-call vcvarsall.bat %* 
+call vcvarsall.bat x86
 set CC=cl
 set AS=ml
 goto :echo_inc
