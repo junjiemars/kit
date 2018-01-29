@@ -757,18 +757,24 @@ declare -f set_vim_cc_path
 `
 if on_linux; then
   declare -f check_linux_cc_include
-  echo ""
-  echo "#check_linux_cc_include \\$HOME/.cc-inc.list \\$HOME/.vimrc"
-  echo ""
 elif on_windows_nt; then
   declare -f find_vctools
   echo ""
   declare -f check_win_cc_include
-  echo ""
-  echo "#check_win_cc_include \\$HOME/.cc-inc.list \\$HOME/.vimrc \\$HOME/.vc-inc.bat"
-  echo ""
 fi
 `
+
+if [ ! -f "\$HOME/.cc-checked.id" ]; then
+`
+if on_linux; then
+  echo "  check_linux_cc_include \\$HOME/.cc-inc.list \\$HOME/.vimrc"
+  echo "  echo \\$(date) > \\$HOME/.cc-checked.id"
+elif on_windows_nt; then
+  echo "  check_win_cc_include \\$HOME/.cc-inc.list \\$HOME/.vimrc \\$HOME/.vc-inc.bat"
+  echo "  echo \\"\\$\\$ | \\$? | \\$(date)\\" > \\$HOME/.cc-checked.id"
+fi
+`
+fi
 
 END
 }
