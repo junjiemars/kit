@@ -357,6 +357,7 @@ alias_racket() {
 			if [ 67 -gt \$(( \${v[0]}*10+\${v[1]} )) ]; then
 				alias racket='rlwrap racket'
 			fi
+      unset IFS
 		fi
 	fi
 }
