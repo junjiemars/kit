@@ -171,7 +171,7 @@ export HOME=\${HOME%/}
 
 PLATFORM="\`uname -s 2>/dev/null\`"
 MACHINE="\`uname -m 2>/dev/null\`"
-GITHUB_KIT="$GITHUB_KIT"
+export GITHUB_KIT="$GITHUB_KIT"
 
 inside_docker_p() {
   [ ".\$INSIDE_DOCKER" = ".1" ] && return 0
