@@ -756,7 +756,9 @@ gen_dot_bash_cc() {
 #------------------------------------------------
 
 `
+if ! on_darwin; then
 declare -f set_vim_cc_path
+fi
 `
 
 `
@@ -773,11 +775,12 @@ if [ ! -f "\$HOME/.cc-checked.id" ]; then
 `
 if on_linux; then
   echo "  check_linux_cc_include \\$HOME/.cc-inc.list \\$HOME/.vimrc"
-  echo "  echo \\$(date) > \\$HOME/.cc-checked.id"
 elif on_windows_nt; then
   echo "  check_win_cc_include \\$HOME/.cc-inc.list \\$HOME/.vimrc \\$HOME/.cc-env.bat"
-  echo "  echo \\"\\$\\$ | \\$? | \\$(date)\\" > \\$HOME/.cc-checked.id"
+else
+  echo "  # nop"
 fi
+echo "  echo \\"\\$\\$ : \\$?\\" > \\$HOME/.cc-checked.id"
 `
 fi
 
