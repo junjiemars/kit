@@ -656,7 +656,7 @@ check_linux_cc_include() {
 }
 
 find_vctools() {
- 	local vctools="`env|grep 'VS[0-9][0-9]*COMNTOOLS'|sed 's#^VS[0-9]*COMNTOOLS=\(.*\)$#\1#g'`"
+ 	local vctools="`env|grep '^VS[0-9][0-9]*COMNTOOLS=.*$'|sed 's#^VS[0-9]*COMNTOOLS=\(.*\)$#\1#g'`"
 
   if [ -n "$vctools" ]; then
     vctools="`( cd "$vctools\..\..\VC\Auxiliary\Build" && pwd )`"
