@@ -57,9 +57,13 @@ on_linux() {
 
 posix_path() {
   local p="$@"
+
   if [[ $p =~ ^[a-zA-Z]:[\/\\].*$ ]]; then
-    echo "\\$p" | \
-      sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#' | sed -e 's#\\#\/#g'
+    local sed_opt_downcase=
+    if [ "abc" = `echo "ABC" | sed -e 's#\([A-Z]*\)#\L\1#g'` ]; then
+      sed_opt_downcase='\L'
+    fi
+    echo "\\$p" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\'"$sed_opt_downcase"'\1\\#' | sed -e 's#\\#\/#g'
   else
     echo "$p" | sed -e 's#\\#\/#g'
   fi
@@ -733,7 +737,7 @@ END
  	local inc_lns=()
  	IFS=$';'
  	for i in `echo "${include}"`; do
-		local ln=$(echo "\\${i}"|sed -e 's#^\\\([a-zA-Z]\):\\#\\\l\1\\#' -e 's#\\#\/#g')
+		local ln="`posix_path \"${i}\"`"
 		echo "'$ln'" >> "$inc_list"
 		inc_lns+=( "$ln" )
  	done
