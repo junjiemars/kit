@@ -28,7 +28,7 @@ set_win_var() {
 
 append_win_path() {
   local p="$@"
-	if [ "function" = `type -t append_paths 2>/dev/null` ]; then
+	if [ "function" = "`type -t append_path 2>/dev/null`" ]; then
 		append_path "$p" "$PATH"
   fi
 }
@@ -209,15 +209,23 @@ install_gmake() {
 
 	[ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
 
+	if [ -f "${gm_tmp}/${gm_bin_tgz}" ]; then
+    tar xf "${gm_tmp}/${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1
+  fi
+  
 	if [ ! -f "${bin_dir}/make.exe" ]; then
 		curl -Lo "${gm_tmp}/${gm_bin_tgz}" -C - "${gm_url}"
 	fi
 
-	[ -f "${gm_tmp}/${gm_bin_tgz}" ] || return 1
-  tar xf "${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1 || return $?
-  [ -f "${bin_dir}/make.exe" ] || return $?
+	if [ -f "${gm_tmp}/${gm_bin_tgz}" ]; then
+    tar xf "${gm_tmp}/${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1
+  fi
 
-	append_win_path "${bin_dir}"
+  if test -f "${bin_dir}/make.exe" && `${bin_dir}/make.exe -v &>/dev/null`; then
+  	append_win_path "${bin_dir}"
+  else
+    return 1
+  fi
 }
 
 if [ "YES" == "${HAS_ALL}" ]; then
@@ -245,9 +253,10 @@ fi
 
 for i in "${KITS[@]}"; do
   echo -e "# ${i} ..."
-  if `${i} &>/dev/null`; then
-    echo -e "# ${i} good."
-  else
-    echo -e "# ${i} panic!"
-  fi
+  ${i}
+  #if `${i} &>/dev/null`; then
+  #  echo -e "# ${i} good."
+  #else
+  #  echo -e "# ${i} panic!"
+  #fi
 done
