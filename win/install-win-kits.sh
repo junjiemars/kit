@@ -26,6 +26,13 @@ set_win_var() {
   setx "$1=$2" 
 }
 
+append_win_path() {
+  local p="$@"
+	if [ "function" = `type -t append_paths 2>/dev/null` ]; then
+		append_path "$p" "$PATH"
+  fi
+}
+
 #set_path() {
 # can not get user specific PATH vars
 #}
@@ -192,44 +199,25 @@ install_netcat() {
 }
 
 install_gmake() {
-  local gm_ver="3.8.1"
-	local gm_bin_zip="make-${gm_ver}-bin.zip"
-  local gm_url="https://sourceforge.net/projects/gnuwin32/files/make/${gm_ver}"
-	local gm_bin_url="${gm_url}/${gm_bin_zip}/download"
-	local gm_dep_zip="make-${gm_ver}-dep.zip"
-	local gm_dep_url="${gm_url}/${gm_dep_zip}/download"
+  local gm_ver="4.2.90"
+	local gm_bin_tgz="gnumake-${gm_ver}-${MACHINE}.tar.gz"
+  local gm_url="https://github.com/junjiemars/make/releases/download/${gm_ver}/${gm_bin_tgz}"
 	local bin_dir="${OPT_RUN}/gmake"
 	local gm_tmp="$HOME/Downloads"
 
-	#[ `make -v $>/dev/null` ] && return 0
+	`make -v $>/dev/null` && return 0
+
 	[ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
 
 	if [ ! -f "${bin_dir}/make.exe" ]; then
-		curl -Lo "${gm_tmp}/${gm_bin_zip}" -C - "${gm_bin_url}"
-	fi
-	if [ -f "${gm_tmp}/${gm_bin_zip}" ]; then
-		unzip -qo "${gm_tmp}/${gm_bin_zip}" 'bin/make.exe' -d"${gm_tmp}/gm_bin" && \
-      cp "${gm_tmp}/gm_bin/bin/make.exe" "${bin_dir%/}/"
-	else
-		return 1
+		curl -Lo "${gm_tmp}/${gm_bin_tgz}" -C - "${gm_url}"
 	fi
 
-	if [ ! -f "${bin_dir}/libiconv2.dll" ]; then
-		curl -Lo "${gm_tmp}/${gm_dep_zip}" -C - "${gm_dep_url}"
-	fi
-	if [ -f "${gm_tmp}/${gm_dep_zip}" ]; then
-		unzip -qo "${gm_tmp}/${gm_dep_zip}" 'bin/*' -d"${gm_tmp}/gm_dep" 
-    [ -f "${gm_tmp}/gm_dep/bin/libiconv2.dll" ] && \
-      find "${gm_tmp}/gm_dep/bin" -type f -name '*.dll' \
-				-exec cp -t "${bin_dir}" {} +
-	else
-		return 1
-	fi
+	[ -f "${gm_tmp}/${gm_bin_tgz}" ] || return 1
+  tar xf "${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1 || return $?
+  [ -f "${bin_dir}/make.exe" ] || return $?
 
-	[ "function" = `type -t append_paths 2>/dev/null` ] && \
-		append_paths "${bin_dir}"
-	
-	return 0	
+	append_win_path "${bin_dir}"
 }
 
 if [ "YES" == "${HAS_ALL}" ]; then
