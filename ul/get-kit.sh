@@ -58,30 +58,40 @@ CURL_OPTS="${CURL_OPTS:--f --connect-timeout 60}"
 
 
 append_kit_path() {
-  local f_paths="$HOME/.bash_paths"
   local name="PATH"
   local val="\${PATH:+\$PATH:}$1"
   local flag="$2"
   local var="${name}=\"${val}\""
-  if `grep "^${name}=\".*${flag}.*\"" "${f_paths}" &>/dev/null`; then
-    sed $ "s#^${name}=\".*${flag}\"#${var}#g" "${f_paths}"
+  local f_paths="$HOME/.bash_paths"
+  
+  if `inside_kit_bash_env_p` && test -f "${f_paths}"; then
+    if `grep "^${name}=\".*${flag}.*\"" "${f_paths}" &>/dev/null`; then
+      sed $ "s#^${name}=\".*${flag}\"#${var}#g" "${f_paths}"
+    else
+      echo -e "${var}" >> "${f_paths}"
+    fi
   else
-    echo -e "${var}" >> "${f_paths}"
+    return 0
   fi
-  . "${f_paths}"
 }
 
 append_kit_var() {
- local f_vars="$HOME/.bash_vars"
  local name="$1"
  local val="$2"
+ local f_vars="$HOME/.bash_vars"
  local var="export ${name}='${val}'"
- if `grep "^export ${name}='.*'" "${f_vars}" &>/dev/null`; then
-   sed $ "s#^export ${name}='.*'#${var}#g" "${f_vars}"
+
+ if `inside_kit_bash_env_p`; then
+   if `grep "^export ${name}='.*'" "${f_vars}" &>/dev/null`; then
+     sed $ "s#^export ${name}='.*'#${var}#g" "${f_vars}"
+   else
+     echo -e "${var}" >> "${f_vars}"
+   fi
+   . "${f_vars}"   
  else
-   echo -e "${var}" >> "${f_vars}"
+   return 0
  fi
- . "${f_vars}"
+
 }
 
 download_kit() {

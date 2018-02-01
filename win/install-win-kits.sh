@@ -1,6 +1,6 @@
 #!/bin/bash
 #------------------------------------------------
-# target: install Win32 programming environment
+# target: setup Win32 programming environment
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
@@ -15,7 +15,7 @@ GET_KIT_L=${TMP}/get-kit.sh
 curl -fsqL -o ${TMP_DIR}/get-kit.sh ${GET_KIT_URL}
 if [ -f "${GET_KIT_L}" ]; then
   . ${GET_KIT_L}
-  if [ "yes" != "$INCLUDE_KIT_ENV" ]; then
+  if [ "yes" != "$INCLUDE_GET_KIT" ]; then
     exit 1
   fi
 else
@@ -232,27 +232,11 @@ install_gmake() {
               "${bin_dir}" \
     || return $?
 
-  
-
-#	[ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
-#
-#	if [ -f "${gm_tmp}/${gm_bin_tgz}" ]; then
-#    tar xf "${gm_tmp}/${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1
-#  fi
-#  
-#	if [ ! -f "${bin_dir}/make.exe" ]; then
-#		curl -Lo "${gm_tmp}/${gm_bin_tgz}" -C - "${gm_url}"
-#	fi
-#
-#	if [ -f "${gm_tmp}/${gm_bin_tgz}" ]; then
-#    tar xf "${gm_tmp}/${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1
-#  fi
-#
-#  if test -f "${bin_dir}/make.exe" && `${bin_dir}/make.exe -v &>/dev/null`; then
-#  	append_win_path "${bin_dir}"
-#  else
-#    return 1
-#  fi
+  if `${cmd} &>/dev/null`; then
+    append_kit_path "${bin_dir}" "${bin_dir}"
+  else
+    return 1
+  fi
 }
 
 if [ "YES" == "${HAS_ALL}" ]; then
