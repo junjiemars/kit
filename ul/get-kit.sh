@@ -167,4 +167,4 @@ check_kit() {
   fi
 }
 
-export GET_KIT="yes"
+export INCLUDE_KIT_ENV="yes"

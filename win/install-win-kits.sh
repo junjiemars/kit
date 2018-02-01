@@ -4,24 +4,31 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
+KIT_BRANCH="${KIT_BRANCH:-master}"
 GITHUB_R="${GITHUB_R:-https://raw.githubusercontent.com/junjiemars}"
 GITHUB_H="${GITHUB_H:-https://github.com/junjiemars}"
-KIT_BRANCH="${KIT_BRANCH:-master}"
+GET_KIT_URL="${GET_KIT_URL:-${GITHUB_R}/${KIT_BRANCH}/ul/get-kit.sh}"
 
-curl ${GITHUB_R}/${KIT_BRANCH}/ul/get-kit.sh | bash 
-if [ "yes" != "$GET_KIT" ]; then
+TMP_DIR=${TMP:-$HOME/Downloads}
+GET_KIT_L=${TMP}/get-kit.sh
+
+curl -fsqL -o ${TMP_DIR}/get-kit.sh ${GET_KIT_URL}
+if [ -f "${GET_KIT_L}" ]; then
+  . ${GET_KIT_L}
+  if [ "yes" != "$INCLUDE_KIT_ENV" ]; then
+    exit 1
+  fi
+else
   exit 1
 fi
 
-#MACHINE="`uname -m 2>/dev/null`"
-#
-#HAS_ALL=${HAS_ALL:-"NO"}
-#HAS_EMACS=${HAS_EMACS:-0}
-#HAS_EMACS_SOURCE=${HAS_EMACS_SOURCE:-0}
-#HAS_PSTOOLS=${HAS_PSTOOLS:-0}
-#HAS_PROCEXP=${HAS_PROCEXP:-0}
-#HAS_NETCAT=${HAS_NETCAT:-0}
-#HAS_GMAKE=${HAS_GMAKE:-0}
+HAS_ALL=${HAS_ALL:-"NO"}
+HAS_EMACS=${HAS_EMACS:-0}
+HAS_EMACS_SOURCE=${HAS_EMACS_SOURCE:-0}
+HAS_PSTOOLS=${HAS_PSTOOLS:-0}
+HAS_PROCEXP=${HAS_PROCEXP:-0}
+HAS_NETCAT=${HAS_NETCAT:-0}
+HAS_GMAKE=${HAS_GMAKE:-0}
 #
 #EMACS_VER=${EMACS_VER:-"25.2"}
 #
@@ -207,52 +214,53 @@ fi
 #  return 0
 #}
 #
-#install_gmake() {
-#  local gm_ver="4.2.90"
-#	local gm_bin_tgz="gnumake-${gm_ver}-${MACHINE}.tar.gz"
-#  local gm_url="https://github.com/junjiemars/make/releases/download/${gm_ver}/${gm_bin_tgz}"
-#	local bin_dir="${OPT_RUN}/gmake"
-#	local gm_tmp="$HOME/Downloads"
-#
-#	`make -v $>/dev/null` && return 0
-#
-#	[ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
-#
-#	if [ -f "${gm_tmp}/${gm_bin_tgz}" ]; then
-#    tar xf "${gm_tmp}/${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1
-#  fi
-#  
-#	if [ ! -f "${bin_dir}/make.exe" ]; then
-#		curl -Lo "${gm_tmp}/${gm_bin_tgz}" -C - "${gm_url}"
-#	fi
-#
-#	if [ -f "${gm_tmp}/${gm_bin_tgz}" ]; then
-#    tar xf "${gm_tmp}/${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1
-#  fi
-#
-#  if test -f "${bin_dir}/make.exe" && `${bin_dir}/make.exe -v &>/dev/null`; then
-#  	append_win_path "${bin_dir}"
-#  else
-#    return 1
-#  fi
-#}
-#
-#if [ "YES" == "${HAS_ALL}" ]; then
-#  HAS_EMACS=1
-#  HAS_EMACS_SOURCE=0
-#  HAS_PSTOOLS=1
-#  HAS_PROCEXP=1
-#  HAS_NETCAT=1
-#	HAS_GMAKE=1
-#fi
-#
-#[ 0 -lt "${HAS_EMACS}" ]          && KITS+=('install_emacs')
-#[ 0 -lt "${HAS_EMACS_SOURCE}" ]   && KITS+=('install_emacs_source')
-#[ 0 -lt "${HAS_PSTOOLS}" ]        && KITS+=('install_pstools')
-#[ 0 -lt "${HAS_PROCEXP}" ]        && KITS+=('install_procexp')
-#[ 0 -lt "${HAS_NETCAT}" ]         && KITS+=('install_netcat')
-#[ 0 -lt "${HAS_GMAKE}" ]          && KITS+=('install_gmake')
-#
+
+install_gmake() {
+  local gm_ver="4.2.90"
+	local gm_bin_tgz="gnumake-${gm_ver}-${MACHINE}.tar.gz"
+  local gm_url="https://github.com/junjiemars/make/releases/download/${gm_ver}/${gm_bin_tgz}"
+	local bin_dir="${OPT_RUN}/gmake"
+	local gm_tmp="$HOME/Downloads"
+
+	`make -v $>/dev/null` && return 0
+
+	[ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
+
+	if [ -f "${gm_tmp}/${gm_bin_tgz}" ]; then
+    tar xf "${gm_tmp}/${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1
+  fi
+  
+	if [ ! -f "${bin_dir}/make.exe" ]; then
+		curl -Lo "${gm_tmp}/${gm_bin_tgz}" -C - "${gm_url}"
+	fi
+
+	if [ -f "${gm_tmp}/${gm_bin_tgz}" ]; then
+    tar xf "${gm_tmp}/${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1
+  fi
+
+  if test -f "${bin_dir}/make.exe" && `${bin_dir}/make.exe -v &>/dev/null`; then
+  	append_win_path "${bin_dir}"
+  else
+    return 1
+  fi
+}
+
+if [ "YES" == "${HAS_ALL}" ]; then
+  HAS_EMACS=1
+  HAS_EMACS_SOURCE=0
+  HAS_PSTOOLS=1
+  HAS_PROCEXP=1
+  HAS_NETCAT=1
+	HAS_GMAKE=1
+fi
+
+[ 0 -lt "${HAS_EMACS}" ]          && KITS+=('install_emacs')
+[ 0 -lt "${HAS_EMACS_SOURCE}" ]   && KITS+=('install_emacs_source')
+[ 0 -lt "${HAS_PSTOOLS}" ]        && KITS+=('install_pstools')
+[ 0 -lt "${HAS_PROCEXP}" ]        && KITS+=('install_procexp')
+[ 0 -lt "${HAS_NETCAT}" ]         && KITS+=('install_netcat')
+[ 0 -lt "${HAS_GMAKE}" ]          && KITS+=('install_gmake')
+
 ## check OPT_* env vars
 #if [ -z "$OPT_RUN" ]; then
 #  echo -e "# \$OPT_RUN not set, run setup-bash.sh first, panic!"
