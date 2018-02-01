@@ -11,6 +11,7 @@ GET_KIT_URL="${GET_KIT_URL:-${GITHUB_R}/${KIT_BRANCH}/ul/get-kit.sh}"
 
 TMP_DIR=${TMP:-$HOME/Downloads}
 GET_KIT_L=${TMP}/get-kit.sh
+ECHO_QUIET=${ECHO_QUIET:-NO}
 
 curl -fsqL -o ${TMP_DIR}/get-kit.sh ${GET_KIT_URL}
 if [ -f "${GET_KIT_L}" ]; then
@@ -22,13 +23,7 @@ else
   exit 1
 fi
 
-HAS_ALL=${HAS_ALL:-"NO"}
-HAS_EMACS=${HAS_EMACS:-0}
-HAS_EMACS_SOURCE=${HAS_EMACS_SOURCE:-0}
-HAS_PSTOOLS=${HAS_PSTOOLS:-0}
-HAS_PROCEXP=${HAS_PROCEXP:-0}
-HAS_NETCAT=${HAS_NETCAT:-0}
-HAS_GMAKE=${HAS_GMAKE:-0}
+
 #
 #EMACS_VER=${EMACS_VER:-"25.2"}
 #
@@ -239,6 +234,31 @@ install_gmake() {
   fi
 }
 
+echo_head() {
+  if [ "NO" = "$ECHO_QUIET" ]; then
+    echo -n "$@"
+  fi
+}
+
+echo_tail() {
+  if [ "NO" = "$ECHO_QUIET" ]; then
+    if [ 0 -eq $1 ]; then
+      echo "ok"
+    else
+      echo "failed"
+    fi  
+  fi
+}
+
+
+HAS_ALL=${HAS_ALL:-"NO"}
+HAS_EMACS=${HAS_EMACS:-0}
+HAS_EMACS_SOURCE=${HAS_EMACS_SOURCE:-0}
+HAS_PSTOOLS=${HAS_PSTOOLS:-0}
+HAS_PROCEXP=${HAS_PROCEXP:-0}
+HAS_NETCAT=${HAS_NETCAT:-0}
+HAS_GMAKE=${HAS_GMAKE:-0}
+
 if [ "YES" == "${HAS_ALL}" ]; then
   HAS_EMACS=1
   HAS_EMACS_SOURCE=0
@@ -255,20 +275,9 @@ fi
 [ 0 -lt "${HAS_NETCAT}" ]         && KITS+=('install_netcat')
 [ 0 -lt "${HAS_GMAKE}" ]          && KITS+=('install_gmake')
 
-## check OPT_* env vars
-#if [ -z "$OPT_RUN" ]; then
-#  echo -e "# \$OPT_RUN not set, run setup-bash.sh first, panic!"
-#  echo - "bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh)"
-#  exit 1
-#fi
-#
+
 for i in "${KITS[@]}"; do
- echo -e "# ${i} ..."
- ${i}
- #if `${i} &>/dev/null`; then
- #  echo -e "# ${i} good."
- #else
- #  echo -e "# ${i} panic!"
- #fi
+  echo_head " + ${i} ... "
+  echo_tail `${i} ; echo $?`
 done
 
