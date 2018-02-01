@@ -217,32 +217,42 @@ HAS_GMAKE=${HAS_GMAKE:-0}
 
 install_gmake() {
   local gm_ver="4.2.90"
-	local gm_bin_tgz="gnumake-${gm_ver}-${MACHINE}.tar.gz"
-  local gm_url="https://github.com/junjiemars/make/releases/download/${gm_ver}/${gm_bin_tgz}"
-	local bin_dir="${OPT_RUN}/gmake"
-	local gm_tmp="$HOME/Downloads"
+	local gm_tgz="gnumake-${gm_ver}-${MACHINE}.tar.gz"
+  local gm_url="${GITHUB_H}/make/releases/download/${gm_ver}/${gm_tgz}"
+  local gm_home="${OPEN_DIR}/gmake"
+	local bin_dir="${gm_home}/${gm_ver}"
+  local cmd="${bin_dir}/make -v"
 
-	`make -v $>/dev/null` && return 0
+  `check_kit "make -v" "${bin_dir}"` && return 0
 
-	[ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
+  install_kit "${bin_dir}/make.exe" \
+              "${cmd}" \
+              "${gm_url}" \
+              "${gm_home}/${gm_tgz}" \
+              "${bin_dir}" \
+    || return $?
 
-	if [ -f "${gm_tmp}/${gm_bin_tgz}" ]; then
-    tar xf "${gm_tmp}/${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1
-  fi
   
-	if [ ! -f "${bin_dir}/make.exe" ]; then
-		curl -Lo "${gm_tmp}/${gm_bin_tgz}" -C - "${gm_url}"
-	fi
 
-	if [ -f "${gm_tmp}/${gm_bin_tgz}" ]; then
-    tar xf "${gm_tmp}/${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1
-  fi
-
-  if test -f "${bin_dir}/make.exe" && `${bin_dir}/make.exe -v &>/dev/null`; then
-  	append_win_path "${bin_dir}"
-  else
-    return 1
-  fi
+#	[ -d "${bin_dir}" ] || mkdir -p "${bin_dir}"
+#
+#	if [ -f "${gm_tmp}/${gm_bin_tgz}" ]; then
+#    tar xf "${gm_tmp}/${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1
+#  fi
+#  
+#	if [ ! -f "${bin_dir}/make.exe" ]; then
+#		curl -Lo "${gm_tmp}/${gm_bin_tgz}" -C - "${gm_url}"
+#	fi
+#
+#	if [ -f "${gm_tmp}/${gm_bin_tgz}" ]; then
+#    tar xf "${gm_tmp}/${gm_bin_tgz}" -C "${bin_dir}" --strip-components=1
+#  fi
+#
+#  if test -f "${bin_dir}/make.exe" && `${bin_dir}/make.exe -v &>/dev/null`; then
+#  	append_win_path "${bin_dir}"
+#  else
+#    return 1
+#  fi
 }
 
 if [ "YES" == "${HAS_ALL}" ]; then
@@ -268,13 +278,13 @@ fi
 #  exit 1
 #fi
 #
-#for i in "${KITS[@]}"; do
-#  echo -e "# ${i} ..."
-#  ${i}
-#  #if `${i} &>/dev/null`; then
-#  #  echo -e "# ${i} good."
-#  #else
-#  #  echo -e "# ${i} panic!"
-#  #fi
-#done
-#
+for i in "${KITS[@]}"; do
+ echo -e "# ${i} ..."
+ ${i}
+ #if `${i} &>/dev/null`; then
+ #  echo -e "# ${i} good."
+ #else
+ #  echo -e "# ${i} panic!"
+ #fi
+done
+

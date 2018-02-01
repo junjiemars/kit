@@ -9,7 +9,7 @@ PLATFORM="`uname -s 2>/dev/null`"
 MACHINE="`uname -m 2>/dev/null`"
 
 inside_kit_bash_env_p() {
-  echo $KIT_GITHUB | grep 'junjiemars/kit' &>/dev/null
+  echo $INSIDE_KIT_BASH_ENV | grep 'junjiemars/kit' &>/dev/null
 }
 
 on_windows_nt() {
@@ -139,13 +139,11 @@ install_kit() {
   local dst="$5"
 
   if `test -f "${bin}"`; then
-		$cmd &>/dev/null
-		[ 0 -eq $? ] && return 0
+		$cmd &>/dev/null && return 0
 	fi
 
   if `test -f "${src}"` && `extract_kit "${src}" "${dst}"`; then
-    $cmd &>/dev/null
-		[ 0 -eq $? ] && return 0
+    $cmd &>/dev/null && return 0
 	fi
 
   if `download_kit "$url" "$src"`; then
@@ -167,4 +165,4 @@ check_kit() {
   fi
 }
 
-export INCLUDE_KIT_ENV="yes"
+export INCLUDE_GET_KIT="yes"
