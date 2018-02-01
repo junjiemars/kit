@@ -166,3 +166,5 @@ check_kit() {
     return 1
   fi
 }
+
+export GET_KIT="yes"
