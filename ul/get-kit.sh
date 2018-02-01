@@ -54,7 +54,7 @@ if `on_darwin`; then
   SED_OPT_I="-i ''"
 fi
 
-CURL_OPTS="${CURL_OPTS:--f --connect-timeout 60}"
+CURL_OPTS="${CURL_OPTS:--f}"
 
 
 append_kit_path() {
@@ -172,6 +172,21 @@ check_kit() {
   else
     [ -d "${home}" ] || mkdir -p "${home}"
     return 1
+  fi
+}
+
+kit_version() {
+  local ver=()
+  IFS='.' read -a ver <<< "$1"
+  echo "${ver[@]}"
+}
+
+kit_major_version() {
+  local ver=(`kit_version $1`)
+  if [ 0 -lt ${#ver} ]; then
+    echo "${ver[0]}"
+  else
+    echo "${ver}"
   fi
 }
 

@@ -56,31 +56,53 @@ fi
 #  curl -Lo "${dest_dir}/${dest_file}" -C - "${port_url}"; echo $?
 #}
 #
-#install_emacs() {
-#	local emacs_arch="i686"
-#	case $MACHINE in
-#		x86_64) emacs_arch="${MACHINE}" ;;
-#		*) ;;
-#	esac
-#	local emacs_version=
-#	IFS='.' read -a emacs_version <<< "${EMACS_VER}"
-#	local emacs_major="${emacs_version[0]}"
-#	local emacs_minor="${emacs_version[1]}"
-#	if [ ${emacs_major} -lt 25 ]; then
-#		emacs_arch="bin-i686"
-#	elif [ ${emacs_major} -ge 25 -a ${emacs_minor} -gt 1 ]; then
-#		emacs_arch="${emacs_arch}"
-#	fi
+install_emacs() {
+  local e_ver="25.3_1"
+  local e_major_ver="`kit_major_version ${e_ver}`"
+  local e_zip="emacs-${e_ver}-${MACHINE}.zip"
+  local e_dep_zip="emacs-${e_major_ver}-${MACHINE}-deps.zip"
+  local e_url="https://ftp.gnu.org/gnu/emacs/windows/${e_zip}"
+  local e_home="${OPEN_DIR}/emacs"
+  local bin_dir="${e_home}/${e_ver}"
+  local cmd="emacs -nw --batch --eval='(emacs-version)'"
+
+  [ 25 -le $e_major_ver ] || return 1
+  
+  `check_kit "${cmd}" "${bin_dir}"` && return 0
+
+  install_kit "${bin_dir}/emacs.exe" \
+              "${bin_dir}/${cmd}" \
+              "${e_url}" \
+              "${e_home}/${e_zip}" \
+              "${bin_dir}"
+
+}
+
+# install_emacs() {
+# 	local emacs_arch="i686"
+# 	case $MACHINE in
+# 		x86_64) emacs_arch="${MACHINE}" ;;
+# 		*) ;;
+# 	esac
+# 	local emacs_version=
+# 	IFS='.' read -a emacs_version <<< "${EMACS_VER}"
+# 	local emacs_major="${emacs_version[0]}"
+# 	local emacs_minor="${emacs_version[1]}"
+# 	if [ ${emacs_major} -lt 25 ]; then
+# 		emacs_arch="bin-i686"
+# 	elif [ ${emacs_major} -ge 25 -a ${emacs_minor} -gt 1 ]; then
+# 		emacs_arch="${emacs_arch}"
+# 	fi
 #  local emacs_zip="emacs-${EMACS_VER}-${emacs_arch}-mingw32.zip"
-#	if [ ${emacs_major} -ge 25 -a ${emacs_minor} -ge 1 ]; then
+# 	if [ ${emacs_major} -ge 25 -a ${emacs_minor} -ge 1 ]; then
 #  	emacs_zip="emacs-${EMACS_VER}-${emacs_arch}.zip"
-#	fi
+# 	fi
 #  local emacs_url="http://ftp.gnu.org/gnu/emacs/windows/${emacs_zip}"
 #  local emacs_home="${OPT_RUN}/emacs"
 #  local bin_dir="${emacs_home}/bin"
-#
+
 #  [ -d "${emacs_home}" ] || mkdir -p "${emacs_home}"
-#
+
 #  if [ ! -x "${bin_dir}/runemacs.exe" ]; then
 #    curl -Lo "${emacs_home}/${emacs_zip}" -C - "${emacs_url}"
 #    if [ ! -f "${emacs_home}/${emacs_zip}" ]; then
@@ -88,39 +110,39 @@ fi
 #    fi
 #    cd "${emacs_home}" && unzip -qo "${emacs_home}/${emacs_zip}"
 #  fi
-#
-#	if [ ${emacs_major} -ge 25 ]; then
-#		local dep_zip="emacs-${emacs_major}-${MACHINE}-deps.zip"
-#		local dep_url="https://ftp.gnu.org/gnu/emacs/windows/${dep_zip}"
-#		curl -Lo "${emacs_home}/${dep_zip}" -C - "${dep_url}"
-#		if [ ! -f "${emacs_home}/${dep_zip}" ]; then
-#			return 1
-#		fi
+
+# 	if [ ${emacs_major} -ge 25 ]; then
+# 		local dep_zip="emacs-${emacs_major}-${MACHINE}-deps.zip"
+# 		local dep_url="https://ftp.gnu.org/gnu/emacs/windows/${dep_zip}"
+# 		curl -Lo "${emacs_home}/${dep_zip}" -C - "${dep_url}"
+# 		if [ ! -f "${emacs_home}/${dep_zip}" ]; then
+# 			return 1
+# 		fi
 #    cd "${emacs_home}" && unzip -qo "${emacs_home}/${dep_zip}"
-#	else
+# 	else
 #  	if [ ! -x "${bin_dir}/gnutls-cli.exe" ]; then
-#			local gnutls_zip="gnutls-3.3.11-w32-bin.zip"
-#			download_winport "${emacs_home}" "${gnutls_zip}"
-#			if [ ! -f "${emacs_home}/${gnutls_zip}" ]; then
-#				return 1
-#			fi
-#			unzip -qo "${emacs_home}/${gnutls_zip}" 'bin/*' -d"${emacs_home}"
-#			unzip -qo "${emacs_home}/${gnutls_zip}" 'lib/*' -d"${emacs_home}"
-#		fi
-#
-#		if [ ! -f "${bin_dir}/libxml2-2.dll" ]; then
-#			local libxml2_zip="libxml2-2.7.8-w32-bin.zip"
+# 			local gnutls_zip="gnutls-3.3.11-w32-bin.zip"
+# 			download_winport "${emacs_home}" "${gnutls_zip}"
+# 			if [ ! -f "${emacs_home}/${gnutls_zip}" ]; then
+# 				return 1
+# 			fi
+# 			unzip -qo "${emacs_home}/${gnutls_zip}" 'bin/*' -d"${emacs_home}"
+# 			unzip -qo "${emacs_home}/${gnutls_zip}" 'lib/*' -d"${emacs_home}"
+# 		fi
+
+# 		if [ ! -f "${bin_dir}/libxml2-2.dll" ]; then
+# 			local libxml2_zip="libxml2-2.7.8-w32-bin.zip"
 #    	download_winport "${emacs_home}" "${libxml2_zip}"
 #    	if [ ! -f "${emacs_home}/${libxml2_zip}" ]; then
 #      	return 1
 #    	fi
 #    	unzip -qo "${emacs_home}/${libxml2_zip}" \
 #          	'bin/libxml2-2.dll' -d"${emacs_home}"
-#  	fi  
-#	fi
-# 
+#  	  fi  
+# 	fi
+
 #  return 0
-#}
+# }
 #
 #install_emacs_source() {
 #  local emacs_git_ver=
@@ -278,6 +300,7 @@ fi
 
 for i in "${KITS[@]}"; do
   echo_head " + ${i} ... "
-  echo_tail `${i} ; echo $?`
+  ${i}
+  echo_tail $?
 done
 
