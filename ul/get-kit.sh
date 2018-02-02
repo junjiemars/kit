@@ -66,7 +66,7 @@ append_kit_path() {
   
   if `inside_kit_bash_env_p` && test -f "${f_paths}"; then
     if `grep "^${name}=\".*${flag}.*\"" "${f_paths}" &>/dev/null`; then
-      sed $ "s#^${name}=\".*${flag}\"#${var}#g" "${f_paths}"
+      sed -e "s#^${name}=\".*${flag}\"#${var}#g" "${f_paths}"
     else
       echo -e "${var}" >> "${f_paths}"
     fi
@@ -91,7 +91,6 @@ append_kit_var() {
  else
    return 0
  fi
-
 }
 
 download_kit() {
