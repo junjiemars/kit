@@ -5,7 +5,7 @@
 #------------------------------------------------
 
 KIT_BRANCH="${KIT_BRANCH:-master}"
-GITHUB_R="${GITHUB_R:-https://raw.githubusercontent.com/junjiemars}"
+GITHUB_R="${GITHUB_R:-https://raw.githubusercontent.com/junjiemars}/kit"
 GITHUB_H="${GITHUB_H:-https://github.com/junjiemars}"
 GET_KIT_URL="${GET_KIT_URL:-${GITHUB_R}/${KIT_BRANCH}/ul/get-kit.sh}"
 
