@@ -49,9 +49,9 @@ RUN_DIR="${OPT_RUN:-${PREFIX}/run}"
 OPEN_DIR="${OPT_OPEN:-${PREFIX}/open}"
 TMP_DIR="${TMP:-${PREFIX}/tmp}"
 
-SED_OPT_I="-i''"
+SED_OPT_I="-i.pre"
 if `on_darwin`; then
-  SED_OPT_I="-i ''"
+  SED_OPT_I="-i .pre"
 fi
 
 CURL_OPTS="${CURL_OPTS:--f}"
@@ -66,7 +66,7 @@ append_kit_path() {
   
   if `inside_kit_bash_env_p` && test -f "${f_paths}"; then
     if `grep "^${name}=\".*${flag}.*\"" "${f_paths}" &>/dev/null`; then
-      sed -e "s#^${name}=\".*${flag}\"#${var}#g" "${f_paths}"
+      sed $SED_OPT_I -e "s#^${name}=\".*${flag}\"#${var}#g" "${f_paths}"
     else
       echo -e "${var}" >> "${f_paths}"
     fi
