@@ -23,39 +23,9 @@ else
 fi
 
 
-
 EMACS_VER="${EMACS_VER:-25.3_1}"
 GMAKE_VER="${GMAKE_VER:-4.2.90}"
 
-#to_win_path() {
-#  echo "$1" | \
-#    sed -e 's#^\/\([a-zA-Z]\)\/#\u\1:\/#' | \
-#    sed -e 's#\/#\\#g'
-#}
-#
-#set_win_var() {
-#  setx "$1=$2" 
-#}
-#
-#append_win_path() {
-#  local p="$@"
-#	if [ "function" = "`type -t append_path 2>/dev/null`" ]; then
-#		append_path "$p" "$PATH"
-#  fi
-#}
-#
-##set_path() {
-## can not get user specific PATH vars
-##}
-#
-#download_winport() {
-#  local ezwinports="https://sourceforge.net/projects/ezwinports"
-#  local dest_dir=$1
-#  local dest_file=$2
-#  local port_url="${ezwinports}/files/${dest_file}/download"
-#  curl -Lo "${dest_dir}/${dest_file}" -C - "${port_url}"; echo $?
-#}
-#
 install_emacs() {
   local e_major_ver="`kit_major_version ${EMACS_VER}`"
   local e_zip="emacs-${EMACS_VER}-${MACHINE}.zip"
@@ -207,22 +177,6 @@ install_gmake() {
     append_kit_path "${bin_dir}" "${gm_home}"
   else
     return 1
-  fi
-}
-
-echo_head() {
-  if [ "no" = "$ECHO_QUIET" ]; then
-    echo -n "$@"
-  fi
-}
-
-echo_tail() {
-  if [ "no" = "$ECHO_QUIET" ]; then
-    if [ 0 -eq $1 ]; then
-      echo "ok"
-    else
-      echo "failed"
-    fi  
   fi
 }
 
