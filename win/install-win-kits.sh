@@ -114,23 +114,30 @@ install_emacs_source() {
       ${e_git_url} ${e_repo} || return $?
   fi
 }
-#
-#install_pstools() {
-#  local pstools_zip="PSTools.zip"  
-#  local pstools_url="https://download.sysinternals.com/files/${pstools_zip}"
-#  local pstools_home="${OPT_RUN}/pstools"
-#
-#  `pslist &>/dev/null` && return 0
-#  [ -d "${pstools_home}" ] || mkdir -p "${pstools_home}"
-#
-#  curl -Lo "${pstools_home}/${pstools_zip}" -C - "${pstools_url}" 
-#  if [ ! -x "${pstools_home}/pslist" ]; then
-#    unzip -qo "${pstools_home}/${pstools_zip}" -d"${pstools_home}"
-#  fi
-#
-#  return 0
-#}
-#
+
+install_pstools() {
+  local p_zip="PSTools.zip"  
+  local p_url="https://download.sysinternals.com/files/${p_zip}"
+  local p_home="${OPEN_DIR}/pstools"
+  local bin_dir="${p_home}/bin"
+  local cmd="pslist"
+
+  `check_kit "${cmd}" "${p_home}"` && return 0
+
+  install_kit "${bin_dir}/pslist.exe" \
+              "${bin_dir}/${cmd}" \
+              "${p_url}" \
+              "${p_home}/${p_zip}" \
+              "${bin_dir}" \
+    || return $?
+
+  if `${bin_dir}/${cmd} &>/dev/null`; then
+    append_kit_path "${bin_dir}" "${p_home}"
+  else
+    return 1
+  fi
+}
+
 #install_procexp() {
 #  local procexp_zip="ProcessExplorer.zip"  
 #  local procexp_url="https://download.sysinternals.com/files/${procexp_zip}"
