@@ -139,11 +139,6 @@ extract_kit() {
       ;;
     zip)
       cd `dirname ${src}` && unzip -q -o "${src}" -d"${dst}"
-      t=$?
-      [ 0 -eq $t ] || return 1
-      local d="`ls -d ${dst}/*`"
-      [ -d "$d" ] || return 1
-      cd "${d}" && cp -r * "${dst}" && rm -r "$d"
       ;;
     jar)
       return 0

@@ -25,7 +25,7 @@ fi
 
 
 
-EMACS_VER="${EMACS_VER:-25.2}"
+EMACS_VER="${EMACS_VER:-25.3_1}"
 GMAKE_VER="${GMAKE_VER:-4.2.90}"
 
 #to_win_path() {
@@ -58,13 +58,12 @@ GMAKE_VER="${GMAKE_VER:-4.2.90}"
 #}
 #
 install_emacs() {
-  local e_ver="25.3_1"
-  local e_major_ver="`kit_major_version ${e_ver}`"
-  local e_zip="emacs-${e_ver}-${MACHINE}.zip"
+  local e_major_ver="`kit_major_version ${EMACS_VER}`"
+  local e_zip="emacs-${EMACS_VER}-${MACHINE}.zip"
   local e_dep_zip="emacs-${e_major_ver}-${MACHINE}-deps.zip"
   local e_url="https://ftp.gnu.org/gnu/emacs/windows/${e_zip}"
   local e_home="${OPEN_DIR}/emacs"
-  local bin_dir="${e_home}/${e_ver}"
+  local bin_dir="${e_home}/${EMACS_VER}/bin"
   local cmd="emacs -nw --batch --eval='(emacs-version)'"
 
   [ 25 -le $e_major_ver ] || return 1
@@ -75,7 +74,14 @@ install_emacs() {
               "${bin_dir}/${cmd}" \
               "${e_url}" \
               "${e_home}/${e_zip}" \
-              "${bin_dir}"
+              "${bin_dir}" \
+    || return $?
+
+  if `${bin_dir}/${cmd} &>/dev/null`; then
+    append_kit_path "${bin_dir}" "${e_home}"
+  else
+    return 1
+  fi
 
 }
 
