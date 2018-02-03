@@ -24,9 +24,10 @@ else
 fi
 
 
-#
-#EMACS_VER=${EMACS_VER:-"25.2"}
-#
+
+EMACS_VER="${EMACS_VER:-25.2}"
+GMAKE_VER="${GMAKE_VER:-4.2.90}"
+
 #to_win_path() {
 #  echo "$1" | \
 #    sed -e 's#^\/\([a-zA-Z]\)\/#\u\1:\/#' | \
@@ -233,11 +234,10 @@ install_emacs() {
 #
 
 install_gmake() {
-  local gm_ver="4.2.90"
-	local gm_tgz="gnumake-${gm_ver}-${MACHINE}.tar.gz"
-  local gm_url="${GITHUB_H}/make/releases/download/${gm_ver}/${gm_tgz}"
+	local gm_tgz="gnumake-${GMAKE_VER}-${MACHINE}.tar.gz"
+  local gm_url="${GITHUB_H}/make/releases/download/${GMAKE_VER}/${gm_tgz}"
   local gm_home="${OPEN_DIR}/gmake"
-	local bin_dir="${gm_home}/${gm_ver}"
+	local bin_dir="${gm_home}/${GMAKE_VER}"
   local cmd="${bin_dir}/make -v"
 
   `check_kit "make -v" "${bin_dir}"` && return 0
