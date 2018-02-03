@@ -8,7 +8,7 @@
 PLATFORM="`uname -s 2>/dev/null`"
 MACHINE="`uname -m 2>/dev/null`"
 ECHO_QUIET=${ECHO_QUIET:-no}
-ECHO_LOG="${ECHO_LOG:-${0}.log}"
+ECHO_LOG="${ECHO_LOG:-${TMP%/}/`basename ${0}`.log}"
 
 inside_kit_bash_env_p() {
   echo $INSIDE_KIT_BASH_ENV | grep 'junjiemars/kit' &>/dev/null
@@ -223,21 +223,22 @@ check_git_repo() {
   local d="$1"
   local f="$2"
   [ -d "$d" ] || return 1
-	cd $d && git remote -v 2>/dev/null | grep '$f' &>/dev/null
+	cd $d && git remote -v 2>/dev/null | grep "$f" &>/dev/null
 }
 
-check_kit_git_branch() {
+check_git_branch() {
   local d="$1"
   [ -d "$d" ] || return 1
   cd $d && git rev-parse --abbrev-ref HEAD
 }
 
 call_git() {
-  local argv="$@"
+  local repo="$1"
+  local argv="${@:2}"
   if [ "no" = "${ECHO_QUIET}" ]; then
-    git $@
+    cd ${repo} && git ${argv}
   else
-    git $@ &>> ${ECHO_LOG}
+    cd ${repo} && git ${argv} &>> ${ECHO_LOG}
   fi
 }
 

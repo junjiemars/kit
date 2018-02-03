@@ -11,7 +11,6 @@ GET_KIT_URL="${GET_KIT_URL:-${GITHUB_R}/${KIT_BRANCH}/ul/get-kit.sh}"
 
 TMP_DIR=${TMP:-$HOME/Downloads}
 GET_KIT_L=${TMP}/get-kit.sh
-ECHO_QUIET=${ECHO_QUIET:-NO}
 
 curl -fsqL -o ${TMP_DIR}/get-kit.sh ${GET_KIT_URL}
 if [ -f "${GET_KIT_L}" ]; then
@@ -161,26 +160,26 @@ install_emacs() {
 #  return 0
 # }
 #
-#install_emacs_source() {
-#  local emacs_git_ver=
-#  local emacs_git_url="https://github.com/emacs-mirror/emacs.git"
-#  IFS='.' read -a emacs_git_ver <<< "$EMACS_VER"
-#  emacs_git_ver="emacs-${emacs_git_ver[0]}"
-#
-#  [ -z "$OPT_OPEN" ] && return 1
-#  local emacs_git_home="$OPT_OPEN/${emacs_git_ver}"
-#  
-#  if [ -d "${emacs_git_home%/}/.git" ]; then
-#    cd "${emacs_git_home}"
-#    git reset --hard
-#    git pull origin "${emacs_git_ver}"
-#  else
-#    cd "$OPT_OPEN"
-#    git clone --depth=1 -b"${emacs_git_ver}" "${emacs_git_url}" "${emacs_git_ver}"
-#  fi
-#
-#  return $?
-#}
+install_emacs_source() {
+  local e_major_ver="`kit_major_version ${EMACS_VER}`"
+  local e_git_url="https://github.com/emacs-mirror/emacs.git"
+  local e_home="${OPEN_DIR}/emacs"
+  local e_repo="${e_home}/src-${e_major_ver}"
+  local e_branch="emacs-${e_major_ver}"
+
+  if ! `check_git_repo "${e_repo}" "/emacs\.git"`; then
+    call_git clone --depth=1 --branch=${e_branch} \
+      ${e_git_url} ${e_repo} || return $?
+  fi
+
+  if [ "`check_git_branch ${e_repo}`" = "${e_branch}" ]; then
+    call_git ${e_repo} pull origin ${e_branch} || return $?
+  else
+    [ -d "${e_repo}" ] && rm -rf "${e_repo}"
+    call_git ${e_repo} clone --depth=1 --branch=${e_branch} \
+      ${e_git_url} ${e_repo} || return $?
+  fi
+}
 #
 #install_pstools() {
 #  local pstools_zip="PSTools.zip"  
@@ -273,13 +272,13 @@ install_gmake() {
 }
 
 echo_head() {
-  if [ "NO" = "$ECHO_QUIET" ]; then
+  if [ "no" = "$ECHO_QUIET" ]; then
     echo -n "$@"
   fi
 }
 
 echo_tail() {
-  if [ "NO" = "$ECHO_QUIET" ]; then
+  if [ "no" = "$ECHO_QUIET" ]; then
     if [ 0 -eq $1 ]; then
       echo "ok"
     else
