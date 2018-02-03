@@ -134,7 +134,7 @@ download_kit() {
   t=$?
   if [ 33 -eq $t ]; then
     curl $CURL_OPTS -L -o "${fn}" "${url}"
-  elif [ 60 -eq $t ]; then
+  elif [ 60 -eq $t -o 22 -eq $t ]; then
     [ -f "${fn}" ] && rm "${fn}"
     curl $CURL_OPTS -k -L -o "${fn}" "${url}"
   else

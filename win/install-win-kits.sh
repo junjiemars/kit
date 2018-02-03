@@ -162,36 +162,30 @@ install_procexp() {
     return 1
   fi
 }
-#
-#install_netcat() {
-#  local nc_zip="netcat-win32-1.12.zip"
-#  local nc_url="https://eternallybored.org/misc/netcat/${nc_zip}"
-#  local bin_dir="${OPT_RUN}/bin"
-#  local nc_tmp="$HOME/Downloads"
-#  
-#  `nc -h &>/dev/null` && return 0
-#
-#  if [ ! -f "${bin_dir}/nc" ]; then
-#    curl -Lo "${nc_tmp}/${nc_zip}" -C - "${nc_url}"
-#  fi
-#
-#  if [ -f "${nc_tmp}/${nc_zip}" ]; then
-#    case `uname -m 2>/dev/null` in
-#      x86_64) 
-#        unzip -qo "${nc_tmp}/${nc_zip}" 'nc64.exe' -d"${bin_dir}" && \
-#          mv "${bin_dir}/nc64.exe" "${bin_dir}/nc.exe"
-#      ;;
-#      *)
-#        unzip -qo "${nc_tmp}/${nc_zip}" 'nc.exe' -d"${bin_dir}"
-#      ;;
-#    esac
-#  else
-#    return 1
-#  fi
-#
-#  return 0
-#}
-#
+
+install_netcat() {
+  local nc_zip="netcat-win32-1.12.zip"
+  local nc_url="https://eternallybored.org/misc/netcat/${nc_zip}"
+  local nc_home="${OPEN_DIR}/netcat"
+  local bin_dir="${nc_home}/bin"
+  local cmd="file ${bin_dir}/nc.exe"
+  
+  `type -p nc &>/dev/null` && return 0
+  mkdir -p "${nc_home}"
+
+  install_kit "${bin_dir}/nc.exe" \
+              "${cmd}" \
+              "${nc_url}" \
+              "${nc_home}/${nc_zip}" \
+              "${bin_dir}" \
+    || return $?
+
+  if `${cmd} &>/dev/null`; then
+    append_kit_path "${bin_dir}" "${nc_home}"
+  else
+    return 1
+  fi
+}
 
 install_gmake() {
 	local gm_tgz="gnumake-${GMAKE_VER}-${MACHINE}.tar.gz"
