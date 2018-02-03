@@ -7,6 +7,8 @@
 
 PLATFORM="`uname -s 2>/dev/null`"
 MACHINE="`uname -m 2>/dev/null`"
+ECHO_QUIET=${ECHO_QUIET:-no}
+ECHO_LOG="${ECHO_LOG:-${0}.log}"
 
 inside_kit_bash_env_p() {
   echo $INSIDE_KIT_BASH_ENV | grep 'junjiemars/kit' &>/dev/null
@@ -55,6 +57,22 @@ if `on_darwin`; then
 fi
 
 CURL_OPTS="${CURL_OPTS:--f}"
+
+echo_head() {
+  if [ "no" = "$ECHO_QUIET" ]; then
+    echo -n "$@"
+  fi
+}
+
+echo_tail() {
+  if [ "no" = "$ECHO_QUIET" ]; then
+    if [ 0 -eq $1 ]; then
+      echo "ok"
+    else
+      echo "failed"
+    fi  
+  fi
+}
 
 save_as() {
   local f="$1"
@@ -200,5 +218,31 @@ kit_major_version() {
     echo "${ver}"
   fi
 }
+
+check_git_repo() {
+  local d="$1"
+  local f="$2"
+  [ -d "$d" ] || return 1
+	cd $d && git remote -v 2>/dev/null | grep '$f' &>/dev/null
+}
+
+check_kit_git_branch() {
+  local d="$1"
+  [ -d "$d" ] || return 1
+  cd $d && git rev-parse --abbrev-ref HEAD
+}
+
+call_git() {
+  local argv="$@"
+  if [ "no" = "${ECHO_QUIET}" ]; then
+    git $@
+  else
+    git $@ &>> ${ECHO_LOG}
+  fi
+}
+
+if [ -f "${ECHO_LOG}" ]; then
+  rm "${ECHO_LOG}"
+fi
 
 export INCLUDE_GET_KIT="yes"
