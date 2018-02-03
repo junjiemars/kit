@@ -138,26 +138,30 @@ install_pstools() {
   fi
 }
 
-#install_procexp() {
-#  local procexp_zip="ProcessExplorer.zip"  
-#  local procexp_url="https://download.sysinternals.com/files/${procexp_zip}"
-#  local bin_dir="${OPT_RUN}/bin"
-#  local procexp_tmp="$HOME/Downloads"
-#
-#  `type -p procexp &>/dev/null` && return 0
-#
-#  if [ ! -f "${bin_dir}/procexp" ]; then
-#    curl -Lo "${procexp_tmp}/${procexp_zip}" -C - "${procexp_url}" 
-#  fi
-#
-#  if [ -f "${procexp_tmp}/${procexp_zip}" ]; then
-#    unzip -qo "${procexp_tmp}/${procexp_zip}" 'procexp.exe' -d"${bin_dir}"
-#  else
-#    return 1
-#  fi
-#
-#  return 0
-#}
+install_procexp() {
+  local p_zip="ProcessExplorer.zip"  
+  local p_url="https://download.sysinternals.com/files/${p_zip}"
+  local p_home="${OPEN_DIR}/procexp"
+  local bin_dir="${p_home}/bin"
+  local cmd="file ${bin_dir}/procexp.exe"
+
+  `type -p procexp &>/dev/null` && return 0
+
+  mkdir -p "${p_home}"
+
+  install_kit "${bin_dir}/procexp.exe" \
+              "${cmd}" \
+              "${p_url}" \
+              "${p_home}/${p_zip}" \
+              "${bin_dir}" \
+    || return $?
+  
+  if `${cmd} &>/dev/null`; then
+    append_kit_path "${bin_dir}" "${p_home}"
+  else
+    return 1
+  fi
+}
 #
 #install_netcat() {
 #  local nc_zip="netcat-win32-1.12.zip"
