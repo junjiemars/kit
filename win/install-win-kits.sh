@@ -61,9 +61,12 @@ install_emacs() {
   local e_major_ver="`kit_major_version ${EMACS_VER}`"
   local e_zip="emacs-${EMACS_VER}-${MACHINE}.zip"
   local e_dep_zip="emacs-${e_major_ver}-${MACHINE}-deps.zip"
-  local e_url="https://ftp.gnu.org/gnu/emacs/windows/${e_zip}"
+  local e_url_h="https://ftp.gnu.org/gnu/emacs/windows"
+  local e_url="${e_url_h}/${e_zip}"
+	local e_dep_url="${e_url_h}/${e_dep_zip}"
   local e_home="${OPEN_DIR}/emacs"
-  local bin_dir="${e_home}/${EMACS_VER}/bin"
+  local e_vhome="${e_home}/${EMACS_VER}"
+  local bin_dir="${e_vhome}/bin"
   local cmd="emacs -nw --batch --eval='(emacs-version)'"
 
   [ 25 -le $e_major_ver ] || return 1
@@ -74,7 +77,7 @@ install_emacs() {
               "${bin_dir}/${cmd}" \
               "${e_url}" \
               "${e_home}/${e_zip}" \
-              "${bin_dir}" \
+              "${e_vhome}" \
     || return $?
 
   if `${bin_dir}/${cmd} &>/dev/null`; then
@@ -83,6 +86,13 @@ install_emacs() {
     return 1
   fi
 
+  if [ ! -f "${e_home}/${e_dep_zip}" ]; then
+    download_kit "${e_dep_url}" "${e_home}/${e_dep_zip}"
+  fi
+
+  if [ -f "${e_home}/${e_dep_zip}" ]; then
+    extract_kit "${e_home}/${e_dep_zip}" "${e_vhome}" "clean=no"
+  fi
 }
 
 # install_emacs() {

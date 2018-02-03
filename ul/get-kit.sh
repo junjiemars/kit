@@ -127,10 +127,13 @@ download_kit() {
 extract_kit() {
   local src="$1"
   local dst="$2"
+  local clean="${3:-yes}"
   local x="${src##*.}"
   local t=0
 
-  [ -d "${dst}" ] && rm -r "${dst}"
+  if test -d "${dst}" && test "yes" = "${clean}"; then
+    rm -r "${dst}"
+  fi
   mkdir -p "${dst}"
   
   case "$x" in
