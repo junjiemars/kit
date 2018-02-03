@@ -250,7 +250,7 @@ install_gmake() {
     || return $?
 
   if `${cmd} &>/dev/null`; then
-    append_kit_path "${gm_home}" "${bin_dir}"
+    append_kit_path "${bin_dir}" "${gm_home}"
   else
     return 1
   fi

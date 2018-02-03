@@ -56,6 +56,19 @@ fi
 
 CURL_OPTS="${CURL_OPTS:--f}"
 
+save_as() {
+  local f="$1"
+	local ori="${f}.ori"
+  local pre="${f}.pre"
+
+  if [ -f ${f} ]; then
+		if [ -f ${ori} ]; then
+      cp $f $pre
+    else
+      cp $f $ori
+    fi
+  fi
+}
 
 append_kit_path() {
   local name="PATH"
@@ -65,6 +78,7 @@ append_kit_path() {
   local f_paths="$HOME/.bash_paths"
   
   if `inside_kit_bash_env_p` && test -f "${f_paths}"; then
+    save_as "${f_paths}"
     if `grep "^${name}=\".*${flag}.*\"" "${f_paths}" &>/dev/null`; then
       sed $SED_OPT_I -e "s#^${name}=\".*${flag}\"#${var}#g" "${f_paths}"
     else
