@@ -778,7 +778,7 @@ elif on_windows_nt; then
 fi
 `
 
-if [ ! -f "\$HOME/.cc-checked.id" ]; then
+if test ! -f "\$HOME/.cc-checked.id" || test "0" = "\`cat \$HOME/.cc-checked.id\`"; then
 `
 if on_linux; then
   echo "  check_linux_cc_include \\$HOME/.cc-inc.list \\$HOME/.vimrc"
@@ -787,8 +787,8 @@ elif on_windows_nt; then
 else
   echo "  # nop"
 fi
-echo "  echo \\"\\$\\$ : \\$?\\" > \\$HOME/.cc-checked.id"
 `
+	echo "1" > "\$HOME/.cc-checked.id"
 fi
 
 END
