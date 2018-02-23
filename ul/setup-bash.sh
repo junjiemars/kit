@@ -680,7 +680,7 @@ find_vctools() {
 
   local vswhere="`posix_path \"${PROGRAMFILES} (x86)/Microsoft Visual Studio/Installer/vswhere.exe\"`"
   if [ -f "${vswhere}" ]; then
-    vctools="`cd \"$(dirname \"${vswhere}\")\"; ./vswhere.exe -latest -property installationPath`"
+    vctools="`cd \"$(dirname \"${vswhere}\")\"; ./vswhere.exe -nologo -latest -property installationPath`"
     if [ -n "$vctools" ]; then
       vctools="${vctools}\VC\Auxiliary\Build"
       if [ -d "$vctools" ]; then
