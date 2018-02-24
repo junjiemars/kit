@@ -6,7 +6,7 @@
 #------------------------------------------------
 
 PLATFORM=`uname -s 2>/dev/null`
-PWD_DIR="$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)"
+ROOT="$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)"
 
 function sqlplus_name() {
   case "$PLATFORM" in
@@ -118,7 +118,7 @@ function find_oracle_home() {
 	local n="`sqlplus_name`"
 	local s="`find_sqlplus_path`"
 	local h=( 
-		"$PWD_DIR"
+		"$ROOT"
 		"$s"
 		"/u01/app/oracle/product"
 		"/u02/app/oracle/product"
@@ -156,9 +156,9 @@ function find_sqlpath() {
 	fi
 
 	local sql=(
-		"$PWD_DIR"
-		"$PWD_DIR/oracle"
-		"$PWD_DIR/db"
+		"$ROOT"
+		"$ROOT/oracle"
+		"$ROOT/db"
 		"$ORACLE_HOME"
 		"$ORACLE_BASE"
 		"${HOME%/}/product"
@@ -185,7 +185,7 @@ function find_sqlpath() {
 
 function check_oracle_env() {
 	local t=0
-	local env_file="${PWD_DIR%/}/.oracle.env"
+	local env_file="${ROOT%/}/.oracle.env"
 
 	validate_oracle_home
 	t=$?
