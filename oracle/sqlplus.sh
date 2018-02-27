@@ -7,8 +7,6 @@
 
 PLATFORM="`uname -s 2>/dev/null`"
 ROOT="$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)"
-SQLPLUS_SH_ARGS=
-SQLPLUS_BIN_ARGS=
 RLWRAP="${RLWRAP:-`hash rlwrap &>/dev/null && echo rlwrap`}"
 
 ORACLE_HOME="${ORACLE_HOME:-}"
@@ -244,11 +242,12 @@ function check_oracle_env() {
 }
 
 function usage() {
-	echo -e "Usage: $(basename $0) [OPTIONS] -- [sqlplus argv...]"
+	echo -e "Usage: $(basename $0) [OPTIONS] [sqlplus argv...]"
 	echo -e ""
   echo -e "Options:"
   echo -e "  --help\t\t\tPrint this message"
   echo -e "  --verbose\t\t\tverbose print environment variables"
+  echo -e "  --sqlplus-opts=\t\tsqlplus options, should be quoted"
   echo -e "  --oracle-home=\t\tset local ORACLE_HOME"
   echo -e "  --oracle-nls-lang=\t\tset local oracle NLS_LANG=$NLS_LANG"
   echo -e "  --oracle-uid=\t\t\toracle user id: user/password@host:port/sid"
@@ -260,60 +259,35 @@ function echo_env() {
 	echo "ORACLE_HOME=$ORACLE_HOME"
 	echo "SQLPATH=$SQLPATH"
 	echo "NLS_LANG=$NLS_LANG"
-	echo "SQLPLUS_SH_ARGS=$SQLPLUS_SH_ARGS"
-	echo "SQLPLUS_BIN_ARGS=$SQLPLUS_BIN_ARGS"
 	echo "oracle_env_file=$oracle_env_file"
 	echo "oracle_uid_file=$oracle_uid_file"
 	echo "oracle_uid=$oracle_uid"
-	echo "argv=${sqlplus_opts} ${oracle_uid} ${SQLPLUS_BIN_ARGS[@]}"
+	echo "argv=${sqlplus_opts:+$sqlplus_opts }${argv[@]}"
 }
 
 
 for option
 do
   case "$option" in
-    --sqlplus-opts=*) 
-			sqlplus_opts="`echo "$option" | sed -e 's/--sqlplus-opts=\([-.a-zA-Z0-9]*\)/\1/'`" 
-			continue ;;
+    --help)                  help=yes                   ;;
+		--verbose)               verbose=yes                ;;
+		--sqlplus-opts=*) 
+			sqlplus_opts="`echo $option | sed -e 's/--sqlplus-opts=\(.*\)/\1/'`"
+		;;
+		--oracle-home=*) 
+			oracle_home="`echo $option | sed -e 's/--oracle-home=\(.*\)/\1/'`"
+		;;
+    --oracle-uid=*) 
+			oracle_uid="`echo $option | sed -e 's/--oracle-uid=\(.*\)/\1/'`"
+		;;
+    --oracle-nls-lang=*) 
+			oracle_nls_lang="`echo $option | sed -e 's/--oracle-nls-lang=\(.*\)/\1/'`"
+		;;
+
     *) argv+=("$option") ;;
   esac
 done
 
-
-if [[ ${argv[@]} =~ ^.*--$ ]]; then
-  SQLPLUS_SH_ARGS="`echo ${argv[@]} | sed -e \"s/\(.*\)--$/\1/\"`"
-elif [[ ${argv[@]} =~ ^--[[:space:]][[:space:]]*.*$ ]]; then
-	SQLPLUS_BIN_ARGS="`echo ${argv[@]} | sed -e \"s/^--\s\s*\(.*\)/\1/\"`"
-elif [[ ${argv[@]} =~ ^..*--[^=]..* ]]; then
-  SQLPLUS_SH_ARGS="`echo ${argv[@]} | sed -e \"s/\(.* .*\)--[^=].*/\1/\"`"
-	SQLPLUS_BIN_ARGS="`echo ${argv[@]} | sed -e \"s/.*--[^=]\(.*\)/\1/\"`"
-else
-	SQLPLUS_BIN_ARGS="${argv[@]}"
-fi
-
-for option in ${SQLPLUS_SH_ARGS[@]};
-do
-  opt="$opt `echo $option | sed -e \"s/\(--[^=]*=\)\(.* .*\)/\1'\2'/\"`"
-  
-  case "$option" in
-    --*=*) value=`echo "$option" | sed -e 's/[-_a-zA-Z0-9]*=//'` ;;
-    *) value="" ;;
-  esac
-  
-  case "$option" in
-    --help)                  help=yes                   ;;
-		--verbose)               verbose=yes                ;;
-		--oracle-home=*)         oracle_home="$value"       ;;
-    --oracle-uid=*)          oracle_uid="$value"        ;;
-    --oracle-nls-lang=*)     oracle_nls_lang="$value"   ;;
-
-    *)
-			echo "$0: error: invalid `basename $0` option \"$option\""
-			usage
-			exit 1
-    ;;
-  esac
-done
 
 if [ "yes" = "$help" ]; then
 	usage
@@ -341,12 +315,7 @@ fi
 
 echo_env
 
-if [ -z "${SQLPLUS_BIN_ARGS[@]}" ]; then
-	${RLWRAP} sqlplus ${sqlplus_opts} ${oracle_uid}
-else
-	${RLWRAP} sqlplus ${sqlplus_opts} ${oracle_uid} ${SQLPLUS_BIN_ARGS[@]}
-fi
-
+${RLWRAP} sqlplus ${sqlplus_opts} ${oracle_uid} ${argv[@]}
 if [ 0 -eq $? -a -n "$oracle_uid" ]; then
 	gen_oracle_uid_file
 fi
