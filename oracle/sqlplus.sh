@@ -10,14 +10,16 @@ ROOT="$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)"
 SQLPLUS_SH_ARGS=
 SQLPLUS_BIN_ARGS=
 RLWRAP="${RLWRAP:-`hash rlwrap &>/dev/null && echo rlwrap`}"
+
 ORACLE_HOME="${ORACLE_HOME:-}"
 SQLPATH="${SQLPATH:-}"
 export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
 
 oracle_env_file="${ROOT%/}/.oracle.env"
 oracle_uid_file="${ROOT%/}/.oracle.uid"
+
 help=no
-debug=no
+verbose=no
 oracle_home=
 oracle_uid=
 
@@ -243,8 +245,22 @@ function usage() {
 	echo -e ""
   echo -e "Options:"
   echo -e "  --help\t\tPrint this message"
+  echo -e "  --verbose\t\tverbose print environment variables"
   echo -e "  --oracle-home=\t\tset local ORACLE_HOME"
   echo -e "  --oracle-uid=\t\toracle user id, such as user/password@host:port/sid"
+}
+
+function echo_env() {
+	[ "yes" = "$verbose" ] || return 0
+	
+	echo "ORACLE_HOME=$ORACLE_HOME"
+	echo "SQLPATH=$SQLPATH"
+	echo "NLS_LANG=$NLS_LANG"
+	echo "SQLPLUS_SH_ARGS=$SQLPLUS_SH_ARGS"
+	echo "SQLPLUS_BIN_ARGS=$SQLPLUS_BIN_ARGS"
+	echo "oracle_env_file=$oracle_env_file"
+	echo "oracle_uid_file=$oracle_uid_file"
+	echo "oracle_uid=$oracle_uid"
 }
 
 
@@ -270,6 +286,7 @@ do
   
   case "$option" in
     --help)                  help=yes                   ;;
+		--verbose)               verbose=yes                ;;
 		--oracle-home=*)         oracle_home="$value"       ;;
     --oracle-uid=*)          oracle_uid="$value"        ;;
 
@@ -286,17 +303,21 @@ if [ "yes" = "$help" ]; then
 	exit 0
 fi
 
+if [ -n "$oracle_home" ]; then
+	export ORACLE_HOME="$oracle_home"
+fi
+
 check_oracle_env
 if [ 0 -ne $? ]; then
-	echo "ORACLE_HOME=$ORACLE_HOME"
-	echo "PATH=$PATH"
-	echo "! ORACLE environment  =invalid"
+	echo_env
 	exit 1
 fi
 
 if [ -z "$oracle_uid" ]; then
 	[ -f "$oracle_uid_file" ] && . "$oracle_uid_file"
 fi
+
+echo_env
 
 if [ -z "${SQLPLUS_BIN_ARGS[@]}" ]; then
 	${RLWRAP} sqlplus ${oracle_uid}
