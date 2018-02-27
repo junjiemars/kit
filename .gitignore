@@ -26,4 +26,4 @@ all/ide/idea/*/options/
 *.bak
 **/tds.sh
 **/*.pre
-**/.oracle.env
+**/.oracle.*

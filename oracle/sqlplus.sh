@@ -5,8 +5,21 @@
 # note: suit for multiple Oracle coexisting env
 #------------------------------------------------
 
-PLATFORM=`uname -s 2>/dev/null`
+PLATFORM="`uname -s 2>/dev/null`"
 ROOT="$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)"
+SQLPLUS_SH_ARGS=
+SQLPLUS_BIN_ARGS=
+RLWRAP="${RLWRAP:-`hash rlwrap &>/dev/null && echo rlwrap`}"
+ORACLE_HOME="${ORACLE_HOME:-}"
+SQLPATH="${SQLPATH:-}"
+export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
+
+oracle_env_file="${ROOT%/}/.oracle.env"
+oracle_uid_file="${ROOT%/}/.oracle.uid"
+help=no
+debug=no
+oracle_home=
+oracle_uid=
 
 function sqlplus_name() {
   case "$PLATFORM" in
@@ -31,16 +44,28 @@ function find_sqlplus_path() {
 }
 
 function gen_oracle_env_file() {
-	local env_file="$@"
-	local pre_file="${env_file}.pre"
+	local pre_file="${oracle_env_file}.pre"
 
-	if [ -f "$env_file" ]; then
-		mv "$env_file" "$pre_file"
+	if [ -f "$oracle_env_file" ]; then
+		mv "$oracle_env_file" "$pre_file"
 	fi
 
-	cat << END > "$env_file" 
+	cat << END > "$oracle_env_file" 
 export ORACLE_HOME="${ORACLE_HOME}"
 export SQLPATH="${SQLPATH}"
+END
+}
+
+function gen_oracle_uid_file() {
+	local userid="$@"
+	local pre_file="${userid_file}.pre"
+
+	if [ -f "$oracle_uid_file" ]; then
+		mv "$oracle_uid_file" "$pre_file"
+	fi
+
+	cat << END > "$oracle_uid_file" 
+oracle_uid=${oracle_uid}
 END
 }
 
@@ -185,19 +210,18 @@ function find_sqlpath() {
 
 function check_oracle_env() {
 	local t=0
-	local env_file="${ROOT%/}/.oracle.env"
 
 	validate_oracle_home
 	t=$?
 	if [ 0 -eq $t ]; then
 		SQLPATH="`find_sqlpath`"
 		export SQLPATH
-		gen_oracle_env_file "$env_file"
+		gen_oracle_env_file
 		return 0
 	fi
 
 
-	[ -f "$env_file" ] && . "$env_file"
+	[ -f "$oracle_env_file" ] && . "$oracle_env_file"
 	
 	validate_oracle_home
 	t=$?
@@ -211,40 +235,75 @@ function check_oracle_env() {
 	SQLPATH="`find_sqlpath`"
 	export SQLPATH
 
-	gen_oracle_env_file "$env_file"
+	gen_oracle_env_file
+}
+
+function usage() {
+	echo -e "Usage: $(basename $0) [OPTIONS] -- [sqlplus arg...]"
+	echo -e ""
+  echo -e "Options:"
+  echo -e "  --help\t\tPrint this message"
+  echo -e "  --oracle-home=\t\tset local ORACLE_HOME"
+  echo -e "  --oracle-uid=\t\toracle user id, such as user/password@host:port/sid"
 }
 
 
-ORACLE_HOME="${ORACLE_HOME:-}"
-SQLPATH="${SQLPATH:-}"
-export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
+if [[ $@ =~ ^.*--$ ]]; then
+  SQLPLUS_SH_ARGS="`echo $@ | sed -e \"s/\(.*\)--$/\1/\"`"
+elif [[ $@ =~ ^--[[:space:]][[:space:]]*.*$ ]]; then
+	SQLPLUS_BIN_ARGS="`echo $@ | sed -e \"s/^--\s\s*\(.*\)/\1/\"`"
+elif [[ $@ =~ ^..*--[^=]..* ]]; then
+  SQLPLUS_SH_ARGS="`echo $@ | sed -e \"s/\(.* .*\)--[^=].*/\1/\"`"
+	SQLPLUS_BIN_ARGS="`echo $@ | sed -e \"s/.*--[^=]\(.*\)/\1/\"`"
+else
+	SQLPLUS_BIN_ARGS="$@"
+fi
+
+for option in ${SQLPLUS_SH_ARGS[@]};
+do
+  opt="$opt `echo $option | sed -e \"s/\(--[^=]*=\)\(.* .*\)/\1'\2'/\"`"
+  
+  case "$option" in
+    --*=*) value=`echo "$option" | sed -e 's/[-_a-zA-Z0-9]*=//'` ;;
+    *) value="" ;;
+  esac
+  
+  case "$option" in
+    --help)                  help=yes                   ;;
+		--oracle-home=*)         oracle_home="$value"       ;;
+    --oracle-uid=*)          oracle_uid="$value"        ;;
+
+    *)
+			echo "$0: error: invalid `basename $0` option \"$option\""
+			usage
+			exit 1
+    ;;
+  esac
+done
+
+if [ "yes" = "$help" ]; then
+	usage
+	exit 0
+fi
 
 check_oracle_env
 if [ 0 -ne $? ]; then
 	echo "ORACLE_HOME=$ORACLE_HOME"
 	echo "PATH=$PATH"
 	echo "! ORACLE environment  =invalid"
+	exit 1
 fi
 
-ORA_USER=${ORA_USER:-system}
-ORA_PASSWD=${ORA_PASSWD:-oracle}
-HOST=${HOST:-localhost}
-PORT=${PORT:-1521}
-SID=${SID:-'XE'}
-USERID=${USERID:-${HOST}:${PORT}/${SID}}
+if [ -z "$oracle_uid" ]; then
+	[ -f "$oracle_uid_file" ] && . "$oracle_uid_file"
+fi
 
-if `hash rlwrap &>/dev/null`; then
-	RLWRAP='rlwrap'
-fi	
-
-if [ 0 -eq $# ] ; then
-	${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID}
+if [ -z "${SQLPLUS_BIN_ARGS[@]}" ]; then
+	${RLWRAP} sqlplus ${oracle_uid}
 else
-	if [[ $1 =~ ..*/..*@..*:[0-9][0-9]*[:/]..* ]]; then
-		${RLWRAP} sqlplus $1 ${@:2}
-	elif [[ $1 =~ ..*/..* ]]; then
-			${RLWRAP} sqlplus $1@${USERID} ${@:2}
-  else
-		${RLWRAP} sqlplus ${ORA_USER}/${ORA_PASSWD}@${USERID} $@
-  fi
+	${RLWRAP} sqlplus ${oracle_uid} ${SQLPLUS_BIN_ARGS[@]}
+fi
+
+if [ 0 -eq $? -a -n "$oracle_uid" ]; then
+	gen_oracle_uid_file
 fi
