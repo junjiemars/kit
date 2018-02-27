@@ -18,11 +18,13 @@ NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
 oracle_env_file="${ROOT%/}/.oracle.env"
 oracle_uid_file="${ROOT%/}/.oracle.uid"
 
+argv=()
 help=no
 verbose=no
 oracle_home=
 oracle_uid=
 oracle_nls_lang=
+sqlplus_opts=
 
 function sqlplus_name() {
   case "$PLATFORM" in
@@ -263,18 +265,30 @@ function echo_env() {
 	echo "oracle_env_file=$oracle_env_file"
 	echo "oracle_uid_file=$oracle_uid_file"
 	echo "oracle_uid=$oracle_uid"
+	echo "argv=${sqlplus_opts} ${oracle_uid} ${SQLPLUS_BIN_ARGS[@]}"
 }
 
 
-if [[ $@ =~ ^.*--$ ]]; then
-  SQLPLUS_SH_ARGS="`echo $@ | sed -e \"s/\(.*\)--$/\1/\"`"
-elif [[ $@ =~ ^--[[:space:]][[:space:]]*.*$ ]]; then
-	SQLPLUS_BIN_ARGS="`echo $@ | sed -e \"s/^--\s\s*\(.*\)/\1/\"`"
-elif [[ $@ =~ ^..*--[^=]..* ]]; then
-  SQLPLUS_SH_ARGS="`echo $@ | sed -e \"s/\(.* .*\)--[^=].*/\1/\"`"
-	SQLPLUS_BIN_ARGS="`echo $@ | sed -e \"s/.*--[^=]\(.*\)/\1/\"`"
+for option
+do
+  case "$option" in
+    --sqlplus-opts=*) 
+			sqlplus_opts="`echo "$option" | sed -e 's/--sqlplus-opts=\([-.a-zA-Z0-9]*\)/\1/'`" 
+			continue ;;
+    *) argv+=("$option") ;;
+  esac
+done
+
+
+if [[ ${argv[@]} =~ ^.*--$ ]]; then
+  SQLPLUS_SH_ARGS="`echo ${argv[@]} | sed -e \"s/\(.*\)--$/\1/\"`"
+elif [[ ${argv[@]} =~ ^--[[:space:]][[:space:]]*.*$ ]]; then
+	SQLPLUS_BIN_ARGS="`echo ${argv[@]} | sed -e \"s/^--\s\s*\(.*\)/\1/\"`"
+elif [[ ${argv[@]} =~ ^..*--[^=]..* ]]; then
+  SQLPLUS_SH_ARGS="`echo ${argv[@]} | sed -e \"s/\(.* .*\)--[^=].*/\1/\"`"
+	SQLPLUS_BIN_ARGS="`echo ${argv[@]} | sed -e \"s/.*--[^=]\(.*\)/\1/\"`"
 else
-	SQLPLUS_BIN_ARGS="$@"
+	SQLPLUS_BIN_ARGS="${argv[@]}"
 fi
 
 for option in ${SQLPLUS_SH_ARGS[@]};
@@ -328,9 +342,9 @@ fi
 echo_env
 
 if [ -z "${SQLPLUS_BIN_ARGS[@]}" ]; then
-	${RLWRAP} sqlplus ${oracle_uid}
+	${RLWRAP} sqlplus ${sqlplus_opts} ${oracle_uid}
 else
-	${RLWRAP} sqlplus ${oracle_uid} ${SQLPLUS_BIN_ARGS[@]}
+	${RLWRAP} sqlplus ${sqlplus_opts} ${oracle_uid} ${SQLPLUS_BIN_ARGS[@]}
 fi
 
 if [ 0 -eq $? -a -n "$oracle_uid" ]; then
