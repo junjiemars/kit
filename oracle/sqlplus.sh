@@ -244,7 +244,7 @@ function check_oracle_env() {
 }
 
 function usage() {
-	echo -e "Usage: $(basename $0) [OPTIONS] -- [sqlplus arg...]"
+	echo -e "Usage: $(basename $0) [OPTIONS] -- [sqlplus argv...]"
 	echo -e ""
   echo -e "Options:"
   echo -e "  --help\t\t\tPrint this message"
