@@ -13,7 +13,7 @@ RLWRAP="${RLWRAP:-`hash rlwrap &>/dev/null && echo rlwrap`}"
 
 ORACLE_HOME="${ORACLE_HOME:-}"
 SQLPATH="${SQLPATH:-}"
-export NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
+NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
 
 oracle_env_file="${ROOT%/}/.oracle.env"
 oracle_uid_file="${ROOT%/}/.oracle.uid"
@@ -22,6 +22,7 @@ help=no
 verbose=no
 oracle_home=
 oracle_uid=
+oracle_nls_lang=
 
 function sqlplus_name() {
   case "$PLATFORM" in
@@ -244,10 +245,11 @@ function usage() {
 	echo -e "Usage: $(basename $0) [OPTIONS] -- [sqlplus arg...]"
 	echo -e ""
   echo -e "Options:"
-  echo -e "  --help\t\tPrint this message"
-  echo -e "  --verbose\t\tverbose print environment variables"
+  echo -e "  --help\t\t\tPrint this message"
+  echo -e "  --verbose\t\t\tverbose print environment variables"
   echo -e "  --oracle-home=\t\tset local ORACLE_HOME"
-  echo -e "  --oracle-uid=\t\toracle user id, such as user/password@host:port/sid"
+  echo -e "  --oracle-nls-lang=\t\tset local oracle NLS_LANG=$NLS_LANG"
+  echo -e "  --oracle-uid=\t\t\toracle user id, such as user/password@host:port/sid"
 }
 
 function echo_env() {
@@ -289,6 +291,7 @@ do
 		--verbose)               verbose=yes                ;;
 		--oracle-home=*)         oracle_home="$value"       ;;
     --oracle-uid=*)          oracle_uid="$value"        ;;
+    --oracle-nls-lang=*)     oracle_nls_lang="$value"   ;;
 
     *)
 			echo "$0: error: invalid `basename $0` option \"$option\""
@@ -306,6 +309,11 @@ fi
 if [ -n "$oracle_home" ]; then
 	export ORACLE_HOME="$oracle_home"
 fi
+
+if [ -n "$oracle_nls_lang" ]; then
+	NLS_LANG="$oracle_nls_lang"
+fi
+export NLS_LANG
 
 check_oracle_env
 if [ 0 -ne $? ]; then
