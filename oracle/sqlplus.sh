@@ -251,7 +251,7 @@ function usage() {
   echo -e "  --verbose\t\t\tverbose print environment variables"
   echo -e "  --oracle-home=\t\tset local ORACLE_HOME"
   echo -e "  --oracle-nls-lang=\t\tset local oracle NLS_LANG=$NLS_LANG"
-  echo -e "  --oracle-uid=\t\t\toracle user id, such as user/password@host:port/sid"
+  echo -e "  --oracle-uid=\t\t\toracle user id: user/password@host:port/sid"
 }
 
 function echo_env() {
