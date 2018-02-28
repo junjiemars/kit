@@ -10,7 +10,7 @@ ROOT="$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)"
 RLWRAP="${RLWRAP:-`hash rlwrap &>/dev/null && echo rlwrap`}"
 
 ORACLE_HOME="${ORACLE_HOME%/:-}"
-SQLPATH="${SQLPATH:-}"
+SQLPATH="${SQLPATH%/:-}"
 NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
 
 oracle_env_file="${ROOT%/}/.oracle.env"
@@ -21,6 +21,7 @@ argv=()
 help=no
 verbose=no
 oracle_home=
+oracle_sqlpath=
 oracle_uid=
 oracle_nls_lang=
 sqlplus_opts=
@@ -276,6 +277,7 @@ function usage() {
   echo -e "  --verbose\t\t\tverbose print environment variables"
   echo -e "  --sqlplus-opts=\t\tsqlplus options, should be quoted"
   echo -e "  --oracle-home=\t\tset local ORACLE_HOME"
+  echo -e "  --oracle-sqlpath=\t\tpush local oracle SQLPATH"
   echo -e "  --oracle-nls-lang=\t\tset local oracle NLS_LANG=$NLS_LANG"
   echo -e "  --oracle-uid=\t\t\toracle user id: user/password@host:port/sid"
 }
@@ -304,6 +306,9 @@ do
 		;;
 		--oracle-home=*) 
 			oracle_home="`echo $option | sed -e 's/--oracle-home=\(.*\)/\1/'`"
+		;;
+		--oracle-sqlpath=*) 
+			oracle_sqlpath="`echo $option | sed -e 's/--oracle-sqlpath=\(.*\)/\1/'`"
 		;;
     --oracle-uid=*) 
 			oracle_uid="`echo $option | sed -e 's/--oracle-uid=\(.*\)/\1/'`"
@@ -339,6 +344,10 @@ fi
 
 if [ -z "$oracle_uid" ]; then
 	[ -f "$oracle_uid_file" ] && . "$oracle_uid_file"
+fi
+
+if [ -n "$oracle_sqlpath}" ]; then
+	export SQLPATH="${oracle_sqlpath:+$oracle_sqlpath:}$SQLPATH"
 fi
 
 gen_oracle_login_file
