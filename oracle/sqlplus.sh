@@ -9,7 +9,7 @@ PLATFORM="`uname -s 2>/dev/null`"
 ROOT="$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)"
 RLWRAP="${RLWRAP:-`hash rlwrap &>/dev/null && echo rlwrap`}"
 
-ORACLE_HOME="${ORACLE_HOME:-}"
+ORACLE_HOME="${ORACLE_HOME%/:-}"
 SQLPATH="${SQLPATH:-}"
 NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
 
@@ -323,7 +323,7 @@ if [ "yes" = "$help" ]; then
 fi
 
 if [ -n "$oracle_home" ]; then
-	export ORACLE_HOME="$oracle_home"
+	export ORACLE_HOME="${oracle_home%/}"
 fi
 
 if [ -n "$oracle_nls_lang" ]; then
