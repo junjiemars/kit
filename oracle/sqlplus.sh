@@ -247,8 +247,7 @@ function check_oracle_env() {
 	if [ 0 -eq $t ]; then
 		SQLPATH="`find_sqlpath`"
 		export SQLPATH
-		gen_oracle_env_file
-		return 0
+		gen_oracle_env_file && return 0
 	fi
 
 
@@ -258,12 +257,15 @@ function check_oracle_env() {
 	t=$?
 	if [ 0 -ne $t ]; then
 		ORACLE_HOME="`find_oracle_home`"
-		validate_oracle_home
-		t=$?
-		[ 0 -eq $t ] || return $t
+		validate_oracle_home || return $?
 	fi
 
 	SQLPATH="`find_sqlpath`"
+	if [ -n "$oracle_sqlpath" -a "$oracle_sqlpath" != "$SQLPATH" ]; then
+		if ! [[ $SQLPATH =~ ${oracle_sqlpath}:.* ]]; then
+			SQLPATH="$oracle_sqlpath:$SQLPATH"
+		fi
+	fi
 	export SQLPATH
 
 	gen_oracle_env_file
@@ -328,7 +330,13 @@ if [ "yes" = "$help" ]; then
 fi
 
 if [ -n "$oracle_home" ]; then
-	export ORACLE_HOME="${oracle_home%/}"
+	oracle_home="${oracle_home%/}"
+	export ORACLE_HOME="$oracle_home"
+fi
+
+if [ -n "${oracle_sqlpath}" ]; then
+	oracle_sqlpath="${oracle_sqlpath%/}"
+	export SQLPATH="$oracle_sqlpath"
 fi
 
 if [ -n "$oracle_nls_lang" ]; then
@@ -344,10 +352,6 @@ fi
 
 if [ -z "$oracle_uid" ]; then
 	[ -f "$oracle_uid_file" ] && . "$oracle_uid_file"
-fi
-
-if [ -n "$oracle_sqlpath}" ]; then
-	export SQLPATH="${oracle_sqlpath:+$oracle_sqlpath:}$SQLPATH"
 fi
 
 gen_oracle_login_file
