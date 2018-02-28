@@ -15,6 +15,7 @@ NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
 
 oracle_env_file="${ROOT%/}/.oracle.env"
 oracle_uid_file="${ROOT%/}/.oracle.uid"
+oracle_login_file="${ROOT%/}/login.sql"
 
 argv=()
 help=no
@@ -70,6 +71,32 @@ function gen_oracle_uid_file() {
 	cat << END > "$oracle_uid_file" 
 oracle_uid=${oracle_uid}
 END
+}
+
+function gen_oracle_login_file() {
+	if [ ! -f "$oracle_login_file" ]; then
+		cat << END > "$oracle_login_file"
+--------------------------------------------------
+-- author: junjiemars@gmail.com
+-- target: set sqlplus prompt
+-- note: 
+-- > put login.sql under the directory that
+-- > \$SQLPATH point to
+--------------------------------------------------
+
+set sqlprompt '&_user.@&_connect_identifier.> ';
+
+-- use \$? | %errorlevel%
+-- whenever sqlerror exit sql.sqlcode
+
+set serveroutput on
+
+--set define on;
+--define _editor=/usr/bin/vi;
+--set define off;
+--set sqlblanklines on;
+END
+	fi
 }
 
 function validate_oracle_home() {
@@ -261,6 +288,7 @@ function echo_env() {
 	echo "NLS_LANG=$NLS_LANG"
 	echo "oracle_env_file=$oracle_env_file"
 	echo "oracle_uid_file=$oracle_uid_file"
+	echo "oracle_login_file=$oracle_login_file"
 	echo "oracle_uid=$oracle_uid"
 	echo "argv=${sqlplus_opts:+$sqlplus_opts }${argv[@]}"
 }
@@ -313,6 +341,7 @@ if [ -z "$oracle_uid" ]; then
 	[ -f "$oracle_uid_file" ] && . "$oracle_uid_file"
 fi
 
+gen_oracle_login_file
 echo_env
 
 ${RLWRAP} sqlplus ${sqlplus_opts} ${oracle_uid} ${argv[@]}
