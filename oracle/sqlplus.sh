@@ -26,7 +26,7 @@ oracle_uid=
 oracle_nls_lang=
 sqlplus_opts=
 
-function sqlplus_name() {
+sqlplus_name() {
   case "$PLATFORM" in
     MSYS_NT*|MINGW*)
 			echo "sqlplus.exe"
@@ -37,7 +37,7 @@ function sqlplus_name() {
   esac
 }
 
-function find_sqlplus_path() {
+find_sqlplus_path() {
 	local p=
 	local t=
 
@@ -48,7 +48,7 @@ function find_sqlplus_path() {
 	echo "`dirname $p`"
 }
 
-function gen_oracle_env_file() {
+gen_oracle_env_file() {
 	local pre_file="${oracle_env_file}.pre"
 
 	if [ -f "$oracle_env_file" ]; then
@@ -61,7 +61,7 @@ export SQLPATH="${SQLPATH}"
 END
 }
 
-function gen_oracle_uid_file() {
+gen_oracle_uid_file() {
 	local userid="$@"
 	local pre_file="${userid_file}.pre"
 
@@ -74,7 +74,7 @@ oracle_uid=${oracle_uid}
 END
 }
 
-function gen_oracle_login_file() {
+gen_oracle_login_file() {
 	if [ ! -f "$oracle_login_file" ]; then
 		cat << END > "$oracle_login_file"
 --------------------------------------------------
@@ -100,7 +100,7 @@ END
 	fi
 }
 
-function validate_oracle_home() {
+validate_oracle_home() {
 	[ -n "$ORACLE_HOME" ] || return 1
 
 	ORACLE_HOME="${ORACLE_HOME%/}"
@@ -170,7 +170,7 @@ function validate_oracle_home() {
 	return $t 
 }
 
-function find_oracle_home() {
+find_oracle_home() {
 	local n="`sqlplus_name`"
 	local s="`find_sqlplus_path`"
 	local h=( 
@@ -205,7 +205,12 @@ function find_oracle_home() {
 	return 1
 }
 
-function find_sqlpath() {
+find_sqlpath() {
+	if [ -n "$oracle_sqlpath" ]; then
+		echo "$oracle_sqlpath"
+		return 0;
+	fi
+
 	if [ -n "$SQLPATH" ]; then
 		echo "$SQLPATH"
 		return 0
@@ -239,8 +244,12 @@ function find_sqlpath() {
 	echo -e "$p" | uniq | tr '\n' ':' | sed -e 's_:$__g'
 }
 
-function check_oracle_env() {
+check_oracle_env() {
 	local t=0
+
+	if [ -z "$ORACLE_HOME" ]; then
+		[ -f "$oracle_env_file" ] && . "$oracle_env_file"
+	fi
 
 	validate_oracle_home
 	t=$?
@@ -250,28 +259,15 @@ function check_oracle_env() {
 		gen_oracle_env_file && return 0
 	fi
 
-
-	[ -f "$oracle_env_file" ] && . "$oracle_env_file"
-	
-	validate_oracle_home
-	t=$?
-	if [ 0 -ne $t ]; then
-		ORACLE_HOME="`find_oracle_home`"
-		validate_oracle_home || return $?
-	fi
+	ORACLE_HOME="`find_oracle_home`"
+	validate_oracle_home || return $?
 
 	SQLPATH="`find_sqlpath`"
-	if [ -n "$oracle_sqlpath" -a "$oracle_sqlpath" != "$SQLPATH" ]; then
-		if ! [[ $SQLPATH =~ ${oracle_sqlpath}:.* ]]; then
-			SQLPATH="$oracle_sqlpath:$SQLPATH"
-		fi
-	fi
 	export SQLPATH
-
 	gen_oracle_env_file
 }
 
-function usage() {
+usage() {
 	echo -e "Usage: $(basename $0) [OPTIONS] [sqlplus argv...]"
 	echo -e ""
   echo -e "Options:"
@@ -284,7 +280,7 @@ function usage() {
   echo -e "  --oracle-uid=\t\t\toracle user id: user/password@host:port/sid"
 }
 
-function echo_env() {
+echo_env() {
 	[ "yes" = "$verbose" ] || return 0
 	
 	echo "ORACLE_HOME=$ORACLE_HOME"
