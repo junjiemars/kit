@@ -13,7 +13,8 @@ ORACLE_HOME="${ORACLE_HOME%/:-}"
 SQLPATH="${SQLPATH%/:-}"
 NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
 
-oracle_env_file="${ROOT%/}/.oracle.env"
+oracle_home_file="${ROOT%/}/.oracle.home"
+oracle_sqlpath_file="${ROOT%/}/.oracle.sqlpath"
 oracle_uid_file="${ROOT%/}/.oracle.uid"
 oracle_login_file="${ROOT%/}/login.sql"
 
@@ -48,15 +49,26 @@ find_sqlplus_path() {
 	echo "`dirname $p`"
 }
 
-gen_oracle_env_file() {
-	local pre_file="${oracle_env_file}.pre"
+gen_oracle_home_file() {
+	local pre_file="${oracle_home_file}.pre"
 
-	if [ -f "$oracle_env_file" ]; then
-		mv "$oracle_env_file" "$pre_file"
+	if [ -f "$oracle_home_file" ]; then
+		mv "$oracle_home_file" "$pre_file"
 	fi
 
-	cat << END > "$oracle_env_file" 
+	cat << END > "$oracle_home_file" 
 export ORACLE_HOME="${ORACLE_HOME}"
+END
+}
+
+gen_oracle_sqlpath_file() {
+	local pre_file="${oracle_sqlpath_file}.pre"
+
+	if [ -f "$oracle_sqlpath_file" ]; then
+		mv "$oracle_sqlpath_file" "$pre_file"
+	fi
+
+	cat << END > "$oracle_sqlpath_file" 
 export SQLPATH="${SQLPATH}"
 END
 }
@@ -245,18 +257,19 @@ find_sqlpath() {
 }
 
 check_oracle_env() {
-	local t=0
-
 	if [ -z "$ORACLE_HOME" ]; then
-		[ -f "$oracle_env_file" ] && . "$oracle_env_file"
+		[ -f "$oracle_home_file" ] && . "$oracle_home_file"
 	fi
 
-	validate_oracle_home
-	t=$?
-	if [ 0 -eq $t ]; then
+	if [ -z "$SQLPATH" ]; then
+		[ -f "$oracle_sqlpath_file" ] && . "$oracle_sqlpath_file"
+	fi
+
+	if validate_oracle_home; then
 		SQLPATH="`find_sqlpath`"
 		export SQLPATH
-		gen_oracle_env_file && return 0
+		gen_oracle_sqlpath_file
+		gen_oracle_home_file && return 0
 	fi
 
 	ORACLE_HOME="`find_oracle_home`"
@@ -264,7 +277,9 @@ check_oracle_env() {
 
 	SQLPATH="`find_sqlpath`"
 	export SQLPATH
-	gen_oracle_env_file
+
+	gen_oracle_sqlpath_file
+	gen_oracle_home_file
 }
 
 usage() {
@@ -286,7 +301,8 @@ echo_env() {
 	echo "ORACLE_HOME=$ORACLE_HOME"
 	echo "SQLPATH=$SQLPATH"
 	echo "NLS_LANG=$NLS_LANG"
-	echo "oracle_env_file=$oracle_env_file"
+	echo "oracle_home_file=$oracle_home_file"
+	echo "oracle_sqlpath_file=$oracle_sqlpath_file"
 	echo "oracle_uid_file=$oracle_uid_file"
 	echo "oracle_login_file=$oracle_login_file"
 	echo "oracle_uid=$oracle_uid"
