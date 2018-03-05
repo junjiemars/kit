@@ -99,13 +99,19 @@ sort_path() {
   echo -n "${sorted}" 
 }
 
+get_sed_opt_i() {
+  if on_darwin; then
+    echo "-i $1"
+  else
+    echo "-i$1"
+  fi
+}
+
 delete_tail_lines() {
 	local h="$1"
   local lines="$2"
 	local f="$3"
-
-	sed_opt_i="-i.pre"
-	`on_darwin` && sed_opt_i="-i .pre"
+	sed_opt_i="`get_sed_opt_i .pre`"
 
   [ -f "$f" ] || return 1
 
@@ -193,17 +199,15 @@ inside_emacs_p() {
   test -n "\$INSIDE_EMACS"
 }
 
+get_sed_opt_i() {
 `
-declare -f on_windows_nt
+	if on_darwin; then
+  	echo -e "  echo \\"-i \\$1\\""
+	else
+  	echo -e "  echo \\"-i\\$1\\""
+	fi
 `
-
-`
-declare -f on_darwin
-`
-
-`
-declare -f on_linux
-`
+}
 
 `
 declare -f delete_tail_lines
@@ -500,7 +504,7 @@ declare -f posix_path
 `
 
 `
-if \`on_windows_nt\`; then
+if on_windows_nt; then
   declare -f sort_path
 fi
 `
