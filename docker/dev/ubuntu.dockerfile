@@ -59,7 +59,9 @@ RUN useradd -m -s/bin/bash ${SUDOUSER} && \
 
 # chown home opt dirs
 RUN chown -R ${SUDOUSER}:${SUDOUSER} ${UR_HOME} && \
-    mkdir -p /opt/run/{bin,sbin,conf} && \
+    mkdir -p /opt/run/bin && \
+		mkdir -p /opt/run/sbin && \
+    mkdir -p /opt/run/conf && \
     chown -R ${SUDOUSER}:${SUDOUSER} /opt/run && \
     mkdir -p /opt/open && chown -R ${SUDOUSER}:${SUDOUSER} /opt/open && \
     mkdir -p /opt/apps && chown -R ${SUDOUSER}:${SUDOUSER} /opt/apps && \
