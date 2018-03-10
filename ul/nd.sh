@@ -538,8 +538,58 @@ gen_shell() {
 #    --opt-server-name=$OPT_SERVER_NAME
 #    --opt-server-tokens=$OPT_SERVER_TOKENS
 
+ROOT=${ROOT%/}
 NGX_HOME=${NGX_RUN_DIR%/}
-\${NGX_HOME}/sbin/nginx \$@
+NGX_CONF_DIR=${NGX_CONF_DIR}
+NGX_BIN=\${NGX_HOME}/sbin/nginx
+
+check_nginx_env() {
+  if [ ! -d "\$NGX_HOME" ]; then
+    echo -e "! \$NGX_HOME does not exist"
+    exit 1
+  fi
+
+  if [ ! -d "\$NGX_CONF_DIR" ]; then
+    echo -e "! \$NGX_CONF_DIR does not exist"
+    exit 1
+  fi
+
+  if [ ! -f "\$NGX_BIN" ]; then
+    echo -e "! \$NGX_BIN does not exist"
+    exit 1
+  fi
+}
+
+copy_nginx_conf() {
+  local s="\${ROOT}/$NGX_CONF"
+  local d="\${NGX_CONF_DIR}/$NGX_CONF"
+
+  if [ ! -f "\$s" ]; then
+    echo -e "! \$s does not exist"
+    exit 1
+  fi
+
+  if \`diff "\$s" "\$d" &>/dev/null\`; then
+    return 0
+  fi
+
+  if [ ! -f "\${d}.ori" ]; then
+    if [ -f "\${d}" ]; then
+      cp "\${d}" "\${d}.ori"
+    else
+      cp "\${s}" "\${d}.ori"
+    fi
+  fi
+  if [ -f "\${d}" ]; then
+    cp "\${d}" "\${d}.pre"
+  fi
+  cp "\${s}" "\${d}"
+}
+
+check_nginx_env
+copy_nginx_conf
+
+\${NGX_BIN} \$@
 
 END
 
