@@ -351,6 +351,10 @@ if [ -n "$profile" ]; then
 	oracle_home_file="${ROOT%/}/${oracle_home_file}${profile:+.$profile}"
 	oracle_uid_file="${ROOT%/}/${oracle_uid_file}${profile:+.$profile}"
 	oracle_sqlpath_file="${ROOT%/}/${oracle_sqlpath_file}${profile:+.$profile}"
+else
+	oracle_home_file="${ROOT%/}/${oracle_home_file}"
+	oracle_uid_file="${ROOT%/}/${oracle_uid_file}"
+	oracle_sqlpath_file="${ROOT%/}/${oracle_sqlpath_file}"
 fi
 
 if [ -n "$oracle_home" ]; then
