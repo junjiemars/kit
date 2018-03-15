@@ -10,11 +10,11 @@ ROOT="$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)"
 RLWRAP="${RLWRAP:-`hash rlwrap &>/dev/null && echo rlwrap`}"
 
 ORACLE_HOME="${ORACLE_HOME%/:-}"
-SQLPATH="${SQLPATH%/:-}"
+ORACLE_PATH="${ORACLE_PATH%/:-}"
 NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
 
 oracle_home_file=".oracle.home"
-oracle_sqlpath_file=".oracle.sqlpath"
+oracle_path_file=".oracle.path"
 oracle_uid_file=".oracle.uid"
 oracle_login_file="${ROOT%/}/login.sql"
 
@@ -23,7 +23,7 @@ help=no
 verbose=no
 profile=
 oracle_home=
-oracle_sqlpath=
+oracle_path=
 oracle_uid=
 oracle_nls_lang=
 sqlplus_opts=
@@ -62,15 +62,15 @@ export ORACLE_HOME="${ORACLE_HOME}"
 END
 }
 
-gen_oracle_sqlpath_file() {
-	local pre_file="${oracle_sqlpath_file}.pre"
+gen_oracle_path_file() {
+	local pre_file="${oracle_path_file}.pre"
 
-	if [ -f "$oracle_sqlpath_file" ]; then
-		mv "$oracle_sqlpath_file" "$pre_file"
+	if [ -f "$oracle_path_file" ]; then
+		mv "$oracle_path_file" "$pre_file"
 	fi
 
-	cat << END > "$oracle_sqlpath_file" 
-export SQLPATH="${SQLPATH}"
+	cat << END > "$oracle_path_file" 
+export ORACLE_PATH="${ORACLE_PATH}"
 END
 }
 
@@ -95,7 +95,7 @@ gen_oracle_login_file() {
 -- target: set sqlplus prompt
 -- note: 
 -- > put login.sql under the directory that
--- > \$SQLPATH point to
+-- > \$ORACLE_PATH point to
 --------------------------------------------------
 
 set sqlprompt '&_user.@&_connect_identifier.> ';
@@ -219,13 +219,13 @@ find_oracle_home() {
 }
 
 find_sqlpath() {
-	if [ -n "$oracle_sqlpath" ]; then
-		echo "$oracle_sqlpath"
+	if [ -n "$oracle_path" ]; then
+		echo "$oracle_path"
 		return 0;
 	fi
 
-	if [ -n "$SQLPATH" ]; then
-		echo "$SQLPATH"
+	if [ -n "$ORACLE_PATH" ]; then
+		echo "$ORACLE_PATH"
 		return 0
 	fi
 
@@ -262,24 +262,24 @@ check_oracle_env() {
 		[ -f "$oracle_home_file" ] && . "$oracle_home_file"
 	fi
 
-	if [ -z "$SQLPATH" ]; then
-		[ -f "$oracle_sqlpath_file" ] && . "$oracle_sqlpath_file"
+	if [ -z "$ORACLE_PATH" ]; then
+		[ -f "$oracle_path_file" ] && . "$oracle_path_file"
 	fi
 
 	if validate_oracle_home; then
-		SQLPATH="`find_sqlpath`"
-		export SQLPATH
-		gen_oracle_sqlpath_file
+		ORACLE_PATH="`find_sqlpath`"
+		export ORACLE_PATH
+		gen_oracle_path_file
 		gen_oracle_home_file && return 0
 	fi
 
 	ORACLE_HOME="`find_oracle_home`"
 	validate_oracle_home || return $?
 
-	SQLPATH="`find_sqlpath`"
-	export SQLPATH
+	ORACLE_PATH="`find_oracle_path`"
+	export ORACLE_PATH
 
-	gen_oracle_sqlpath_file
+	gen_oracle_path_file
 	gen_oracle_home_file
 }
 
@@ -292,7 +292,7 @@ usage() {
 	echo -e "  --profile=\t\t\tprofile environment"
   echo -e "  --sqlplus-opts=\t\tsqlplus options, should be quoted"
   echo -e "  --oracle-home=\t\tset local ORACLE_HOME"
-  echo -e "  --oracle-sqlpath=\t\tpush local oracle SQLPATH"
+  echo -e "  --oracle-path=\t\tpush local oracle ORACLE_PATH"
   echo -e "  --oracle-nls-lang=\t\tset local oracle NLS_LANG=$NLS_LANG"
   echo -e "  --oracle-uid=\t\t\toracle user id: user/password@host:port/sid"
 }
@@ -301,10 +301,10 @@ echo_env() {
 	[ "yes" = "$verbose" ] || return 0
 	
 	echo "ORACLE_HOME=$ORACLE_HOME"
-	echo "SQLPATH=$SQLPATH"
+	echo "ORACLE_PATH=$ORACLE_PATH"
 	echo "NLS_LANG=$NLS_LANG"
 	echo "oracle_home_file=$oracle_home_file"
-	echo "oracle_sqlpath_file=$oracle_sqlpath_file"
+	echo "oracle_path_file=$oracle_path_file"
 	echo "oracle_uid_file=$oracle_uid_file"
 	echo "oracle_login_file=$oracle_login_file"
 	echo "oracle_uid=$oracle_uid"
@@ -326,8 +326,8 @@ do
 		--oracle-home=*) 
 			oracle_home="`echo $option | sed -e 's/--oracle-home=\(.*\)/\1/'`"
 			;;
-		--oracle-sqlpath=*) 
-			oracle_sqlpath="`echo $option | sed -e 's/--oracle-sqlpath=\(.*\)/\1/'`"
+		--oracle-path=*) 
+			oracle_path="`echo $option | sed -e 's/--oracle-path=\(.*\)/\1/'`"
 			;;
     --oracle-uid=*) 
 			oracle_uid="`echo $option | sed -e 's/--oracle-uid=\(.*\)/\1/'`"
@@ -350,11 +350,11 @@ fi
 if [ -n "$profile" ]; then
 	oracle_home_file="${ROOT%/}/${oracle_home_file}${profile:+.$profile}"
 	oracle_uid_file="${ROOT%/}/${oracle_uid_file}${profile:+.$profile}"
-	oracle_sqlpath_file="${ROOT%/}/${oracle_sqlpath_file}${profile:+.$profile}"
+	oracle_path_file="${ROOT%/}/${oracle_path_file}${profile:+.$profile}"
 else
 	oracle_home_file="${ROOT%/}/${oracle_home_file}"
 	oracle_uid_file="${ROOT%/}/${oracle_uid_file}"
-	oracle_sqlpath_file="${ROOT%/}/${oracle_sqlpath_file}"
+	oracle_path_file="${ROOT%/}/${oracle_path_file}"
 fi
 
 if [ -n "$oracle_home" ]; then
@@ -362,9 +362,9 @@ if [ -n "$oracle_home" ]; then
 	export ORACLE_HOME="$oracle_home"
 fi
 
-if [ -n "${oracle_sqlpath}" ]; then
-	oracle_sqlpath="${oracle_sqlpath%/}"
-	export SQLPATH="$oracle_sqlpath"
+if [ -n "${oracle_path}" ]; then
+	oracle_path="${oracle_path%/}"
+	export ORACLE_PATH="$oracle_path"
 fi
 
 if [ -n "$oracle_nls_lang" ]; then
