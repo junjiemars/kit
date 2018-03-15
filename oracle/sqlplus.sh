@@ -13,14 +13,15 @@ ORACLE_HOME="${ORACLE_HOME%/:-}"
 SQLPATH="${SQLPATH%/:-}"
 NLS_LANG="${NLS_LANG:-AMERICAN_AMERICA.UTF8}"
 
-oracle_home_file="${ROOT%/}/.oracle.home"
-oracle_sqlpath_file="${ROOT%/}/.oracle.sqlpath"
-oracle_uid_file="${ROOT%/}/.oracle.uid"
+oracle_home_file=".oracle.home"
+oracle_sqlpath_file=".oracle.sqlpath"
+oracle_uid_file=".oracle.uid"
 oracle_login_file="${ROOT%/}/login.sql"
 
 argv=()
 help=no
 verbose=no
+profile=
 oracle_home=
 oracle_sqlpath=
 oracle_uid=
@@ -288,6 +289,7 @@ usage() {
   echo -e "Options:"
   echo -e "  --help\t\t\tPrint this message"
   echo -e "  --verbose\t\t\tverbose print environment variables"
+	echo -e "  --profile=\t\tprofile environment"
   echo -e "  --sqlplus-opts=\t\tsqlplus options, should be quoted"
   echo -e "  --oracle-home=\t\tset local ORACLE_HOME"
   echo -e "  --oracle-sqlpath=\t\tpush local oracle SQLPATH"
@@ -315,23 +317,27 @@ do
   case "$option" in
     --help)                  help=yes                   ;;
 		--verbose)               verbose=yes                ;;
+		--profile=*)
+			profile="`echo $option | sed -e 's/--profile=\(.*\)/\1/'`"
+			;;
 		--sqlplus-opts=*) 
 			sqlplus_opts="`echo $option | sed -e 's/--sqlplus-opts=\(.*\)/\1/'`"
-		;;
+			;;
 		--oracle-home=*) 
 			oracle_home="`echo $option | sed -e 's/--oracle-home=\(.*\)/\1/'`"
-		;;
+			;;
 		--oracle-sqlpath=*) 
 			oracle_sqlpath="`echo $option | sed -e 's/--oracle-sqlpath=\(.*\)/\1/'`"
-		;;
+			;;
     --oracle-uid=*) 
 			oracle_uid="`echo $option | sed -e 's/--oracle-uid=\(.*\)/\1/'`"
-		;;
+			;;
     --oracle-nls-lang=*) 
 			oracle_nls_lang="`echo $option | sed -e 's/--oracle-nls-lang=\(.*\)/\1/'`"
-		;;
+			;;
 
-    *) argv+=("$option") ;;
+    *) argv+=("$option")
+		  ;;
   esac
 done
 
@@ -339,6 +345,12 @@ done
 if [ "yes" = "$help" ]; then
 	usage
 	exit 0
+fi
+
+if [ -n "$profile" ]; then
+	oracle_home_file="${ROOT%/}/${oracle_home_file}${profile:+.$profile}"
+	oracle_uid_file="${ROOT%/}/${oracle_uid_file}${profile:+.$profile}"
+	oracle_sqlpath_file="${ROOT%/}/${oracle_sqlpath_file}${profile:+.$profile}"
 fi
 
 if [ -n "$oracle_home" ]; then
