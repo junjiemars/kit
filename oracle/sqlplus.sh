@@ -289,7 +289,7 @@ usage() {
   echo -e "Options:"
   echo -e "  --help\t\t\tPrint this message"
   echo -e "  --verbose\t\t\tverbose print environment variables"
-	echo -e "  --profile=\t\tprofile environment"
+	echo -e "  --profile=\t\t\tprofile environment"
   echo -e "  --sqlplus-opts=\t\tsqlplus options, should be quoted"
   echo -e "  --oracle-home=\t\tset local ORACLE_HOME"
   echo -e "  --oracle-sqlpath=\t\tpush local oracle SQLPATH"
