@@ -327,7 +327,7 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 exist_p() {
-  type -p \${1} &>/dev/null; echo \$?
+  command -v \${1} &>/dev/null; echo \$?
 }
 
 diff_p() {
