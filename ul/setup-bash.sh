@@ -110,7 +110,7 @@ delete_tail_lines() {
 	local h="$1"
   local lines="$2"
 	local f="$3"
-	sed_opt_i="`get_sed_opt_i .pre`"
+	local sed_opt_i="`get_sed_opt_i .pre`"
 
   [ -f "$f" ] || return 1
 
