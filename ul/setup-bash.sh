@@ -614,6 +614,9 @@ set hidden " :nohidden
 set ruler
 "set laststatus=2
 
+" visual bell
+set novisualbell
+
 " set internal shell
 set shell=bash\ --rcfile\ ~/.bashrc
 
