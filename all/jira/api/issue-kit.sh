@@ -77,7 +77,7 @@ do
     --api-doc)                       API_DOC="YES"              ;;
     
     --host=*)   	                   HOST="$value"     				  ;;
-    --post=*)   	                   PORT="$value"     				  ;;
+    --port=*)   	                   PORT="$value"     				  ;;
 
     --user=*)   	                   JIRA_USER="$value"    			;;
     --project=*)                     PROJECT="$value"     	    ;;
