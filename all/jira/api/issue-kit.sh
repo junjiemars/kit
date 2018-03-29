@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-
+PLATFORM=`uname -s 2>/dev/null`
 
 HELP=
 VERBOSE=
@@ -177,7 +177,7 @@ create_template() {
 {
 	"fields": {
 		"project": {
-			"id": "11700"
+			"id": "$p"
 		},
 		"summary": "ok, we missing it",
 		"description": "some description",
@@ -194,6 +194,23 @@ END
 	fi
 	return 1
 }
+
+on_windows_nt() {
+ case "$PLATFORM" in
+   MSYS_NT*|MINGW*) return 0 ;;
+   *) return 1 ;;
+ esac
+}
+	
+posix_path() {
+	local p="$1"
+	if `on_windows_nt`; then
+		echo "$p" | sed -e 's#^\/\([a-zA-Z]\)\/#\1:\/#'
+	else
+		echo "$p"	
+	fi
+}
+
 
 check_required_option "--user" "${JIRA_USER}" 1
 retval=$?
@@ -219,7 +236,7 @@ case "$COMMAND" in
 			exit 1
 		fi
 
-		JSON_FILE="${JSON_DIR%/}/create_issue_${PROJECT}.json"
+		JSON_FILE="`posix_path ${JSON_DIR%/}/create_issue_${PROJECT}.json`"
 		CURL_M="POST"
 		if [ ! -f "$JSON_FILE" ]; then
 			echo -e "$0 [error]: ${JSON_FILE} no found"
@@ -230,9 +247,9 @@ case "$COMMAND" in
 		for i in $(seq 1 $SIZE); do
 			echo -e "\n"
 			if [ "YES" = "$DRY_RUN" ]; then
-				echo curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" -d@"$JSON_FILE" $JIRA_ISSUE_URL
+				echo curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" -d @"$JSON_FILE" $JIRA_ISSUE_URL
 			else
-				curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" -d@"$JSON_FILE" $JIRA_ISSUE_URL
+				curl $IPV6 $DUMP_HEADER $VERBOSE -u $JIRA_USER -X$CURL_M -H "$CURL_H" -d @"$JSON_FILE" $JIRA_ISSUE_URL
 			fi
 			echo -e "\n"
 		done
