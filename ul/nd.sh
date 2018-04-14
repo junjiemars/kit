@@ -293,15 +293,13 @@ echo "\
 		stream|dns)
 echo "\
 --with-stream                    				          \
---without-http_geo_module        				          \
---without-http_map_module        				          \
---without-http_geo_module        				          \
---without-http_map_module        				          \
 --without-http_fastcgi_module    				          \
---without-http_scgi_module       				          \
+--without-http_geo_module        				          \
+--without-http_map_module        				          \
 --without-http_memcached_module  				          \
---without-mail_pop3_module       				          \
+--without-http_scgi_module       				          \
 --without-mail_imap_module       				          \
+--without-mail_pop3_module       				          \
 --without-mail_smtp_module       				          \
 --without-stream_geo_module      				          \
 --without-stream_map_module                       \
