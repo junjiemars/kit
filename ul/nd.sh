@@ -492,11 +492,25 @@ done
 
     server {
         listen $OPT_LISTEN_PORT;
-        proxy_connect_timeout 1s;
-        proxy_timeout 3s;
+        #proxy_connect_timeout 1s;
+        #proxy_timeout 3s;
         proxy_pass backend;
 
     } # end of server
+
+		#upstream backend_1 {
+		#	  has \$remote_addr consitent;
+		#		#server x.x.x.x:12345		max_fails=3 fail_timeout=30s;
+		#} # end of upstream variant backend
+
+    #server {
+    #    listen $OPT_LISTEN_PORT;
+    #    proxy_connect_timeout 1s;
+    #    proxy_timeout 3s;
+    #    proxy_pass $upstream;
+		#
+    #} # end of variant server
+		
 
 } # end of stream
 
