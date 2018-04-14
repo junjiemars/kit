@@ -11,9 +11,21 @@ VERSION="0.1.1"
 ROOT="${ROOT:-$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)}"
 OPT_RUN="${OPT_RUN:-${ROOT%/}/run}"
 
+find_nginx_home() {
+	for d in `ls -d ${ROOT%/}/*/`; do
+		if [[ $d =~ ${ROOT%/}/(nginx|nginx-release-*) ]]; then
+			if [ -f "${d%/}/auto/configure" ]; then
+				echo "${d%/}"
+				return 0
+			fi
+		fi
+	done
+	return 1
+}
+
 NGX_TARGET=( raw http https stream dns )
 NGX_IDX=( ${NGX_TARGET[0]} )
-NGX_HOME=${NGX_HOME:-${ROOT%/}/nginx}
+NGX_HOME=${NGX_HOME:-`find_nginx_home`}
 NGX_RUN_DIR=${NGX_RUN_DIR:-$OPT_RUN}
 NGX_CONF_DIR=${NGX_CONF_DIR:-${NGX_RUN_DIR%/}/conf}
 NGX_LOG_DIR=${NGX_LOG_DIR:-${NGX_RUN_DIR%/}/var/nginx}
