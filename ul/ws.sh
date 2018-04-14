@@ -13,7 +13,7 @@ HTTP_VER=${HTTP_VER:-1.1}
 
 
 function check_nc() {
-	hash nc &>/dev/null
+	command -v nc &>/dev/null
 }
 
 function nc_cmd() {
@@ -97,10 +97,10 @@ function do_listen() {
 	local nc_cmd=`nc_cmd`
 	
 	trap "exit" INT
-	while :
-		do
-			echo -e "HTTP/${HTTP_VER} 200 OK\n\n $(date)" | $nc_cmd $HTTP_PORT
-		done
+	while true; do
+		echo -e "HTTP/${HTTP_VER} 200 OK\r\n [pid:$$] $(date)" \
+			| $nc_cmd $HTTP_PORT
+	done
 }
 
 do_listen
