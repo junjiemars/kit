@@ -505,7 +505,7 @@ done
 
 		#map \$remote_addr \$backend {
 		#		172.20.0.1	 backend_1;
-		#		172.20.0.2	 backend_2;
+		#		default   	 backend_2;
 		#}
 
     #server {
