@@ -273,7 +273,6 @@ configure_option() {
 
 		raw)
 echo "\
-`echo ${NGX_OPTIONS[@]}`
 "
 
 		;;
@@ -285,7 +284,6 @@ echo "\
 --without-http_memcached_module  				           \
 --without-http_rewrite_module                      \
 --without-http_scgi_module                         \
-`echo ${NGX_OPTIONS[@]}`
 "
 
 		;;
@@ -302,7 +300,6 @@ echo "\
 --without-mail_pop3_module       				          \
 --without-mail_smtp_module       				          \
 --without-stream_geo_module      				          \
-`echo ${NGX_OPTIONS[@]}`
 "
 
 		;;
@@ -320,6 +317,17 @@ do_configure() {
 	for i in "${NGX_IDX[@]}"; do
 		c="${c} `configure_option ${i} | tr -s ''`"
 	done
+	
+	if [ 0 -lt "${#NGX_OPTIONS[@]}" ]; then
+		c="${c} ${NGX_OPTIONS[@]}"
+		
+		for o in ${NGX_OPTIONS[@]}; do
+			if [[ $o =~ --with-[_a-z]+_module ]]; then
+				local w="`echo $o | sed -e 's/--with-\([_a-z]*_module\)/\1/'`"
+				c=$(echo $c | sed -e "s/--with-$w//g" -e "s/--without-$w//g")
+			fi
+		done
+	fi
 
 	if [ "yes" = "$NGX_GEN_SHELL" ]; then
 		gen_shell

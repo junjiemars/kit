@@ -27,3 +27,6 @@ all/ide/idea/*/options/
 **/tds.sh
 **/*.pre
 **/.oracle.*
+
+ul/nginx.sh
+ul/nginx.conf
