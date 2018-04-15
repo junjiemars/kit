@@ -409,9 +409,9 @@ gen_conf_header() {
 
 worker_processes	$OPT_CPU_N;
 
-#error_log  logs/error.log;
-#error_log  logs/error.log  notice;
-#error_log  logs/error.log  info;
+#error_log  ${NGX_LOG_DIR%/}/error.log;
+#error_log  ${NGX_LOG_DIR%/}/error.log  notice;
+#error_log  ${NGX_LOG_DIR%/}/error.log  info;
 
 #pid        logs/pid;
 
