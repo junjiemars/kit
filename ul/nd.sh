@@ -504,8 +504,9 @@ done
 		#		#server x.x.x.x:12345		max_fails=3 fail_timeout=30s;
 		#} # end of upstream variant backend
 
-		#map \$remote_addr \$backend {
+		#map \$remote_addr \$upstream {
 		#		172.20.0.1	 backend_1;
+		#		172.20.0.2	 backend_1;
 		#		default   	 backend_2;
 		#}
 
