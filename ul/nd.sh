@@ -279,7 +279,6 @@ echo "\
 
 		http)
 echo "\
---with-http                                        \
 --http-log-path=${NGX_LOG_DIR%/}/access.log        \
 --without-http_fastcgi_module    				           \
 --without-http_memcached_module  				           \
