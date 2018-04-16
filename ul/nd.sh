@@ -466,7 +466,7 @@ done
 		#		server_tokens $OPT_SERVER_TOKENS;
 		#
 		#		location / {
-		#			  proxy_pass http://upstream;
+		#			  proxy_pass http://\$upstream;
 		#		}
 		#}
 
