@@ -279,6 +279,7 @@ echo "\
 
 		http)
 echo "\
+--with-http                                        \
 --http-log-path=${NGX_LOG_DIR%/}/access.log        \
 --without-http_fastcgi_module    				           \
 --without-http_memcached_module  				           \
@@ -309,17 +310,7 @@ do_configure() {
 	for i in "${NGX_IDX[@]}"; do
 		c="${c} `configure_option ${i} | tr -s ''`"
 	done
-	
-	if [ 0 -lt "${#NGX_OPTIONS[@]}" ]; then
-		c="${c} ${NGX_OPTIONS[@]}"
-		
-		for o in ${NGX_OPTIONS[@]}; do
-			if [[ $o =~ --with-[_a-z]+_module ]]; then
-				local w="`echo $o | sed -e 's/--with-\([_a-z]*_module\)/\1/'`"
-				c=$(echo $c | sed -e "s/--with-$w//g" -e "s/--without-$w//g")
-			fi
-		done
-	fi
+	c="${c} ${NGX_OPTIONS[@]}"
 
 	if [ "yes" = "$NGX_GEN_SHELL" ]; then
 		gen_shell
@@ -423,6 +414,7 @@ gen_http_section() {
 
 http {
 		#access_log  off;
+		#access_log  ${NGX_LOG_DIR%/}/access.log;
     #default_type  application/octet-stream;
     #include       mime.types;
     #gzip  on;
@@ -456,6 +448,27 @@ done
 				} # end of location
 
     } # end of server
+
+    #upstream backend_1 {
+		#		192.168.0.1:9601;
+		#		192.168.0.2:9603;
+		#}
+		#
+		#map \$remote_addr \$upstream {
+		#		172.20.0.1		backend_1;
+		#		172.20.0.2		backend_1;
+		#		default				backend_2;
+		#}
+		#
+		#server {
+		#	  listen $OPT_LISTEN_PORT;
+		#		server_name localhost;
+		#		server_tokens $OPT_SERVER_TOKENS;
+		#
+		#		location / {
+		#			  proxy_pass http://upstream;
+		#		}
+		#}
 
 } # end of http
 
