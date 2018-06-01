@@ -30,3 +30,7 @@ all/ide/idea/*/options/
 
 ul/nginx.sh
 ul/nginx.conf
+
+# org export
+**/*.pdf
+**/*.tex
