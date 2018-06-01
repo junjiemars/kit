@@ -1,10 +1,8 @@
 #!/bin/bash
-# usage: 
-# --------------------
-# ```sh
-# curl https://raw.githubusercontent.com/junjiemars/kit/master/ubuntu/setup-emacs-desktop.sh|sudo bash
-# ```
-# -------------------- 
+#------------------------------------------------
+# target: setup Emacs application for Ubuntu
+# author: junjiemars@gmail.com
+#------------------------------------------------
 
 
 E_BIN_PATH="${E_BIN_PATH:-`type -p emacs 2>/dev/null`}"
@@ -138,3 +136,5 @@ StartupWMClass=Emacs
 END
 
 chmod 644 ${E_DESKTOP_NAME}
+
+# sudo cp ${E_DESKTOP_NAME} /usr/share/applications/
