@@ -175,6 +175,10 @@ function on_win32() {
   esac
 }
 
+function expand_path() {
+	cd "$1" 2>/dev/null || return $?
+	echo "`pwd -P`"
+}
 
 function unix_path() {
 	local p="$1"
@@ -557,7 +561,7 @@ fi
 retval=0
 
 if [ -n "$prefix" ]; then
-  PREFIX="$prefix"
+  PREFIX="`expand_path $prefix`"
 fi
 
 if [ -n "$tomcat_ver" ]; then
