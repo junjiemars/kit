@@ -708,7 +708,7 @@ function install_tomcat() {
 
   for f in "${ltgz[@]}"; do
     if [ -f "$f" ]; then
-      control_tomcat verify "${TO_WHERE[$TW_IDX_LOCAL]}" "--prefix=`dirname $f`"
+      $tc install "${TO_WHERE[$TW_IDX_LOCAL]}" "--prefix=`dirname $f`"
       t=$?
       if [ 0 -eq $t ]; then
         ltgz_x="$f"

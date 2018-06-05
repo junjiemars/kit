@@ -321,7 +321,7 @@ function download_tomcat() {
 
   do_verify "$ltgz" "$ltgz_sha1" && return 0 
 
-	download_file "$d" "$ltgz_sha1" "$rtgz_sha1" && return 0
+	download_file "$d" "$ltgz_sha1" "$rtgz_sha1" || return $?
 
 	do_verify "$ltgz" "$ltgz_sha1" && return 0
 
@@ -389,6 +389,7 @@ function do_install() {
   echo -e "! check Tomcat[$VER] existing  =failed"
   
 	download_tomcat "$PREFIX" "$ltgz" "$ltgz_sha1" "$url_tgz" "$url_sha1"
+	echo "!!download_tomcat_arg:$PREFIX $ltgz $ltgz_sha1 $url_tgz $url_sha1"
 	t=$?
 	if [ 0 -ne $t ]; then
 		echo -e "! install Tomcat[$VER]  =failed"
