@@ -708,7 +708,10 @@ function install_tomcat() {
 
   for f in "${ltgz[@]}"; do
     if [ -f "$f" ]; then
-      $tc install "${TO_WHERE[$TW_IDX_LOCAL]}" "--prefix=`dirname $f`" "--tomcat-version=$VER"
+      $tc install \
+					--download-only=yes \
+					--tomcat-version="$VER" \
+					--prefix="`dirname $f`"
       t=$?
       if [ 0 -eq $t ]; then
         ltgz_x="$f"
@@ -722,7 +725,7 @@ function install_tomcat() {
     $tc install                              \
         --download-only=yes                  \
         --tomcat-version="$VER"              \
-        --prefix="$ltgz_x"
+        --prefix="`dirname $ltgz_x`"
     t=$?
     if [ 0 -ne $t ]; then
       echo -e "! install Tomcat $wa[$VER]  =failed"
