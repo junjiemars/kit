@@ -40,7 +40,7 @@ install_emacs() {
 
   [ 25 -le $e_major_ver ] || return 1
   
-  `check_kit "${cmd}" "${bin_dir}"` && return 0
+  `check_kit "${cmd}" "${bin_dir}" "${EMACS_VER}"` && return 0
 
   install_kit "${bin_dir}/emacs.exe" \
               "${bin_dir}/${cmd}" \
