@@ -218,7 +218,7 @@ find_oracle_home() {
 	return 1
 }
 
-find_sqlpath() {
+find_oracle_path() {
 	if [ -n "$oracle_path" ]; then
 		echo "$oracle_path"
 		return 0;
@@ -267,7 +267,7 @@ check_oracle_env() {
 	fi
 
 	if validate_oracle_home; then
-		ORACLE_PATH="`find_sqlpath`"
+		ORACLE_PATH="`find_oracle_path`"
 		export ORACLE_PATH
 		gen_oracle_path_file
 		gen_oracle_home_file && return 0
