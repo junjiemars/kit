@@ -195,9 +195,14 @@ install_kit() {
 check_kit() {
   local cmd="$1"
   local home="$2"
+	local ver="$3"
 
   if `${cmd} &>/dev/null`; then
-    return 0
+		if [ -n "$ver" ]; then
+			test "`${cmd} 2>/dev/null`" = "$ver"
+		else
+    	return 0
+		fi
   else
     [ -d "${home}" ] || mkdir -p "${home}"
     return 1
