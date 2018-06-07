@@ -257,6 +257,13 @@ find_oracle_path() {
 	echo -e "$p" | uniq | tr '\n' ':' | sed -e 's_:$__g'
 }
 
+export_oracle_path() {
+	case $PLATFORM in
+    MSYS_NT*|MINGW*) export SQLPATH="$@" ;;
+		*) export ORACLE_PATH="$@" ;;
+	esac
+}
+
 check_oracle_env() {
 	if [ -z "$ORACLE_HOME" ]; then
 		[ -f "$oracle_home_file" ] && . "$oracle_home_file"
@@ -268,7 +275,7 @@ check_oracle_env() {
 
 	if validate_oracle_home; then
 		ORACLE_PATH="`find_oracle_path`"
-		export ORACLE_PATH
+		export_oracle_path "$ORACLE_PATH"
 		gen_oracle_path_file
 		gen_oracle_home_file && return 0
 	fi
@@ -277,7 +284,7 @@ check_oracle_env() {
 	validate_oracle_home || return $?
 
 	ORACLE_PATH="`find_oracle_path`"
-	export ORACLE_PATH
+	export_oracle_path "$ORACLE_PATH"
 
 	gen_oracle_path_file
 	gen_oracle_home_file
@@ -363,8 +370,8 @@ if [ -n "$oracle_home" ]; then
 fi
 
 if [ -n "${oracle_path}" ]; then
-	oracle_path="${oracle_path%/}"
-	export ORACLE_PATH="$oracle_path"
+	ORACLE_PATH="${oracle_path%/}"
+	export_oracle_path "$ORACLE_PATH"
 fi
 
 if [ -n "$oracle_nls_lang" ]; then
