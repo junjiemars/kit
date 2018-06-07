@@ -308,7 +308,10 @@ echo_env() {
 	[ "yes" = "$verbose" ] || return 0
 	
 	echo "ORACLE_HOME=$ORACLE_HOME"
-	echo "ORACLE_PATH=$ORACLE_PATH"
+	case $PLATFORM in
+    MSYS_NT*|MINGW*) echo "SQLPATH=$SQLPATH" ;;
+		*) echo "ORACLE_PATH=$ORACLE_PATH" ;;
+	esac
 	echo "NLS_LANG=$NLS_LANG"
 	echo "oracle_home_file=$oracle_home_file"
 	echo "oracle_path_file=$oracle_path_file"
