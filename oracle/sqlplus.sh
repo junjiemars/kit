@@ -138,9 +138,12 @@ validate_oracle_home() {
 	local t=0
 	case $PLATFORM in
     MSYS_NT*|MINGW*)
-			bin_path="${lib_path}:${bin_path}"
+			lib_path="${lib_path}"
+			bin_path="${bin_path}"
 
-			PATH="$bin_path" sqlplus -V &>/dev/null
+			ORACLE_HOME="${ORACLE_HOME}" \
+			PATH="${lib_path}:${bin_path}" \
+			sqlplus -V &>/dev/null
 			t=$?
 
 			if [ 0 -eq $t ]; then
@@ -153,7 +156,9 @@ validate_oracle_home() {
 		Darwin)
 			lib_path="${lib_path}${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
 
-			PATH="${bin_path}" DYLD_LIBRARY_PATH="${lib_path}" \
+			ORACLE_HOME="${ORACLE_HOME}" \
+			PATH="${bin_path}" \
+			DYLD_LIBRARY_PATH="${lib_path}" \
 			sqlplus -V &>/dev/null
 			t=$?
 
@@ -168,7 +173,9 @@ validate_oracle_home() {
 		*)
 			lib_path="${lib_path}${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
-			PATH="${bin_path}" LD_LIBRARY_PATH="${lib_path}" \
+			ORACLE_HOME="${ORACLE_HOME}" \
+			PATH="${bin_path}" \
+			LD_LIBRARY_PATH="${lib_path}" \
 			sqlplus -V &>/dev/null
 			t=$?
 
