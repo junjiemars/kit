@@ -403,6 +403,8 @@ gen_oracle_login_file
 echo_env
 
 ${RLWRAP} sqlplus ${sqlplus_opts} ${oracle_uid} ${argv[@]}
-if [ 0 -eq $? -a -n "$oracle_uid" ]; then
+sqlcode=$?
+if [ 0 -eq $sqlcode -a -n "$oracle_uid" ]; then
 	gen_oracle_uid_file
 fi
+exit $sqlcode
