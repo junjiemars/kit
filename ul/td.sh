@@ -463,7 +463,7 @@ function file_eq() {
           gen_docker_shell_bat "$rbp" "$rp"
           t=$?
           if [ 0 -eq $t ]; then
-            rh=`local_src_path`/$TD_SHELL_BAT`
+            rh=$(`local_src_path`/$TD_SHELL_BAT)
           fi
         else
 			    rh=`docker $(docker_login_id) $rbp $rp`
