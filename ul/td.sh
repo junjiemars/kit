@@ -10,7 +10,7 @@ PLATFORM=${PLATFORM:-`uname -s 2>/dev/null`}
 
 DEP=${DEP:-$(cd `dirname ${BASH_SOURCE[@]}`; pwd -P)}
 
-L_PREFIX="${L_PREFIX:-$DEP}"
+L_PREFIX="${L_PREFIX:-${DEP%/}}"
 R_PREFIX="${R_PREFIX:-${DEP%/}/run/www/tomcat}"
 L_WAR_PATH="${L_WAR_PATH}"
 
@@ -180,20 +180,21 @@ function export_java_opts() {
 }
 
 function gen_docker_sha1sum_sh() {
+  local p="`local_src_path`/$TD_SHA1SUM_SH"
 
-  echo -e "+ generate Shell L[$TD_SHA1SUM_SH] ..."
+  echo -e "+ generate Shell L[$p] ..."
 
-  cat << END > "$TD_SHA1SUM_SH"
+  cat << END > "$p"
 #!/bin/bash
 test -f \$1 && sha1sum \$1 | cut -d' ' -f1
 END
-  chmod u+x "$TD_SHA1SUM_SH"
+  chmod u+x "$p"
 
-  if [ -f "$TD_SHA1SUM_SH" ]; then
-    echo -e "# generate Shell L[$TD_SHA1SUM_SH]  =succeed"
+  if [ -f "$p" ]; then
+    echo -e "# generate Shell L[$p]  =succeed"
     return 0
   else
-    echo -e "! generate Shell L[$TD_SHA1SUM_SH]  =failed"
+    echo -e "! generate Shell L[$p]  =failed"
     return 1
   fi
 }
@@ -220,7 +221,7 @@ END
 }
 
 function local_src_path() {
-  local p="${L_PREFIX%/}"
+  local p="${L_PREFIX}"
   echo "$p"
 }
 
@@ -454,7 +455,7 @@ function file_eq() {
       ;;
     docker)
       local rbp="`remote_bin_path $TD_SHA1SUM_SH`"
-      transport_file "$TD_SHA1SUM_SH" "$rbp" "$w"
+      transport_file "`local_src_path`/$TD_SHA1SUM_SH" "$rbp" "$w"
       t=$?
       if [ 0 -eq $t ]; then
         if `on_win32`; then
@@ -955,7 +956,7 @@ END
 }
 
 function do_make() {
-  local tds="`backup_file ${L_PREFIX%/}/tds.sh`"
+  local tds="`backup_file ${L_PREFIX}/tds.sh`"
   local tdp="$(dirname $0)"
   local td="${tdp%/}/$(basename $0)"
 
@@ -1081,7 +1082,7 @@ fi
 retval=0
 
 if [ -n "$l_prefix" ]; then
-  L_PREFIX="$l_prefix"
+  L_PREFIX="${l_prefix%/}"
 fi
 
 if [ -n "$r_prefix" ]; then
