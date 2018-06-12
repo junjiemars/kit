@@ -200,22 +200,23 @@ END
 }
 
 function gen_docker_shell_bat() {
+  local p="`local_src_path`/$TD_SHELL_BAT"
   local cmd="$1"
   local args="$2"
 
-  echo -e "+ generate Shell L[$TD_SHELL_BAT>[$cmd]] ..."
+  echo -e "+ generate Shell L[$p>[$cmd]] ..."
 
-  cat << END > "$TD_SHELL_BAT"
+  cat << END > "$p"
 @echo off
 docker `docker_login_id` $cmd $args
 END
-  chmod u+x "$TD_SHELL_BAT"
+  chmod u+x "$p"
 
-  if [ -f "$TD_SHELL_BAT" ]; then
-    echo -e "# generate Shell L[$TD_SHELL_BAT>[$cmd]]  =succeed"
+  if [ -f "$p" ]; then
+    echo -e "# generate Shell L[$p>[$cmd]]  =succeed"
     return 0
   else
-    echo -e "! generate Shell L[$TD_SHELL_BAT>[$cmd]]  =failed"
+    echo -e "! generate Shell L[$p>[$cmd]]  =failed"
     return 1
   fi
 }
@@ -462,7 +463,7 @@ function file_eq() {
           gen_docker_shell_bat "$rbp" "$rp"
           t=$?
           if [ 0 -eq $t ]; then
-            rh=`./$TD_SHELL_BAT`
+            rh=`local_src_path`/$TD_SHELL_BAT`
           fi
         else
 			    rh=`docker $(docker_login_id) $rbp $rp`
@@ -501,7 +502,7 @@ function dir_mk() {
         gen_docker_shell_bat "mkdir -p $d"
         t=$?
         if [ 0 -eq $t ]; then
-          ./$TD_SHELL_BAT
+          `local_src_path`/$TD_SHELL_BAT
           t=$?
         fi
       else
@@ -626,13 +627,13 @@ function delete_war_dir() {
         gen_docker_shell_bat "test" "-d ${rdw}"
         t=$?
         if [ 0 -eq $t ]; then
-          ./$TD_SHELL_BAT
+          `local_src_path`/$TD_SHELL_BAT
           t=$?
           if [ 0 -eq $t ]; then
             gen_docker_shell_bat "rm" "-r ${rdw}"
             t=$?
             if [ 0 -eq $t ]; then
-              ./$TD_SHELL_BAT
+              `local_src_path`/$TD_SHELL_BAT
               t=$t
             fi
           fi
@@ -799,7 +800,7 @@ function control_tomcat() {
         gen_docker_shell_bat "`remote_bin_path $TC_SH`" "$cmd_args"
         t=$?
         if [ 0 -eq $t ]; then
-          ./$TD_SHELL_BAT
+          `local_src_path`/$TD_SHELL_BAT
           let t=$t+$?
         fi
       else
