@@ -17,10 +17,12 @@ oracle_home_file=".oracle.home"
 oracle_path_file=".oracle.path"
 oracle_uid_file=".oracle.uid"
 oracle_login_file="${ROOT%/}/login.sql"
+profile_pre_suffix=".pre"
 
 argv=()
 help=no
 verbose=no
+clean=no
 profile=
 oracle_home=
 oracle_path=
@@ -51,7 +53,7 @@ find_sqlplus_path() {
 }
 
 gen_oracle_home_file() {
-	local pre_file="${oracle_home_file}.pre"
+	local pre_file="${oracle_home_file}${profile_pre_suffix}"
 
 	if [ -f "$oracle_home_file" ]; then
 		mv "$oracle_home_file" "$pre_file"
@@ -63,7 +65,7 @@ END
 }
 
 gen_oracle_path_file() {
-	local pre_file="${oracle_path_file}.pre"
+	local pre_file="${oracle_path_file}${profile_pre_suffix}"
 
 	if [ -f "$oracle_path_file" ]; then
 		mv "$oracle_path_file" "$pre_file"
@@ -75,8 +77,7 @@ END
 }
 
 gen_oracle_uid_file() {
-	local userid="$@"
-	local pre_file="${userid_file}.pre"
+	local pre_file="${oracle_uid_file}${profile_pre_suffix}"
 
 	if [ -f "$oracle_uid_file" ]; then
 		mv "$oracle_uid_file" "$pre_file"
@@ -303,6 +304,7 @@ usage() {
   echo -e "Options:"
   echo -e "  --help\t\t\tPrint this message"
   echo -e "  --verbose\t\t\tverbose print environment variables"
+  echo -e "  --clean\t\t\tclean specified profile"
 	echo -e "  --profile=\t\t\tprofile environment"
   echo -e "  --sqlplus-opts=\t\tsqlplus options, should be quoted"
   echo -e "  --oracle-home=\t\tset local ORACLE_HOME"
@@ -328,12 +330,42 @@ echo_env() {
 	echo "argv=${sqlplus_opts:+$sqlplus_opts }${argv[@]}"
 }
 
+clean_profile() {
+	echo "oracle_home_file=$oracle_home_file clean ..."
+	if [ -f "$oracle_home_file" ]; then
+		rm "$oracle_home_file"
+		[ -f "${oracle_home_file}${profile_pre_suffix}" ] \
+			&& rm "${oracle_home_file}${profile_pre_suffix}"
+	fi
+
+	echo "oracle_path_file=$oracle_path_file clean ..."	
+	if [ -f "$oracle_path_file" ]; then
+		rm "$oracle_path_file"
+		[ -f "${oracle_path_file}${profile_pre_suffix}" ] \
+			&& rm "${oracle_path_file}${profile_pre_suffix}"
+	fi
+
+	echo "oracle_uid_file=$oracle_uid_file clean ..."	
+	if [ -f "$oracle_uid_file" ]; then
+		rm "$oracle_uid_file"
+		[ -f "${oracle_uid_file}${profile_pre_suffix}" ] \
+			&& rm "${oracle_uid_file}${profile_pre_suffix}"
+	fi
+
+	echo "oracle_login_file=$oracle_login_file clean ..."
+	if [ -f "oracle_login_file" ]; then
+		rm "$oracle_login_file"
+	fi
+}
+
 
 for option
 do
   case "$option" in
     --help)                  help=yes                   ;;
 		--verbose)               verbose=yes                ;;
+		--clean)                 clean=yes                  ;;
+
 		--profile=*)
 			profile="`echo $option | sed -e 's/--profile=\(.*\)/\1/'`"
 			;;
@@ -361,6 +393,11 @@ done
 
 if [ "yes" = "$help" ]; then
 	usage
+	exit 0
+fi
+
+if [ "yes" = "$clean" ]; then
+	clean_profile
 	exit 0
 fi
 
