@@ -353,7 +353,7 @@ clean_profile() {
 	fi
 
 	echo "oracle_login_file=$oracle_login_file clean ..."
-	if [ -f "oracle_login_file" ]; then
+	if [ -f "$oracle_login_file" ]; then
 		rm "$oracle_login_file"
 	fi
 }
@@ -396,11 +396,6 @@ if [ "yes" = "$help" ]; then
 	exit 0
 fi
 
-if [ "yes" = "$clean" ]; then
-	clean_profile
-	exit 0
-fi
-
 if [ -n "$profile" ]; then
 	oracle_home_file="${ROOT%/}/${oracle_home_file}${profile:+.$profile}"
 	oracle_uid_file="${ROOT%/}/${oracle_uid_file}${profile:+.$profile}"
@@ -409,6 +404,11 @@ else
 	oracle_home_file="${ROOT%/}/${oracle_home_file}"
 	oracle_uid_file="${ROOT%/}/${oracle_uid_file}"
 	oracle_path_file="${ROOT%/}/${oracle_path_file}"
+fi
+
+if [ "yes" = "$clean" ]; then
+	clean_profile
+	exit 0
 fi
 
 if [ -n "$oracle_home" ]; then
