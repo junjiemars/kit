@@ -28,15 +28,15 @@ GMAKE_VER="${GMAKE_VER:-4.2.90}"
 
 install_emacs() {
   local e_major_ver="`kit_major_version ${EMACS_VER}`"
-  local e_zip="emacs-${EMACS_VER}-${MACHINE}.zip"
-  local e_dep_zip="emacs-${e_major_ver}-${MACHINE}-deps.zip"
+  local e_zip="emacs-${e_major_ver}/emacs-${EMACS_VER}-${MACHINE}.zip"
+  local e_dep_zip="emacs-${e_major_ver}/emacs-${EMCACS_VER}-${MACHINE}-deps.zip"
   local e_url_h="https://ftp.gnu.org/gnu/emacs/windows"
   local e_url="${e_url_h}/${e_zip}"
 	local e_dep_url="${e_url_h}/${e_dep_zip}"
   local e_home="${OPEN_DIR}/emacs"
   local e_vhome="${e_home}/${EMACS_VER}"
   local bin_dir="${e_vhome}/bin"
-  local cmd="emacs -nw --batch --eval='(emacs-version)'"
+  local cmd="${bin_dir}/emacs -nw --batch --eval='(emacs-version)'"
 
   [ 25 -le $e_major_ver ] || return 1
   

@@ -128,8 +128,10 @@ append_kit_var() {
 download_kit() {
   local url="$1"
   local fn="$2"
+  local d="`dirname $fn`"
   local t=0
 
+  [ -d "$d" ] || mkdir -p "$d"
   curl $CURL_OPTS -L -o "${fn}" -C - "${url}"
   t=$?
   if [ 33 -eq $t ]; then
