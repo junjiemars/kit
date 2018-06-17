@@ -36,7 +36,7 @@ install_emacs() {
   local e_home="${OPEN_DIR}/emacs"
   local e_vhome="${e_home}/${EMACS_VER}"
   local bin_dir="${e_vhome}/bin"
-  local cmd="${bin_dir}/emacs -nw --batch --eval='(emacs-version)'"
+  local cmd="emacs -nw --batch --eval='(emacs-version)'"
 
   [ 25 -le $e_major_ver ] || return 1
   

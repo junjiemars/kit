@@ -152,7 +152,7 @@ extract_kit() {
   local t=0
 
   if test -d "${dst}" && test "yes" = "${clean}"; then
-    rm -r "${dst}"
+    rm -rf "${dst}"
   fi
   mkdir -p "${dst}"
   
