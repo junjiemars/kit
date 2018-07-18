@@ -33,11 +33,11 @@ sqlplus_opts=
 case "$PLATFORM" in
   MSYS_NT*|MINGW*)
 		sqlplus_program="sqlplus.exe"
-		find_program=""
+		find_program="$(dirname `command -v bash`)/find.exe"
     ;;
   *)
 		sqlplus_program="sqlplus"
-		find_program="$(dirname `command -v bash`)/find.exe"
+		find_program="find"
 		;;
 esac
 
