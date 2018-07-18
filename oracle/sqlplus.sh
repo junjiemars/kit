@@ -30,16 +30,16 @@ oracle_uid=
 oracle_nls_lang=
 sqlplus_opts=
 
-sqlplus_name() {
-  case "$PLATFORM" in
-    MSYS_NT*|MINGW*)
-			echo "sqlplus.exe"
-     ;;
-    *)
-			echo "sqlplus"
+case "$PLATFORM" in
+  MSYS_NT*|MINGW*)
+		sqlplus_program="sqlplus.exe"
+		find_program=""
+    ;;
+  *)
+		sqlplus_program="sqlplus"
+		find_program="$(dirname `command -v bash`)/find.exe"
 		;;
-  esac
-}
+esac
 
 find_sqlplus_path() {
 	local p=
@@ -192,7 +192,7 @@ validate_oracle_home() {
 }
 
 find_oracle_home() {
-	local n="`sqlplus_name`"
+	local n="$sqlplus_program"
 	local s="`find_sqlplus_path`"
 	local h=( 
 		"$ROOT"
@@ -212,7 +212,7 @@ find_oracle_home() {
 
 	for i in "${h[@]}"; do
 		[ -n "$i" -a -d "$i" ] || continue
-		p="`find $i -type f -name $n -print -quit`"
+		p="`$find_program $i -type f -name $n -print -quit`"
 		if [ 0 -eq $? -a -n "$p" ]; then
 			d=$(basename `dirname "$p"`)
 			if [ "bin" == "$d" ]; then
@@ -257,7 +257,7 @@ find_oracle_path() {
 	for i in "${sql[@]}"; do
 		[ -n "$i" -a -d "$i" ] || continue
 		p="${p:+$p\n}${i}"
-		f="`find $i -type f -name 'login.sql' -print -quit`"
+		f="`$find_program $i -type f -name 'login.sql' -print -quit`"
 		if [ -n "$f" -a -f "$f" ]; then
 			p="${p:+$p\n}`dirname ${f}`"
 		fi
