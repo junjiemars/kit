@@ -23,6 +23,8 @@ argv=()
 help=no
 verbose=no
 clean=no
+check=no
+
 profile=
 oracle_home=
 oracle_path=
@@ -305,6 +307,7 @@ usage() {
   echo -e "  --help\t\t\tPrint this message"
   echo -e "  --verbose\t\t\tverbose print environment variables"
   echo -e "  --clean\t\t\tclean specified profile"
+	echo -e "  --check\t\t\tcheck oracle connection"
 	echo -e "  --profile=\t\t\tprofile environment"
   echo -e "  --sqlplus-opts=\t\tsqlplus options, should be quoted"
   echo -e "  --oracle-home=\t\tset local ORACLE_HOME"
@@ -365,6 +368,7 @@ do
     --help)                  help=yes                   ;;
 		--verbose)               verbose=yes                ;;
 		--clean)                 clean=yes                  ;;
+		--check)                 check=yes                  ;;
 
 		--profile=*)
 			profile="`echo $option | sed -e 's/--profile=\(.*\)/\1/'`"
@@ -439,9 +443,14 @@ fi
 gen_oracle_login_file
 echo_env
 
-${RLWRAP} sqlplus ${sqlplus_opts} ${oracle_uid} ${argv[@]}
-sqlcode=$?
-if [ 0 -eq $sqlcode -a -n "$oracle_uid" ]; then
-	gen_oracle_uid_file
+if [ "yes" = "$check" ]; then
+	echo -e "whenever sqlerror exit sql.sqlcode\nselect 1+2 from dual;" \
+		| ${sqlplus_program} ${oracle_uid} 
+else
+	${RLWRAP} ${sqlplus_program} ${sqlplus_opts} ${oracle_uid} ${argv[@]}
+	sqlcode=$?
+	if [ 0 -eq $sqlcode -a -n "$oracle_uid" ]; then
+		gen_oracle_uid_file
+	fi
+	exit $sqlcode
 fi
-exit $sqlcode
