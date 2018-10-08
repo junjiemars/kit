@@ -57,6 +57,10 @@ set shell=bash\ --rcfile\ ~/.bashrc
 " colorful
 "set grepprg=grep\ --color=always\ -n\ $*\ /dev/null
 
+" clipboard copy/paste
+" darwin: pbcopy/pbpast
+" linux: xclip -i/-o
+
 " search subdirs
 set path+=**
 
