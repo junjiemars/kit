@@ -19,7 +19,7 @@ Locate at =ul= directory.
 
 ** =ws.sh=
 	 :PROPERTIES:
-	 :CUSTOM_ID: ws_sh
+	 :CUSTOM_ID: wssh
 	 :END:
 
 
