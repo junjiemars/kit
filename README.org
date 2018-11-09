@@ -15,7 +15,7 @@ platforms.
 
 Locate at =ul= directory.
 
-[[#ws_sh][ws.sh]]
+[[#wssh][ws.sh]]
 
 ** =ws.sh=
 	 :PROPERTIES:
