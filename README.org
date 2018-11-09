@@ -39,6 +39,15 @@ $ sudo apt-get install netcat-traditional
 $ sudo update-alternative --config nc
 #+END_SRC
 
+** =wget.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: wgetsh
+	 :END:
+
+A shortcut of wget to mirror a [[https://en.wikipedia.org/wiki/Website][website]].
+
+
+
 * Windows
 	:PROPERTIES:
 	:CUSTOM_ID: windows
