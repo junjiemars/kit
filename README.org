@@ -15,6 +15,25 @@ platforms.
 
 Locate at =ul= directory.
 
+** =crontab-env.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: crontab_envsh
+	 :END:
+
+Clone the current =shell= environment and the job list of [[https://en.wikipedia.org/wiki/Cron][crontab]] into
+a plain text file named =crontab.list=.
+
+#+BEGIN_SRC sh
+$ crontab-env.sh
+#+END_SRC
+
+** =wget.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: wgetsh
+	 :END:
+
+A shortcut of wget to mirror a [[https://en.wikipedia.org/wiki/Website][website]].
+
 ** =ws.sh=
 	 :PROPERTIES:
 	 :CUSTOM_ID: wssh
@@ -38,14 +57,6 @@ $ curl -v http://<host>:8080
 $ sudo apt-get install netcat-traditional
 $ sudo update-alternative --config nc
 #+END_SRC
-
-** =wget.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: wgetsh
-	 :END:
-
-A shortcut of wget to mirror a [[https://en.wikipedia.org/wiki/Website][website]].
-
 
 
 * Windows
