@@ -27,6 +27,18 @@ a plain text file named =crontab.list=.
 $ crontab-env.sh
 #+END_SRC
 
+** =ctags.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: ctagssh
+	 :END:
+
+A shortcut of exuberant [[https://en.wikipedia.org/wiki/Ctags][Ctags]].
+
+#+BEGIN_SRC sh
+$ ./ctags.sh --help
+$ ./ctags.sh --language=c
+#+END_SRC
+
 ** =wget.sh=
 	 :PROPERTIES:
 	 :CUSTOM_ID: wgetsh
@@ -57,7 +69,6 @@ $ curl -v http://<host>:8080
 $ sudo apt-get install netcat-traditional
 $ sudo update-alternative --config nc
 #+END_SRC
-
 
 * Windows
 	:PROPERTIES:
