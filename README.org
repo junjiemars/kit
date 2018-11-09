@@ -39,6 +39,13 @@ $ ./ctags.sh --help
 $ ./ctags.sh --language=c
 #+END_SRC
 
+** =get-kit.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: get_kitsh
+	 :END:
+
+Download and configure kit via web.
+
 ** =wget.sh=
 	 :PROPERTIES:
 	 :CUSTOM_ID: wgetsh

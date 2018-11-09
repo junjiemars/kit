@@ -1,6 +1,6 @@
 #!/bin/bash
 #------------------------------------------------
-# target: install java programming environment
+# target: download and configure kit via web
 # author: junjiemars@gmail.com
 # source: https://github.com/junjiemars/kits
 #------------------------------------------------
