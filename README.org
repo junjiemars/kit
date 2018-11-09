@@ -1,0 +1,51 @@
+#+TITLE: Kit more than code
+#+AUTHOR: Junjie Mars
+#+STARTUP: overview
+#+OPTIONS: toc:2
+
+
+Now, a daily working environment can be build via few lines code on
+the fly. And effetive, robust, beautiful, consistent on multiple
+platforms.
+
+* Unix-like
+	:PROPERTIES:
+	:CUSTOM_ID: unix_like
+	:END:
+
+* Windows
+	:PROPERTIES:
+	:CUSTOM_ID: windows
+	:END:
+
+* Darwin
+	:PROPERTIES:
+	:CUSTOM_ID: darwin
+	:END:
+
+* Ubuntu
+	:PROPERTIES:
+	:CUSTOM_ID: ubuntu
+	:END:
+
+* Docker
+	:PROPERTIES:
+	:CUSTOM_ID: docker
+	:END:
+
+* Raspbian
+	:PROPERTIES:
+	:CUSTOM_ID: raspbian
+	:END:
+
+* Oracle
+	:PROPERTIES:
+	:CUSTOM_ID: oracle
+	:END:
+
+* All
+	:PROPERTIES:
+	:CUSTOM_ID: all
+	:END:
+
+

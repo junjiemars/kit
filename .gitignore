@@ -34,3 +34,4 @@ ul/nginx.conf
 # org export
 **/*.pdf
 **/*.tex
+**/*.html
