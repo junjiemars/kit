@@ -29,6 +29,16 @@ $ ./ws.sh --http-port=8080 --http-version=1.1
 $ curl -v http://<host>:8080
 #+END_SRC
 
+*** Q/A
+
+- This is =nc= from the =netcat-openbsd= package. An alternative =nc=
+  is available in the =netcat-traditional= package
+#+BEGIN_SRC sh
+# on Ubuntu
+$ sudo apt-get install netcat-traditional
+$ sudo update-alternative --config nc
+#+END_SRC
+
 * Windows
 	:PROPERTIES:
 	:CUSTOM_ID: windows
