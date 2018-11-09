@@ -13,6 +13,16 @@ platforms.
 	:CUSTOM_ID: unix_like
 	:END:
 
+Locate at =ul= directory.
+
+[[#ws_sh][ws.sh]]
+
+** =ws.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: ws_sh
+	 :END:
+
+
 * Windows
 	:PROPERTIES:
 	:CUSTOM_ID: windows
