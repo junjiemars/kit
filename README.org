@@ -39,6 +39,17 @@ $ ./ctags.sh --help
 $ ./ctags.sh --language=c
 #+END_SRC
 
+** =install-java-kits.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: install_java_kitsh
+	 :END:
+
+Install java programming environment.
+
+#+BEGIN_SRC sh
+$ HAS_ANT=1 HAS_ABCL=1 HAS_MAVEN=1 ./install-java-kit.sh
+#+END_SRC
+
 ** =get-kit.sh=
 	 :PROPERTIES:
 	 :CUSTOM_ID: get_kitsh
@@ -91,6 +102,13 @@ $ sudo update-alternative --config nc
 	:PROPERTIES:
 	:CUSTOM_ID: ubuntu
 	:END:
+
+** =jd.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: jdsh
+	 :END:
+
+Allow =jdb= to attach process on Ubuntu.
 
 * Docker
 	:PROPERTIES:
