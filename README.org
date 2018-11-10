@@ -93,6 +93,27 @@ $ git clone --depth=1 https://github.com/junjiemars/kit.git <kit-local-dir>
 $ GITHUB_H=file://<kit-local-dir> <kit-local-dir>/ul/setup-bash.sh
 #+END_SRC
 
+** =tc.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: tcsh
+	 :END:
+
+Tomcat console: download, start, and stop etc.
+
+** =td.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: tdsh
+	 :END:
+
+A deploy & debug console for tomcat.
+
+** =unzip-cjk.sh=
+	 :properties:
+	 :custom_id: unzip_cjksh
+	 :end:
+
+Unzip specify code page.
+
 ** =wget.sh=
 	 :PROPERTIES:
 	 :CUSTOM_ID: wgetsh
