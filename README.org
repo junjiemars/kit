@@ -157,10 +157,39 @@ $ sudo update-alternative --config nc
 
 Get Windows default code page.
 
+** =install-win-kits.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: install_win_kitssh
+	 :END:
+
+Setup Win32 programming environment.
+
 * Darwin
 	:PROPERTIES:
 	:CUSTOM_ID: darwin
 	:END:
+
+** Darwin Tips
+	 :PROPERTIES:
+	 :CUSTOM_ID: darwin_tips
+	 :END:
+
+- Which Port is Listening
+#+BEGIN_SRC sh
+$ lsof -iTCP -sTCP:LISTEN -n -P```
+#+END_SRC
+
+- Who is Listening on the Port
+#+BEGIN_SRC sh
+$ lsof -i :<port> -n -P
+#+END_SRC
+
+** =uninstall-jdk.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: uninstall_jdksh
+	 :END:
+
+Uninstall JDK on Darwin.
 
 * Ubuntu
 	:PROPERTIES:
