@@ -485,7 +485,7 @@ The default =docker0= virtual bridge interface let communications:
 *** SSH between Containers
 
 - =Read from socket failed: Connection reset by peer=
-$+BEGIN_SRC sh
+#+BEGIN_SRC sh
 $ sudo ssh-keygen -t rsa -f /etc/ssh/ssh_hosts_rsa_key
 $ sudo ssh-keygen -t dsa -f /etc/ssh/ssh_hosts_dsa_key
 #+END_SRC
