@@ -39,6 +39,13 @@ $ ./ctags.sh --help
 $ ./ctags.sh --language=c
 #+END_SRC
 
+** =get-kit.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: get_kitsh
+	 :END:
+
+Download and configure kit via web.
+
 ** =install-java-kits.sh=
 	 :PROPERTIES:
 	 :CUSTOM_ID: install_java_kitsh
@@ -50,12 +57,19 @@ Install java programming environment.
 $ HAS_ANT=1 HAS_ABCL=1 HAS_MAVEN=1 ./install-java-kit.sh
 #+END_SRC
 
-** =get-kit.sh=
+** =lr.sh=
 	 :PROPERTIES:
-	 :CUSTOM_ID: get_kitsh
+	 :CUSTOM_ID: LRSH
 	 :END:
 
-Download and configure kit via web.
+Log rotate.
+
+** =nd.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: ndsh
+	 :END:
+
+A nginx configurator and shell maker.
 
 ** =wget.sh=
 	 :PROPERTIES:
