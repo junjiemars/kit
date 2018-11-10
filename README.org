@@ -150,6 +150,13 @@ $ sudo update-alternative --config nc
 	:CUSTOM_ID: windows
 	:END:
 
+** =e.sh=
+	 :PROPERTIES:
+	 :CUSTOM_ID: esh
+	 :END:
+
+Get Windows default code page.
+
 * Darwin
 	:PROPERTIES:
 	:CUSTOM_ID: darwin
