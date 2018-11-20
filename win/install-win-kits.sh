@@ -108,6 +108,29 @@ install_pstools() {
   fi
 }
 
+install_autoruns() {
+  local ar_zip="Autoruns.zip"  
+  local ar_url="https://download.sysinternals.com/files/${ar_zip}"
+  local ar_home="${OPEN_DIR}/pstools"
+  local bin_dir="${ar_home}/bin"
+  local cmd="autoruns"
+
+  `check_kit "${cmd}" "${ar_home}"` && return 0
+
+  install_kit "${bin_dir}/autoruns.exe" \
+              "${bin_dir}/${cmd}" \
+              "${ar_url}" \
+              "${ar_home}/${ar_zip}" \
+              "${bin_dir}" \
+    || return $?
+
+  if `${bin_dir}/${cmd} &>/dev/null`; then
+    append_kit_path "${bin_dir}" "${ar_home}"
+  else
+    return 1
+  fi
+}
+
 install_procexp() {
   local p_zip="ProcessExplorer.zip"  
   local p_url="https://download.sysinternals.com/files/${p_zip}"
@@ -190,6 +213,7 @@ HAS_NETCAT=${HAS_NETCAT:-0}
 HAS_GMAKE=${HAS_GMAKE:-0}
 
 if [ "YES" == "${HAS_ALL}" ]; then
+	HAS_AUTORUNS=1
   HAS_EMACS=1
   HAS_EMACS_SOURCE=0
   HAS_PSTOOLS=1
@@ -198,13 +222,13 @@ if [ "YES" == "${HAS_ALL}" ]; then
 	HAS_GMAKE=1
 fi
 
+[ 0 -lt "${HAS_AUTORUNS}" ]       && KITS+=('install_autoruns')
 [ 0 -lt "${HAS_EMACS}" ]          && KITS+=('install_emacs')
 [ 0 -lt "${HAS_EMACS_SOURCE}" ]   && KITS+=('install_emacs_source')
 [ 0 -lt "${HAS_PSTOOLS}" ]        && KITS+=('install_pstools')
 [ 0 -lt "${HAS_PROCEXP}" ]        && KITS+=('install_procexp')
 [ 0 -lt "${HAS_NETCAT}" ]         && KITS+=('install_netcat')
 [ 0 -lt "${HAS_GMAKE}" ]          && KITS+=('install_gmake')
-
 
 for i in "${KITS[@]}"; do
   echo_head " + ${i} ... "
