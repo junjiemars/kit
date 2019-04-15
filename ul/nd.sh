@@ -119,25 +119,25 @@ do
   esac
   
   case "$option" in
-    --help)                  				help=yes                   				 ;;
-    --version)               				version=yes                				 ;;
+    --help)                           help=yes                             ;;
+    --version)                        version=yes                          ;;
 
-    --target=*)             				ngx_target=( $value ) 	  				 ;;
-    --home=*)                				ngx_home="$value"    							 ;;
-		--run-dir=*)             				ngx_run_dir="$value"       				 ;;
-		--conf-dir=*)             			ngx_conf_dir="$value"     				 ;;
-		--log-dir=*)             				ngx_log_dir="$value"       				 ;;
-		--options=*)             				ngx_options="$value"       				 ;;
+    --target=*)                       ngx_target=( $value )                ;;
+    --home=*)                         ngx_home="$value"                    ;;
+    --run-dir=*)                      ngx_run_dir="$value"                 ;;
+    --conf-dir=*)                     ngx_conf_dir="$value"                ;;
+    --log-dir=*)                      ngx_log_dir="$value"                 ;;
+    --options=*)                      ngx_options="$value"                 ;;
 
-		--chained=*)            				ngx_chained="$value"       				 ;;
-		--gen-conf=*)               		ngx_gen_conf="$value"      				 ;;
-		--gen-shell=*)               		ngx_gen_shell="$value"     				 ;;
+    --chained=*)                      ngx_chained="$value"                 ;;
+    --gen-conf=*)                     ngx_gen_conf="$value"                ;;
+    --gen-shell=*)                    ngx_gen_shell="$value"               ;;
 
-		--opt-processes=*)     					OPT_CPU_N="$value"      		       ;;
-		--opt-connections=*)     				OPT_CON_N="$value"       		       ;;
-		--opt-listen-port=*)     				OPT_LISTEN_PORT="$value"		       ;;
-		--opt-upstream=*)								OPT_UPSTREAM=( "$value" )          ;;
-		--opt-server-tokens=*)	 				OPT_SERVER_TOKENS=( "$value" )     ;;
+    --opt-processes=*)                OPT_CPU_N="$value"                   ;;
+    --opt-connections=*)              OPT_CON_N="$value"                   ;;
+    --opt-listen-port=*)              OPT_LISTEN_PORT="$value"             ;;
+    --opt-upstream=*)                 OPT_UPSTREAM=( "$value" )            ;;
+    --opt-server-tokens=*)            OPT_SERVER_TOKENS=( "$value" )       ;;
     
     *)
 
@@ -412,62 +412,66 @@ gen_http_section() {
 	cat <<END >>"$1"
 
 http {
-		#access_log  off;
-		#access_log  ${NGX_LOG_DIR%/}/access.log;
+    #access_log  off;
+    #log_format access_log_format '\$remote_addr [\$time_local] '
+    #                             '"\$request" \$status "\$http_referer" '
+    #                             '"\$http_user_agent" \$bytes_sent "\$request_body"';
+    #access_log ${NGX_LOG_DIR%/}/access.log access_log_format;
+    #access_log ${NGX_LOG_DIR%/}/access.log;
     #default_type  application/octet-stream;
     #include       mime.types;
     #gzip  on;
-		#gzip_min_length  1000;
-		#gzip_types		text/plain application/xml;
+    #gzip_min_length  1000;
+    #gzip_types     text/plain application/xml;
     #keepalive_timeout  0;
     #keepalive_timeout  65;
     #sendfile        on;
     #tcp_nopush     on;
 
-		upstream backend {
-				#server x.x.x.x:8181 weight=5;
-				#server x.x.x.x:8282 backup;
+    upstream backend {
+        #server x.x.x.x:8181 weight=5;
+        #server x.x.x.x:8282 backup;
 `
 for i in ${OPT_UPSTREAM[@]}; do
-		echo "\
-				server $i;"
+    echo "\
+        server $i;"
 done
 `
 
-		} # end of upstream
-	
+    } # end of upstream
+
     server {
         listen $OPT_LISTEN_PORT;
         server_name  localhost;
-				server_tokens $OPT_SERVER_TOKENS;
+        server_tokens $OPT_SERVER_TOKENS;
 
-				location / {
-					proxy_pass http://backend;
+        location / {
+          proxy_pass http://backend;
 
-				} # end of location
+        } # end of location
 
     } # end of server
 
     #upstream backend_1 {
-		#		192.168.0.1:9601;
-		#		192.168.0.2:9603;
-		#}
-		#
-		#map \$remote_addr \$upstream {
-		#		172.20.0.1		backend_1;
-		#		172.20.0.2		backend_1;
-		#		default				backend_2;
-		#}
-		#
-		#server {
-		#	  listen $OPT_LISTEN_PORT;
-		#		server_name localhost;
-		#		server_tokens $OPT_SERVER_TOKENS;
-		#
-		#		location / {
-		#			  proxy_pass http://\$upstream;
-		#		}
-		#}
+    #     192.168.0.1:9601;
+    #     192.168.0.2:9603;
+    #}
+    #
+    #map \$remote_addr \$upstream {
+    #     172.20.0.1    backend_1;
+    #     172.20.0.2    backend_1;
+    #     default         backend_2;
+    #}
+    #
+    #server {
+    #     listen $OPT_LISTEN_PORT;
+    #     server_name localhost;
+    #     server_tokens $OPT_SERVER_TOKENS;
+    #
+    #     location / {
+    #         proxy_pass http://\$upstream;
+    #     }
+    #}
 
 } # end of http
 
@@ -487,8 +491,8 @@ stream {
         #server x.x.x.x:12345     max_fails=3 fail_timeout=30s;
 `
 for i in ${OPT_UPSTREAM[@]}; do
-		echo "\
-				server $i;"
+    echo "\
+        server $i;"
 done
 `
 
@@ -502,25 +506,25 @@ done
 
     } # end of server
 
-		#upstream backend_1 {
-		#	  hash \$remote_addr consistent;
-		#		#server x.x.x.x:12345		max_fails=3 fail_timeout=30s;
-		#} # end of upstream variant backend
+    #upstream backend_1 {
+    #     hash \$remote_addr consistent;
+    #     #server x.x.x.x:12345     max_fails=3 fail_timeout=30s;
+    #} # end of upstream variant backend
 
-		#map \$remote_addr \$upstream {
-		#		172.20.0.1	 backend_1;
-		#		172.20.0.2	 backend_1;
-		#		default   	 backend_2;
-		#}
+    #map \$remote_addr \$upstream {
+    #     172.20.0.1   backend_1;
+    #     172.20.0.2   backend_1;
+    #     default      backend_2;
+    #}
 
     #server {
     #    listen $OPT_LISTEN_PORT;
     #    proxy_connect_timeout 1s;
     #    proxy_timeout 3s;
     #    proxy_pass \$upstream;
-		#
+    #
     #} # end of variant server
-		
+
 
 } # end of stream
 
@@ -533,12 +537,12 @@ gen_dns_section() {
 
 stream {
 
-		upstream dns {
-    		#server x.x.x.x:53;
+    upstream dns {
+        #server x.x.x.x:53;
 `
 for i in ${OPT_UPSTREAM[@]}; do
-		echo "\
-				server $i;"
+    echo "\
+        server $i;"
 done
 `
 
