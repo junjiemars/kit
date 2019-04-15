@@ -413,7 +413,7 @@ gen_http_section() {
 
 http {
     #access_log  off;
-    #log_format access_log_format '\$remote_addr [\$time_local] '
+    #log_format access_log_format '\$remote_addr "\$remote_user" [\$time_local] '
     #                             '"\$request" \$status "\$http_referer" '
     #                             '"\$http_user_agent" \$bytes_sent "\$request_body"';
     #access_log ${NGX_LOG_DIR%/}/access.log access_log_format;
