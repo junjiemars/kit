@@ -530,10 +530,44 @@ $ docker run --name n0 -w /home/u -h n0 -v <host-path>:/opt/vol -d <docker-image
 $ docker run --name n0 -w /home/u -h n0 -v ~/.bash_history:/home/u/.bash_history -d <docker-image>
 #+END_SRC
 
-* Raspbian
+* Raspberry
 	:PROPERTIES:
 	:CUSTOM_ID: raspbian
 	:END:
+
+** Ubuntu
+
+Login with user =ubuntu= and default password =ubuntu=, then prompt to
+change the default password.
+	 
+*** Network
+
+**** Static IP Address
+
+#+BEGIN_SRC sh
+sudo vi /etc/netplan/50-cloud-init.yaml
+#+END_SRC
+
+#+BEGIN_SRC yaml
+network:
+  version: 2
+  ethernets:
+    eth0:
+      dhcp4: no
+      addresses: [192.168.1.15/24,]
+      gateway4: 192.168.1.1
+      nameservers:
+        addresses: [208.67.222.222,8.8.8.8]
+      match:
+        macaddress: xx:xx:xx:xx:xx:xx
+      set-name: eth0
+
+#+END_SRC
+
+#+BEGIN_SRC sh
+sudo netplan apply
+#+END_SRC
+
 
 * Oracle
 	:PROPERTIES:
