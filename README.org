@@ -539,7 +539,17 @@ $ docker run --name n0 -w /home/u -h n0 -v ~/.bash_history:/home/u/.bash_history
 
 Login with user =ubuntu= and default password =ubuntu=, then prompt to
 change the default password.
-	 
+
+*** Install
+
+**** On MacOS
+
+#+BEGIN_SRC sh
+sudo diskutil list
+sudo diskutil unmountdisk /dev/xxx
+xzcat ubuntu.img.xz | sudo dd of=/dev/xxx bs=4M
+#+END_SRC
+
 *** Network
 
 **** Static IP Address
@@ -568,6 +578,9 @@ network:
 sudo netplan apply
 #+END_SRC
 
+** Raspberry References
+
+ [[https://wiki.ubuntu.com/ARM/RaspberryPi][ubuntu wiki]]
 
 * Oracle
 	:PROPERTIES:
