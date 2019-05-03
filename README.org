@@ -169,7 +169,42 @@ Setup Win32 programming environment.
 	:CUSTOM_ID: darwin
 	:END:
 
-** Darwin Tips
+** Network
+
+*** Routing
+
+- Non-Persistent Routes
+#+BEGIN_SRC sh
+# display the entire routing table
+netstat -rn
+
+# add non-persistent routes
+sudo route -n add 192.168/16 10.0.1.1
+
+# delete non-persistent routes
+sudo route -n delete 192.168/16
+#+END_SRC
+
+- Persistent Routes
+#+BEGIN_SRC sh
+# display all of the network names
+networksetup -listallnetworkservices
+
+# get IP address info for a specific network
+networksetup -getinfo "Wi-Fi"
+
+# display routes associated with a specific network
+networksetup -getadditionalroutes "Wi-Fi"
+
+# add a static route
+networksetup -setadditionalroutes "Wi-Fi" 192.168.0.0 255.255.0.0 10.0.1.1
+
+# delete all static routes
+networksetup -setadditionalroutes "Wi-Fi"
+
+#+END_SRC
+
+*** Darwin Tips
 	 :PROPERTIES:
 	 :CUSTOM_ID: darwin_tips
 	 :END:
@@ -184,7 +219,9 @@ $ lsof -iTCP -sTCP:LISTEN -n -P```
 $ lsof -i :<port> -n -P
 #+END_SRC
 
-** =uninstall-jdk.sh=
+** Programming
+
+*** =uninstall-jdk.sh=
 	 :PROPERTIES:
 	 :CUSTOM_ID: uninstall_jdksh
 	 :END:
