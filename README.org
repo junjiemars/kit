@@ -581,6 +581,7 @@ sudo netplan apply
 ** Raspberry References
 
 - [[https://wiki.ubuntu.com/ARM/RaspberryPi][ubuntu wiki]]
+- [[https://www.raspberrypi.org/documentation/configuration/boot_folder.md][The boot folder]]
 
 * Oracle
 	:PROPERTIES:
