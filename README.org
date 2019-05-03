@@ -580,7 +580,7 @@ sudo netplan apply
 
 ** Raspberry References
 
- [[https://wiki.ubuntu.com/ARM/RaspberryPi][ubuntu wiki]]
+- [[https://wiki.ubuntu.com/ARM/RaspberryPi][ubuntu wiki]]
 
 * Oracle
 	:PROPERTIES:
