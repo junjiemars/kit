@@ -15,113 +15,121 @@ platforms.
 
 Locate at =ul= directory.
 
-** =crontab-env.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: crontab_envsh
-	 :END:
+** SSH
+	:PROPERTIES:
+	:CUSTOM_ID: ssh
+	:END:
 
-Clone the current =shell= environment and the job list of [[https://en.wikipedia.org/wiki/Cron][crontab]] into
-a plain text file named =crontab.list=.
 
-#+BEGIN_SRC sh
-$ crontab-env.sh
-#+END_SRC
+** Utilities
 
-** =ctags.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: ctagssh
-	 :END:
-
-A shortcut of exuberant [[https://en.wikipedia.org/wiki/Ctags][Ctags]].
-
-#+BEGIN_SRC sh
-$ ./ctags.sh --help
-$ ./ctags.sh --language=c
-#+END_SRC
-
-** =get-kit.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: get_kitsh
-	 :END:
-
-Download and configure kit via web.
-
-** =install-java-kits.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: install_java_kitsh
-	 :END:
-
-Install java programming environment.
-
-#+BEGIN_SRC sh
-$ HAS_ANT=1 HAS_ABCL=1 HAS_MAVEN=1 ./install-java-kit.sh
-#+END_SRC
-
-** =lr.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: LRSH
-	 :END:
-
-Log rotate.
-
-** =nd.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: ndsh
-	 :END:
-
-A nginx configurator and shell maker.
-
-** =setup-bash.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: setup_bashsh
-	 :END:
-
-Setup bash, aliases, paths and vars etc., on Windows, Darwin, Linux or
-Unix-like box, and just one line code you need to getting things done:
-#+BEGIN_SRC sh
-$ bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh)
-#+END_SRC
-
-For Windiows you can use [[https://git-scm.com/downloads][Git Bash]] instead.
-
-You can boot it from local storage two.
-#+BEGIN_SRC sh
-# git clone it from github to <kit-local-dir>
-$ git clone --depth=1 https://github.com/junjiemars/kit.git <kit-local-dir>
-
-# boot up from <kit-local-dir>
-$ GITHUB_H=file://<kit-local-dir> <kit-local-dir>/ul/setup-bash.sh
-#+END_SRC
-
-** =tc.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: tcsh
-	 :END:
-
-Tomcat console: download, start, and stop etc.
-
-** =td.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: tdsh
-	 :END:
-
-A deploy & debug console for tomcat.
-
-** =unzip-cjk.sh=
-	 :properties:
-	 :custom_id: unzip_cjksh
-	 :end:
-
-Unzip specify code page.
-
-** =wget.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: wgetsh
-	 :END:
-
-A shortcut of wget to mirror a [[https://en.wikipedia.org/wiki/Website][website]].
-
-** =ws.sh=
+*** =crontab-env.sh=
+*	 :PROPERTIES:
+*	 :CUSTOM_ID: crontab_envsh
+*	 :END:
+*
+*Clone the current =shell= environment and the job list of [[https://en.wikipedia.org/wiki/Cron][crontab]] into
+*a plain text file named =crontab.list=.
+*
+*#+BEGIN_SRC sh
+*$ crontab-env.sh
+*#+END_SRC
+*
+*** =ctags.sh=
+*	 :PROPERTIES:
+*	 :CUSTOM_ID: ctagssh
+*	 :END:
+*
+*A shortcut of exuberant [[https://en.wikipedia.org/wiki/Ctags][Ctags]].
+*
+*#+BEGIN_SRC sh
+*$ ./ctags.sh --help
+*$ ./ctags.sh --language=c
+*#+END_SRC
+*
+*** =get-kit.sh=
+*	 :PROPERTIES:
+*	 :CUSTOM_ID: get_kitsh
+*	 :END:
+*
+*Download and configure kit via web.
+*
+*** =install-java-kits.sh=
+*	 :PROPERTIES:
+*	 :CUSTOM_ID: install_java_kitsh
+*	 :END:
+*
+*Install java programming environment.
+*
+*#+BEGIN_SRC sh
+*$ HAS_ANT=1 HAS_ABCL=1 HAS_MAVEN=1 ./install-java-kit.sh
+*#+END_SRC
+*
+*** =lr.sh=
+*	 :PROPERTIES:
+*	 :CUSTOM_ID: LRSH
+*	 :END:
+*
+*Log rotate.
+*
+*** =nd.sh=
+*	 :PROPERTIES:
+*	 :CUSTOM_ID: ndsh
+*	 :END:
+*
+*A nginx configurator and shell maker.
+*
+*** =setup-bash.sh=
+*	 :PROPERTIES:
+*	 :CUSTOM_ID: setup_bashsh
+*	 :END:
+*
+*Setup bash, aliases, paths and vars etc., on Windows, Darwin, Linux or
+*Unix-like box, and just one line code you need to getting things done:
+*#+BEGIN_SRC sh
+*$ bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/setup-bash.sh)
+*#+END_SRC
+*
+*For Windiows you can use [[https://git-scm.com/downloads][Git Bash]] instead.
+*
+*You can boot it from local storage two.
+*#+BEGIN_SRC sh
+*# git clone it from github to <kit-local-dir>
+*$ git clone --depth=1 https://github.com/junjiemars/kit.git <kit-local-dir>
+*
+*# boot up from <kit-local-dir>
+*$ GITHUB_H=file://<kit-local-dir> <kit-local-dir>/ul/setup-bash.sh
+*#+END_SRC
+*
+*** =tc.sh=
+*	 :PROPERTIES:
+*	 :CUSTOM_ID: tcsh
+*	 :END:
+*
+*Tomcat console: download, start, and stop etc.
+*
+*** =td.sh=
+*	 :PROPERTIES:
+*	 :CUSTOM_ID: tdsh
+*	 :END:
+*
+*A deploy & debug console for tomcat.
+*
+*** =unzip-cjk.sh=
+*	 :properties:
+*	 :custom_id: unzip_cjksh
+*	 :end:
+*
+*Unzip specify code page.
+*
+*** =wget.sh=
+*	 :PROPERTIES:
+*	 :CUSTOM_ID: wgetsh
+*	 :END:
+*
+*A shortcut of wget to mirror a [[https://en.wikipedia.org/wiki/Website][website]].
+*
+*** =ws.sh=
 	 :PROPERTIES:
 	 :CUSTOM_ID: wssh
 	 :END:
@@ -135,15 +143,9 @@ $ ./ws.sh --http-port=8080 --http-version=1.1
 $ curl -v http://<host>:8080
 #+END_SRC
 
-*** Q/A
+** References
 
-- This is =nc= from the =netcat-openbsd= package. An alternative =nc=
-  is available in the =netcat-traditional= package
-#+BEGIN_SRC sh
-# on Ubuntu
-$ sudo apt-get install netcat-traditional
-$ sudo update-alternative --config nc
-#+END_SRC
+- [[https://www.ssh.com/ssh/key/][SSH Key]]
 
 * Windows
 	:PROPERTIES:
