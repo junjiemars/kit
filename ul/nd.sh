@@ -8,19 +8,43 @@
 
 ND_ROOT="${ND_ROOT:-$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)}"
 ND_PWD="`pwd -P`"
+GREP_OPT_E="`echo 123 | grep -E '^[0-9]+$'`"
 
 find_nginx_home() {
 	local x="$@"
-	for d in `ls -d ${x%/}/*/`; do
-		if [[ $d =~ ${x%/}/(nginx|nginx-release-*) ]]; then
-			if [ -f "${d%/}/auto/configure" ]; then
-				echo "${d%/}"
-				return 0
-			fi
-		fi
+	for d in `find . -type d -depth 1`; do
+		d="`echo $d | sed 's#^\.\/##g'`"
+		case "$d" in
+			nginx|nginx-release-*)
+				if [ -f "${d%/}/auto/configure" ]; then
+					echo "${d%/}"
+					return 0
+				fi
+				;;
+			*) continue ;;
+		esac
 	done
 	return 1
 }
+
+is_int() {
+	local n="$1"
+	if [ 0 -eq $GREP_OPT_E ]; then
+		echo "$n" | grep -E '^[0-9]+$'
+	else
+		test -n "$n" && test "$n" -eq "$n" 2>/dev/null
+	fi
+}
+
+n_cpu() {
+	local os="`uname -s`"
+	local n=1
+	case "$os" in
+		Darwin) n="`sysctl -n hw.cpu`" ;;
+	esac
+	echo $n
+}
+
 
 NGX_TARGET=( raw http https stream dns )
 NGX_IDX=( ${NGX_TARGET[0]} )
@@ -70,6 +94,11 @@ opt_check() {
 	return 1
 }
 
+opt_is_int() {
+	local n="$1"
+	local r='^[0-9]+$'
+	[ $n =~ $r ]
+}
 
 usage() {
   echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
@@ -133,7 +162,7 @@ do
     --gen-conf=*)                     ngx_gen_conf="$value"                ;;
     --gen-shell=*)                    ngx_gen_shell="$value"               ;;
 
-    --opt-processes=*)                OPT_CPU_N="$value"                   ;;
+    --opt-processes=*)                opt_cpu_n="$value"                   ;;
     --opt-connections=*)              OPT_CON_N="$value"                   ;;
     --opt-listen-port=*)              OPT_LISTEN_PORT="$value"             ;;
     --opt-upstream=*)                 OPT_UPSTREAM=( "$value" )            ;;
@@ -257,8 +286,8 @@ do_list() {
 configure_prefix() {
 echo "\
 --prefix=$NGX_PREFIX                             \
---error-log-path=${NGX_LOG_DIR%/}/$NGX_ERR_LOG    \
---pid-path=${NGX_LOG_DIR%/}/$NGX_PID_LOG          \
+--error-log-path=${NGX_LOG_DIR%/}/$NGX_ERR_LOG   \
+--pid-path=${NGX_LOG_DIR%/}/$NGX_PID_LOG         \
 "
 }
 
