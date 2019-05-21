@@ -381,7 +381,7 @@ do_upgrade() {
 	local t=0
 
 	if [ "yes" = "$NGX_CHAINED" ]; then
-		do_configure	
+		do_install
 		t=$?
 		[ 0 -eq $t ] || exit $t
 	fi
@@ -496,7 +496,7 @@ stream {
     upstream backend {
         hash \$remote_addr consistent;
 
-        #server x.x.x.x:12345     weight=5;
+        server 127.0.0.1:12345    weight=5;
         #server x.x.x.x:12345     max_fails=3 fail_timeout=30s;
 `
 for i in ${OPT_UPSTREAM[@]}; do
