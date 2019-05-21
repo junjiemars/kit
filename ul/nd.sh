@@ -40,11 +40,13 @@ n_cpu() {
 	local os="`uname -s`"
 	local n=1
 	case "$os" in
-		Darwin) n="`sysctl -n hw.cpu`" ;;
+		Darwin) n="`sysctl -n hw.ncpu`" ;;
+    Linux) n="`grep -c processor /proc/cpuinfo`" ;;
 	esac
 	echo $n
 }
 
+ND_CPU_N=`n_cpu`
 
 NGX_TARGET=( raw http https stream dns )
 NGX_IDX=( ${NGX_TARGET[0]} )
@@ -162,7 +164,7 @@ do
     --gen-conf=*)                     ngx_gen_conf="$value"                ;;
     --gen-shell=*)                    ngx_gen_shell="$value"               ;;
 
-    --opt-processes=*)                opt_cpu_n="$value"                   ;;
+    --opt-processes=*)                OPT_CPU_N="$value"                   ;;
     --opt-connections=*)              OPT_CON_N="$value"                   ;;
     --opt-listen-port=*)              OPT_LISTEN_PORT="$value"             ;;
     --opt-upstream=*)                 OPT_UPSTREAM=( "$value" )            ;;
@@ -349,15 +351,13 @@ do_configure() {
 
 do_make() {
 	local t=0
-
 	if [ "yes" = "$NGX_CHAINED" ]; then
 		do_configure	
 		t=$?
 		[ 0 -eq $t ] || exit $t
 	fi
-
 	cd $NGX_HOME
-	make -j4
+	make -j$ND_CPU_N
 }
 
 
@@ -576,6 +576,7 @@ gen_shell() {
 
 ND_ROOT="${ND_ROOT%/}"
 ND_PWD="${ND_PWD%/}"
+ND_CPU_N=${ND_CPU_N}
 NGX_PREFIX="${NGX_PREFIX%/}"
 NGX_CONF_DIR="${NGX_CONF_DIR%/}"
 NGX_LOG_DIR="${NGX_LOG_DIR%/}"
