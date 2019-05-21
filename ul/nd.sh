@@ -6,8 +6,6 @@
 # url    : https://raw.githubusercontent.com/junjiemars/kit/master/ul/nd.sh
 #------------------------------------------------
 
-VERSION="0.1.1"
-
 ND_ROOT="${ND_ROOT:-$(cd `dirname ${BASH_SOURCE[0]}`; pwd -P)}"
 ND_PWD="`pwd -P`"
 
@@ -78,7 +76,6 @@ usage() {
   echo -e "       $(basename $0) [ --help | --version ]\n"
   echo -e "Options:"
   echo -e "  --help     Print this message"
-  echo -e "  --version  Print version information and quit"
   echo -e ""
   echo -e "  --target=   what nginx `opt_prompt ${NGX_TARGET[@]}` do, NGX_TARGET='$NGX_TARGET'"
   echo -e "  --options=  nginx auto/configure options, NGX_OPTIONS='${NGX_OPTIONS}'"
@@ -123,7 +120,6 @@ do
   
   case "$option" in
     --help)                           help=yes                             ;;
-    --version)                        version=yes                          ;;
 
     --target=*)                       ngx_target=( $value )                ;;
     --options=*)                      ngx_options="$value"                 ;;
@@ -164,11 +160,6 @@ done
 
 if [ "yes" = "$help" -o 0 -eq $# ]; then
 	usage
-	exit 0
-fi
-
-if [ "yes" = "$version" ]; then
-	echo -e "$VERSION"
 	exit 0
 fi
 
@@ -446,7 +437,6 @@ for i in ${OPT_UPSTREAM[@]}; do
         server $i;"
 done
 `
-
     } # end of upstream
 
     server {
@@ -460,27 +450,6 @@ done
         } # end of location
 
     } # end of server
-
-    #upstream backend_1 {
-    #     192.168.0.1:9601;
-    #     192.168.0.2:9603;
-    #}
-    #
-    #map \$remote_addr \$upstream {
-    #     172.20.0.1    backend_1;
-    #     172.20.0.2    backend_1;
-    #     default         backend_2;
-    #}
-    #
-    #server {
-    #     listen $OPT_LISTEN_PORT;
-    #     server_name localhost;
-    #     server_tokens $OPT_SERVER_TOKENS;
-    #
-    #     location / {
-    #         proxy_pass http://\$upstream;
-    #     }
-    #}
 
 } # end of http
 
@@ -514,26 +483,6 @@ done
         proxy_pass backend;
 
     } # end of server
-
-    #upstream backend_1 {
-    #     hash \$remote_addr consistent;
-    #     #server x.x.x.x:12345     max_fails=3 fail_timeout=30s;
-    #} # end of upstream variant backend
-
-    #map \$remote_addr \$upstream {
-    #     172.20.0.1   backend_1;
-    #     172.20.0.2   backend_1;
-    #     default      backend_2;
-    #}
-
-    #server {
-    #    listen $OPT_LISTEN_PORT;
-    #    proxy_connect_timeout 1s;
-    #    proxy_timeout 3s;
-    #    proxy_pass \$upstream;
-    #
-    #} # end of variant server
-
 
 } # end of stream
 
