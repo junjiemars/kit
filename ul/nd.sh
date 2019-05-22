@@ -166,7 +166,7 @@ do
 
     --opt-processes=*)                opt_cpu_n="$value"                   ;;
     --opt-connections=*)              opt_con_n="$value"                   ;;
-    --opt-listen-port=*)              OPT_LISTEN_PORT="$value"             ;;
+    --opt-listen-port=*)              opt_listen_port="$value"             ;;
     --opt-upstream=*)                 OPT_UPSTREAM=( "$value" )            ;;
     --opt-server-tokens=*)            OPT_SERVER_TOKENS=( "$value" )       ;;
     
@@ -245,10 +245,18 @@ fi
 
 if [ -n "$opt_con_n" ]; then
 	if ! `is_int $opt_con_n && test $opt_con_n -ge 1`; then
-		echo -e "! --opt-connections=$opt_con_n  =invalid, should be [1, 1024+]"
+		echo -e "! --opt-connections=$opt_con_n  =invalid, should be 1+, default is $OPT_CON_N"
 		exit 1
 	fi
 	OPT_CON_N="$opt_con_n"
+fi
+
+if [ -n "$opt_listen_port" ]; then
+	if ! `is_int $opt_listen_port && test $opt_listen_port -ge 1`; then
+		echo -e "! --opt-connections=$opt_con_n  =invalid, should be 1+, default is $OPT_LISTEN_PORT"
+		exit 1
+	fi
+	OPT_LISTEN_PORT="$opt_listen_port"
 fi
 
 
