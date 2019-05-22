@@ -164,8 +164,8 @@ do
     --gen-conf=*)                     ngx_gen_conf="$value"                ;;
     --gen-shell=*)                    ngx_gen_shell="$value"               ;;
 
-    --opt-processes=*)                OPT_CPU_N="$value"                   ;;
-    --opt-connections=*)              OPT_CON_N="$value"                   ;;
+    --opt-processes=*)                opt_cpu_n="$value"                   ;;
+    --opt-connections=*)              opt_con_n="$value"                   ;;
     --opt-listen-port=*)              OPT_LISTEN_PORT="$value"             ;;
     --opt-upstream=*)                 OPT_UPSTREAM=( "$value" )            ;;
     --opt-server-tokens=*)            OPT_SERVER_TOKENS=( "$value" )       ;;
@@ -234,6 +234,23 @@ if [ ! -d "$NGX_LOG_DIR" ]; then
 	retval=$?
 	[ 0 -eq $retval ] || exit $retval
 fi
+
+if [ -n "$opt_cpu_n" ]; then
+	if ! `is_int $opt_cpu_n && test $opt_cpu_n -ge 1`; then
+		echo -e "! --opt-processor=$opt_cpu_n  =invalid, should be [1, ${ND_CPU_N}+]"
+		exit 1
+	fi
+	OPT_CPU_N="$opt_cpu_n"
+fi
+
+if [ -n "$opt_con_n" ]; then
+	if ! `is_int $opt_con_n && test $opt_con_n -ge 1`; then
+		echo -e "! --opt-connections=$opt_con_n  =invalid, should be [1, 1024+]"
+		exit 1
+	fi
+	OPT_CON_N="$opt_con_n"
+fi
+
 
 if [ -n "$ngx_options" ]; then
 	NGX_OPTIONS="$ngx_options"
