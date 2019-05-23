@@ -68,9 +68,9 @@ NGX_GEN_SHELL=( no yes )
 NGX_CONF="nginx.conf"
 NGX_SHELL="nginx.sh"
 
+OPT_DEBUG=( no yes )
 OPT_CPU_N=1
 OPT_CON_N=1024
-
 OPT_LISTEN_PORT=8080 
 OPT_UPSTREAM=
 OPT_SERVER_NAME=localhost
@@ -120,6 +120,7 @@ usage() {
   echo -e "  --gen-conf=`opt_prompt ${NGX_GEN_CONF[@]}`   generate nginx.conf, NGX_GEN_CONF='$NGX_GEN_CONF'"
   echo -e "  --gen-shell=`opt_prompt ${NGX_GEN_SHELL[@]}`  generate nginx.sh, NGX_GEN_SHELL='$NGX_GEN_SHELL'"
   echo -e ""
+	echo -e "  --opt-debug=          option: debug, default is '$OPT_DEBUG'"
   echo -e "  --opt-processes=      option: worker_processes, default is '$OPT_CPU_N'"
   echo -e "  --opt-connections=    option: worker_connections, default is '$OPT_CON_N'"
   echo -e "  --opt-listen-port=    option: listen_port, default is '$OPT_LISTEN_PORT'"
@@ -164,6 +165,7 @@ do
     --gen-conf=*)                     ngx_gen_conf="$value"                ;;
     --gen-shell=*)                    ngx_gen_shell="$value"               ;;
 
+    --opt-debug=*)                    OPT_DEBUG="$value"                   ;;
     --opt-processes=*)                opt_cpu_n="$value"                   ;;
     --opt-connections=*)              opt_con_n="$value"                   ;;
     --opt-listen-port=*)              opt_listen_port="$value"             ;;
@@ -369,8 +371,11 @@ do_configure() {
 		gen_conf
 	fi
 
-	cd $NGX_HOME
-	auto/configure ${c}
+	if [ "yes" = "$OPT_DEBUG" ]; then
+		c="${c} --with-debug"
+	fi
+
+	cd "$NGX_HOME" && auto/configure ${c}
 }
 
 
