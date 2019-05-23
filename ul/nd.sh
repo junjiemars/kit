@@ -75,6 +75,7 @@ OPT_LISTEN_PORT=8080
 OPT_UPSTREAM=
 OPT_SERVER_NAME=localhost
 OPT_SERVER_TOKENS=( on off )
+OPT_ADD_MODULE=
 
 opt_prompt() {
 	echo "[$@]" | tr ' ' '|'
@@ -171,6 +172,7 @@ do
     --opt-listen-port=*)              opt_listen_port="$value"             ;;
     --opt-upstream=*)                 OPT_UPSTREAM=( "$value" )            ;;
     --opt-server-tokens=*)            OPT_SERVER_TOKENS=( "$value" )       ;;
+    --opt-add-module=*)               OPT_ADD_MODULE="$value"              ;;
     
     *)
 
@@ -374,6 +376,11 @@ do_configure() {
 	if [ "yes" = "$OPT_DEBUG" ]; then
 		c="${c} --with-debug"
 	fi
+
+	if [ -n "$OPT_ADD_MODULE" ]; then
+		c="${c} --add-module=$OPT_ADD_MODULE"
+	fi
+	
 
 	cd "$NGX_HOME" && auto/configure ${c}
 }
