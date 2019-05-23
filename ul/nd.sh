@@ -12,10 +12,10 @@ GREP_OPT_E="`echo 123 | grep -E '^[0-9]+$'`"
 
 find_nginx_home() {
 	local x="$@"
-	for d in `find . -maxdepth 1 -mindepth 1 -type d`; do
+	for d in `find . -maxdepth 1 -mindepth 0 -type d`; do
 		d="`echo $d | sed 's#^\.\/##g'`"
 		case "$d" in
-			nginx|nginx-release-*)
+			.|nginx|nginx-release-*)
 				if [ -f "${d%/}/auto/configure" ]; then
 					echo "${d%/}"
 					return 0
