@@ -61,7 +61,7 @@ NGX_ERR_LOG=error.log
 NGX_PID_LOG=pid
 
 NGX_CHAIN=( no yes )
-
+NGX_GEN_DIR="${ND_PWD}"
 NGX_GEN_CONF=( no yes )
 NGX_GEN_SHELL=( no yes )
 
@@ -117,7 +117,8 @@ usage() {
   echo -e "  --conf-dir=  where nginx conf, NGX_CONF_DIR='${NGX_CONF_DIR}'"
   echo -e "  --log-dir=   where nginx log store, NGX_LOG_DIR='${NGX_LOG_DIR}'"
 	echo -e ""
-  echo -e "  --chain=`opt_prompt ${NGX_CHAIN[@]}`    chained commands, NGX_CHAIN='$NGX_CHAIN'"
+  echo -e "  --chain=`opt_prompt ${NGX_CHAIN[@]}`      chained commands, NGX_CHAIN='$NGX_CHAIN'"
+  echo -e "  --gen-dir=            where to generate conf/shell, NGX_GEN_DIR='$NGX_GEN_DIR'"
   echo -e "  --gen-conf=`opt_prompt ${NGX_GEN_CONF[@]}`   generate nginx.conf, NGX_GEN_CONF='$NGX_GEN_CONF'"
   echo -e "  --gen-shell=`opt_prompt ${NGX_GEN_SHELL[@]}`  generate nginx.sh, NGX_GEN_SHELL='$NGX_GEN_SHELL'"
   echo -e ""
@@ -163,6 +164,7 @@ do
     --log-dir=*)                      ngx_log_dir="$value"                 ;;
 
     --chain=*)                        ngx_chain="$value"                   ;;
+    --gen-dir=*)                      ngx_gen_dir="$value"                 ;;
     --gen-conf=*)                     ngx_gen_conf="$value"                ;;
     --gen-shell=*)                    ngx_gen_shell="$value"               ;;
 
@@ -279,6 +281,16 @@ if [ -n "$ngx_chain" ]; then
 		echo -e "! --target=\"$ngx_chain\"  =invalid"
 		exit $retval
 	fi	
+fi
+
+if [ -n "$ngx_gen_dir" ]; then
+	if [ ! -d "$ngx_gen_dir" ]; then
+		echo -e "! --gen-dir=$ngx_gen_dir  =invalid, try to create '$ngx_gen_dir' ..."
+		mkdir -p "$ngx_gen_dir"
+		retval=$?
+		[ 0 -eq $retval ] || exit $retval
+	fi
+	NGX_GEN_DIR="$ngx_gen_dir"
 fi
 
 if [ -n "$ngx_gen_conf" ]; then
@@ -591,7 +603,8 @@ END
 
 
 gen_shell() {
-	cat << END > $NGX_SHELL
+	local shell="${NGX_GEN_DIR%/}/${NGX_SHELL}"
+	cat << END > "${shell}"
 #!/bin/bash
 #------------------------------------------------
 # target: init script
@@ -619,6 +632,7 @@ ND_ROOT="${ND_ROOT%/}"
 ND_PWD="${ND_PWD%/}"
 ND_CPU_N=${ND_CPU_N}
 NGX_PREFIX="${NGX_PREFIX%/}"
+ND_GEN_DIR="${NGX_GEN_DIR}"
 NGX_CONF_DIR="${NGX_CONF_DIR%/}"
 NGX_LOG_DIR="${NGX_LOG_DIR%/}"
 NGX_BIN="${NGX_PREFIX%/}/sbin/nginx"
@@ -642,7 +656,7 @@ check_nginx_env() {
 }
 
 copy_nginx_conf() {
-  local s="\${ND_PWD}/$NGX_CONF"
+  local s="\${ND_GEN_DIR}/$NGX_CONF"
   local d="\${NGX_CONF_DIR}/$NGX_CONF"
 
   if [ ! -f "\$s" ]; then
@@ -687,24 +701,25 @@ echo "--------------------"
 
 END
 
-	[ -f $NGX_SHELL ] && chmod u+x $NGX_SHELL
+	[ -f "$shell" ] && chmod u+x "${shell}"
 }
 
 
 gen_conf() {
-	echo -n > "$NGX_CONF"
+	local conf="${NGX_GEN_DIR%/}/$NGX_CONF"
+	echo -n > "$conf"
 
-	gen_conf_header "$NGX_CONF"
+	gen_conf_header "$conf"
 
 	for i in "${NGX_IDX[@]}"; do
-		gen_${i}_section "$NGX_CONF"
+		gen_${i}_section "$conf"
 	done
 
 	local f="${NGX_CONF_DIR%/}/$NGX_CONF"
 	if [ -f "${f}" ]; then
-		mv ${f} ${f}.b0
+		mv "${f}" "${f}.b0"
 	fi
-	cp $NGX_CONF ${f}
+	cp "$conf" "${f}"
 }
 
 
