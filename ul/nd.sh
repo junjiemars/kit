@@ -60,7 +60,7 @@ NGX_LOG_DIR="${NGX_LOG_DIR:-${NGX_PREFIX%/}/var/nginx}"
 NGX_ERR_LOG=error.log
 NGX_PID_LOG=pid
 
-NGX_CHAINED=( no yes )
+NGX_CHAIN=( no yes )
 
 NGX_GEN_CONF=( no yes )
 NGX_GEN_SHELL=( no yes )
@@ -117,7 +117,7 @@ usage() {
   echo -e "  --conf-dir=  where nginx conf, NGX_CONF_DIR='${NGX_CONF_DIR}'"
   echo -e "  --log-dir=   where nginx log store, NGX_LOG_DIR='${NGX_LOG_DIR}'"
 	echo -e ""
-  echo -e "  --chained=`opt_prompt ${NGX_CHAINED[@]}`    chained commands, NGX_CHAINED='$NGX_CHAINED'"
+  echo -e "  --chain=`opt_prompt ${NGX_CHAIN[@]}`    chained commands, NGX_CHAIN='$NGX_CHAIN'"
   echo -e "  --gen-conf=`opt_prompt ${NGX_GEN_CONF[@]}`   generate nginx.conf, NGX_GEN_CONF='$NGX_GEN_CONF'"
   echo -e "  --gen-shell=`opt_prompt ${NGX_GEN_SHELL[@]}`  generate nginx.sh, NGX_GEN_SHELL='$NGX_GEN_SHELL'"
   echo -e ""
@@ -162,7 +162,7 @@ do
     --conf-dir=*)                     ngx_conf_dir="$value"                ;;
     --log-dir=*)                      ngx_log_dir="$value"                 ;;
 
-    --chained=*)                      ngx_chained="$value"                 ;;
+    --chain=*)                        ngx_chain="$value"                   ;;
     --gen-conf=*)                     ngx_gen_conf="$value"                ;;
     --gen-shell=*)                    ngx_gen_shell="$value"               ;;
 
@@ -268,11 +268,11 @@ if [ -n "$ngx_options" ]; then
 	NGX_OPTIONS="$ngx_options"
 fi
 
-if [ -n "$ngx_chained" ]; then
-	NGX_CHAINED=`opt_check $ngx_chained ${NGX_CHAINED[@]}`
+if [ -n "$ngx_chain" ]; then
+	NGX_CHAIN=`opt_check $ngx_chain ${NGX_CHAIN[@]}`
 	retval=$?
 	if [ 0 -ne $retval ]; then
-		echo -e "! --target=\"$ngx_chained\"  =invalid"
+		echo -e "! --target=\"$ngx_chain\"  =invalid"
 		exit $retval
 	fi	
 fi
@@ -388,7 +388,7 @@ do_configure() {
 
 do_make() {
 	local t=0
-	if [ "yes" = "$NGX_CHAINED" ]; then
+	if [ "yes" = "$NGX_CHAIN" ]; then
 		do_configure	
 		t=$?
 		[ 0 -eq $t ] || exit $t
@@ -401,7 +401,7 @@ do_make() {
 do_install() {
 	local t=0
 	
-	if [ "yes" = "$NGX_CHAINED" ]; then
+	if [ "yes" = "$NGX_CHAIN" ]; then
 		do_make
 		t=$?
 		[ 0 -eq $t ] || exit $t
@@ -423,7 +423,7 @@ do_clean() {
 do_modules() {
 	local t=0
 
-	if [ "yes" = "$NGX_CHAINED" ]; then
+	if [ "yes" = "$NGX_CHAIN" ]; then
 		do_configure	
 		t=$?
 		[ 0 -eq $t ] || exit $t
@@ -437,7 +437,7 @@ do_modules() {
 do_upgrade() {
 	local t=0
 
-	if [ "yes" = "$NGX_CHAINED" ]; then
+	if [ "yes" = "$NGX_CHAIN" ]; then
 		do_install
 		t=$?
 		[ 0 -eq $t ] || exit $t
@@ -601,7 +601,7 @@ gen_shell() {
 #    --conf-dir=$NGX_CONF_DIR
 #    --log-dir=$NGX_LOG_DIR
 #    --options=$NGX_OPTIONS
-#    --chained=$NGX_CHAINED
+#    --chain=$NGX_CHAIN
 #    --gen-conf=$NGX_GEN_CONF
 #    --gen-shell=$NGX_GEN_SHELL
 #    --opt-processes=$OPT_CPU_N
