@@ -683,7 +683,7 @@ copy_nginx_conf() {
 
 ppid() {
   local pid="\$1"
-  [ -f "\${pid}" ] && echo "[`cat \${pid}`]"
+  [ -f "\${pid}" ] && echo "[\`cat \${pid}\`]"
 }
 
 echo -n "+check nginx env ... "
@@ -700,7 +700,7 @@ else
 	echo "failed"
 fi
 
-echo "+run`ppid ${NGX_PID}`: \$@ ... "
+echo "+run\`ppid \${NGX_PID}\`: \$@ ... "
 echo "--------------------"
 \${NGX_BIN} \$@
 
