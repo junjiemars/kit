@@ -221,6 +221,8 @@ fi
 
 if [ -n "$ngx_conf_dir" ]; then
 	NGX_CONF_DIR="${ngx_conf_dir%/}"
+else
+	NGX_CONF_DIR="${NGX_PREFIX%/}/conf"
 fi
 if [ ! -d "$NGX_CONF_DIR" ]; then
 	echo -e "! --conf-dir=$NGX_CONF_DIR  =invalid, try to create '$NGX_CONF_DIR'..."
@@ -231,6 +233,8 @@ fi
 
 if [ -n "$ngx_log_dir" ]; then
 	NGX_LOG_DIR="${ngx_log_dir%/}"
+else
+	NGX_LOG_DIR="${NGX_PREFIX%/}/var/nginx"
 fi
 if [ ! -d "$NGX_LOG_DIR" ]; then
 	echo -e "! --log-dir=$NGX_LOG_DIR  =invalid, try to create '$NGX_LOG_DIR' ..."
@@ -597,7 +601,7 @@ gen_shell() {
 # $0
 #    --target='${NGX_IDX[@]}'
 #    --home=$NGX_HOME
-#    --run-dir=$NGX_PREFIX
+#    --prefix=$NGX_PREFIX
 #    --conf-dir=$NGX_CONF_DIR
 #    --log-dir=$NGX_LOG_DIR
 #    --options=$NGX_OPTIONS
