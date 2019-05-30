@@ -27,7 +27,12 @@ VER=$VER
 # crontab list
 # *minute(0-59) *hour(0-23) *day-of-month(1-31) *month(1-12) *day-of-week(0-7)
 
+# contab examples:
+# every 5 minutes  : */5 *    * * * <job>
+# 5th weekday      : *   *    * * 5 <job>
+# 1st or 15th hour : *   1,15 * * * <job>
 
+# TODO:
 # * * * * * <job> >> /tmp/x.log 2>&1
 
 #------------------
