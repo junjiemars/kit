@@ -166,6 +166,14 @@ Get Windows default code page.
 
 Setup Win32 programming environment.
 
+** Tools
+
+| name   | url                                     |
+|--------+-----------------------------------------|
+| aria2c | https://github.com/aria2/aria2/releases |
+|        |                                         |
+
+
 * Darwin
 	:PROPERTIES:
 	:CUSTOM_ID: darwin
