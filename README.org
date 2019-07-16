@@ -8,6 +8,11 @@ Now, a daily working environment can be build via few lines code on
 the fly. And effetive, robust, beautiful, consistent on multiple
 platforms.
 
+Install:
+#+BEGIN_SRC sh
+git clone --depth=1 https://github.com/junjiemars/kit.git
+#+END_SRC
+
 * Unix-like
 	:PROPERTIES:
 	:CUSTOM_ID: unix_like
