@@ -108,6 +108,24 @@ install_pstools() {
   fi
 }
 
+install_aria2c() {
+  local a2c_zip="aria2-1.34.0-win-64bit-build1.zip"
+  local a2c_url="https://github.com/aria2/aria2/releases/download/release-1.34.0/${a2c_zip}"
+  local a2c_home="${RUN_DIR}/"
+  local bin_dir="${a2c_home}/bin"
+  local cmd="aria2c"
+
+  `check_kit "${cmd}" "${a2c_home}"` && return 0
+
+  install_kit "${bin_dir}/${cmd}.exe" \
+              "${bin_dir}/${cmd}" \
+              "${a2c_url}" \
+              "${a2c_home}/${a2c_zip}" \
+              "${bin_dir}" \
+    || return $?
+}
+
+
 install_autoruns() {
   local ar_zip="Autoruns.zip"  
   local ar_url="https://download.sysinternals.com/files/${ar_zip}"
@@ -204,36 +222,115 @@ install_gmake() {
 }
 
 
-HAS_ALL=${HAS_ALL:-"NO"}
-HAS_AUTORUNS=${HAS_AUTORUNS:-0}
-HAS_EMACS=${HAS_EMACS:-0}
-HAS_EMACS_SOURCE=${HAS_EMACS_SOURCE:-0}
-HAS_PSTOOLS=${HAS_PSTOOLS:-0}
-HAS_PROCEXP=${HAS_PROCEXP:-0}
-HAS_NETCAT=${HAS_NETCAT:-0}
-HAS_GMAKE=${HAS_GMAKE:-0}
+function usage() {
+  echo -e "Usage: $(basename $0) [OPTIONS] COMMAND [arg...]"
+  echo -e "       $(basename $0) [ -h | --help | -v | --version ]\n"
+  echo -e "Options:"
+  echo -e "  --help               Print this message"
+  echo -e "  --version            Print version information and quit"
+  echo -e ""
+  echo -e "  --install-aria2c     install aria2c"
+  echo -e "  --install-autoruns   install autoruns"
+  echo -e "  --tomcat-version=    tomcat version, VER${VER:+='$VER'}"
+  echo -e "  --catalina-options=  catalina options, CATALINA_OPTS='${CATALINA_OPTS}'"
+  echo -e "  --download-only      download tomcat tgz file only, DOWNLOAD_ONLY='$DOWNLOAD_ONLY'"
+  echo -e ""
+  echo -e "  --listen-on=         listen on what address, LISTEN_ON='${LISTEN_ON}'"
+  echo -e "  --ip-version=        prefered IP protocol version, IP_VER='${IP_VER}'"
+  echo -e "  --stop-timeout=      force waiting STOP_TIMEOUT='$STOP_TIMEOUT' seconds before stop"
+  echo -e "  --start-port=        tomcat start port, START_PORT='${START_PORT}'"
+  echo -e "  --stop-port=         tomcat stop port, STOP_PORT='${STOP_PORT}'"
+  echo -e "  --jpda-port=         tomcat debug port, JPDA_PORT='${JPDA_PORT}'"
+}
 
-if [ "YES" == "${HAS_ALL}" ]; then
-	HAS_AUTORUNS=1
-  HAS_EMACS=0
-  HAS_EMACS_SOURCE=0
-  HAS_PSTOOLS=1
-  HAS_PROCEXP=1
-  HAS_NETCAT=1
-	HAS_GMAKE=1
+for option
+do
+  opt="$opt `echo $option | sed -e \"s/\(--[^=]*=\)\(.* .*\)/\1'\2'/\"`"
+  
+  case "$option" in
+    -*=*) value=`echo "$option" | sed -e 's/[-_a-zA-Z0-9]*=//'` ;;
+    *) value="" ;;
+  esac
+  
+  case "$option" in
+    --help)                  help=yes                   ;;
+    --version)               version=yes      			    ;;
+
+    --install-aria2c)        aria2c="yes"               ;;
+    --install-autoruns)      autoruns="yes"             ;;
+    --catalina-options=*)    catalina_opts="$value"     ;;
+    --download-only=*)       download_only="$value"     ;;
+
+    --listen-on=*)           LISTEN_ON="$value"         ;;
+    --ip-version=*)          ip_ver="$value"            ;;
+    --stop-timeout=*)        STOP_TIMEOUT="$value"		  ;;
+    --start-port=*)          START_PORT="$value"			  ;;
+    --stop-port=*)           STOP_PORT="$value" 			  ;;
+    --jpda-port=*)           JPDA_PORT="$value"  			  ;;
+
+    *)
+			case "$option" in
+				-*)
+					echo "$0: error: invalid option \"$option\""
+					exit 1
+				;;
+
+				*) 
+      		command="$option"
+				;;
+			esac
+    ;;
+  esac
+done
+
+if [ "yes" = "$help" -o 0 -eq $# ]; then
+	usage
+	exit 0
 fi
 
-[ 0 -lt "${HAS_AUTORUNS}" ]       && KITS+=('install_autoruns')
-[ 0 -lt "${HAS_EMACS}" ]          && KITS+=('install_emacs')
-[ 0 -lt "${HAS_EMACS_SOURCE}" ]   && KITS+=('install_emacs_source')
-[ 0 -lt "${HAS_PSTOOLS}" ]        && KITS+=('install_pstools')
-[ 0 -lt "${HAS_PROCEXP}" ]        && KITS+=('install_procexp')
-[ 0 -lt "${HAS_NETCAT}" ]         && KITS+=('install_netcat')
-[ 0 -lt "${HAS_GMAKE}" ]          && KITS+=('install_gmake')
+if [ "yes" = "$version" ]; then
+	echo -e "$VERSION"
+	exit 0
+fi
 
-for i in "${KITS[@]}"; do
-  echo_head " + ${i} ... "
-  ${i}
-  echo_tail $?
-done
+if [ "yes" = "$autoruns" ]; then
+	install_autoruns
+fi
+
+if [ "yes" = "$aria2c" ]; then
+	install_aria2c
+fi
+# HAS_ALL=${HAS_ALL:-"NO"}
+# HAS_AUTORUNS=${HAS_AUTORUNS:-0}
+# HAS_EMACS=${HAS_EMACS:-0}
+# HAS_EMACS_SOURCE=${HAS_EMACS_SOURCE:-0}
+# HAS_PSTOOLS=${HAS_PSTOOLS:-0}
+# HAS_PROCEXP=${HAS_PROCEXP:-0}
+# HAS_NETCAT=${HAS_NETCAT:-0}
+# HAS_GMAKE=${HAS_GMAKE:-0}
+
+# if [ "YES" == "${HAS_ALL}" ]; then
+# 	HAS_AUTORUNS=1
+# 	HAS_EMACS=0
+# 	HAS_EMACS_SOURCE=0
+# 	HAS_PSTOOLS=1
+# 	HAS_PROCEXP=1
+# 	HAS_NETCAT=1
+# 	HAS_GMAKE=1
+# fi
+
+# [ 0 -lt "${HAS_AUTORUNS}" ]       && KITS+=('install_autoruns')
+# [ 0 -lt "${HAS_EMACS}" ]          && KITS+=('install_emacs')
+# [ 0 -lt "${HAS_EMACS_SOURCE}" ]   && KITS+=('install_emacs_source')
+# [ 0 -lt "${HAS_PSTOOLS}" ]        && KITS+=('install_pstools')
+# [ 0 -lt "${HAS_PROCEXP}" ]        && KITS+=('install_procexp')
+# [ 0 -lt "${HAS_NETCAT}" ]         && KITS+=('install_netcat')
+# [ 0 -lt "${HAS_GMAKE}" ]          && KITS+=('install_gmake')
+
+# for i in "${KITS[@]}"; do
+#  echo_head " + ${i} ... "
+#  ${i}
+#  echo_tail $?
+# done
+
 

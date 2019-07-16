@@ -8,9 +8,14 @@ Now, a daily working environment can be build via few lines code on
 the fly. And effetive, robust, beautiful, consistent on multiple
 platforms.
 
-Install:
+There are two ways to use *kit*:
+- clone git repository to your working host
 #+BEGIN_SRC sh
 git clone --depth=1 https://github.com/junjiemars/kit.git
+#+END_SRC
+- use single kit via bash
+#+BEGIN_SRC sh
+$ bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/<where-the-bash-script>)
 #+END_SRC
 
 * Unix-like
