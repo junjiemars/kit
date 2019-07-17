@@ -75,11 +75,9 @@ echo_tail() {
 }
 
 check_arch() {
-	local arch=32
 	case "`uname -m`" in
-		x86_64) arch=64;;
+		x86_64) echo 64;;
 	esac
-	echo "${arch}"
 }
 
 save_as() {
@@ -144,6 +142,8 @@ download_kit() {
   t=$?
   if [ 33 -eq $t ]; then
     curl $CURL_OPTS -L -o "${fn}" "${url}"
+	elif [ 10054 -eq $t ]; then
+		curl $CURL_OPTS -L -o "${fn}" -C - "${url}"
   elif [ 60 -eq $t -o 22 -eq $t ]; then
     [ -f "${fn}" ] && rm "${fn}"
     curl $CURL_OPTS -k -L -o "${fn}" "${url}"
