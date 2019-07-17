@@ -79,6 +79,7 @@ check_arch() {
 	case "`uname -m`" in
 		x86_64) arch=64;;
 	esac
+	echo "${arch}"
 }
 
 save_as() {
