@@ -201,14 +201,13 @@ check_kit() {
   local home="$2"
 	local ver="$3"
 
-  if `${cmd} &>/dev/null`; then
+  if `${cmd} &>/dev/null` || `${home%/}/${cmd} &>/dev/null`; then
 		if [ -n "$ver" ]; then
 			test "`${cmd} 2>/dev/null`" = "$ver"
 		else
     	return 0
 		fi
-  else
-    [ -d "${home}" ] || mkdir -p "${home}"
+	else
     return 1
   fi
 }
