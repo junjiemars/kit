@@ -151,10 +151,11 @@ extract_kit() {
   local x="${src##*.}"
   local t=0
 
-  if test -d "${dst}" && test "yes" = "${clean}"; then
-    rm -rf "${dst}"
+  if test -d "${dst}"; then
+		test "yes" = "${clean}" && rm -rf "${dst}"
+	else
+		mkdir -p "${dst}"		
   fi
-  mkdir -p "${dst}"
   
   case "$x" in
     gz|tgz)
@@ -178,18 +179,18 @@ install_kit() {
   local url="$3"
   local src="$4"
   local dst="$5"
-	local clr="$6"
+	local clean="$6"
 
   if `test -f "${bin}"`; then
 		$cmd &>/dev/null && return 0
 	fi
 
-  if `test -f "${src}"` && `extract_kit "${src}" "${dst}"`; then
+  if `test -f "${src}"` && `extract_kit "${src}" "${dst}" "${clean}"`; then
     $cmd &>/dev/null && return 0
 	fi
 
   if `download_kit "$url" "$src"`; then
-    extract_kit "${src}" "${dst}" "${clr}"
+    extract_kit "${src}" "${dst}" "${clean}"
   else
     return 1
   fi
