@@ -174,20 +174,14 @@ extract_kit() {
 }
 
 install_kit() {
-  local bin="$1"
-  local cmd="$2"
-  local url="$3"
-  local src="$4"
-  local dst="$5"
-	local clean="$6"
+  local cmd="$1"
+  local url="$2"
+  local src="$3"
+  local dst="$4"
+	local clean="$5"
 
-  # if `test -f "${bin}"`; then
-	# 	$cmd &>/dev/null && return 0
-	# fi
-
-  if `test -f "${src}"` && `extract_kit "${src}" "${dst}" "${clean}"`; then
-		check_kit "${cmd}" && return 0
-    # $cmd &>/dev/null && return 0
+  if `test -f "${src}"`; then
+		extract_kit "${src}" "${dst}" "${clean}"
 	fi
 
   if `download_kit "$url" "$src"`; then

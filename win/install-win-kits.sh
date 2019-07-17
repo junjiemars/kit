@@ -92,7 +92,7 @@ install_pstools() {
   local bin_dir="${p_home}/bin"
   local cmd="pslist"
 
-  `check_kit "${cmd}" "${p_home}"` && return 0
+  # `check_kit "${cmd}" "${p_home}"` && return 0
 
   install_kit "${bin_dir}/pslist.exe" \
               "${bin_dir}/${cmd}" \
@@ -109,20 +109,33 @@ install_pstools() {
 }
 
 install_aria2c() {
-  local a2c_zip="aria2-1.34.0-win-64bit-build1.zip"
-  local a2c_url="https://github.com/aria2/aria2/releases/download/release-1.34.0/${a2c_zip}"
-  local a2c_home="${RUN_DIR}/"
-  local bin_dir="${a2c_home}/bin"
+  local a2c_zip="aria2-1.34.0-win-64bit-build1"
+  local a2c_url="https://github.com/aria2/aria2/releases/download/release-1.34.0/${a2c_zip}.zip"
   local cmd="aria2c"
+  local a2c_home="${TMP_DIR}/${cmd}"
+	local a2c_tmp="${a2c_home}/bin"
+  local bin_dir="${RUN_DIR}/bin"
+	local exe="${cmd}.exe"
+	local a2c_check="${cmd} --version"
 
-  `check_kit "${cmd}" "${a2c_home}"` && return 0
+	if ! `check_kit "${a2c_check}"`; then
+		if `check_kit "${a2c_check}" "${a2c_tmp}/${a2c_zip}"`; then
+			cp "${a2c_tmp}/${a2c_zip}/${exe}" "${bin_dir}" && rm -rf "${a2c_home}"
+		fi
+	else
+		return 0
+	fi
 
-  install_kit "${bin_dir}/${cmd}.exe" \
-              "${bin_dir}/${cmd}" \
+  install_kit "${bin_dir}/${cmd}" \
               "${a2c_url}" \
-              "${a2c_home}/${a2c_zip}" \
-              "${bin_dir}" \
-    || return $?
+              "${a2c_home}/${a2c_zip}.zip" \
+              "${a2c_tmp}" \
+							"no"
+	[ 0 -eq $? ] || return $?
+
+	if `check_kit "${a2c_check}" "${a2c_tmp}/${a2c_zip}"`; then
+		cp "${a2c_tmp}/${a2c_zip}/${exe}" "${bin_dir}" && rm -rf "${a2c_home}"
+	fi
 }
 
 
