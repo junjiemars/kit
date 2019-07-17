@@ -74,6 +74,13 @@ echo_tail() {
   fi
 }
 
+check_arch() {
+	local arch=32
+	case "`uname -m`" in
+		x86_64) arch=64;;
+	esac
+}
+
 save_as() {
   local f="$1"
 	local ori="${f}.ori"
