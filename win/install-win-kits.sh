@@ -120,7 +120,8 @@ install_aria2c() {
 
 	if ! `check_kit "${a2c_check}"`; then
 		if `check_kit "${a2c_check}" "${a2c_tmp}/${a2c_zip}"`; then
-			cp "${a2c_tmp}/${a2c_zip}/${exe}" "${bin_dir}" && rm -rf "${a2c_home}"
+			cp "${a2c_tmp}/${a2c_zip}/${exe}" "${bin_dir}" \
+				&& rm -rf "${a2c_home}"
 		fi
 	else
 		return 0
@@ -134,7 +135,8 @@ install_aria2c() {
 	[ 0 -eq $? ] || return $?
 
 	if `check_kit "${a2c_check}" "${a2c_tmp}/${a2c_zip}"`; then
-		cp "${a2c_tmp}/${a2c_zip}/${exe}" "${bin_dir}" && rm -rf "${a2c_home}"
+		cp "${a2c_tmp}/${a2c_zip}/${exe}" "${bin_dir}" \
+			&& rm -rf "${a2c_home}"
 	fi
 }
 
@@ -142,25 +144,41 @@ install_aria2c() {
 install_autoruns() {
   local ar_zip="Autoruns.zip"  
   local ar_url="https://download.sysinternals.com/files/${ar_zip}"
-  local ar_home="${OPEN_DIR}/pstools"
-  local bin_dir="${ar_home}/bin"
-  local cmd="autoruns"
+	local arch="`check_arch`"
+  local cmd="autorunsc${arch}"
+  local ar_home="${TMP_DIR}/${cmd}"
+	local ar_tmp="${ar_home}/bin"
+  local bin_dir="${RUN_DIR}/bin"
+	local exe="${cmd}.exe"
+	local ar_check="${exe}"
+	local clean="no"
+	
+	if ! `check_kit "${ar_check}"`; then
+		if `check_kit "${ar_check}" "${ar_tmp}"`; then
+			cp "${ar_tmp}/${exe}" "${bin_dir}" \
+				 && cp "${ar_tmp}/Autoruns${arch}.*" "${bin_dir}" \
+				 && cp "${ar_tmp}/Autoruns${arch}.dll" "${bin_dir}"
+			[ 0 -eq $? ] && rm -rf "${ar_home}"
+		fi
+	else
+		return 0
+	fi
 
-  `check_kit "${cmd}" "${ar_home}"` && return 0
-
-  install_kit "${bin_dir}/autoruns.exe" \
-              "${bin_dir}/${cmd}" \
+  install_kit "${bin_dir}/${cmd}" \
               "${ar_url}" \
               "${ar_home}/${ar_zip}" \
-              "${bin_dir}" \
-    || return $?
-
-  if `${bin_dir}/${cmd} &>/dev/null`; then
-    append_kit_path "${bin_dir}" "${ar_home}"
-  else
-    return 1
-  fi
+              "${ar_tmp}" \
+							"${clean}"
+  [ 0 -eq $? ] ||  return $?
+	
+	if `check_kit "${ar_check}" "${ar_tmp}"`; then
+		cp "${ar_tmp}/${exe}" "${bin_dir}" \
+			&& cp "${ar_tmp}/Autoruns${arch}.exe" "${bin_dir}" \
+			&& cp "${ar_tmp}/Autoruns${arch}.dll" "${bin_dir}"
+		[ 0 -eq $? ] && rm -rf "${ar_home}"
+	fi
 }
+
 
 install_procexp() {
   local p_zip="ProcessExplorer.zip"  
