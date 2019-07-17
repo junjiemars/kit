@@ -178,6 +178,7 @@ install_kit() {
   local url="$3"
   local src="$4"
   local dst="$5"
+	local clr="$6"
 
   if `test -f "${bin}"`; then
 		$cmd &>/dev/null && return 0
@@ -188,7 +189,7 @@ install_kit() {
 	fi
 
   if `download_kit "$url" "$src"`; then
-    extract_kit "${src}" "${dst}"
+    extract_kit "${src}" "${dst}" "${clr}"
   else
     return 1
   fi
