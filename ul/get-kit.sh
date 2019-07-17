@@ -181,12 +181,13 @@ install_kit() {
   local dst="$5"
 	local clean="$6"
 
-  if `test -f "${bin}"`; then
-		$cmd &>/dev/null && return 0
-	fi
+  # if `test -f "${bin}"`; then
+	# 	$cmd &>/dev/null && return 0
+	# fi
 
   if `test -f "${src}"` && `extract_kit "${src}" "${dst}" "${clean}"`; then
-    $cmd &>/dev/null && return 0
+		check_kit "${cmd}" && return 0
+    # $cmd &>/dev/null && return 0
 	fi
 
   if `download_kit "$url" "$src"`; then
