@@ -156,8 +156,7 @@ install_autoruns() {
 	if ! `check_kit "${ar_check}"`; then
 		if `check_kit "${ar_check}" "${ar_tmp}"`; then
 			cp "${ar_tmp}/${exe}" "${bin_dir}" \
-				 && cp "${ar_tmp}/Autoruns${arch}.*" "${bin_dir}" \
-				 && cp "${ar_tmp}/Autoruns${arch}.dll" "${bin_dir}"
+				 && cp "${ar_tmp}/Autoruns${arch}".* "${bin_dir}"
 			[ 0 -eq $? ] && rm -rf "${ar_home}"
 		fi
 	else
@@ -173,8 +172,7 @@ install_autoruns() {
 	
 	if `check_kit "${ar_check}" "${ar_tmp}"`; then
 		cp "${ar_tmp}/${exe}" "${bin_dir}" \
-			&& cp "${ar_tmp}/Autoruns${arch}.exe" "${bin_dir}" \
-			&& cp "${ar_tmp}/Autoruns${arch}.dll" "${bin_dir}"
+			&& cp "${ar_tmp}/Autoruns${arch}".* "${bin_dir}"
 		[ 0 -eq $? ] && rm -rf "${ar_home}"
 	fi
 }
