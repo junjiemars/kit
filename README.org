@@ -636,20 +636,44 @@ sudo netplan apply
 
 * VCS
 
+** Git
+
+*** Issue
+
+**** =cannot checkout branch - error: pathsepc=
+
+fix the =.git/config= file
+#+BEGIN_SRC sh
+[remote "origin"]
+  url = https://github.com/junjiemars/kit.git
+  fetch= +refs/heads/*:refs/remotes/origin/*
+#+END_SRC
+
 ** Subversion
 
 On Windows, =svn= doesn't support posix repository URL.
 
 #+BEGIN_SRC sh
 # create repository
-svnadmin create /e/lab/vcs/svn/repo
+svnadmin create </opt/lab/vcs/svn/repo>
 
 # make hooks/pre-revprop-change file
 chmod u+x hooks/pre-revprop-change
 
 # checkout repository
-svn checkout file://E:/lab/vcs/svn/repo
+svn checkout <file://E:/lab/vcs/svn/repo>
+
+# update local
+svn update
+
+# commit
+svn add .
+svn commit -m"message"
+
+# log
+svn log --limit 8
 #+END_SRC
+
 
 hooks/pre-revprops-change
 #+BEGIN_SRC sh
@@ -657,6 +681,35 @@ hooks/pre-revprops-change
 exit 0;
 #+END_SRC
 
+** Git and Subversion Bridge
+
+Clone the SVN repository
+#+BEGIN_SRC sh
+git svn clone <file:///a/b/c>
+#+END_SRC
+
+Create a new branch to modify or work on a new feature
+#+BEGIN_SRC sh
+git checkout -b <new-branch>
+#+END_SRC
+
+Work on your newly created branch in the local repository as
+usual. Once complete, you can switch to the master branch and merge
+your changes to master.
+#+BEGIN_SRC sh
+git checkout master
+git merge <new-branch>
+#+END_SRC
+
+Update your SVN repository
+#+BEGIN_SRC sh
+git svn rebase
+#+END_SRC
+
+Commit back to the SVN repository
+#+BEGIN_SRC sh
+git svn dcommit -m"commit back"
+#+END_SRC
 
 ** References
 - [[https://git-scm.com/book/en/v1/Git-and-Other-Systems-Git-and-Subversion][Git and Other Systems Git and Subversion]]
