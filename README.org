@@ -173,6 +173,10 @@ Setup Win32 programming environment.
 | aria2c | https://github.com/aria2/aria2/releases |
 |        |                                         |
 
+** Issues
+
+- Disk slow on Windows 10: Disable write cache in Disk > Hardware > Policies
+
 * Darwin
 	:PROPERTIES:
 	:CUSTOM_ID: darwin
