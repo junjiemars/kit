@@ -182,6 +182,15 @@ Setup Win32 programming environment.
 	:CUSTOM_ID: darwin
 	:END:
 
+** Launchpad
+
+Remove an icon from Launchpad
+#+BEGIN_SRC sh
+sqlite3 \
+$(find /private/var/folders \( -name com.apple.dock.launchpad -a -user $USER \) 2> /dev/null)/db/db "DELETE FROM apps WHERE title='APP_NAME_CASE_SENSITIVE';" \
+&& killall Dock
+#+END_SRC
+
 ** Network
 
 *** Routing
@@ -633,10 +642,25 @@ sudo netplan apply
 - [[https://wiki.ubuntu.com/ARM/RaspberryPi][ubuntu wiki]]
 - [[https://www.raspberrypi.org/documentation/configuration/boot_folder.md][The boot folder]]
 
-* Oracle
+* Database
+** Oracle
 	:PROPERTIES:
 	:CUSTOM_ID: oracle
 	:END:
+
+** Sqlite
+
+*** Scheme
+
+List tables
+#+BEGIN_SRC sql
+select name from sqlite_master where type='table';
+#+END_SRC
+
+Table structure
+#+BEING_SRC sql
+pragma table_info(<table>);
+#+END_SRC
 
 * VCS
 
