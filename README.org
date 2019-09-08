@@ -186,8 +186,11 @@ Setup Win32 programming environment.
 
 Remove an icon from Launchpad
 #+BEGIN_SRC sh
+# replace APP_NAME_CASE_SENSITIVE with the app name
 sqlite3 \
-$(find /private/var/folders \( -name com.apple.dock.launchpad -a -user $USER \) 2> /dev/null)/db/db "DELETE FROM apps WHERE title='APP_NAME_CASE_SENSITIVE';" \
+$(find /private/var/folders \( -name com.apple.dock.launchpad -a -user $USER \) \
+2> /dev/null)/db/db \
+"DELETE FROM apps WHERE title='APP_NAME_CASE_SENSITIVE';" \
 && killall Dock
 #+END_SRC
 
