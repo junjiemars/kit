@@ -41,7 +41,7 @@ $ crontab-env.sh
 crontab crontab.list
 #+END_SRC
 
-** =ctags.sh=
+** [[file:ul/ctags.sh][ctags.sh]]
 	 :PROPERTIES:
 	 :CUSTOM_ID: ctagssh
 	 :END:
@@ -129,7 +129,7 @@ Unzip specify code page.
 
 A shortcut of wget to mirror a [[https://en.wikipedia.org/wiki/Website][website]].
 
-** =ws.sh=
+** [[file:ul/ws.sh][ws.sh]]
 	 :PROPERTIES:
 	 :CUSTOM_ID: wssh
 	 :END:
@@ -380,7 +380,7 @@ $ curl -sL mirrors.ubuntu.com/mirrors.txt
 
 Now, the good news is Docker has native stable version for Windows 10
 since 7/29/2016. If you need =Docker Machine= you can check
-[[#docker-machine-on-windows-10][DockerMachine on Windows 10]].
+[[https://docs.docker.com/machine/install-machine/][DockerMachine on Windows 10]].
 
 *** Hyper-V Default Locations
 
