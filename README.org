@@ -25,9 +25,9 @@ $ bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/<where-the
 
 Locate at =ul= directory.
 
-** =crontab-env.sh=
+** [[file:ul/crontab-env.sh][crontab-env.sh]]
 	 :PROPERTIES:
-	 :CUSTOM_ID: crontab_envsh
+	 :CUSTOM_ID: crontab_env_sh
 	 :END:
 
 Clone the current =shell= environment and the job list of [[https://en.wikipedia.org/wiki/Cron][crontab]] into
@@ -184,7 +184,7 @@ Setup Win32 programming environment.
 
 ** Launchpad
 
-Remove an icon from Launchpad
+[[file:darwin/remove-from-launchpad.sh][Remove an icon from Launchpad]]
 #+BEGIN_SRC sh
 # replace APP_NAME_CASE_SENSITIVE with the app name
 sqlite3 \
