@@ -184,7 +184,7 @@ Setup Win32 programming environment.
 
 ** Launchpad
 
-[[file:darwin/remove-from-launchpad.sh][Remove an icon from Launchpad]]
+[[file:darwin/remove-from-launchpad.sh][remove-from-launchpad.sh]]
 #+BEGIN_SRC sh
 # replace APP_NAME_CASE_SENSITIVE with the app name
 sqlite3 \
@@ -750,4 +750,7 @@ git svn dcommit -m"commit back"
 	:CUSTOM_ID: all
 	:END:
 
+** Kotlin
 
+*** References
+- [[https://kotlinlang.org/docs/tutorials/command-line.html][Working with the Command Line Compiler]]
