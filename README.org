@@ -745,12 +745,38 @@ git svn dcommit -m"commit back"
 ** References
 - [[https://git-scm.com/book/en/v1/Git-and-Other-Systems-Git-and-Subversion][Git and Other Systems Git and Subversion]]
 
+* Language
+** Kotlin
+
+*** References
+- [[https://kotlinlang.org/docs/tutorials/command-line.html][Working with the Command Line Compiler]]
+
 * All
 	:PROPERTIES:
 	:CUSTOM_ID: all
 	:END:
 
-** Kotlin
+** IDE
+	 :PROPERTIES:
+	 :CUSTOM_ID: all-ide
+	 :END:
 
-*** References
-- [[https://kotlinlang.org/docs/tutorials/command-line.html][Working with the Command Line Compiler]]
+*** IDEA Intellij
+		:PROPERTIES:
+		:CUSTOM_ID: all-ide-idea-intellij
+		:END:
+
+**** Performance
+
+Find the configuration file: =idea64.conf= at =~/.idea/=.
+#+BEGIN_SRC sh
+-Xms128m
+-Xmx1024m
+-XX:MaxPermSize=1024m
+#+END_SRC
+
+- =-Xms=: specify the initial memory allocation pool.
+- =-Xmx=: specify the maximum memory allocation pool.
+- =-XX:MaxPermSize=: the maximum permanent space used by the JVM are
+  stored and never deallocated.
+
