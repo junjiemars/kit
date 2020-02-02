@@ -229,6 +229,16 @@ networksetup -setadditionalroutes "Wi-Fi"
 
 #+END_SRC
 
+*** DNS
+
+- =/private/etc/hosts=
+#+BEGIN_SRC sh
+# clean dns cache
+sudo killall -HUP mDNSResponder
+#+END_SRC
+
+
+
 *** Darwin Tips
 	 :PROPERTIES:
 	 :CUSTOM_ID: darwin_tips
