@@ -263,6 +263,36 @@ $ lsof -i :<port> -n -P
 
 Uninstall JDK on Darwin.
 
+** Applications
+
+=/Applications=
+
+=~/Library=
+#+BEGIN_SRC sh
+rm -r ~/Library/Saved Application State/xxx
+rm -r ~/Library/Containers/xxx
+rm -r ~/Library/Caches/xxx
+rm -r ~/Library/Application Support/xxx
+rm -r ~/Library/Application Scripts/xxx
+rm -r ~/Library/Preferences/xxx
+#+END_SRC
+
+- Remove Google software
+#+BEGIN_SRC sh
+# local uninstallation:
+python ~/Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle/\
+Contents/Resources/GoogleSoftwareUpdateAgent.app/Contents/Resources/\
+install.py --uninstall
+touch ~/Library/Google/GoogleSoftwareUpdate
+# global uninstallation:
+sudo python /Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle/\
+Contents/Resources/GoogleSoftwareUpdateAgent.app/Contents/Resources/\
+install.py --uninstall
+sudo touch /Library/Google/GoogleSoftwareUpdate
+#+END_SRC
+
+** Launchd
+
 * Ubuntu
 	:PROPERTIES:
 	:CUSTOM_ID: ubuntu
