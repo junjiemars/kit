@@ -254,27 +254,18 @@ $ lsof -iTCP -sTCP:LISTEN -n -P```
 $ lsof -i :<port> -n -P
 #+END_SRC
 
-** Programming
-
-*** =uninstall-jdk.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: uninstall_jdksh
-	 :END:
-
-Uninstall JDK on Darwin.
-
 ** Applications
 
-=/Applications=
+- =/Applications=
 
-=~/Library=
+- =~/Library=
 #+BEGIN_SRC sh
-rm -r ~/Library/Saved Application State/xxx
-rm -r ~/Library/Containers/xxx
-rm -r ~/Library/Caches/xxx
-rm -r ~/Library/Application Support/xxx
-rm -r ~/Library/Application Scripts/xxx
-rm -r ~/Library/Preferences/xxx
+rm -r ~/Library/Saved Application State/${APP}
+rm -r ~/Library/Containers/${APP}
+rm -r ~/Library/Caches/${APP}
+rm -r ~/Library/Application Support/${APP}
+rm -r ~/Library/Application Scripts/${APP}
+rm -r ~/Library/Preferences/${APP}
 #+END_SRC
 
 - Remove Google software
@@ -289,6 +280,20 @@ sudo python /Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle/\
 Contents/Resources/GoogleSoftwareUpdateAgent.app/Contents/Resources/\
 install.py --uninstall
 sudo touch /Library/Google/GoogleSoftwareUpdate
+#+END_SRC
+
+- Remove Oracle JDK
+#+BEGIN_SRC sh
+rm -r /Library/Java/JavaVirtualMachines/${JDK_VER}
+rm -r /Library/PreferencePanes/JavaControlPanel.prefPane
+rm -r /Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin
+rm -r /Library/Application Support/Oracle
+#+END_SRC
+
+- Install OpenJDK
+#+BEGIN_SRC sh
+sudo port install openjdk${JDK_VER}
+# JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk%{JDK_VER}/Contents/Home
 #+END_SRC
 
 ** Launchd
