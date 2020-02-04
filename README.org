@@ -237,12 +237,7 @@ networksetup -setadditionalroutes "Wi-Fi"
 sudo killall -HUP mDNSResponder
 #+END_SRC
 
-
-
-*** Darwin Tips
-	 :PROPERTIES:
-	 :CUSTOM_ID: darwin_tips
-	 :END:
+*** Port
 
 - Which Port is Listening
 #+BEGIN_SRC sh
@@ -296,7 +291,23 @@ sudo port install openjdk${JDK_VER}
 # JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk%{JDK_VER}/Contents/Home
 #+END_SRC
 
-** Launchd
+** Launch Daemons and Agents
+
+There are two types of services that *launchd* manages:
+- launch daemon can run without a user logged in.
+	=/System/Library/LaunchDaemons/= for Apple.
+  =/Library/LaunchDaemons/= for the rest.
+- launch agent need the user to be logged in.
+	=/System/Library/LaunchAgents/= for Apple.
+	=/Library/LaunchAgents/= for rest.
+
+*** =launchctl=
+
+=launchctl= interfaces with launchd to manage and inspect daemons,
+agents and XPC services.
+
+*** References
+- [[https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html][Creating Launch Daemons and Agents]]
 
 * Ubuntu
 	:PROPERTIES:
