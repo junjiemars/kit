@@ -309,6 +309,11 @@ agents and XPC services.
 *** References
 - [[https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html][Creating Launch Daemons and Agents]]
 
+** APFS
+
+*** References
+- [[https://blog.cugu.eu/post/apfs/][APFS filesystem format]]
+
 * Ubuntu
 	:PROPERTIES:
 	:CUSTOM_ID: ubuntu
