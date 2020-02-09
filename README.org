@@ -300,9 +300,8 @@ sudo port install wireshark3
 wireshark-chmodbpf has the following notes:
     To fully complete your installation and use Wireshark
     to capture from devices (like network interfaces) please run:
-    
+
       sudo dseditgroup -q -o edit -a [USER] -t user access_bpf
-    
     and change [USER] to the user that needs access to the devices.
     A reboot should not be required for this to take effect.
 
@@ -310,7 +309,7 @@ wireshark-chmodbpf has the following notes:
     launchd, and will be enabled automatically on activation. Execute the
     following command to manually _disable_ it:
     
-        sudo port unload wireshark-chmodbpf
+      sudo port unload wireshark-chmodbpf
 #+END_QUOTE
 
 ** Launch Daemons and Agents
