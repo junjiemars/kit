@@ -753,6 +753,23 @@ pragma table_info(<table>);
 make -f docker/compose/mysql.Makefile start
 #+END_SRC
 
+*** System variables
+
+#+BEGIN_SRC sh
+mysql> select @@sql_mode;
+mysql> SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+mysql> SET GLOBAL sql_mode = sys.list_drop(@@GLOBAL.sql_mode, 'ONLY_FULL_GROUP_BY');
+mysql> SET @@sql_mode = @@GLOBAL.sql_mode;
+#+END_SRC
+
+*** Functions
+
+#+BEGIN_SRC sql
+SELECT [Name],
+       GROUP_CONCAT(DISTINCT [Name]  SEPARATOR ',')
+       FROM tbl_cars
+#+END_SRC
+
 * VCS
 
 ** Git
