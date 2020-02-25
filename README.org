@@ -241,7 +241,7 @@ sudo killall -HUP mDNSResponder
 
 - Which Port is Listening
 #+BEGIN_SRC sh
-$ lsof -iTCP -sTCP:LISTEN -n -P```
+$ lsof -iTCP -sTCP:LISTEN -n -P
 #+END_SRC
 
 - Who is Listening on the Port
@@ -331,9 +331,16 @@ agents and XPC services.
 - [[https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html][Creating Launch Daemons and Agents]]
 
 ** APFS
+	 
 
 *** References
 - [[https://blog.cugu.eu/post/apfs/][APFS filesystem format]]
+
+** Package Manager
+
+*** MacPorts
+
+
 
 * Ubuntu
 	:PROPERTIES:
