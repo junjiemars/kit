@@ -1,0 +1,22 @@
+# -*- mode: snippet -*-
+# name: post
+# key: post
+# --
+
+$1({
+    
+})
+    .then(response => {
+        if (response.data && response.data.code === '0') {
+            console.log('$1,', response.data.data);
+        } else {
+            this.$message({
+                showClose: true,
+                message: response.data.message || '保存失败！',
+                type: 'error',
+            });
+        }
+    })
+    .catch(error => {
+        console.log(error);
+    });
