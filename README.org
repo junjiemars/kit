@@ -781,6 +781,14 @@ SELECT [Name],
 
 ** Git
 
+*** Proxy
+
+#+BEGIN_SRC sh
+git config --global http.proxy 'socks5://127.0.0.1:<port>'
+# git something...
+git config --global --unset http.proxy
+#+END_SRC
+    
 *** Issue
 
 **** =cannot checkout branch - error: pathsepc=
