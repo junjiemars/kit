@@ -740,6 +740,10 @@ sudo netplan apply
 	:CUSTOM_ID: oracle
 	:END:
 
+#+BEGIN_SRC sh
+make -C docker/compose/ -f oraclexe.Makefile start
+#+END_SRC
+    
 ** Sqlite
 
 *** Scheme
@@ -757,7 +761,7 @@ pragma table_info(<table>);
 ** MySQL
 
 #+BEGIN_SRC sh
-make -f docker/compose/mysql.Makefile start
+make -C docker/compose/ -f mysql.Makefile start
 #+END_SRC
 
 *** System variables

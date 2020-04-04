@@ -1,0 +1,17 @@
+version: '2.0'
+
+services:
+  db:
+    image: junjiemars/oracle-xe:v1
+    container_name: oraclexe-db
+    hostname: xe
+    # restart: always
+    ports:
+      - 1521:1521
+
+  adminer:
+    image: adminer
+    container_name: adminer-dev
+    restart: always
+    ports:
+      - 8080:8080
