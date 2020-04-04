@@ -1,0 +1,105 @@
+## status code
+#
+# 1xx: informational, means the request was received and the process
+# is continuing.
+#
+# 2xx: success, means the action was successfully received,
+# understood, and accepted.
+#
+# 3xx: rediction, means further action must be taken in order to
+# complete the request.
+#
+# 4xx: client error, means the request contains incorrect syntax or
+# cannot be fulfilled.
+#
+# 5xx: server error, means the server failed to fulfill an apparently
+# valid request.
+#
+## idempotent method
+# a http method that can be called many times without different
+# outcomes
+
+
+
+# get from url
+GET https://cn.bing.com/dict/search?q=world
+
+# user agent
+GET https://cn.bing.com/dict/search?q=world
+User-Agent: Emacs26.3
+
+# get json string
+GET https://reqbin.com/echo/get/json
+{
+	"a": "aaa"
+}
+
+# head:
+HEAD https://www.trunk.rocks
+
+# options: allowed
+OPTIONS https://reqbin.com/echo/get/json
+
+# options: disallowed
+OPTIONS https://www.trunk.rocks
+
+# trace:
+TRACE https://reqbin.com/echo/get/json
+
+# connect:
+CONNECT https://reqbin.com/echo/get/json
+
+# authorization: bearer
+GET https://reqbin.com/echo/get/json
+Authorization: Bearer token1
+{ "a": "aaa" }
+
+# authorization: basic
+GET https://reqbin.com/echo/get/json
+Authorization: Basic YWJjOjEyMw==
+{ "a": "aaa" }
+
+# authorization: basic
+GET https://reqbin.com/echo/get/json
+Authorization: Basic YWJjOjEyMw==
+{ "a": "aaa" }
+
+# authorization: custom
+GET https://reqbin.com/echo/get/json
+Authorization: token1
+{ "a": "aaa" }
+
+# authorization: custom, variable
+:token1 = abc123
+GET https://reqbin.com/echo/get/json
+Authorization: :token1
+{ "a": "aaa" }
+
+# get image
+GET https://cdn.techpp.com/wp-content/uploads/2009/07/firefox-banner.jpg
+
+# get image: content encoding
+GET https://cdn.techpp.com/wp-content/uploads/2009/07/firefox-banner.jpg
+Accept-Encoding: compress, gzip, deflate
+
+# get image: media type
+GET https://cdn.techpp.com/wp-content/uploads/2009/07/firefox-banner.jpg
+Accept: image/gif
+
+
+# post form data in url encoded format
+POST https://reqbin.com/echo/post/json
+Content-Type: application/x-www-form-urlencoded
+<<
+param1=value1
+param2=value2
+param3={
+	a: "aa",
+	b: "bb",
+	c: "cc"
+}
+
+# post file
+POST http://httpbin.org/post
+Content-type: text/plain
+< /opt/apps/kit/all/http/rest.http
