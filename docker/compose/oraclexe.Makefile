@@ -17,7 +17,7 @@ exec: start
 				-e COLUMNS=$(COLUMNS)			\
 				-e TERM=$(TERM)					\
 				-it -u u                        \
-				oraclexe-dev /bin/bash
+				oraclexe-db /bin/bash
 
 remove: $(compose_file) stop
 	docker-compose -f $<  rm $(REMOVE_FLAGS)
