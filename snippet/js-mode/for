@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: for
+# key: for
+# --
+for (let $1; $2; $3) {
+  `yas-selected-text`$0
+}
