@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: some
+# key: some
+# --
+some((${1:x${2:, idx${3:, seq}}}) => {
+  return $4;
+}${5: this});$0
