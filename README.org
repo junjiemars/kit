@@ -743,6 +743,12 @@ sudo netplan apply
 #+BEGIN_SRC sh
 make -C docker/compose/ -f oraclexe.Makefile start
 #+END_SRC
+
+*** SQL*Plus
+
+You can using raw =sqlplus= command program or an awsome tool
+=sqlplus.sh=, or Emacs.
+
     
 ** Sqlite
 
