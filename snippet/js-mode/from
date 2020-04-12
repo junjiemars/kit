@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: from
+# key: from
+# --
+Array.from(${1:what}, (${2:x}${3:, idx${4:, seq}}) => {
+    return $5;
+}${6:, this});$0

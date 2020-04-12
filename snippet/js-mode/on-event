@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: on-event
+# key: on-event
+# --
+
+on$1(${2:arg1}${3:, arg2}${4:, arg3...}) {
+  console.log('on$1');$0
+}
