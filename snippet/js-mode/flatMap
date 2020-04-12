@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: flatMap
+# key: flatMap
+# --
+flatMap((${1:x${2:, idx${3:, seq}}}) => {
+  return $4;
+}${5:, this});

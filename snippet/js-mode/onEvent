@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: on-event
-# key: on-event
+# name: onEvent
+# key: onEvent
 # --
 
 on$1(${2:arg1}${3:, arg2}${4:, arg3...}) {
