@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: flat
+# key: flat
+# --
+flat(${1:$$(yas-choose-value '(1 Infinity))});$0
