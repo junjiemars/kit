@@ -1,0 +1,6 @@
+-Xmx2048m
+-Xms512m
+-Xverify:none
+-XX:+UseParallelGC
+-XX:+UseAdaptiveSizePolicy
+-XX:-UseConcMarkSweepGC

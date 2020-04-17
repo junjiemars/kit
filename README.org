@@ -341,7 +341,6 @@ agents and XPC services.
 *** MacPorts
 
 
-
 * Ubuntu
 	:PROPERTIES:
 	:CUSTOM_ID: ubuntu
@@ -879,6 +878,9 @@ git svn dcommit -m"commit back"
 - [[https://git-scm.com/book/en/v1/Git-and-Other-Systems-Git-and-Subversion][Git and Other Systems Git and Subversion]]
 
 * Language
+	
+** Java
+
 ** Kotlin
 
 *** References
@@ -901,15 +903,26 @@ git svn dcommit -m"commit back"
 
 **** Performance
 
-Find the configuration file: =idea64.conf= at =~/.idea/=.
+Find the configuration file: =idea64.vmoptions= at
+=~/.config/JetBrains=.
 #+BEGIN_SRC sh
 -Xms128m
 -Xmx1024m
--XX:MaxPermSize=1024m
+-XX:+UseParallelGC
+-XX:+UseAdaptiveSizePolicy
+-XX:-UseConcMarkSweepGC
 #+END_SRC
 
 - =-Xms=: specify the initial memory allocation pool.
 - =-Xmx=: specify the maximum memory allocation pool.
-- =-XX:MaxPermSize=: the maximum permanent space used by the JVM are
-  stored and never deallocated.
+- =+UseParallelGC=: faster responsibilies but may be unstable
+- =-XX:+UseParallelGC=: faster responsibilies but may be unstable
+- =-XX:+UseAdaptiveSizePolicy=: faster responsibilies but may be unstable
+- =-XX:-UseConcMarkSweepGC=: faster responsibilies but may be unstable
+	
+**** Unified Gradle
+
+Default gradle home at =~/.gradle=.
+
+Open File=>=Settings=>=
 
