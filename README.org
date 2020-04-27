@@ -353,6 +353,36 @@ agents and XPC services.
 
 Allow =jdb= to attach process on Ubuntu.
 
+** Performance
+
+*** Swap
+
+#+BEGIN_SRC sh
+# write
+sysctl -w vm.swappiness=30
+# load
+sysctl -p
+# check
+sysctl -a |*grep swap.*
+#+END_SRC
+
+*** Disk
+
+
+*** CPU
+
+#+BEGIN_SRC sh
+# show old 
+for i in 0 1 2 3; do cat /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor; done
+# trans powersave to performance
+for i in 0 1 2 3; do echo performance > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor; done
+#+END_SRC
+
+*** References
+- [[https://cromwell-intl.com/open-source/performance-tuning/disks.html][Performance Tuning on Linux — Disk I/O]]
+- [[https://cromwell-intl.com/open-source/performance-tuning/tcp.html][Performance Tuning on Linux — TCP]]
+- [[https://wiki.mikejung.biz/Ubuntu_Performance_Tuning][Ubuntu Performance Tuning]]
+
 * Docker
 	:PROPERTIES:
 	:CUSTOM_ID: docker
