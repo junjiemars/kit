@@ -375,6 +375,7 @@ sysctl -a |*grep swap.*
 # show old 
 for i in 0 1 2 3; do cat /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor; done
 # trans powersave to performance
+# /etc/rc.local
 for i in 0 1 2 3; do echo performance > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor; done
 #+END_SRC
 
