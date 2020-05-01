@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: endian
+# key: endian
+# --
+function is_little_endian() {
+    const buf2 = new ArrayBuffer(2);
+    const u8 = new Uint8Array(buf2);
+    const u16 = new Uint16Array(buf2);
+    u8[0] = 0xaa;
+    u8[1] = 0xbb;
+    if (0xbbaa === u16[0]) {
+        return true;
+    }
+    // big endian
+    return false;
+}
+$0
+  
