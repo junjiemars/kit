@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: unused
+# key: unused
+# --
+_unused_($1);$0
