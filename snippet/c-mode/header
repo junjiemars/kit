@@ -1,0 +1,12 @@
+# key: header
+# name: header
+# --
+#ifndef _$1_H_
+#define _$1_H_
+
+#include <nore.h>
+
+#define _unused_(x) (void)(x)
+
+$0
+#endif /* end of _$1_H_ */
