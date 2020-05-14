@@ -1,7 +1,7 @@
 # key: header
 # name: header
 # --
-#ifndef _$1_H_
+#ifndef _${1:$$(upcase yas-text)}_H_
 #define _$1_H_
 
 #include <nore.h>
