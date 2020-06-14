@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: time
+# key: time
+# --
+#include <time.h>
+#define _time_(E, V) do {                       \
+  clock_t _epoch_1_ = clock();                  \
+  (E);                                          \
+  V = (clock() - _epoch_1_);                    \
+} while (0)$0
+/*
+printf("(E), escaped %li cpu time, %lf sec\n",
+        elapsed, (double)elapsed/CLOCKS_PER_SEC);
+*/
