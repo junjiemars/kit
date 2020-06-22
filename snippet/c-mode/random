@@ -3,7 +3,10 @@
 # key: random
 # --
 #include <time.h>
-#include <stdlib.h>
+/* #include <stdlib.h> */
+#if !RAND_MAX
+#  define RAND_MAX 0x7fffffff
+#endif
 srand(time(0));
 
 int
