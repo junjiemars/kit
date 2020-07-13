@@ -3,5 +3,5 @@
 # key: timing
 # --
 console.time("${1:$$(upcase yas-text)}");
-console.log(${2:`(string-trim> yas-selected-text ";")`});
+${2:`(string-trim> yas-selected-text ";")`};
 console.timeEnd("$1");
