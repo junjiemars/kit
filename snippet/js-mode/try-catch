@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: try-catch
+# key: try-catch
+# --
+try {
+	`yas-selected-text`$0
+} catch (error) {
+  console.log(error);
+}
