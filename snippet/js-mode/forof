@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: forof
+# key: forof
+# --
+for (const $1 of $2) {
+	`yas-selected-text`$0
+}
