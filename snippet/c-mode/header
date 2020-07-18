@@ -4,7 +4,7 @@
 #ifndef _${1:$$(upcase yas-text)}_H_
 #define _$1_H_
 
-#include <nore.h>
+#include "nore.h"
 
 #define _unused_(x) (void)(x)
 
