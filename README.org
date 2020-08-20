@@ -364,10 +364,37 @@ sysctl -w vm.swappiness=30
 sysctl -p
 # check
 sysctl -a |*grep swap.*
+less /proc/sys/vm/swappiness
 #+END_SRC
 
 *** Disk
 
+*** Memory
+
+RAM is split into Zones
+- Direct Memory Access (DMA): This is the low 16 MB of memory. The
+  zone gets its name because, a long time ago, there were computers
+  that could only do direct memory access into this area of physical
+  memory.
+- Direct Memory Access 32: Despite its name, Direct Memory Access 32
+  (DMA32) is a zone only found in 64-bit Linux. It’s the low 4 GB of
+  memory. Linux running on 32-bit computers can only do DMA to this
+  amount of RAM (unless they are using the physical address extension
+  (PAE) kernel), which is how the zone got its name. Although, on
+  32-bit computers, it is called HighMem.
+- Normal: On 64-bit computers, normal memory is all of the RAM above
+  4GB (roughly). On 32-bit machines, it is RAM between 16 MB and 896
+  MB.
+- HighMem: This only exists on 32-bit Linux computers. It is all RAM
+  above 896 MB, including RAM above 4 GB on sufficiently large
+  machines.
+
+#+BEGIN_SRC sh
+getconf PAGESIZE
+less /proc/zoneinfo
+sudo cat /proc/pagetypeinfo
+less /proc/buddyinfo
+#+END_SRC
 
 *** CPU
 
@@ -383,6 +410,8 @@ for i in 0 1 2 3; do echo performance > /sys/devices/system/cpu/cpu$i/cpufreq/sc
 - [[https://cromwell-intl.com/open-source/performance-tuning/disks.html][Performance Tuning on Linux — Disk I/O]]
 - [[https://cromwell-intl.com/open-source/performance-tuning/tcp.html][Performance Tuning on Linux — TCP]]
 - [[https://wiki.mikejung.biz/Ubuntu_Performance_Tuning][Ubuntu Performance Tuning]]
+- [[https://www.howtogeek.com/449691/what-is-swapiness-on-linux-and-how-to-change-it/][What Is Swappiness on Linux?]]
+- [[https://utcc.utoronto.ca/~cks/space/blog/linux/KernelMemoryZones][How the Linux kernel divides up your RAM]]
 
 * Docker
 	:PROPERTIES:
@@ -422,7 +451,6 @@ $ docker build -t centos-dev https://raw.githubusercontent.com/junjiemars/kit/ma
 #+END_SRC
 
 Or you can download [[https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos.dockerfile][centos.dockefile]] then build from it.
-
 
 *** Play with =centos-dev= Docker Container
 
