@@ -1,9 +1,14 @@
 #+TITLE: Kit more than code
 #+AUTHOR: Junjie Mars
 #+STARTUP: overview
-#+OPTIONS: toc:2
+#+OPTIONS: toc:1
 
+* Quick start
+  :PROPERTIES:
+  :CUSTOM_ID: quick-start
+  :END:
 
+#+ATTR_HTML: :style text-align:left
 Now, a daily working environment can be build via few lines code on
 the fly. And effetive, robust, beautiful, consistent on multiple
 platforms.
@@ -23,11 +28,13 @@ $ bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/<where-the
 	:CUSTOM_ID: unix_like
 	:END:
 
+Kits for Unix-like platforms.
+
 Locate at =ul= directory.
 
 ** [[file:ul/crontab-env.sh][crontab-env.sh]]
 	 :PROPERTIES:
-	 :CUSTOM_ID: crontab_env_sh
+	 :CUSTOM_ID: unix_like_crontab_env_sh
 	 :END:
 
 Clone the current =shell= environment and the job list of [[https://en.wikipedia.org/wiki/Cron][crontab]] into
@@ -43,7 +50,7 @@ crontab crontab.list
 
 ** [[file:ul/ctags.sh][ctags.sh]]
 	 :PROPERTIES:
-	 :CUSTOM_ID: ctagssh
+	 :CUSTOM_ID: unix_like_ctags_sh
 	 :END:
 
 A shortcut of exuberant [[https://en.wikipedia.org/wiki/Ctags][Ctags]].
@@ -53,10 +60,12 @@ $ ./ctags.sh --help
 $ ./ctags.sh --language=c
 #+END_SRC
 
-** =get-kit.sh=
+** [[file:ul/get-kit.sh][get-kit.sh]]
 	 :PROPERTIES:
-	 :CUSTOM_ID: get_kitsh
+	 :CUSTOM_ID: unix_like_get_kit_sh
 	 :END:
+
+Download and configure kit via web.
 
 ** =install-java-kits.sh=
 	 :PROPERTIES:
@@ -143,7 +152,10 @@ $ ./ws.sh --http-port=8080 --http-version=1.1
 $ curl -v http://<host>:8080
 #+END_SRC
 
-** References
+** Reference
+	:PROPERTIES:
+	:CUSTOM_ID: unix_like_reference
+	:END:
 
 - [[https://www.ssh.com/ssh/key/][SSH Key]]
 
@@ -339,7 +351,6 @@ agents and XPC services.
 ** Package Manager
 
 *** MacPorts
-
 
 * Ubuntu
 	:PROPERTIES:
