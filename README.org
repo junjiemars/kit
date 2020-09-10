@@ -973,6 +973,13 @@ git svn dcommit -m"commit back"
 #+END_SRC
 
 ** Kotlin
+** Node.js
+
+=NODE_OPTIONS= environment variable
+#+BEGIN_SRC sh
+export NODE_OPTIONS="--max-old-space-size=1024"
+yarn build
+#+END_SRC
 
 *** References
 - [[https://kotlinlang.org/docs/tutorials/command-line.html][Working with the Command Line Compiler]]
