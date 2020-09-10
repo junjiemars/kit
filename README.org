@@ -426,6 +426,7 @@ for i in 0 1 2 3; do echo performance > /sys/devices/system/cpu/cpu$i/cpufreq/sc
 - [[https://www.howtogeek.com/449691/what-is-swapiness-on-linux-and-how-to-change-it/][What Is Swappiness on Linux?]]
 - [[https://utcc.utoronto.ca/~cks/space/blog/linux/KernelMemoryZones][How the Linux kernel divides up your RAM]]
 - [[https://lonesysadmin.net/2013/12/22/better-linux-disk-caching-performance-vm-dirty_ratio/][Better Linux Disk Caching & Performance with vm.dirty_ratio & vm.dirty_background_ratio]]
+- [[https://hammertux.github.io/slab-allocator][The Slab Allocator in the Linux kernel]]
 
 * Docker
 	:PROPERTIES:
