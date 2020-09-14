@@ -4,14 +4,29 @@
 # author: junjiemars@gmail.com
 #------------------------------------------------
 
-PREFIX=${PREFIX:-"`pwd`"}
-JAR_NAME="settings.jar"
+PREFIX=
+JAR_NAME="${JAR_NAME:-settings.zip}"
+
+function set_kit_prefix() {
+  local p="$HOME/.config/JetBrains"
+  local d=
+  
+  if [ -d "$p" ]; then
+    d="`find $HOME/.config/JetBrains -maxdepth 1 -type d | sort -r | head -n1`"
+  else
+    d="`pwd`"
+  fi
+  echo "${d}/$JAR_NAME"
+}
 
 function set_os_prefix() {
-	local p="$1"	
+	local p="$1"
+  local d=""
 	local os=`uname -s 2>/dev/null`
 
-	[ -z "$p" ] && p="`eval echo "$PREFIX"`"
+  if [ -z "$p" ]; then
+    p="`pwd`"
+  fi
 
 	case "$os" in
 		MSYS_NT*|MINGW*)
@@ -34,50 +49,49 @@ function usage() {
   echo -e "Options:"
   echo -e "  -h, --help\t\tPrint this message"
   echo -e "A Idea settings extract/archive kit.\n"
+  echo -e "PREFIX=${PREFIX}/${JAR_NAME}\n"
   echo -e "Commands:"
-  echo -e "\t-x=|--extract=<where>\t\teXtract to <PREFIX> from <where> settings.jar"
-  echo -e "\t-a=|--archive=<where>\t\tarchive from <PREFIX> to <where> settings.jar"
-  echo -e "\t-l=|--list=<where>\t\tlist the content of settings.jar"
+  echo -e "\t-x=|--extract=<where>\t\teXtract to <where> from <PREFIX>"
+  echo -e "\t-a=|--archive=<where>\t\tarchive to <PREFIX> from <where>"
+  echo -e "\t-l=|--list=<where>\t\tlist the content of <PREFIX>"
 }
+
+PREFIX="$(set_kit_prefix)"
+KIT_WHERE="${@#*=}"
 
 case "$@" in
 	-x=*|--extract=*)
-		KIT_EXTRACT="${@#*=}"
-		if [ -z "$KIT_EXTRACT" ]; then
-			usage	
+		KIT_WHERE="${@#*=}"
+		if [ ! -d "$KIT_WHERE" ]; then
+			usage
 			exit 1
 		else
-			shift
-			p=$(set_os_prefix "$1")
-			[ -d "$p" ] || mkdir -p "$p"; 
-			KIT_EXTRACT="`eval echo "$KIT_EXTRACT"`"
-			echo "extracting [${KIT_EXTRACT}] to [$p] ..."
-			cd "$p" ; jar xvf "$KIT_EXTRACT"
+			KIT_WHERE=$(set_os_prefix "$KIT_WHERE")
+			[ -d "$KIT_WHERE" ] || mkdir -p "$KIT_WHERE"; 
+			echo "extracting [${PREFIX}] to [$KIT_WHERE] ..."
+			cd "$KIT_WHERE" ; jar xvf "$PREFIX"
 		fi
 		;;
 	-a=*|--archive=*)
-		KIT_ARCHIVE="${@#*=}"
-		if [ -z "$KIT_ARCHIVE" ]; then
+		KIT_WHERE="${@#*=}"
+		if [ ! -d "$KIT_WHERE" ]; then
 			usage
 			exit 1
 		else
-			shift
-			KIT_ARCHIVE="`eval echo "${KIT_ARCHIVE%/}/$JAR_NAME"`"
-			p=$(set_os_prefix "$1")
-			echo "archiving [$p] to [${KIT_ARCHIVE}] ..."
-			jar cvfM "$KIT_ARCHIVE" -C "$p" .
+			KIT_WHERE=$(set_os_prefix "$KIT_WHERE")
+			echo "archiving [${KIT_WHERE}] to [${PREFIX}] ..."
+			jar cvfM "$PREFIX" -C "$KIT_WHERE" .
 		fi
 		;;
 	-l=*|--list=*)
-		KIT_LIST="${@#*=}"
-		if [ -z "$KIT_LIST}" ]; then
-			usage
-			exit 1
-		else
-			KIT_LIST="`eval echo "${KIT_LIST%/}/$JAR_NAME"`"
-			echo "listing [$KIT_LIST] ..."
-			jar tf "$KIT_LIST"
+		KIT_WHERE="${@#*=}"
+    if [ ! -d "$KIT_WHERE" ]; then
+		  KIT_WHERE="`eval echo "${PREFIX}"`"
+    else
+      KIT_WHERE="${KIT_WHERE%/}/$JAR_NAME"
 		fi
+		echo "listing [$KIT_WHERE] ..."
+		jar tf "$KIT_WHERE"
 		;;
 	-h|--help|*)
 		usage
