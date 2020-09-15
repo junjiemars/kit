@@ -49,7 +49,7 @@ function usage() {
   echo -e "Options:"
   echo -e "  -h, --help\t\tPrint this message"
   echo -e "A Idea settings extract/archive kit.\n"
-  echo -e "PREFIX=${PREFIX}/${JAR_NAME}\n"
+  echo -e "PREFIX=${PREFIX}\n"
   echo -e "Commands:"
   echo -e "\t-x=|--extract=<where>\t\teXtract to <where> from <PREFIX>"
   echo -e "\t-a=|--archive=<where>\t\tarchive to <PREFIX> from <where>"

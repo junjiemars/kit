@@ -1024,3 +1024,6 @@ Default gradle home at =~/.gradle=.
 
 Open File=>=Settings=>=
 
+**** Keymap
+
+[[file:all/ide/idea/idea-jar-kit.sh][idea-jar-kit.sh]] import/export settings.
