@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: main
+# key: main
+# --
+#include <$1>
+
+#define _unused_(x) ((void)(x))
+
+int
+main(int argc, char **argv) {
+  _unused_(argc);
+  _unused_(argv);
+  
+  $0
+
+  return 0;
+}

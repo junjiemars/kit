@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: try-finally
+# key: try-finally
+# --
+try {
+  `yas-selected-text`
+} finally {
+	$0
+}

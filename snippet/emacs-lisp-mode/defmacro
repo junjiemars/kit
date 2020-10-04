@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: defmacro
+# key: d m
+# --
+(defmacro $1 ($2)
+"$3"
+$0)

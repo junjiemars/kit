@@ -1,9 +1,14 @@
 #+TITLE: Kit more than code
 #+AUTHOR: Junjie Mars
 #+STARTUP: overview
-#+OPTIONS: toc:2
+#+OPTIONS: toc:1
 
+* Quick start
+  :PROPERTIES:
+  :CUSTOM_ID: quick-start
+  :END:
 
+#+ATTR_HTML: :style text-align:left
 Now, a daily working environment can be build via few lines code on
 the fly. And effetive, robust, beautiful, consistent on multiple
 platforms.
@@ -23,11 +28,13 @@ $ bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/<where-the
 	:CUSTOM_ID: unix_like
 	:END:
 
+Kits for Unix-like platforms.
+
 Locate at =ul= directory.
 
 ** [[file:ul/crontab-env.sh][crontab-env.sh]]
 	 :PROPERTIES:
-	 :CUSTOM_ID: crontab_env_sh
+	 :CUSTOM_ID: unix_like_crontab_env_sh
 	 :END:
 
 Clone the current =shell= environment and the job list of [[https://en.wikipedia.org/wiki/Cron][crontab]] into
@@ -43,7 +50,7 @@ crontab crontab.list
 
 ** [[file:ul/ctags.sh][ctags.sh]]
 	 :PROPERTIES:
-	 :CUSTOM_ID: ctagssh
+	 :CUSTOM_ID: unix_like_ctags_sh
 	 :END:
 
 A shortcut of exuberant [[https://en.wikipedia.org/wiki/Ctags][Ctags]].
@@ -53,10 +60,12 @@ $ ./ctags.sh --help
 $ ./ctags.sh --language=c
 #+END_SRC
 
-** =get-kit.sh=
+** [[file:ul/get-kit.sh][get-kit.sh]]
 	 :PROPERTIES:
-	 :CUSTOM_ID: get_kitsh
+	 :CUSTOM_ID: unix_like_get_kit_sh
 	 :END:
+
+Download and configure kit via web.
 
 ** =install-java-kits.sh=
 	 :PROPERTIES:
@@ -143,7 +152,10 @@ $ ./ws.sh --http-port=8080 --http-version=1.1
 $ curl -v http://<host>:8080
 #+END_SRC
 
-** References
+** Reference
+	:PROPERTIES:
+	:CUSTOM_ID: unix_like_reference
+	:END:
 
 - [[https://www.ssh.com/ssh/key/][SSH Key]]
 
@@ -229,14 +241,19 @@ networksetup -setadditionalroutes "Wi-Fi"
 
 #+END_SRC
 
-*** Darwin Tips
-	 :PROPERTIES:
-	 :CUSTOM_ID: darwin_tips
-	 :END:
+*** DNS
+
+- =/private/etc/hosts=
+#+BEGIN_SRC sh
+# clean dns cache
+sudo killall -HUP mDNSResponder
+#+END_SRC
+
+*** Port
 
 - Which Port is Listening
 #+BEGIN_SRC sh
-$ lsof -iTCP -sTCP:LISTEN -n -P```
+$ lsof -iTCP -sTCP:LISTEN -n -P
 #+END_SRC
 
 - Who is Listening on the Port
@@ -244,14 +261,96 @@ $ lsof -iTCP -sTCP:LISTEN -n -P```
 $ lsof -i :<port> -n -P
 #+END_SRC
 
-** Programming
+** Applications
 
-*** =uninstall-jdk.sh=
-	 :PROPERTIES:
-	 :CUSTOM_ID: uninstall_jdksh
-	 :END:
+- =/Applications=
 
-Uninstall JDK on Darwin.
+- =~/Library=
+#+BEGIN_SRC sh
+rm -r ~/Library/Saved Application State/${APP}
+rm -r ~/Library/Containers/${APP}
+rm -r ~/Library/Caches/${APP}
+rm -r ~/Library/Application Support/${APP}
+rm -r ~/Library/Application Scripts/${APP}
+rm -r ~/Library/Preferences/${APP}
+#+END_SRC
+
+- Remove Google software
+#+BEGIN_SRC sh
+# local uninstallation:
+python ~/Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle/\
+Contents/Resources/GoogleSoftwareUpdateAgent.app/Contents/Resources/\
+install.py --uninstall
+touch ~/Library/Google/GoogleSoftwareUpdate
+# global uninstallation:
+sudo python /Library/Google/GoogleSoftwareUpdate/GoogleSoftwareUpdate.bundle/\
+Contents/Resources/GoogleSoftwareUpdateAgent.app/Contents/Resources/\
+install.py --uninstall
+sudo touch /Library/Google/GoogleSoftwareUpdate
+#+END_SRC
+
+- Remove Oracle JDK
+#+BEGIN_SRC sh
+rm -r /Library/Java/JavaVirtualMachines/${JDK_VER}
+rm -r /Library/PreferencePanes/JavaControlPanel.prefPane
+rm -r /Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin
+rm -r /Library/Application Support/Oracle
+#+END_SRC
+
+- Install OpenJDK
+#+BEGIN_SRC sh
+sudo port install openjdk${JDK_VER}
+# JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk%{JDK_VER}/Contents/Home
+#+END_SRC
+
+- Install Wireshark
+#+BEING_SRC sh
+sudo port install wireshark3
+#+END_SRC
+
+#+BEGIN_QUOTE
+wireshark-chmodbpf has the following notes:
+    To fully complete your installation and use Wireshark
+    to capture from devices (like network interfaces) please run:
+
+      sudo dseditgroup -q -o edit -a [USER] -t user access_bpf
+    and change [USER] to the user that needs access to the devices.
+    A reboot should not be required for this to take effect.
+
+    A startup item has been generated that will start wireshark-chmodbpf with
+    launchd, and will be enabled automatically on activation. Execute the
+    following command to manually _disable_ it:
+    
+      sudo port unload wireshark-chmodbpf
+#+END_QUOTE
+
+** Launch Daemons and Agents
+
+There are two types of services that *launchd* manages:
+- launch daemon can run without a user logged in.
+	=/System/Library/LaunchDaemons/= for Apple.
+  =/Library/LaunchDaemons/= for the rest.
+- launch agent need the user to be logged in.
+	=/System/Library/LaunchAgents/= for Apple.
+	=/Library/LaunchAgents/= for rest.
+
+*** =launchctl=
+
+=launchctl= interfaces with launchd to manage and inspect daemons,
+agents and XPC services.
+
+*** References
+- [[https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html][Creating Launch Daemons and Agents]]
+
+** APFS
+	 
+
+*** References
+- [[https://blog.cugu.eu/post/apfs/][APFS filesystem format]]
+
+** Package Manager
+
+*** MacPorts
 
 * Ubuntu
 	:PROPERTIES:
@@ -264,6 +363,81 @@ Uninstall JDK on Darwin.
 	 :END:
 
 Allow =jdb= to attach process on Ubuntu.
+
+** Performance
+
+*** Swap
+
+#+BEGIN_SRC sh
+# write
+sysctl -w vm.swappiness=30
+# load
+sysctl -p
+# check
+sysctl -a |*grep swap.*
+less /proc/sys/vm/swappiness
+#+END_SRC
+
+*** Disk
+
+#+BEGIN_SRC sh
+$ cat /proc/vmstat | grep -E "dirty|writeback"
+
+vm.dirty_background_ratio = 5
+vm.dirty_background_bytes = 0
+vm.dirty_ratio = 10
+vm.dirty_bytes = 0
+vm.dirty_writeback_centisecs = 500
+vm.dirty_expire_centisecs = 3000
+#+END_SRC
+
+*** Memory
+
+RAM is split into Zones
+- Direct Memory Access (DMA): This is the low 16 MB of memory. The
+  zone gets its name because, a long time ago, there were computers
+  that could only do direct memory access into this area of physical
+  memory.
+- Direct Memory Access 32: Despite its name, Direct Memory Access 32
+  (DMA32) is a zone only found in 64-bit Linux. It’s the low 4 GB of
+  memory. Linux running on 32-bit computers can only do DMA to this
+  amount of RAM (unless they are using the physical address extension
+  (PAE) kernel), which is how the zone got its name. Although, on
+  32-bit computers, it is called HighMem.
+- Normal: On 64-bit computers, normal memory is all of the RAM above
+  4GB (roughly). On 32-bit machines, it is RAM between 16 MB and 896
+  MB.
+- HighMem: This only exists on 32-bit Linux computers. It is all RAM
+  above 896 MB, including RAM above 4 GB on sufficiently large
+  machines.
+
+#+BEGIN_SRC sh
+getconf PAGESIZE
+less /proc/zoneinfo
+sudo cat /proc/pagetypeinfo
+less /proc/buddyinfo
+#+END_SRC
+
+*** CPU
+
+#+BEGIN_SRC sh
+# show old 
+for i in 0 1 2 3; do cat /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor; done
+# trans powersave to performance
+# /etc/rc.local
+for i in 0 1 2 3; do echo performance > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor; done
+#+END_SRC
+
+*** Network
+
+*** References
+- [[https://cromwell-intl.com/open-source/performance-tuning/disks.html][Performance Tuning on Linux — Disk I/O]]
+- [[https://cromwell-intl.com/open-source/performance-tuning/tcp.html][Performance Tuning on Linux — TCP]]
+- [[https://wiki.mikejung.biz/Ubuntu_Performance_Tuning][Ubuntu Performance Tuning]]
+- [[https://www.howtogeek.com/449691/what-is-swapiness-on-linux-and-how-to-change-it/][What Is Swappiness on Linux?]]
+- [[https://utcc.utoronto.ca/~cks/space/blog/linux/KernelMemoryZones][How the Linux kernel divides up your RAM]]
+- [[https://lonesysadmin.net/2013/12/22/better-linux-disk-caching-performance-vm-dirty_ratio/][Better Linux Disk Caching & Performance with vm.dirty_ratio & vm.dirty_background_ratio]]
+- [[https://hammertux.github.io/slab-allocator][The Slab Allocator in the Linux kernel]]
 
 * Docker
 	:PROPERTIES:
@@ -303,7 +477,6 @@ $ docker build -t centos-dev https://raw.githubusercontent.com/junjiemars/kit/ma
 #+END_SRC
 
 Or you can download [[https://raw.githubusercontent.com/junjiemars/kit/master/docker/dev/centos.dockerfile][centos.dockefile]] then build from it.
-
 
 *** Play with =centos-dev= Docker Container
 
@@ -651,6 +824,16 @@ sudo netplan apply
 	:CUSTOM_ID: oracle
 	:END:
 
+#+BEGIN_SRC sh
+make -C docker/compose/ -f oraclexe.Makefile start
+#+END_SRC
+
+*** SQL*Plus
+
+You can using raw =sqlplus= command program or an awsome tool
+=sqlplus.sh=, or Emacs.
+
+    
 ** Sqlite
 
 *** Scheme
@@ -665,10 +848,44 @@ Table structure
 pragma table_info(<table>);
 #+END_SRC
 
+** MySQL
+
+#+BEGIN_SRC sh
+make -C docker/compose/ -f mysql.Makefile start
+#+END_SRC
+
+*** System variables
+
+#+BEGIN_SRC sh
+mysql> select @@sql_mode;
+mysql> SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+mysql> SET GLOBAL sql_mode = sys.list_drop(@@GLOBAL.sql_mode, 'ONLY_FULL_GROUP_BY');
+mysql> SET @@sql_mode = @@GLOBAL.sql_mode;
+#+END_SRC
+
+*** Functions
+
+#+BEGIN_SRC sql
+SELECT [Name],
+       GROUP_CONCAT(DISTINCT [Name]  SEPARATOR ',')
+       FROM tbl_cars
+#+END_SRC
+
 * VCS
 
 ** Git
 
+*** Proxy
+
+#+BEGIN_SRC sh
+git config --global http.proxy 'socks5://127.0.0.1:<port>'
+# or per-user: export ALL_PROXY='socks5://127.0.0.1:<port>'
+
+# git something...
+
+git config --global --unset http.proxy
+#+END_SRC
+    
 *** Issue
 
 **** =cannot checkout branch - error: pathsepc=
@@ -746,7 +963,23 @@ git svn dcommit -m"commit back"
 - [[https://git-scm.com/book/en/v1/Git-and-Other-Systems-Git-and-Subversion][Git and Other Systems Git and Subversion]]
 
 * Language
+	
+** Java
+
+**** OpenJFX
+
+#+BEGIN_SRC sh
+--module-path /Users/<user>/Downloads/javafx-sdk-11/lib --add-modules=javafx.controls,javafx.fxml
+#+END_SRC
+
 ** Kotlin
+** Node.js
+
+=NODE_OPTIONS= environment variable
+#+BEGIN_SRC sh
+export NODE_OPTIONS="--max-old-space-size=1024"
+yarn build
+#+END_SRC
 
 *** References
 - [[https://kotlinlang.org/docs/tutorials/command-line.html][Working with the Command Line Compiler]]
@@ -768,15 +1001,29 @@ git svn dcommit -m"commit back"
 
 **** Performance
 
-Find the configuration file: =idea64.conf= at =~/.idea/=.
+Find the configuration file: =idea64.vmoptions= at
+=~/.config/JetBrains=.
 #+BEGIN_SRC sh
 -Xms128m
 -Xmx1024m
--XX:MaxPermSize=1024m
+-XX:+UseParallelGC
+-XX:+UseAdaptiveSizePolicy
+-XX:-UseConcMarkSweepGC
 #+END_SRC
 
 - =-Xms=: specify the initial memory allocation pool.
 - =-Xmx=: specify the maximum memory allocation pool.
-- =-XX:MaxPermSize=: the maximum permanent space used by the JVM are
-  stored and never deallocated.
+- =+UseParallelGC=: faster responsibilies but may be unstable
+- =-XX:+UseParallelGC=: faster responsibilies but may be unstable
+- =-XX:+UseAdaptiveSizePolicy=: faster responsibilies but may be unstable
+- =-XX:-UseConcMarkSweepGC=: faster responsibilies but may be unstable
+	
+**** Unified Gradle
 
+Default gradle home at =~/.gradle=.
+
+Open File=>=Settings=>=
+
+**** Keymap
+
+[[file:all/ide/idea/idea-jar-kit.sh][idea-jar-kit.sh]] import/export settings.

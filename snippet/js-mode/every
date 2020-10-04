@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: every
+# key: every
+# --
+every((${1:x${2:, idx${3:, seq}}}) => {
+    return $4;
+}${5:, this});$0

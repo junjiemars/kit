@@ -10,8 +10,6 @@
     <keyboard-shortcut first-keystroke="alt 9" />
   </action>
   <action id="Back">
-    <keyboard-shortcut first-keystroke="ctrl alt left" />
-    <mouse-shortcut keystroke="button4" />
     <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl space" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="comma" />
     <keyboard-shortcut first-keystroke="alt comma" />
@@ -22,6 +20,10 @@
   <action id="ByteCodeViewer">
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="b" />
   </action>
+  <action id="CallHierarchy">
+    <keyboard-shortcut first-keystroke="ctrl alt h" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="h" />
+  </action>
   <action id="CheckinFiles">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="c" />
   </action>
@@ -31,7 +33,7 @@
   </action>
   <action id="CloseAllEditors" />
   <action id="CloseProject">
-    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="shift ctrl c" />
+    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl c" />
   </action>
   <action id="CommentByBlockComment">
     <keyboard-shortcut first-keystroke="shift ctrl slash" />
@@ -64,6 +66,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl f8" />
     <keyboard-shortcut first-keystroke="shift ctrl b" second-keystroke="e" />
   </action>
+  <action id="EditorChooseLookupItemReplace" />
   <action id="EditorCodeBlockEnd">
     <keyboard-shortcut first-keystroke="ctrl close_bracket" />
     <keyboard-shortcut first-keystroke="ctrl alt close_bracket" />
@@ -88,6 +91,7 @@
   <action id="EditorHungryBackSpace">
     <keyboard-shortcut first-keystroke="escape" second-keystroke="back_slash" />
   </action>
+  <action id="EditorIndentSelection" />
   <action id="EditorJoinLines">
     <keyboard-shortcut first-keystroke="shift ctrl j" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 6" />
@@ -114,6 +118,9 @@
   <action id="EditorSplitLine">
     <keyboard-shortcut first-keystroke="ctrl alt o" />
   </action>
+  <action id="EditorTab">
+    <keyboard-shortcut first-keystroke="tab" />
+  </action>
   <action id="EditorTextEnd">
     <keyboard-shortcut first-keystroke="ctrl end" />
     <keyboard-shortcut first-keystroke="shift alt period" />
@@ -131,14 +138,21 @@
     <keyboard-shortcut first-keystroke="ctrl space" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 2" />
   </action>
+  <action id="EmacsStyleIndent" />
   <action id="EvaluateExpression">
     <keyboard-shortcut first-keystroke="alt f8" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="e" />
   </action>
+  <action id="ExpandLiveTemplateByTab" />
   <action id="FileChooser.TogglePathShowing" />
   <action id="Find">
     <keyboard-shortcut first-keystroke="alt f3" />
     <keyboard-shortcut first-keystroke="ctrl s" />
+  </action>
+  <action id="FocusEditor" />
+  <action id="Forward">
+    <keyboard-shortcut first-keystroke="alt period" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="period" />
   </action>
   <action id="Git.Pull">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="p" />
@@ -148,7 +162,11 @@
     <keyboard-shortcut first-keystroke="alt x" />
   </action>
   <action id="GotoClass">
-    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl c" />
+    <keyboard-shortcut first-keystroke="ctrl h" second-keystroke="c" />
+  </action>
+  <action id="GotoDeclaration">
+    <mouse-shortcut keystroke="control button1" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="d" />
   </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
@@ -163,7 +181,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="u" />
   </action>
   <action id="GotoSymbol">
-    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl s" />
+    <keyboard-shortcut first-keystroke="ctrl h" second-keystroke="s" />
   </action>
   <action id="GotoTypeDeclaration">
     <mouse-shortcut keystroke="shift control button1" />
@@ -185,12 +203,20 @@
   <action id="NewElementInMenuGroup">
     <keyboard-shortcut first-keystroke="shift ctrl x" second-keystroke="n" />
   </action>
+  <action id="NextParameter" />
+  <action id="NextTemplateParameter" />
+  <action id="NextTemplateVariable">
+    <keyboard-shortcut first-keystroke="enter" />
+    <keyboard-shortcut first-keystroke="ctrl m" />
+  </action>
   <action id="OptimizeImports">
     <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="i" />
   </action>
+  <action id="ParameterInfo">
+    <keyboard-shortcut first-keystroke="shift alt p" />
+    <keyboard-shortcut first-keystroke="ctrl h" second-keystroke="p" />
+  </action>
   <action id="QuickJavaDoc">
-    <keyboard-shortcut first-keystroke="ctrl q" />
-    <mouse-shortcut keystroke="alt button2" />
     <keyboard-shortcut first-keystroke="ctrl h" second-keystroke="d" />
   </action>
   <action id="Refactorings.QuickListPopupAction">
@@ -220,9 +246,6 @@
   <action id="RunClass">
     <keyboard-shortcut first-keystroke="shift ctrl f10" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="r" />
-  </action>
-  <action id="SaveAll">
-    <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="s" />
   </action>
   <action id="Scala.RenameJavaToScala" />
   <action id="Scala.RunConsole" />

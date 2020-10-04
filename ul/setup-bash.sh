@@ -532,7 +532,7 @@ if [ -n "\${OPT_RUN}" ]; then
 	PATH="\`append_path \${OPT_RUN}/sbin \${PATH[@]}\`"
 `
   if ! on_windows_nt; then
-	  echo "  LD_LIBRARY_PATH=\"\\$(append_path \\${OPT_RUN}/lib \\${LD_LIBRARY_PATH[@]})\""
+	  echo "  #LD_LIBRARY_PATH=\"\\$(append_path \\${OPT_RUN}/lib \\${LD_LIBRARY_PATH[@]})\""
   fi
 `
 fi
@@ -552,7 +552,7 @@ fi
 if on_windows_nt; then
   echo "PATH=\"\\$(sort_path \\${PATH[@]})\""
 else
-  echo "LD_LIBRARY_PATH=\"\\$(uniq_path \\${LD_LIBRARY_PATH[@]})\""
+  echo "#LD_LIBRARY_PATH=\"\\$(uniq_path \\${LD_LIBRARY_PATH[@]})\""
 fi
 `
 PATH="\$(uniq_path \${PATH[@]})"
@@ -652,7 +652,7 @@ test -f \${HOME%/}/.bash_init && . \${HOME%/}/.bash_init
 export PATH
 `
 if ! on_windows_nt; then
-  echo "export LD_LIBRARY_PATH"
+  echo "#export LD_LIBRARY_PATH"
 fi
 `
 

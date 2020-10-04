@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: try-catch-finally
+# key: try-catch-finally
+# --
+try {
+	`yas-selected-text`$0
+} catch (error) {
+  console.error(error);
+} finally {
+  // do nothing
+}

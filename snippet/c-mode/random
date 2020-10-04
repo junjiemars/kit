@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: random
+# key: random
+# --
+#include <time.h>
+/* #include <stdlib.h> */
+#if !RAND_MAX
+#  define RAND_MAX 0x7fffffff
+#endif
+srand(time(0));
+
+int
+ranged_randomize(int min, int max) {
+	int r = rand() / (RAND_MAX + 1.0) * (max - min) + min;
+	return r;
+}$0

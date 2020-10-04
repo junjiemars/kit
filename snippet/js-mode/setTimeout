@@ -1,0 +1,6 @@
+# key: setTimeout
+# name: setTimeout
+# --
+window.setTimeout(($1) => {
+  $0
+}${2:, 1000}${3:, });

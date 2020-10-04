@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: forEach
+# key: forEach
+# --
+forEach((${1:x${2:, idx${3:, seq}}}) => {
+  $0
+}${4, this});
