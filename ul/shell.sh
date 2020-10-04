@@ -8,14 +8,14 @@ HOME=${HOME%/}
 PLATFORM=`uname -s 2>/dev/null`
 INSIDE_KIT_BASH_ENV="https://github.com/junjiemars/kit"
 BASH_S=(
-	'.bash_init'
-  '.bash_aliases'
-  '.bash_vars'
-  '.bash_paths'
-  '.bashrc'
+	'.${SHELL}init'
+  '.${SHELL}aliases'
+  '.${SHELL}vars'
+  '.${SHELL}paths'
+  '.${SHELL}rc'
   '.profile'
-  '.bash_profile'
-  '.bash_logout'
+  '.${SHELL}profile'
+  '.${SHELL}logout'
   '.vimrc'
 )
 
@@ -126,7 +126,7 @@ delete_tail_lines() {
   fi
 }
 
-gen_dot_bash_profile() {
+gen_dot_shell_profile() {
   cat << END > "$1"
 #------------------------------------------------
 # target: call $HOME/.bashrc
@@ -138,7 +138,7 @@ test -r \$HOME/.bashrc && . \$HOME/.bashrc
 END
 }
 
-gen_dot_bash_logout() {
+gen_dot_shell_logout() {
   cat << END > "$1"
 #------------------------------------------------
 # target: call when logout
@@ -156,7 +156,7 @@ fi
 END
 }
 
-gen_empty_dot_bashrc() {
+gen_empty_dot_shellrc() {
   [ -f "$1" ] && return 0
 
   cat << END > "$1"
@@ -169,7 +169,7 @@ gen_empty_dot_bashrc() {
 END
 }
 
-gen_dot_bash_init() {
+gen_dot_shell_init() {
   cat << END > "$1"
 #!/bin/bash
 #------------------------------------------------
@@ -308,7 +308,7 @@ test -f \$HOME/.bash_aliases && . \$HOME/.bash_aliases
 END
 }
 
-gen_dot_bash_aliases() {
+gen_dot_shell_aliases() {
   cat << END > "$1"
 #!/bin/bash
 #------------------------------------------------
@@ -417,7 +417,7 @@ alias_rlwrap_bin lldb Linux
 END
 }
 
-gen_dot_bash_vars() {
+gen_dot_shell_vars() {
   cat << END > "$1"
 #!/bin/bash
 #------------------------------------------------
@@ -475,7 +475,7 @@ check_java_env
 END
 }
 
-gen_dot_bash_paths() {
+gen_dot_shell_paths() {
   cat << END > "$1"
 #!/bin/bash
 #------------------------------------------------
@@ -629,27 +629,25 @@ set path+=**
 END
 }
 
-echo $SHELL
-
 BEGIN=`date +%s`
-echo "setup $PLATFORM bash env ..."
+echo "setup $PLATFORM $SHELL env ..."
 
 for i in "${BASH_S[@]}"; do
   `save_as "$i"`
 done
 
 
-gen_dot_bash_profile $HOME/.bash_profile
-gen_dot_bash_logout $HOME/.bash_logout
-gen_empty_dot_bashrc $HOME/.bashrc
+gen_dot_shell_profile "$HOME/.${SHELL}_profile"
+gen_dot_shell_logout "$HOME/.${SHELL}_logout"
+gen_empty_dot_shellrc "$HOME/.${SHELL}rc"
 
-gen_dot_bash_init $HOME/.bash_init
+gen_dot_shell_init "$HOME/.${SHELL}_init"
   
-delete_tail_lines '# call .bash_init' "yes" "$HOME/.bashrc" 
+delete_tail_lines "# call .${SHELL}_init" "yes" "$HOME/.${SHELL}rc" 
 
-echo -e "# call .bash_init" >> $HOME/.bashrc
-cat << END >> $HOME/.bashrc
-test -f \${HOME%/}/.bash_init && . \${HOME%/}/.bash_init
+echo -e "# call .${SHELL}_init" >> "$HOME/.${SHELL}rc"
+cat << END >> "$HOME/.${SHELL}rc"
+test -f \${HOME%/}/.${SHELL}_init && . \${HOME%/}/.${SHELL}_init
 export PATH
 `
 if ! on_windows_nt; then
@@ -659,13 +657,13 @@ fi
 
 END
 
-gen_dot_bash_aliases $HOME/.bash_aliases
-gen_dot_bash_vars $HOME/.bash_vars
-gen_dot_bash_paths $HOME/.bash_paths
+gen_dot_shell_aliases "$HOME/.${SHELL}_aliases"
+gen_dot_shell_vars "$HOME/.${SHELL}_vars"
+gen_dot_shell_paths "$HOME/.${SHELL}_paths"
 
 gen_dot_vimrc $HOME/.vimrc
 
-. $HOME/.bashrc
+. $HOME/.${SHELL}rc
 
 
 END=`date +%s`
