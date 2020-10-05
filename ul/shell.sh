@@ -528,20 +528,24 @@ fi`
 
 `
 if on_windows_nt; then
-  echo "if [ -d \"/d/\" ]; then"
-  echo "  [ -d \"/d/opt\" ] || mkdir -p \"/d/opt\""
-  echo "  PREFIX=\"\\${PREFIX:-/d/opt}\""
-  echo "else"
-  echo "  [ -d \"/c/opt\" ] || mkdir -p \"/c/opt\""
-  echo "  PREFIX=\"\\${PREFIX:-/c/opt}\""
-  echo "fi"
+  echo "choose_prefix() {"
+  echo "  if [ -d \"/d/\" ]; then"
+  echo "    [ -d \"/d/opt\" ] || mkdir -p \"/d/opt\""
+  echo "    echo \"/d/opt\""
+  echo "  else"
+  echo "    [ -d \"/c/opt\" ] || mkdir -p \"/c/opt\""
+  echo "    echo \"/c/opt\""
+  echo "  fi"
+	echo "}"
 else
-  echo "PREFIX=\"\\${PREFIX:-/opt}\""
+	echo "choose_prefix() {"
+  echo "  echo \"/opt\""
+	echo "}"
 fi
 `
 
-OPT_RUN="\${OPT_RUN:-\${PREFIX}/run}"
-OPT_OPEN="\${OPT_OPEN:-\${PREFIX}/open}"
+OPT_RUN="\${OPT_RUN:-\$(choose_prefix)/run}"
+OPT_OPEN="\${OPT_OPEN:-\$(choose_prefix)/open}"
 
 [ -d "\${OPT_RUN}" ]  && export OPT_RUN=\${OPT_RUN}
 [ -d "\${OPT_OPEN}" ] && export OPT_OPEN=\${OPT_OPEN}
