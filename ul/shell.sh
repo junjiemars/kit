@@ -709,6 +709,13 @@ fi`
 " nocompatible
 "set nocompatible
 
+" set internal shell
+`if [ "zsh" = "$SH" ]; then
+	echo "set shell=zsh\ --rcs"
+else
+	echo "set shell=bash\ --rcfile\ ~/.bashrc"
+fi`
+
 " tabs are 2 characters
 set tabstop=2
 
@@ -752,9 +759,6 @@ set ruler
 
 " visual bell
 set novisualbell
-
-" set internal shell
-set shell=bash\ --rcfile\ ~/.bashrc
 
 " colorful
 "set grepprg=grep\ --color=always\ -n\ \$*\ /dev/null
