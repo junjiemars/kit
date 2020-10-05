@@ -6,7 +6,6 @@
 
 HOME="${HOME%/}"
 PLATFORM="`uname -s 2>/dev/null`"
-INSIDE_KIT_SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/shell.sh"
 SH="`basename $SHELL`"
 
 save_as() {
@@ -254,7 +253,6 @@ fi`
 
 PLATFORM="\`uname -s 2>/dev/null\`"
 MACHINE="\`uname -m 2>/dev/null\`"
-export INSIDE_KIT_SH_ENV="$INSIDE_KIT_SH_ENV"
 
 inside_docker_p() {
   [ ".\$INSIDE_DOCKER" = ".1" ] && return 0
@@ -554,20 +552,24 @@ check_java_env() {
 `if on_darwin; then
     echo "  local java_home='/usr/libexec/java_home'"
     echo "  if [ -L \"\\${java_home}\" ]; then"
-    echo "    export JAVA_HOME=\\$(\\${java_home} 2>/dev/null)"
+    echo "    JAVA_HOME=\\$(\\${java_home} 2>/dev/null)"
     echo "  fi"
 	elif on_linux; then
     echo "  local javac=\\$(type -p javac 2>/dev/null)"
     echo "  if [ -n \"\\${javac}\" ]; then"
     echo "    local java_home=\\$(readlink -f \"\\${javac}\" | sed 's:/bin/javac::')"
     echo "    if [ -n \"\\${java_home}\" -a -z \"\\$JAVA_HOME\" ]; then"
-    echo "      export JAVA_HOME=\"\\${java_home}\""
+    echo "      JAVA_HOME=\"\\${java_home}\""
     echo "    fi"
     echo "  fi"
   else
     echo "  # nop"
     echo "  :;"
-fi`
+fi
+	echo "  if [ -n \"\\$JAVA_HOME\" ]; then"
+  echo "    unset JAVA_HOME"
+	echo "  fi"
+`
 }
 
 check_java_env
