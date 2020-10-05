@@ -345,7 +345,7 @@ pretty_term() {
 PROMPT_COMMAND="\$(pretty_prompt_command \${PROMPT_COMMAND[@]})"
 export PROMPT_COMMAND
 
-PS1="\$(pretty_ps1 \${PS1[@]})"
+PS1="\$(pretty_ps1)"
 export PS1="\${PS1% } "
 
 if [ "\$(pretty_term \$TERM)" != "\$TERM" ]; then
