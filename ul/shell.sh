@@ -312,7 +312,7 @@ fi`
 }
 
 pretty_prompt_command() {
-  local o="\$@"
+  local o="\${PROMPT_COMMAND[@]}"
   local pc1=''
 
   if test -n "\${o}"; then
@@ -344,8 +344,12 @@ pretty_term() {
   fi
 }
 
-PROMPT_COMMAND="\$(pretty_prompt_command \${PROMPT_COMMAND[@]})"
-export PROMPT_COMMAND
+PROMPT_COMMAND="\$(pretty_prompt_command)"
+if [ -z "\$PROMPT_COMMAND" ]; then
+	unset PROMPT_COMMAND
+else
+	export PROMPT_COMMAND
+fi
 
 PS1="\$(pretty_ps1)"
 export PS1="\${PS1% } "
