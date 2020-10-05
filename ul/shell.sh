@@ -325,15 +325,15 @@ pretty_prompt_command() {
 }
 
 pretty_term() {
-  local o="\$1"
+  local o="\$TERM"
   local t="xterm"
 
-  if test -z "\$o"; then
+  if [ -z "\$o" ]; then
     echo "\$t"
     return
   fi
 
-  if test "dumb" = "\$o"; then
+  if [ "dumb" = "\$o" ]; then
     if \`inside_emacs_p\`; then
       echo "\$o"
     else
@@ -354,9 +354,8 @@ fi
 PS1="\$(pretty_ps1)"
 export PS1="\${PS1% } "
 
-if [ "\$(pretty_term \$TERM)" != "\$TERM" ]; then
-  export TERM="\$(pretty_term \$TERM)"
-fi
+TERM="\$(pretty_term)"
+export TERM
 
 # fix set locale failed
 # sudo localedef -i en_US -f UTF-8 en_US.UTF-8
