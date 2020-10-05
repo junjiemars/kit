@@ -285,19 +285,25 @@ declare -f delete_tail_lines
 `
 
 pretty_ps1() {
-  local o="\$@"
-  local ps1="\u@\h:\w\\$"
+  local o="\$PS1"
+`if [ "zsh" = "$SH" ]; then
+		echo "  local ps1='%n@%m: %1~ %'"
+	else
+		echo "  local ps1='\u@\h: \W \\$'"
+fi`
 
-  if [ -z "\${o}" ]; then
-    echo "\$ps1"
-  elif [[ \$o =~ ^\\\(h|s).*$ ]]; then
+	if [ -z "\$o" ]; then
+		echo "\$ps1"
+	elif [ "\$o" = "\$ps1" ]; then
+		echo "\$o"
+	elif \`inside_emacs_p\`; then	
+		echo "\$ps1"
+  elif [[ \$o =~ ^\\\(h|s\\\).*$ ]]; then
     echo "\$ps1"
   elif [[ \$o =~ ^\\\\\[.*$ ]]; then
-    if \`inside_emacs_p\`; then
-      echo "\$ps1"
-    else
-      echo "\$o"
-    fi
+		echo "\$ps1"
+	elif [[ \$o =~ ^[a-zA-Z0-9%$]+$ ]]; then
+		echo "\$ps1" 
   else
     echo "\$o"
   fi
