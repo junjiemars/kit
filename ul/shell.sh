@@ -207,26 +207,25 @@ END
 		delete_tail_lines "# call .${SH}_init" "yes" "$HOME/.${SH}rc" 
 	fi # end of ! -f "$rc"
 
-	echo -e "\n# call .${SH}_init" >> "$HOME/.${SH}rc"
+	echo -e "# call .${SH}_init" >> "$HOME/.${SH}rc"
 	cat << END >> "$HOME/.${SH}rc"
 `if on_darwin -a test -d "/opt/local/bin"; then
 	echo "# PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
 fi`
 test -f \$HOME/.${SH}_init && . \$HOME/.${SH}_init
 export PATH
-`if ! on_windows_nt; then
+`if on_linux; then
 		if [ -n "$LD_LIBRARY_PATH" ]; then
   		echo "export LD_LIBRARY_PATH"
 		else
 			echo "# export LD_LIBRARY_PATH"
 		fi
-  	if on_darwin; then
-			if [ -n "$DYLD_LIBRARY_PATH" ]; then
-				echo "export DYLD_LIBRARY_PATH"
-			else
-				echo "# export DYLD_LIBRARY_PATH"
-			fi
-		fi
+elif on_darwin; then
+	if [ -n "$DYLD_LIBRARY_PATH" ]; then
+		echo "export DYLD_LIBRARY_PATH"
+	else
+		echo "# export DYLD_LIBRARY_PATH"
+	fi
 fi`
 
 # eof
@@ -648,13 +647,15 @@ set_bin_paths() {
 
 set_bin_paths
 
-# chain basis PREFIX/opt/run/{bin,sbin} paths
+# chain basis \${OPT_RUN}/{bin,sbin} paths
 if [ -n "\${OPT_RUN}" ]; then
 	PATH="\`append_path \${OPT_RUN}/bin \${PATH[@]}\`"
 	PATH="\`append_path \${OPT_RUN}/sbin \${PATH[@]}\`"
 `
-  if ! on_windows_nt; then
+  if on_linux; then
 	  echo "  LD_LIBRARY_PATH=\"\\$(append_path \\${OPT_RUN}/lib \\${LD_LIBRARY_PATH[@]})\""
+	elif on_darwin; then
+	  echo "  DYLD_LIBRARY_PATH=\"\\$(append_path \\${OPT_RUN}/lib \\${DYLD_LIBRARY_PATH[@]})\""
   fi
 `
 fi
@@ -670,8 +671,10 @@ fi
 
 `if on_windows_nt; then
   echo "PATH=\"\\$(sort_path \\${PATH[@]})\""
-else
+elif on_linux; then
   echo "LD_LIBRARY_PATH=\"\\$(uniq_path \\${LD_LIBRARY_PATH[@]})\""
+elif on_darwin; then
+  echo "DYLD_LIBRARY_PATH=\"\\$(uniq_path \\${DYLD_LIBRARY_PATH[@]})\""
 fi`
 PATH="\$(uniq_path \${PATH[@]})"
 
