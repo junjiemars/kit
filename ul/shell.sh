@@ -181,8 +181,9 @@ END
 gen_dot_shell_rc() {
 	local rc="$HOME/.${SH}rc"
 	save_as "$rc"
-	echo -n "+ generating $rc ... "
-  cat << END > "$rc"
+	if [ ! -f "$rc" ]; then
+		echo -n "+ generating $rc ... "
+  	cat << END > "$rc"
 #------------------------------------------------
 # file: $rc
 # target: .${SH}rc default
@@ -195,6 +196,21 @@ fi`
 #------------------------------------------------
 
 END
+	else
+		echo -n "+ appending $rc ... "
+		delete_tail_lines "# call .${SH}_init" "yes" "$HOME/.${SH}rc" 
+		echo -e "# call .${SH}_init" >> "$HOME/.${SH}rc"
+		cat << END >> "$HOME/.${SH}rc"
+test -f \$HOME/.${SH}_init && . \$HOME/.${SH}_init
+export PATH
+`
+if ! on_windows_nt; then
+  echo "export LD_LIBRARY_PATH"
+fi
+`
+END
+	fi # end of ! -f "$rc"
+
 	if [ 0 -eq $? ]; then
 		echo "yes"
 	else
@@ -682,19 +698,6 @@ gen_dot_shell_logout
 gen_dot_shell_rc
 gen_dot_shell_init
   
-delete_tail_lines "# call .${SH}_init" "yes" "$HOME/.${SH}rc" 
-
-echo -e "# call .${SH}_init" >> "$HOME/.${SH}rc"
-cat << END >> "$HOME/.${SH}rc"
-test -f \${HOME%/}/.${SH}_init && . \${HOME%/}/.${SH}_init
-export PATH
-`
-if ! on_windows_nt; then
-  echo "export LD_LIBRARY_PATH"
-fi
-`
-
-END
 
 gen_dot_shell_aliases "$HOME/.${SH}_aliases"
 gen_dot_shell_vars "$HOME/.${SH}_vars"
