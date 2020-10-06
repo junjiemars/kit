@@ -709,13 +709,6 @@ fi`
 " nocompatible
 "set nocompatible
 
-" set internal shell
-`if [ "zsh" = "$SH" ]; then
-	echo "set shell=zsh\ --rcs"
-else
-	echo "set shell=bash\ --rcfile\ ~/.bashrc"
-fi`
-
 " tabs are 2 characters
 set tabstop=2
 
@@ -765,6 +758,13 @@ set novisualbell
 
 " search subdirs
 set path+=**
+
+" shell
+`if [ "zsh" = "$SH" ]; then
+	echo "\" set shell=zsh\ --rcs"
+else
+	echo "\" set shell=bash\ --rcfile\ ~/.bashrc"
+fi`
 
 " eof
 END
