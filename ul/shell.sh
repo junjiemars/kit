@@ -745,7 +745,6 @@ else
 	echo "\" set shell=bash\ --rcfile\ ~/.bashrc"
 fi`
 
-" eof
 END
 	if [ 0 -eq $? ]; then
 		echo "yes"
