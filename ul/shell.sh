@@ -534,6 +534,17 @@ OPT_OPEN="\${OPT_OPEN:-\$(choose_prefix)/open}"
 [ -d "\${OPT_RUN}" ]  && export OPT_RUN=\${OPT_RUN}
 [ -d "\${OPT_OPEN}" ] && export OPT_OPEN=\${OPT_OPEN}
 
+check_racket_env() {
+`if on_darwin; then
+    echo "  if \\\`ls -d /Applications/Racket* &> /dev/null\\\`; then"
+    echo "    RACKET_HOME=\"\\\`ls -ld /Applications/Racket*|sort|head -n1|sed -e 's_.*\\\(/Applications/Racket\\ v[0-9][0-9]*\\.[0-9][0-9]*\\\).*_\\1_g'\\\`\""
+    echo "  fi"
+  else
+    echo "  # nop"
+    echo "  :;"
+fi`
+}
+
 check_java_env() {
 `if on_darwin; then
     echo "  local java_home='/usr/libexec/java_home'"
@@ -558,6 +569,7 @@ fi
 `
 }
 
+check_racket_env
 check_java_env
 
 # declare vars
@@ -642,8 +654,17 @@ if [ -n "\${OPT_RUN}" ]; then
 `
 fi
 
+# racket home
+if [ -n "\$RACKET_HOME" ]; then
+`if on_windows_nt; then
+	echo "  RACKET_HOME=\\$(posix_path \"\\$RACKET_HOME\")"
+fi`
+  PATH="\`append_path \"\$RACKET_HOME/bin\" \$PATH\`"
+fi
+unset RACKET_HOME
+
 # java home
-if [ -n "\${JAVA_HOME}" ]; then
+if [ -n "\$JAVA_HOME" ]; then
 `if on_windows_nt; then
 	echo "  JAVA_HOME=\\$(posix_path \"\\${JAVA_HOME}\")"
 fi`
