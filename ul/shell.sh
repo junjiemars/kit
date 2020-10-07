@@ -426,12 +426,7 @@ alias_racket() {
 	if [ 0 -eq \$has_rlwrap ]; then
 		local p_racket=\$(exist_p 'racket')
 		if [ 0 -eq \$p_racket ]; then
-			local v
-			IFS='.' read -a v <<< "\`racket -v|sed 's/.*v\([0-9].[0-9]\).*/\1/g'\`"
-			if [ 67 -gt \$(( \${v[0]}*10+\${v[1]} )) ]; then
-				alias racket='rlwrap racket'
-			fi
-      unset IFS
+			alias racket='rlwrap racket'
 		fi
 	fi
 }
