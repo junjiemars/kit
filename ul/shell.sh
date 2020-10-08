@@ -531,9 +531,15 @@ OPT_OPEN="\${OPT_OPEN:-\$(choose_prefix)/open}"
 
 check_racket_env() {
 `if on_darwin; then
-    echo "  if \\\`ls -d /Applications/Racket* &> /dev/null\\\`; then"
+		if [ "zsh" = "$SH" ]; then
+			echo "  setopt +o nomatch &>/dev/null"
+		fi
+    echo "  if \\\`ls -ld /Applications/Racket* &>/dev/null\\\`; then"
     echo "    RACKET_HOME=\"\\\`ls -ld /Applications/Racket*|sort|head -n1|sed -e 's_.*\\\(/Applications/Racket\\ v[0-9][0-9]*\\.[0-9][0-9]*\\\).*_\\1_g'\\\`\""
     echo "  fi"
+		if [ "zsh" = "$SH" ]; then
+			echo "  setopt -o nomatch &>/dev/null"
+		fi
   else
     echo "  # nop"
     echo "  :;"
