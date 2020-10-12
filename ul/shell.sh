@@ -490,7 +490,7 @@ END
 }
 
 gen_dot_shell_vars() {
-	local vars="$HOME/.zsh_vars"
+	local vars="$HOME/.${SH}_vars"
 	save_as "$vars"
 	echo -n "+ generate $vars ... "
   cat << END > "$vars"
@@ -570,8 +570,20 @@ fi
 `
 }
 
+check_nvm_env() {
+  local d="\$HOME/.nvm"
+  if [ -d "\$d" ]; then
+    if [ -s "\${d}/nvm.sh" ]; then
+      . "\${d}/nvm.sh"
+      [ -s "\${d}/bash_completion" ] && . "\${d}/bash_completion"
+      NVM_DIR="\$d"
+    fi
+  fi
+}
+
 check_racket_env
 check_java_env
+check_nvm_env
 
 # declare vars
 
@@ -671,6 +683,11 @@ if [ -n "\$JAVA_HOME" ]; then
 fi`
   PATH="\`append_path \"\${JAVA_HOME}\" \$PATH\`"
   PATH="\`append_path \"\${JAVA_HOME}/bin\" \$PATH\`"
+fi
+
+# nvm home
+if [ -n "\$NVM_DIR" ]; then
+  PATH="\`append_path \"\${NVM_DIR}\" \$PATH\`"
 fi
 
 `if on_windows_nt; then
