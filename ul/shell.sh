@@ -212,7 +212,12 @@ END
 `if on_darwin -a test -d "/opt/local/bin"; then
 	echo "# PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
 fi`
+
 test -f \$HOME/.${SH}_init && . \$HOME/.${SH}_init
+test -f \$HOME/.${SH}_vars    && . \$HOME/.${SH}_vars
+test -f \$HOME/.${SH}_paths   && . \$HOME/.${SH}_paths
+test -f \$HOME/.${SH}_aliases && . \$HOME/.${SH}_aliases
+
 export PATH
 `if on_linux; then
 		if [ -n "$LD_LIBRARY_PATH" ]; then
@@ -339,9 +344,6 @@ export TERM
 # fix set locale failed
 # sudo localedef -i en_US -f UTF-8 en_US.UTF-8
 
-# prologue
-#----------
-
 `
 if on_windows_nt; then
   echo -e "# change code page to unicode"
@@ -353,16 +355,6 @@ else
   echo -e "fi"
 fi
 `
-
-# vars, paths, and aliases
-#----------
-
-test -f \$HOME/.${SH}_vars    && . \$HOME/.${SH}_vars
-test -f \$HOME/.${SH}_paths   && . \$HOME/.${SH}_paths
-test -f \$HOME/.${SH}_aliases && . \$HOME/.${SH}_aliases
-
-# epilogue
-#----------
 
 # eof
 END
