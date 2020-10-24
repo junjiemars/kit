@@ -9,6 +9,19 @@ PLATFORM="`uname -s 2>/dev/null`"
 SH="`basename $SHELL`"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 
+# check the echo's "-n" option and "\c" capability
+if echo "test\c" | grep -q c; then
+  echo_c=
+  if echo -n test | tr '\n' _ | grep -q _; then
+    echo_n=
+  else
+    echo_n=-n
+  fi
+else
+  echo_n=
+  echo_c='\c'
+fi
+
 save_as () {
   local f="$1"
 	local ori="${f}.ori"
@@ -85,7 +98,7 @@ sort_path () {
   
   sorted="`echo "${ori}${opt:+$opt }${win}\c" | $awk '!xxx[$0]++' | sed -e 's#:$##' -e 's#:\  *\/#:\/#g' `"
   
-  echo "${sorted}\c"
+  echo $echo_n "${sorted}${echo_c}"
 }
 
 get_sed_opt_i () {
@@ -122,7 +135,7 @@ gen_dot_shell_profile () {
 		profile="$HOME/.zprofile"
 	fi
 	save_as "$profile"
-	echo "+ generate $profile ... \c"
+	echo $echo_n "+ generate $profile ... $echo_c"
   cat << END > "$profile"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -153,7 +166,7 @@ gen_dot_shell_logout () {
 		logout="$HOME/.zlogout"
 	fi
 	save_as "$logout"
-	echo "+ generate $logout ... \c"
+	echo $echo_n "+ generate $logout ... $echo_c"
   cat << END > "$logout"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -187,7 +200,7 @@ gen_dot_shell_rc () {
 	local rc="$HOME/.${SH}rc"
 	save_as "$rc"
 	if [ ! -f "$rc" ]; then
-		echo "+ generate $rc ... \c"
+		echo $echo_n "+ generate $rc ... $echo_c"
   	cat << END > "$rc"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -203,7 +216,7 @@ fi`
 
 END
 	else
-		echo "+ append $rc ... \c"
+		echo $echo_n "+ append $rc ... $echo_c"
 		delete_tail_lines "# call .${SH}_init" "yes" "$HOME/.${SH}rc" 
 	fi # end of ! -f "$rc"
 
@@ -246,7 +259,7 @@ END
 gen_dot_shell_init () {
 	local init="$HOME/.${SH}_init"
 	save_as "$init"
-	echo "+ generate $init ... \c"
+	echo $echo_n "+ generate $init ... $echo_c"
   cat << END > "$init"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -332,10 +345,13 @@ else
 fi
 
 `if [ "zsh" = "$SH" ]; then
-		echo "PS1=\"%n@%m %1~ %#\""
+  echo "PS1=\"%n@%m %1~ %#\""
+elif [ "bash" = "$SH" ]; then
+	echo "PS1=\"\u@\h \W \$\""
 else
-		echo "PS1=\"\u@\h \W \$\""
+  echo "PS1=\"\\$LOGNAME@\\\`uname -n|cut -d'.' -f1\\\` \$\""
 fi`
+
 export PS1="\${PS1% } "
 
 TERM="\$(pretty_term)"
@@ -368,7 +384,7 @@ END
 gen_dot_shell_aliases () {
 	local aliases="$HOME/.${SH}_aliases"
 	save_as "$aliases"
-	echo "+ generate $aliases ... \c"
+	echo $echo_n "+ generate $aliases ... $echo_c"
   cat << END > "$aliases"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -484,7 +500,7 @@ END
 gen_dot_shell_vars () {
 	local vars="$HOME/.${SH}_vars"
 	save_as "$vars"
-	echo "+ generate $vars ... \c"
+	echo $echo_n "+ generate $vars ... $echo_c"
   cat << END > "$vars"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -591,7 +607,7 @@ END
 gen_dot_shell_paths () {
 	local paths="$HOME/.${SH}_paths"
 	save_as "$paths"
-	echo "+ generate $paths ... \c"
+	echo $echo_n "+ generate $paths ... $echo_c"
   cat << END > "$paths"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -704,7 +720,7 @@ END
 
 gen_dot_vimrc () {
 	local rc="$HOME/.vimrc"
-	echo "+ generate $rc ... \c"
+	echo $echo_n "+ generate $rc ... $echo_c"
   cat << END > "$rc"
 "------------------------------------------------
 " target: $rc
