@@ -7,7 +7,7 @@
 HOME="${HOME%/}"
 PLATFORM="`uname -s 2>/dev/null`"
 SH="`basename $SHELL`"
-SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/shell.sh"
+SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 
 save_as () {
   local f="$1"
