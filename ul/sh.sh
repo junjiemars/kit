@@ -351,7 +351,6 @@ elif [ "bash" = "$SH" ]; then
 else
   echo "PS1=\"\\$LOGNAME@\\\`uname -n|cut -d'.' -f1\\\` \$\""
 fi`
-
 export PS1="\${PS1% } "
 
 TERM="\$(pretty_term)"
