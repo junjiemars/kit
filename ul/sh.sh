@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 #------------------------------------------------
 # target: shell env setup script	
 # author: junjiemars@gmail.com
@@ -9,7 +9,7 @@ PLATFORM="`uname -s 2>/dev/null`"
 SH="`basename $SHELL`"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/shell.sh"
 
-save_as() {
+save_as () {
   local f="$1"
 	local ori="${f}.ori"
   local pre="${f}.pre"
@@ -23,31 +23,31 @@ save_as() {
   fi
 }
 
-on_windows_nt() {
+on_windows_nt () {
  case "$PLATFORM" in
    MSYS_NT*|MINGW*) return 0 ;;
    *) return 1 ;;
  esac
 }
 
-on_darwin() {
+on_darwin () {
   case "$PLATFORM" in
     Darwin) return 0 ;;
     *) return 1 ;;
   esac
 }
 
-on_linux() {
+on_linux () {
   case "$PLATFORM" in
     Linux) return 0 ;;
     *) return 1 ;;
   esac
 }
 
-posix_path() { 
+posix_path () { 
   local p="$@"
   local v=
-  if [[ $p =~ ^[a-zA-Z]:[\/\\].*$ ]]; then
+  if echo "$p" | grep -q "^[a-zA-Z]:[\/\\].*$"; then
     if [ "abc" = `echo "ABC" | sed -e 's#\([A-Z]*\)#\L\1#g'` ]; then
       v=$(echo "\\$p" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\L\1\\#')
     else
@@ -64,7 +64,7 @@ posix_path() {
   echo "$v" | sed -e 's#\\#\/#g'
 }
 
-sort_path() {
+sort_path () {
   # Windows: let MSYS_NT and user defined commands first
 	local awk='/bin/awk'
 	local tr='/usr/bin/tr'
@@ -77,18 +77,18 @@ sort_path() {
   local win=
   local sorted=
 
-	opt="`echo -n "$paths" | $tr ':' '\n' | $grep "$opt_p" | $tr '\n' ':' `"
+	opt="`echo "$paths\c" | $tr ':' '\n' | $grep "$opt_p" | $tr '\n' ':' `"
   
-  ori="`echo -n "$paths" | $tr ':' '\n' | $grep -v "$opt_p" | $grep -v "$win_p" | $tr '\n' ':' `"
+  ori="`echo "$paths\c" | $tr ':' '\n' | $grep -v "$opt_p" | $grep -v "$win_p" | $tr '\n' ':' `"
   
-  win="`echo -n "$paths" | $tr ':' '\n' | $grep "$win_p" | $tr '\n' ':' `"
+  win="`echo "$paths\c" | $tr ':' '\n' | $grep "$win_p" | $tr '\n' ':' `"
   
-  sorted="`echo -n "${ori}${opt:+$opt }${win}" | $awk '!xxx[$0]++' | sed -e 's#:$##' -e 's#:\  *\/#:\/#g' `"
+  sorted="`echo "${ori}${opt:+$opt }${win}\c" | $awk '!xxx[$0]++' | sed -e 's#:$##' -e 's#:\  *\/#:\/#g' `"
   
-  echo -n "${sorted}" 
+  echo "${sorted}\c"
 }
 
-get_sed_opt_i() {
+get_sed_opt_i () {
   if on_darwin; then
     echo "-i $1"
   else
@@ -96,7 +96,7 @@ get_sed_opt_i() {
   fi
 }
 
-delete_tail_lines() {
+delete_tail_lines () {
 	local h="$1"
   local lines="$2"
 	local f="$3"
@@ -105,7 +105,7 @@ delete_tail_lines() {
   [ -f "$f" ] || return 1
 
   local line_no=`grep -m1 -n "^${h}" $f | cut -d':' -f1`
-  [[ $line_no =~ ^[0-9]+$ ]] || return 1
+  echo $line_no | grep -q '^[0-9][0-9]*$' || return 1
 
   if [ 0 -lt $line_no ]; then
     if [ "yes" = "$lines" ]; then
@@ -116,13 +116,13 @@ delete_tail_lines() {
   fi
 }
 
-gen_dot_shell_profile() {
+gen_dot_shell_profile () {
 	local profile="$HOME/.bash_profile"
 	if [ "zsh" = "$SH" ]; then
 		profile="$HOME/.zprofile"
 	fi
 	save_as "$profile"
-	echo -n "+ generate $profile ... "
+	echo "+ generate $profile ... \c"
   cat << END > "$profile"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -147,13 +147,13 @@ END
 	fi
 }
 
-gen_dot_shell_logout() {
+gen_dot_shell_logout () {
 	local logout="$HOME/.${SH}_logout"
 	if [ "zsh" = "$SH" ]; then
 		logout="$HOME/.zlogout"
 	fi
 	save_as "$logout"
-	echo -n "+ generate $logout ... "
+	echo "+ generate $logout ... \c"
   cat << END > "$logout"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -183,11 +183,11 @@ END
 	fi
 }
 
-gen_dot_shell_rc() {
+gen_dot_shell_rc () {
 	local rc="$HOME/.${SH}rc"
 	save_as "$rc"
 	if [ ! -f "$rc" ]; then
-		echo -n "+ generate $rc ... "
+		echo "+ generate $rc ... \c"
   	cat << END > "$rc"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -203,11 +203,11 @@ fi`
 
 END
 	else
-		echo -n "+ append $rc ... "
+		echo "+ append $rc ... \c"
 		delete_tail_lines "# call .${SH}_init" "yes" "$HOME/.${SH}rc" 
 	fi # end of ! -f "$rc"
 
-	echo -e "# call .${SH}_init" >> "$HOME/.${SH}rc"
+	echo "# call .${SH}_init" >> "$HOME/.${SH}rc"
 	cat << END >> "$HOME/.${SH}rc"
 `if on_darwin -a test -d "/opt/local/bin"; then
 	echo "# PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
@@ -243,10 +243,10 @@ END
 	fi
 }
 
-gen_dot_shell_init() {
+gen_dot_shell_init () {
 	local init="$HOME/.${SH}_init"
 	save_as "$init"
-	echo -n "+ generate $init ... "
+	echo "+ generate $init ... \c"
   cat << END > "$init"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -263,7 +263,7 @@ fi`
 PLATFORM="\`uname -s 2>/dev/null\`"
 MACHINE="\`uname -m 2>/dev/null\`"
 
-inside_docker_p() {
+inside_docker_p () {
   [ ".\$INSIDE_DOCKER" = ".1" ] && return 0
   [ -f /proc/1/cgroup ] || return 1
   if \`cat /proc/1/cgroup | grep '/docker/' >/dev/null\`; then
@@ -273,16 +273,16 @@ inside_docker_p() {
 	fi 
 }
 
-inside_emacs_p() {
+inside_emacs_p () {
   test -n "\$INSIDE_EMACS"
 }
 
-get_sed_opt_i() {
+get_sed_opt_i () {
 `
 	if on_darwin; then
-  	echo -e "  echo \\"-i \\$1\\""
+  	echo "  echo \\"-i \\$1\\""
 	else
-  	echo -e "  echo \\"-i\\$1\\""
+  	echo "  echo \\"-i\\$1\\""
 	fi
 `
 }
@@ -291,7 +291,7 @@ get_sed_opt_i() {
 declare -f delete_tail_lines
 `
 
-pretty_prompt_command() {
+pretty_prompt_command () {
   local o="\${PROMPT_COMMAND[@]}"
   local pc1=''
 
@@ -304,7 +304,7 @@ pretty_prompt_command() {
   echo "\$o"
 }
 
-pretty_term() {
+pretty_term () {
   local o="\$TERM"
   local t="xterm"
 
@@ -346,13 +346,13 @@ export TERM
 
 `
 if on_windows_nt; then
-  echo -e "# change code page to unicode"
-  echo -e "chcp.com 65001 &>/dev/null"
-  echo -e "export LANG=en_US.UTF-8"
+  echo "# change code page to unicode"
+  echo "chcp.com 65001 &>/dev/null"
+  echo "export LANG=en_US.UTF-8"
 else
-  echo -e "if test -z \"\\$LANG\"; then"
-  echo -e "  export LANG=en_US.UTF-8"
-  echo -e "fi"
+  echo "if test -z \"\\$LANG\"; then"
+  echo "  export LANG=en_US.UTF-8"
+  echo "fi"
 fi
 `
 
@@ -365,10 +365,10 @@ END
 	fi
 }
 
-gen_dot_shell_aliases() {
+gen_dot_shell_aliases () {
 	local aliases="$HOME/.${SH}_aliases"
 	save_as "$aliases"
-	echo -n "+ generate $aliases ... "
+	echo "+ generate $aliases ... \c"
   cat << END > "$aliases"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -390,11 +390,11 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
-exist_p() {
+exist_p () {
   command -v \${1} &>/dev/null; echo \$?
 }
 
-diff_p() {
+diff_p () {
   diff \${1} \${2} &>/dev/null; echo \$?
 }
 
@@ -414,7 +414,7 @@ else
 fi
 `
 
-alias_racket() {
+alias_racket () {
 	if [ 0 -eq \$has_rlwrap ]; then
 		local p_racket=\$(exist_p 'racket')
 		if [ 0 -eq \$p_racket ]; then
@@ -423,14 +423,14 @@ alias_racket() {
 	fi
 }
 
-alias_emacs() {
+alias_emacs () {
 	local p_emacs=\$(exist_p 'emacs')
 	if [ 0 -eq \$p_emacs ]; then
 		alias emacs='emacs -nw'
 	fi
 }
 
-alias_vi() {
+alias_vi () {
 	local p_vi=\$(exist_p 'vi')
 	local p_vim=\$(exist_p 'vim')
 	if [ 0 -eq \$p_vi ] && [ 0 -eq \$p_vim ]; then
@@ -440,7 +440,7 @@ alias_vi() {
 	fi
 }
 
-alias_rlwrap_bin() {
+alias_rlwrap_bin () {
 	local bin="\$1"
 	local os="\$2"
 	local m=
@@ -481,10 +481,10 @@ END
 	fi
 }
 
-gen_dot_shell_vars() {
+gen_dot_shell_vars () {
 	local vars="$HOME/.${SH}_vars"
 	save_as "$vars"
-	echo -n "+ generate $vars ... "
+	echo "+ generate $vars ... \c"
   cat << END > "$vars"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -499,7 +499,7 @@ fi`
 
 `
 if on_windows_nt; then
-  echo "choose_prefix() {"
+  echo "function choose_prefix {"
   echo "  if [ -d \"/d/\" ]; then"
   echo "    [ -d \"/d/opt\" ] || mkdir -p \"/d/opt\""
   echo "    echo \"/d/opt\""
@@ -509,7 +509,7 @@ if on_windows_nt; then
   echo "  fi"
 	echo "}"
 else
-	echo "choose_prefix() {"
+	echo "function choose_prefix {"
   echo "  echo \"/opt\""
 	echo "}"
 fi
@@ -521,7 +521,7 @@ OPT_OPEN="\${OPT_OPEN:-\$(choose_prefix)/open}"
 [ -d "\${OPT_RUN}" ]  && export OPT_RUN=\${OPT_RUN}
 [ -d "\${OPT_OPEN}" ] && export OPT_OPEN=\${OPT_OPEN}
 
-check_racket_env() {
+check_racket_env () {
 `if on_darwin; then
 		if [ "zsh" = "$SH" ]; then
 			echo "  setopt +o nomatch &>/dev/null"
@@ -538,7 +538,7 @@ check_racket_env() {
 fi`
 }
 
-check_java_env() {
+check_java_env () {
 `if on_darwin; then
     echo "  local java_home='/usr/libexec/java_home'"
     echo "  if [ -L \"\\${java_home}\" ]; then"
@@ -562,7 +562,7 @@ fi
 `
 }
 
-check_nvm_env() {
+check_nvm_env () {
   local d="\$HOME/.nvm"
   if [ -d "\$d" ]; then
     if [ -s "\${d}/nvm.sh" ]; then
@@ -588,10 +588,10 @@ END
 	fi
 }
 
-gen_dot_shell_paths() {
+gen_dot_shell_paths () {
 	local paths="$HOME/.${SH}_paths"
 	save_as "$paths"
-	echo -n "+ generate $paths ... "
+	echo "+ generate $paths ... \c"
   cat << END > "$paths"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -604,13 +604,13 @@ gen_dot_shell_paths() {
 fi`
 #------------------------------------------------
 
-append_path() {
+append_path () {
 	local new="\$1"
 	local paths="\${@:2}"
 	echo "\${paths:+\$paths:}\$new"
 }
 
-uniq_path() {
+uniq_path () {
   local paths="\$@"
 	paths=\`echo "\$paths" | tr ':' '\n' | awk '!a[\$0]++'\`
 	paths=\`echo "\$paths" | tr '\n' ':' | sed -e 's_:\$__g'\`
@@ -627,7 +627,7 @@ if on_windows_nt; then
 fi
 `
 
-set_bin_paths() {
+set_bin_paths () {
   local paths=(
     '/usr/local/bin'
     '/usr/bin'
@@ -702,9 +702,9 @@ END
 	fi
 }
 
-gen_dot_vimrc() {
+gen_dot_vimrc () {
 	local rc="$HOME/.vimrc"
-	echo -n "+ generate $rc ... "
+	echo "+ generate $rc ... \c"
   cat << END > "$rc"
 "------------------------------------------------
 " target: $rc

@@ -92,7 +92,7 @@ Log rotate.
 
 A nginx configurator and shell maker.
 
-** =shell.sh=
+** =sh.sh=
 	 :PROPERTIES:
 	 :CUSTOM_ID: shell
 	 :END:
@@ -101,9 +101,9 @@ Setup bash or zsh, aliases, paths and vars etc., on Windows, Darwin,
 Linux or Unix-like box, and just one line code you need to getting
 things done:
 #+BEGIN_SRC sh
-$ bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/shell.sh)
+$ bash <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh)
 # or zsh
-$ $ zsh <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/shell.sh)
+$ $ zsh <(curl https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh)
 #+END_SRC
 
 For Windiows you can use [[https://git-scm.com/downloads][Git Bash]] instead.
