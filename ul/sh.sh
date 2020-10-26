@@ -652,9 +652,30 @@ uniq_path () {
   echo "\$paths"
 }
 
-`
-declare -f posix_path
-`
+# sh has no function forward declaration
+# `
+# declare -f posix_path
+# `
+echo "posix_path () {"
+echo "  local p=\"\$@\""
+echo "  local v="
+echo "  if echo \"\$p\" | grep -q \"^[a-zA-Z]:[\/\\].*\$\"; then"
+echo "    if [ \"abc\" = \`echo \"ABC\" | sed -e 's#\([A-Z]*\)#\L\1#g'\` ]; then"
+echo "      v=\$(echo \"\\\$p\" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\L\1\\#')"
+echo "    else"
+echo "      local car=\"\`echo \$p | cut -d':' -f1\`\""
+echo "      local cdr=\"\`echo \$p | cut -d':' -f2\`\""
+echo "      if [ \"\$p\" = \"\${car}:\${cdr}\" ]; then"
+echo "        v=\$(echo \$car | tr [:upper:] [:lower:])"
+echo "        v=\$(echo \"\\\${v}\${cdr}\" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')"
+echo "      else"
+echo "        v=\$(echo \"\\\$p\" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')"
+echo "      fi"
+echo "    fi;"
+echo "  fi"
+echo "  echo \"\$v\" | sed -e 's#\\#\/#g'"
+echo "}"
+
 
 `
 if on_windows_nt; then
