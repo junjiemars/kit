@@ -300,9 +300,29 @@ get_sed_opt_i () {
 `
 }
 
-`
-declare -f delete_tail_lines
-`
+# sh has no function forward declaration
+# `
+# declare -f delete_tail_lines
+# `
+delete_tail_lines () {
+	local h="\$1"
+  local lines="\$2"
+	local f="\$3"
+	local sed_opt_i="\`get_sed_opt_i .pre\`"
+
+  [ -f "\$f" ] || return 1
+
+  local line_no=\`grep -m1 -n "^\${h}" \$f | cut -d':' -f1\`
+  echo \$line_no | grep -q '^[0-9][0-9]*\$' || return 1
+
+  if [ 0 -lt \$line_no ]; then
+    if [ "yes" = "\$lines" ]; then
+      sed \$sed_opt_i -e "\$line_no,\\$d" "\$f"
+    else  
+      sed \$sed_opt_i -e "\${line_no}d" "\$f"
+    fi
+  fi
+}
 
 pretty_prompt_command () {
   local o="\${PROMPT_COMMAND}"
