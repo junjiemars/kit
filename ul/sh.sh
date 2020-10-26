@@ -305,7 +305,7 @@ declare -f delete_tail_lines
 `
 
 pretty_prompt_command () {
-  local o="\${PROMPT_COMMAND[@]}"
+  local o="\${PROMPT_COMMAND}"
   local pc1=''
 
   if test -n "\${o}"; then
@@ -651,7 +651,7 @@ set_bin_paths () {
     '/sbin'
   )
   
-  for d in "\${paths[@]}"; do
+  for d in "\${paths}"; do
     if [ -d "\${d}" ]; then
       PATH="\`append_path \${d} \$PATH\`"
     fi
@@ -663,13 +663,13 @@ set_bin_paths
 
 # chain basis \${OPT_RUN}/{bin,sbin} paths
 if [ -n "\${OPT_RUN}" ]; then
-	PATH="\`append_path \${OPT_RUN}/bin \${PATH[@]}\`"
-	PATH="\`append_path \${OPT_RUN}/sbin \${PATH[@]}\`"
+	PATH="\`append_path \${OPT_RUN}/bin \${PATH}\`"
+	PATH="\`append_path \${OPT_RUN}/sbin \${PATH}\`"
 `
   if on_linux; then
-	  echo "  LD_LIBRARY_PATH=\"\\$(append_path \\${OPT_RUN}/lib \\${LD_LIBRARY_PATH[@]})\""
+	  echo "  LD_LIBRARY_PATH=\"\\$(append_path \\${OPT_RUN}/lib \\${LD_LIBRARY_PATH})\""
 	elif on_darwin; then
-	  echo "  DYLD_LIBRARY_PATH=\"\\$(append_path \\${OPT_RUN}/lib \\${DYLD_LIBRARY_PATH[@]})\""
+	  echo "  DYLD_LIBRARY_PATH=\"\\$(append_path \\${OPT_RUN}/lib \\${DYLD_LIBRARY_PATH})\""
   fi
 `
 fi
@@ -698,13 +698,13 @@ if [ -n "\$NVM_DIR" ]; then
 fi
 
 `if on_windows_nt; then
-  echo "PATH=\"\\$(sort_path \\${PATH[@]})\""
+  echo "PATH=\"\\$(sort_path \\${PATH})\""
 elif on_linux; then
-  echo "LD_LIBRARY_PATH=\"\\$(uniq_path \\${LD_LIBRARY_PATH[@]})\""
+  echo "LD_LIBRARY_PATH=\"\\$(uniq_path \\${LD_LIBRARY_PATH})\""
 elif on_darwin; then
-  echo "DYLD_LIBRARY_PATH=\"\\$(uniq_path \\${DYLD_LIBRARY_PATH[@]})\""
+  echo "DYLD_LIBRARY_PATH=\"\\$(uniq_path \\${DYLD_LIBRARY_PATH})\""
 fi`
-PATH="\$(uniq_path \${PATH[@]})"
+PATH="\$(uniq_path \${PATH})"
 
 # other paths
 
