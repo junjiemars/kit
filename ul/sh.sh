@@ -667,9 +667,9 @@ if [ -n "\${OPT_RUN}" ]; then
 	PATH="\`append_path \${OPT_RUN}/sbin \${PATH}\`"
 `
   if on_linux; then
-	  echo "  LD_LIBRARY_PATH=\"\\$(append_path \\${OPT_RUN}/lib \\${LD_LIBRARY_PATH})\""
+	  echo "  LD_LIBRARY_PATH=\\"\\\$(append_path \\\${OPT_RUN}/lib \\\${LD_LIBRARY_PATH})\\""
 	elif on_darwin; then
-	  echo "  DYLD_LIBRARY_PATH=\"\\$(append_path \\${OPT_RUN}/lib \\${DYLD_LIBRARY_PATH})\""
+	  echo "  DYLD_LIBRARY_PATH=\\"\\\$(append_path \\\${OPT_RUN}/lib \\\${DYLD_LIBRARY_PATH})\\""
   fi
 `
 fi
@@ -698,11 +698,11 @@ if [ -n "\$NVM_DIR" ]; then
 fi
 
 `if on_windows_nt; then
-  echo "PATH=\"\\$(sort_path \\${PATH})\""
+  echo "PATH=\\"\\\$(sort_path \\\${PATH})\\""
 elif on_linux; then
-  echo "LD_LIBRARY_PATH=\"\\$(uniq_path \\${LD_LIBRARY_PATH})\""
+  echo "LD_LIBRARY_PATH=\\"\\\$(uniq_path \\\${LD_LIBRARY_PATH})\\""
 elif on_darwin; then
-  echo "DYLD_LIBRARY_PATH=\"\\$(uniq_path \\${DYLD_LIBRARY_PATH})\""
+  echo "DYLD_LIBRARY_PATH=\\"\\\$(uniq_path \\\${DYLD_LIBRARY_PATH})\\""
 fi`
 PATH="\$(uniq_path \${PATH})"
 
