@@ -317,7 +317,7 @@ delete_tail_lines () {
 
   if [ 0 -lt \$line_no ]; then
     if [ "yes" = "\$lines" ]; then
-      sed \$sed_opt_i -e "\$line_no,\\$d" "\$f"
+      sed \$sed_opt_i -e "\$line_no,\$d" "\$f"
     else  
       sed \$sed_opt_i -e "\${line_no}d" "\$f"
     fi
@@ -426,11 +426,12 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 exist_p () {
-  command -v \${1} &>/dev/null; echo \$?
+  # command -v \${1} 1>/dev/null 2>&1; echo \$?
+  which \${1} 1>/dev/null 2>&1; echo \$?
 }
 
 diff_p () {
-  diff \${1} \${2} &>/dev/null; echo \$?
+  diff \${1} \${2} 1>/dev/null 2>&1; echo \$?
 }
 
 has_rlwrap=\$(exist_p 'rlwrap')
@@ -656,26 +657,25 @@ uniq_path () {
 # `
 # declare -f posix_path
 # `
-echo "posix_path () {"
-echo "  local p=\"\$@\""
-echo "  local v="
-echo "  if echo \"\$p\" | grep -q \"^[a-zA-Z]:[\/\\].*\$\"; then"
-echo "    if [ \"abc\" = \`echo \"ABC\" | sed -e 's#\([A-Z]*\)#\L\1#g'\` ]; then"
-echo "      v=\$(echo \"\\\$p\" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\L\1\\#')"
-echo "    else"
-echo "      local car=\"\`echo \$p | cut -d':' -f1\`\""
-echo "      local cdr=\"\`echo \$p | cut -d':' -f2\`\""
-echo "      if [ \"\$p\" = \"\${car}:\${cdr}\" ]; then"
-echo "        v=\$(echo \$car | tr [:upper:] [:lower:])"
-echo "        v=\$(echo \"\\\${v}\${cdr}\" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')"
-echo "      else"
-echo "        v=\$(echo \"\\\$p\" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')"
-echo "      fi"
-echo "    fi;"
-echo "  fi"
-echo "  echo \"\$v\" | sed -e 's#\\#\/#g'"
-echo "}"
-
+posix_path () {
+  local p="\$@"
+  local v=
+  if echo "\$p" | grep -q "^[a-zA-Z]:[\/\\].*\$"; then
+    if [ "abc" = \`echo "ABC" | sed -e 's#\([A-Z]*\)#\L\1#g'\` ]; then
+      v=\$(echo "\\\$p" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\L\1\\#')
+    else
+      local car="\`echo \$p | cut -d':' -f1\`"
+      local cdr="\`echo \$p | cut -d':' -f2\`"
+      if [ "\$p" = "\${car}:\${cdr}" ]; then
+        v=\$(echo \$car | tr [:upper:] [:lower:])
+        v=\$(echo "\\\${v}\${cdr}" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')
+      else
+        v=\$(echo "\\\$p" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')
+      fi
+    fi;
+  fi
+  echo "\$v" | sed -e 's#\\#\/#g'
+}
 
 `
 if on_windows_nt; then
