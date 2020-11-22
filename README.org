@@ -197,6 +197,20 @@ Setup Win32 programming environment.
 	:CUSTOM_ID: darwin
 	:END:
 
+** Disk
+
+*** UEFI
+
+UEFI(Unified Extensible Firmware Interface) is known as a motherboard
+firmware interface for computers. With UEFI boot mode, your computer
+can initialize the hardware components and boot the OS stored on the
+hard disk.
+
+*** GPT
+
+GPT(GUID Partition Table) is a partitioning schemes that introduced by
+Intel by the 1990s.
+
 ** Launchpad
 
 [[file:darwin/remove-from-launchpad.sh][remove-from-launchpad.sh]]
