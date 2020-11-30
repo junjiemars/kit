@@ -576,25 +576,31 @@ fi`
 
 check_java_env () {
 `if on_darwin; then
-    echo "  local java_home='/usr/libexec/java_home'"
-    echo "  if [ -L \\"\\\${java_home}\\" ]; then"
-    echo "    JAVA_HOME=\\\$(\\\${java_home} 2>/dev/null)"
-    echo "  fi"
-	elif on_linux; then
-    echo "  local javac=\\\$(type -p javac 2>/dev/null)"
-    echo "  if [ -n \\"\\\${javac}\\" ]; then"
-    echo "    local java_home=\\\$(readlink -f \\"\\\${javac}\\" | sed 's:/bin/javac::')"
-    echo "    if [ -n \\"\\\${java_home}\\" -a -z \\"\\\$JAVA_HOME\\" ]; then"
-    echo "      JAVA_HOME=\\"\\\${java_home}\\""
-    echo "    fi"
-    echo "  fi"
-  else
-    echo "  # nop"
-    echo "  :;"
+  echo "  local java_home='/usr/libexec/java_home'"
+  echo "  if [ -L \\"\\\${java_home}\\" ]; then"
+  echo "    JAVA_HOME=\\\$(\\\${java_home} 2>/dev/null)"
+  echo "  fi"
+elif on_linux; then
+  echo "  local javac="
+  echo "  local java_home="
+  echo "  if [ -n \\"\\\$JAVA_HOME\\" -a ! -d \\"\\\$JAVA_HOME\\" ]; then"
+  echo "    unset \\"JAVA_HOME\\""
+  echo "  fi"
+  echo "  javac=\\"\\\${JAVA_HOME%/}/bin/javac\\""
+  echo "  if [ -f \\"\\\$javac\\" ]; then"
+  echo "    JAVA_HOME=\\"\\\${JAVA_HOME%/}\\""
+  echo "    return 0"
+  echo "  fi"
+  echo "  javac=\\"\\\$(type -p javac 2>/dev/null)\\""
+  echo "  if [ -n \\"\\\${javac}\\" -a -x \\"\\\$javac\\" ]; then"
+  echo "    java_home=\\"\\\$(readlink -f \\"\\\${javac}\\" | sed 's:/bin/javac::')\\""
+  echo "    JAVA_HOME=\\"\\\${java_home}\\""
+  echo "    return 0"
+  echo "  fi"
+elif on_windows; then
+  echo "  # nop"
 fi`
-	if [ -n "\$JAVA_HOME" ]; then
-    unset "JAVA_HOME"
-	fi
+  return 1
 }
 
 check_nvm_env () {
