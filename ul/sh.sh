@@ -606,18 +606,18 @@ fi`
 
 check_nvm_env () {
   local d="\$HOME/.nvm"
-  if [ -d "\$d" ]; then
-    if [ -s "\${d}/nvm.sh" ]; then
-      . "\${d}/nvm.sh"
-      [ -s "\${d}/bash_completion" ] && . "\${d}/bash_completion"
-      NVM_DIR="\$d"
-    fi
+  if [ -s "\${d}/nvm.sh" ]; then
+    . "\${d}/nvm.sh"
+    [ -s "\${d}/bash_completion" ] && . "\${d}/bash_completion"
+    NVM_DIR="\$d"
+    return 0
   fi
+  return 1
 }
 
 check_racket_env
 check_java_env
-check_nvm_env
+# check_nvm_env
 
 # declare vars
 
