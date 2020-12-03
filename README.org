@@ -383,6 +383,20 @@ Allow =jdb= to attach process on Ubuntu.
 
 ** Performance
 
+*** Limits
+
+=/etc/security/limits.conf=, replace =user1= with real user name.
+#+BEGIN_EXAMPLE
+* 	 soft     nproc          655350
+* 	 hard     nproc          655350
+* 	 soft     nofile         655350
+* 	 hard     nofile         655350
+user1 	 soft     nproc          200000
+user1 	 hard     nproc          200000
+user1 	 soft     nofile         200000
+user1 	 hard     nofile         200000
+#+END_EXAMPLE
+
 *** Swap
 
 #+BEGIN_SRC sh
@@ -446,7 +460,6 @@ for i in 0 1 2 3; do echo performance > /sys/devices/system/cpu/cpu$i/cpufreq/sc
 #+END_SRC
 
 *** Network
-
 *** References
 - [[https://cromwell-intl.com/open-source/performance-tuning/disks.html][Performance Tuning on Linux — Disk I/O]]
 - [[https://cromwell-intl.com/open-source/performance-tuning/tcp.html][Performance Tuning on Linux — TCP]]
