@@ -476,6 +476,17 @@ alias_vi () {
 	fi
 }
 
+alias_python () {
+  local p_p3=\$(exist_p 'python3')
+  local p_pip3=\$(exist_p 'pip3')
+  if [ 0 -eq \$p_p3 ]; then
+    alias python=python3
+  fi
+  if [ 0 -eq \$p_pip3 ]; then
+    alias pip=pip3
+  fi
+}
+
 alias_rlwrap_bin () {
 	local bin="\$1"
 	local os="\$2"
@@ -501,11 +512,10 @@ alias_rlwrap_bin () {
 alias_vi
 alias_emacs
 alias_racket
-alias_rlwrap_bin lein
+alias_python
 alias_rlwrap_bin sbcl
 alias_rlwrap_bin ecl
 alias_rlwrap_bin openssl
-alias_rlwrap_bin jjs
 alias_rlwrap_bin lldb Linux
 
 # eof
