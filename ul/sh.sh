@@ -625,9 +625,19 @@ check_nvm_env () {
   return 1
 }
 
+check_kube_env () {
+  local d="\$HOME/.kube"
+  if [ type -p kubectl 2>/dev/null -a -s "\${d}/kube-completions.sh" ]; then
+    . "\${d}/kube-completions.sh"
+    return 0
+  fi
+  return 1
+}
+
 check_racket_env
 check_java_env
 # check_nvm_env
+# check_kube_env
 
 # declare vars
 
