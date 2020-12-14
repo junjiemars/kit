@@ -1206,17 +1206,16 @@ echo $PASSWORD | sudo -S jhsdb jmap --pid $PID
 
 *** OpenJFX
 
-#+BEGIN_SRC sh
---module-path /Users/<user>/Downloads/javafx-sdk-11/lib --add-modules=javafx.controls,javafx.fxml
-#+END_SRC
+#+BEGIN_EXAMPLE sh
+,* --module-path /Users/<user>/Downloads/javafx-sdk-11/lib --add-modules=javafx.controls,javafx.fxml
+#+END_EXAMPLE
 
 ** Kotlin
 ** Node.js
 
 =NODE_OPTIONS= environment variable
-#+BEGIN_SRC sh
+#+BEGIN_SRC shell
 export NODE_OPTIONS="--max-old-space-size=1024"
-yarn build
 #+END_SRC
 
 *** References
