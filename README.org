@@ -374,12 +374,14 @@ agents and XPC services.
 	:CUSTOM_ID: ubuntu
 	:END:
 
-** =jd.sh=
+** Booting
 	 :PROPERTIES:
-	 :CUSTOM_ID: jdsh
+	 :CUSTOM_ID: ubuntu_booting
 	 :END:
 
-Allow =jdb= to attach process on Ubuntu.
+*** References
+
+- [[https://wiki.ubuntu.com/Booting][Ubuntu Booting]]
 
 ** Performance
 
@@ -1203,6 +1205,13 @@ echo $PASSWORD | sudo -S jhsdb jmap --pid $PID
 | 0x00007f402bc3e000 | 66K      | /usr/lib/jvm/java-11-openjdk-amd64/lib/libverify.so                        |                                  |        |        |         |
 | 0x00007f402bc50000 | 70K      | /usr/lib/jvm/java-11-openjdk-amd64/lib/jli/libjli.so                       |                                  |        |        |         |
 | 0x00007f402bc65000 | 186K     | /lib/x86_64-linux-gnu/ld-2.31.so                                           |                                  |        |        |         |
+
+*** =jd.sh=
+ 	 :PROPERTIES:
+	 :CUSTOM_ID: jdsh
+	 :END:
+
+Allow =jdb= to attach process on Ubuntu.
 
 *** OpenJFX
 
