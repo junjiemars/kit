@@ -608,7 +608,7 @@ elif on_linux; then
   echo "    JAVA_HOME=\\"\\\${java_home}\\""
   echo "    return 0"
   echo "  fi"
-elif on_windows; then
+elif on_windows_nt; then
   echo "  # nop"
 fi`
   return 1
