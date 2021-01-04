@@ -16,6 +16,11 @@ test_do() {
   $@
 }
 
+# echo env
+echo "------------"
+env
+echo "------------"
+
 # basic test
 if [ "basic" = "$_TEST_" ]; then
   test_do ul/sh.sh       || exit 1
