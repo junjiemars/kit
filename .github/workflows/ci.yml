@@ -1,0 +1,60 @@
+name: Kit
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+
+  Linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Env
+        run: echo "_OS_ARCH_=$(uname -m)" >> $GITHUB_ENV
+      - name: Build and Test
+        run: |
+          ./test.sh
+
+
+  MacOS:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Env
+        run: echo "_OS_ARCH_=$(uname -m)" >> $GITHUB_ENV
+      - name: Build and Test
+        run: |
+          ./test.sh
+
+
+  Windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # checkout history and tags
+    - name: Install Dependencies
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: git mingw-w64-x86_64-gcc mingw-w64-x86_64
+    - name: Setup Env
+      run: echo "_OS_ARCH_=$(uname -m)" >> $GITHUB_ENV
+    - name: Build and Test
+      run: |
+         ./test.sh
+
+
+# EOF
