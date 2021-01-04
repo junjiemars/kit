@@ -19,6 +19,8 @@ jobs:
       - name: Setup Env
         run: echo "_OS_ARCH_=$(uname -m)" >> $GITHUB_ENV
       - name: Build and Test
+        env:
+          SHELL: /bin/bash
         run: |
           ./test.sh
 
@@ -32,6 +34,8 @@ jobs:
       - name: Setup Env
         run: echo "_OS_ARCH_=$(uname -m)" >> $GITHUB_ENV
       - name: Build and Test
+        env:
+          SHELL: /bin/zsh
         run: |
           ./test.sh
 
@@ -53,6 +57,8 @@ jobs:
     - name: Setup Env
       run: echo "_OS_ARCH_=$(uname -m)" >> $GITHUB_ENV
     - name: Build and Test
+      env:
+        SHELL: /bin/bash
       run: |
          ./test.sh
 

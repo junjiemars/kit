@@ -10,7 +10,7 @@ case "$_OS_NAME_" in
   MSYS_NT-*|MINGW??_NT-*)
     _OS_NAME_="WinNT" ;;
 esac
-SH="`echo $0 | cut -d'-' -f2`"
+SH="`basename $SHELL`"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 
 # check the echo's "-n" option and "\c" capability
