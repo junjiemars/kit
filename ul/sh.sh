@@ -6,7 +6,11 @@
 
 HOME="${HOME%/}"
 PLATFORM="`uname -s 2>/dev/null`"
-SH="`basename $SHELL`"
+case "$_OS_NAME_" in
+  MSYS_NT-*|MINGW??_NT-*)
+    _OS_NAME_="WinNT" ;;
+esac
+SH="`echo $0 | cut -d_ -f2`"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 
 # check the echo's "-n" option and "\c" capability
