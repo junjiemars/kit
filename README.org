@@ -197,19 +197,43 @@ Setup Win32 programming environment.
 	:CUSTOM_ID: darwin
 	:END:
 
-** Disk
+** Boot
 
-*** UEFI
+*** Disk
+
+**** UEFI
 
 UEFI(Unified Extensible Firmware Interface) is known as a motherboard
 firmware interface for computers. With UEFI boot mode, your computer
 can initialize the hardware components and boot the OS stored on the
 hard disk.
 
-*** GPT
+**** GPT
 
 GPT(GUID Partition Table) is a partitioning schemes that introduced by
 Intel by the 1990s.
+
+**** MBR
+
+#+BEGIN_SRC sh
+sudo diskutil partitionDisk /dev/disk3 4 MBR \
+  MS-DOS WIN 20G \
+	MS-DOS LIN 20G \
+	MS-DOS MAC 20G \
+	MS-DOS DTA R
+#+END_SRC
+
+#+BEGIN_SRC sh
+# enter command mode
+sudo fdisk -e /dev/disk3
+#+END_SRC
+
+*** Recovery
+
+*** References
+
+- [[https://support.apple.com/en-us/HT201372][How to create a bootable installer for macOS]]
+- [[https://support.apple.com/en-us/HT201314][About macOS Recovery on Intel-based Mac computers]]
 
 ** Launchpad
 
