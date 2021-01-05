@@ -1637,7 +1637,78 @@ sudo update-alternatives --install /usr/bin/javac, javac `echo $JAVA_HOME`/bin/j
 sudo update-alternatives --install /usr/bin/jhsdb, jhsdb `echo $JAVA_HOME`/bin/jhsdb
 #+END_SRC
 
-*** jmap
+*** jps
+
+#+BEGIN_SRC shell
+jps -vl
+#+END_SRC
+
+#+RESULTS:
+| 827717 | com.intellij.idea.Main     | -Xmx2048m                                             | -Xms128m | -XX:ConcGCThreads=2        | -XX:ErrorFile=/home/junjie/java_error_in_idea_%p.log | -XX:HeapDumpPath=/home/junjie/java_error_in_idea_.hprof | -Didea.vendor.name=JetBrains | -Didea.paths.selector=IdeaIC2020.3 | -Djb.vmOptionsFile=/home/junjie/.config/JetBrains/IdeaIC2020.3/idea64.vmoptions | -Didea.platform.prefix=Idea | -Didea.jre.check=true |
+| 828134 | jdk.jcmd/sun.tools.jps.Jps | -Dapplication.home=/usr/lib/jvm/java-11-openjdk-amd64 | -Xms8m   | -Djdk.module.main=jdk.jcmd |                                                      |                                                         |                              |                                    |                                                                                 |                             |                       |
+
+*** jhsdb
+
+#+BEGIN_SRC shell
+jhsdb -h
+#+END_SRC
+
+#+RESULTS:
+| clhsdb        | command line debugger   |
+| hsdb          | ui debugger             |
+| debugd --help | to get more information |
+| jstack --help | to get more information |
+| jmap   --help | to get more information |
+| jinfo  --help | to get more information |
+| jsnap  --help | to get more information |
+
+**** jstack
+
+#+BEGIN_SRC shell :results drawer
+jhsdb jstack -h
+#+END_SRC
+
+#+RESULTS:
+:results:
+    --locks                 To print java.util.concurrent locks.
+    --mixed                 To print both Java and native frames (mixed mode).
+    --pid <pid>             To attach to and operate on the given live process.
+    --core <corefile>       To operate on the given core file.
+    --exe <executable for corefile>
+    --connect [<id>@]<host> To connect to a remote debug server (debugd).
+
+    The --core and --exe options must be set together to give the core
+    file, and associated executable, to operate on. They can use
+    absolute or relative paths.
+    The --pid option can be set to operate on a live process.
+    The --connect option can be set to connect to a debug server (debugd).
+    --core, --pid, and --connect are mutually exclusive.
+
+    Examples: jhsdb jstack --pid 1234
+          or  jhsdb jstack --core ./core.1234 --exe ./myexe
+          or  jhsdb jstack --connect debugserver
+          or  jhsdb jstack --connect id@debugserver
+:end:
+    --locks                 To print java.util.concurrent locks.
+    --mixed                 To print both Java and native frames (mixed mode).
+    --pid <pid>             To attach to and operate on the given live process.
+    --core <corefile>       To operate on the given core file.
+    --exe <executable for corefile>
+    --connect [<id>@]<host> To connect to a remote debug server (debugd).
+
+    The --core and --exe options must be set together to give the core
+    file, and associated executable, to operate on. They can use
+    absolute or relative paths.
+    The --pid option can be set to operate on a live process.
+    The --connect option can be set to connect to a debug server (debugd).
+    --core, --pid, and --connect are mutually exclusive.
+
+    Examples: jhsdb jstack --pid 1234
+          or  jhsdb jstack --core ./core.1234 --exe ./myexe
+          or  jhsdb jstack --connect debugserver
+          or  jhsdb jstack --connect id@debugserver
+
+**** jmap
 
 #+BEGIN_SRC shell :var PASSWORD=(read-passwd "sudo password: ") :var PID=41223
 echo $PASSWORD | sudo -S jhsdb jmap --pid $PID
