@@ -1866,6 +1866,25 @@ export NODE_OPTIONS="--max-old-space-size=1024"
 *** References
 - [[https://kotlinlang.org/docs/tutorials/command-line.html][Working with the Command Line Compiler]]
 
+* SSL
+
+** Certificate Signing Request
+
+#+BEGIN_SRC sh
+# generate a private key and a CSR(Certificate Signing Request)
+openssl req -newkey rsa:2048 -nodes -keyout x.key -out x.csr
+#+END_SRC
+
+#+BEGIN_SRC sh
+	openssl req \
+					-newky rsa:2048 -nodes -keyout x.key \
+					-x509 -days 365 -out z.crt
+#+END_SRC
+
+** References
+
+- [[https://www.digitalocean.com/community/tutorials/openssl-essentials-working-with-ssl-certificates-private-keys-and-csrs][OpenSSL Essentials: Working with SSL Certificates, Private Keys and CSRs]]
+
 * All
 	:PROPERTIES:
 	:CUSTOM_ID: all
