@@ -630,9 +630,12 @@ check_nvm_env () {
 }
 
 check_kube_env () {
-  local d="\$HOME/.kube"
-  if [ type -p kubectl 2>/dev/null -a -s "\${d}/kube-completions.sh" ]; then
-    . "\${d}/kube-completions.sh"
+  local d="\${HOME}/.kube/kube-${SH}.sh"
+  if \`type -p kubectl 2>/dev/null\`; then
+     if [ ! -s "\$d" ]; then
+        kubectl completion ${SH} >"\$d"
+     fi
+     . "\$d"
     return 0
   fi
   return 1
