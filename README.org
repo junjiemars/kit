@@ -1881,9 +1881,15 @@ openssl req -newkey rsa:2048 -nodes -keyout x.key -out x.csr
 					-x509 -days 365 -out z.crt
 #+END_SRC
 
+
+#+BEGIN_SRC sh
+keytool -v -list -keystore <key-store>
+#+END_SRC
+
 ** References
 
 - [[https://www.digitalocean.com/community/tutorials/openssl-essentials-working-with-ssl-certificates-private-keys-and-csrs][OpenSSL Essentials: Working with SSL Certificates, Private Keys and CSRs]]
+- [[Key Store][https://superuser.com/questions/437330/how-do-you-add-a-certificate-authority-ca-to-ubuntu]]
 
 * All
 	:PROPERTIES:
