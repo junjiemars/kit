@@ -1891,6 +1891,13 @@ keytool -v -list -keystore <key-store>
 - [[https://www.digitalocean.com/community/tutorials/openssl-essentials-working-with-ssl-certificates-private-keys-and-csrs][OpenSSL Essentials: Working with SSL Certificates, Private Keys and CSRs]]
 - [[Key Store][https://superuser.com/questions/437330/how-do-you-add-a-certificate-authority-ca-to-ubuntu]]
 
+* Hardware
+
+** CPU
+
+*** hwloc
+*** numactl
+
 * All
 	:PROPERTIES:
 	:CUSTOM_ID: all
