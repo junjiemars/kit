@@ -695,19 +695,19 @@ posix_path () {
   local v=
   if echo "\$p" | grep -q "^[a-zA-Z]:[\/\\].*\$"; then
     if [ "abc" = \`echo "ABC" | sed -e 's#\([A-Z]*\)#\L\1#g'\` ]; then
-      v=\$(echo "\\\$p" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\L\1\\#')
+      v=\$(echo "\$p" | sed -e 's#^\([a-zA-Z]\):[\/\\]#\\\\\L\1\\\#')
     else
       local car="\`echo \$p | cut -d':' -f1\`"
       local cdr="\`echo \$p | cut -d':' -f2\`"
       if [ "\$p" = "\${car}:\${cdr}" ]; then
         v=\$(echo \$car | tr [:upper:] [:lower:])
-        v=\$(echo "\\\${v}\${cdr}" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')
+        v=\$(echo "\${v}\${cdr}" | sed -e 's#^\\([a-zA-Z]\\):[\/\\]#\\1\\\#')
       else
-        v=\$(echo "\\\$p" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')
+        v=\$(echo "\$p" | sed -e 's#^\\([a-zA-Z]\\):[\/\\]#\\1\\\#')
       fi
     fi;
   fi
-  echo "\$v" | sed -e 's#\\#\/#g'
+  echo "\$v" | sed -e 's#\\\#\/#g'
 }
 
 `
