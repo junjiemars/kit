@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: timing
+# key: timeing
+# --
+#include <time.h>
+#define _timing_(E, W)                          \
+do                                              \
+ {                                              \
+   clock_t _epoch_1_ = clock();                 \
+   (E);                                         \
+   W = (clock() - _epoch_1_);                   \
+ } while (0)
+$0
+/*
+printf("(E), escaped %lu cpu time, %lf sec\n",
+        elapsed,
+				(double) elapsed/CLOCKS_PER_SEC);
+*/

@@ -2,6 +2,7 @@
 # name: struct
 # key: struct
 # --
-typedef struct $1 {
+typedef struct $1_s
+{
   $0
-} $2;
+} $1_s;
