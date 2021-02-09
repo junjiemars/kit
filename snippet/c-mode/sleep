@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: sleep
+# key: sleep
+# --
+#ifdef MSVC
+#  pragma warning(disable: 4996)
+#  include <windows.h>
+#  include <process.h>
+#  define sleep(x) Sleep((x) * 1000)
+#else
+#  include <unistd.h>
+#endif /* end of MSVC */
+$0
