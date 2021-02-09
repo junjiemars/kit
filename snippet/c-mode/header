@@ -6,7 +6,7 @@
 
 #include "nore.h"
 
-#define _unused_(x) (void)(x)
+#define _unused_(x) ((void)(x))
 
 $0
 #endif /* end of _$1_H_ */
