@@ -2,13 +2,13 @@
 # name: nowarning
 # key: nowarning
 # --
-#if (${1:$$(upcase yas-text)})
+#if (${1:CC$$(upcase yas-text)})
 ${2:$$(let ((cc (yas-field-value 1)))
-         (cond ((string= "MSVC" cc)
-                "#  pragma warning(disable:")
-               ((string= "GCC" cc)
+        (cond ((string= "MSVC" cc)
+               "#  pragma warning(disable:")
+              ((string= "GCC" cc)
                "#  pragma GCC diagnostic ignored \\\"")
-               ((string= "CLANG" cc)
+              ((string= "CLANG" cc)
                "#  pragma clang diagnostic ignored \\\"")))}${3:warning}${4:$$(let ((cc (yas-field-value 1)))
                                                                                 (cond ((string= "MSVC" cc) ")")
                                                                                       ((string= "GCC" cc) "\\\"")
