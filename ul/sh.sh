@@ -576,7 +576,7 @@ check_racket_env () {
 		if [ "zsh" = "$SH" ]; then
 			echo "  setopt +o nomatch &>/dev/null"
 		fi
-    echo "  if \\\`ls -ld /Applications/Racket* &>/dev/null\\\`; then"
+    echo "  if \\\`ls -ldr /Applications/Racket* &>/dev/null\\\`; then"
     echo "    RACKET_HOME=\"\\\`ls -ld /Applications/Racket*|sort|head -n1|sed -e 's_.*\\\(/Applications/Racket\\ v[0-9][0-9]*\\.[0-9][0-9]*\\\).*_\\1_g'\\\`\""
     echo "  fi"
 		if [ "zsh" = "$SH" ]; then
