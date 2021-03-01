@@ -1041,6 +1041,9 @@ for i in 0 1 2 3; do echo performance > /sys/devices/system/cpu/cpu$i/cpufreq/sc
 *** journalctl
 *** dmesg
 
+** snap
+
+
 * Docker
 	:PROPERTIES:
 	:CUSTOM_ID: docker
