@@ -589,21 +589,22 @@ fi`
 }
 
 check_java_env () {
-  local javac=
+  local javac="\${JAVA_HOME%/}/bin/javac"
   local java_home=
-  if [ ! -d "\$JAVA_HOME" ]; then
-    unset "JAVA_HOME"
-  fi
-  javac="\${JAVA_HOME%/}/bin/javac"
-  if [ -f "\$javac" ]; then
-    JAVA_HOME="\${JAVA_HOME%/}"
-    return 0
+  if [ -x "\${javac}" ]; then
+    if \${javac}/bin/javac -version &>/dev/null; then
+      return 0
+      unset JAVA_HOME
+    fi
   fi
 `if on_darwin; then
   echo "  java_home='/usr/libexec/java_home'"
   echo "  if [ -L \\"\\\$java_home\\" ]; then"
   echo "    JAVA_HOME=\\"\\\$(\\\${java_home} 2>/dev/null)\\""
-  echo "    return 0"
+  echo "    javac=\\"\\\${JAVA_HOME%/}/bin/javac\\""
+  echo "    if [ -x \\"\\\${javac}\\" ]; then"
+  echo "      return 0"
+  echo "    fi"
   echo "  fi"
 elif on_linux; then
   echo "  javac=\\"\\\$(type -p javac 2>/dev/null)\\""
