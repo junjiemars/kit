@@ -591,11 +591,10 @@ fi`
 check_java_env () {
   local javac="\${JAVA_HOME%/}/bin/javac"
   local java_home=
-  if [ -x "\${javac}" ]; then
-    if \${javac}/bin/javac -version &>/dev/null; then
-      return 0
-      unset JAVA_HOME
-    fi
+  if test -x "\${javac}" && \${javac}/bin/javac -version >/dev/null; then
+    return 0
+  else
+    unset JAVA_HOME
   fi
 `if on_darwin; then
   echo "  java_home='/usr/libexec/java_home'"
