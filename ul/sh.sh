@@ -369,9 +369,9 @@ else
 fi
 
 `if [ "zsh" = "$SH" ]; then
-  echo "PS1=\"%n@%m %1~ %#\""
+  echo "PS1=\\\"%n@%m %1~ %#\\\""
 elif [ "bash" = "$SH" ]; then
-	echo "PS1=\\"\\u@\\h \\W \\$\\""
+	echo "PS1=\\\"\\u@\\h \\W \\$\\\""
 else
   echo "PS1=\"\\$LOGNAME@\\\`uname -n|cut -d'.' -f1\\\` \$\""
 fi`
