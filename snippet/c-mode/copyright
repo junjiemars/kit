@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: copyright
+# key: copyright
+# --
+/*
+ * Copyright (C) Junjie Mars
+ */
