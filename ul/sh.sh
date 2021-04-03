@@ -618,6 +618,7 @@ fi`
   return 1
 }
 
+# https://github.com/nvm-sh/nvm
 check_nvm_env () {
   local d="\$HOME/.nvm"
   if [ -s "\${d}/nvm.sh" ]; then
