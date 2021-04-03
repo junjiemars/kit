@@ -1042,7 +1042,13 @@ for i in 0 1 2 3; do echo performance > /sys/devices/system/cpu/cpu$i/cpufreq/sc
 *** dmesg
 
 ** snap
+	 :PROPERTIES:
+	 :CUSTOM_ID: ubuntu_snap
+	 :END:
 
+Location =/var/lib/snapd/snaps/=
+
+Just keep the current =ul/snap-rm.sh= version.
 
 * Docker
 	:PROPERTIES:
