@@ -369,7 +369,7 @@ else
 fi
 
 `if [ "zsh" = "$SH" ]; then
-  echo "PS1=\\\"%n@%m %1~ %#\\\""
+  echo "PS1=\"%n@%m %1~ %#\""
 elif [ "bash" = "$SH" ]; then
 	echo "PS1=\\\"\\u@\\h \\W \\$\\\""
 else
@@ -591,7 +591,7 @@ fi`
 check_java_env () {
   local javac="\${JAVA_HOME%/}/bin/javac"
   local java_home=
-  if test -x "\${javac}" && \${javac}/bin/javac -version >/dev/null; then
+  if test -x "\${javac}" && \${javac} -version >/dev/null; then
     return 0
   else
     unset JAVA_HOME
@@ -621,9 +621,9 @@ fi`
 check_nvm_env () {
   local d="\$HOME/.nvm"
   if [ -s "\${d}/nvm.sh" ]; then
+    NVM_DIR="\$d"
     . "\${d}/nvm.sh"
     [ -s "\${d}/bash_completion" ] && . "\${d}/bash_completion"
-    NVM_DIR="\$d"
     return 0
   fi
   return 1
