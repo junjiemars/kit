@@ -10,7 +10,7 @@ case "$_OS_NAME_" in
   MSYS_NT-*|MINGW??_NT-*)
     _OS_NAME_="WinNT" ;;
 esac
-SH="`basename $SHELL`"
+SH="${SH:-`basename $SHELL`}"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 
 # check the echo's "-n" option and "\c" capability
@@ -230,24 +230,16 @@ END
 	echo "# PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
 fi`
 
-test -f \$HOME/.${SH}_init && . \$HOME/.${SH}_init
+test -f \$HOME/.${SH}_init    && . \$HOME/.${SH}_init
 test -f \$HOME/.${SH}_vars    && . \$HOME/.${SH}_vars
 test -f \$HOME/.${SH}_paths   && . \$HOME/.${SH}_paths
 test -f \$HOME/.${SH}_aliases && . \$HOME/.${SH}_aliases
 
 export PATH
 `if on_linux; then
-		if [ -n "$LD_LIBRARY_PATH" ]; then
-  		echo "export LD_LIBRARY_PATH"
-		else
-			echo "# export LD_LIBRARY_PATH"
-		fi
+	echo "# export LD_LIBRARY_PATH"
 elif on_darwin; then
-	if [ -n "$DYLD_LIBRARY_PATH" ]; then
-		echo "export DYLD_LIBRARY_PATH"
-	else
-		echo "# export DYLD_LIBRARY_PATH"
-	fi
+  echo "# export DYLD_LIBRARY_PATH"
 fi`
 
 # eof
@@ -591,7 +583,7 @@ fi`
 check_java_env () {
   local javac="\${JAVA_HOME%/}/bin/javac"
   local java_home=
-  if test -x "\${javac}" && \${javac} -version >/dev/null; then
+  if test -x "\${javac}" && \${javac} -version 2>&1 >/dev/null; then
     return 0
   else
     unset JAVA_HOME
