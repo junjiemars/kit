@@ -10,7 +10,7 @@ case "$_OS_NAME_" in
   MSYS_NT-*|MINGW??_NT-*)
     _OS_NAME_="WinNT" ;;
 esac
-SH="${SH:-`ps -cp $$ -o command=''`}"
+SH="${SH:-`ps -cp $$ -o command='' | tr -d '-'`}"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 
 # check the echo's "-n" option and "\c" capability
@@ -187,7 +187,7 @@ fi`
 # `basename ${logout}`: executed by ${SH}(1) when login shell exits.
 # when leaving the console clear the screen to increase privacy
 
-if [ "\$SHLVL" = 1 ]; then
+if [ "\$SHLVL" -eq 1 ]; then
   [ -x /usr/bin/clear_console ] && /usr/bin/clear_console -q
 fi
 
@@ -287,39 +287,13 @@ inside_emacs_p () {
   test -n "\$INSIDE_EMACS"
 }
 
-get_sed_opt_i () {
 `
-	if on_darwin; then
-  	echo "  echo \\"-i \\$1\\""
-	else
-  	echo "  echo \\"-i\\$1\\""
-	fi
+declare -f get_sed_opt_i
 `
-}
 
-# sh has no function forward declaration
-# `
-# declare -f delete_tail_lines
-# `
-delete_tail_lines () {
-	local h="\$1"
-  local lines="\$2"
-	local f="\$3"
-	local sed_opt_i="\`get_sed_opt_i .pre\`"
-
-  [ -f "\$f" ] || return 1
-
-  local line_no=\`grep -m1 -n "^\${h}" \$f | cut -d':' -f1\`
-  echo \$line_no | grep -q '^[0-9][0-9]*\$' || return 1
-
-  if [ 0 -lt \$line_no ]; then
-    if [ "yes" = "\$lines" ]; then
-      sed \$sed_opt_i -e "\$line_no,\$d" "\$f"
-    else  
-      sed \$sed_opt_i -e "\${line_no}d" "\$f"
-    fi
-  fi
-}
+`
+declare -f delete_tail_lines
+`
 
 pretty_prompt_command () {
   local o="\${PROMPT_COMMAND}"
@@ -680,29 +654,9 @@ uniq_path () {
   echo "\$paths"
 }
 
-# sh has no function forward declaration
-# `
-# declare -f posix_path
-# `
-posix_path () {
-  local p="\$@"
-  local v=
-  if echo "\$p" | grep -q "^[a-zA-Z]:[\/\\].*\$"; then
-    if [ "abc" = \`echo "ABC" | sed -e 's#\([A-Z]*\)#\L\1#g'\` ]; then
-      v=\$(echo "\$p" | sed -e 's#^\([a-zA-Z]\):[\/\\]#\\\\\L\1\\\#')
-    else
-      local car="\`echo \$p | cut -d':' -f1\`"
-      local cdr="\`echo \$p | cut -d':' -f2\`"
-      if [ "\$p" = "\${car}:\${cdr}" ]; then
-        v=\$(echo \$car | tr [:upper:] [:lower:])
-        v=\$(echo "\${v}\${cdr}" | sed -e 's#^\\([a-zA-Z]\\):[\/\\]#\\1\\\#')
-      else
-        v=\$(echo "\$p" | sed -e 's#^\\([a-zA-Z]\\):[\/\\]#\\1\\\#')
-      fi
-    fi;
-  fi
-  echo "\$v" | sed -e 's#\\\#\/#g'
-}
+`
+declare -f posix_path
+`
 
 `
 if on_windows_nt; then
