@@ -13,6 +13,7 @@ esac
 SH="${SH:-`ps -cp $$ -o command='' | tr -d '-'`}"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 
+
 # check the echo's "-n" option and "\c" capability
 if echo "test\c" | grep -q c; then
   echo_c=
@@ -134,10 +135,13 @@ delete_tail_lines () {
 }
 
 gen_dot_shell_profile () {
-	local profile="$HOME/.bash_profile"
-	if [ "zsh" = "$SH" ]; then
-		profile="$HOME/.zprofile"
-	fi
+	local profile="$HOME/.${SH}_profile"
+  case "$SH" in
+    zsh)  profile="$HOME/.zprofile" ;;
+    bash) profile="$HOME/.bash_profile" ;;
+    sh|*) profile="$HOME/.profile" ;;
+  esac
+
 	save_as "$profile"
 	echo $echo_n "+ generate $profile ... $echo_c"
   cat << END > "$profile"
@@ -336,11 +340,12 @@ else
 fi
 
 `if [ "zsh" = "$SH" ]; then
+  echo "__${SH}__"
   echo "PS1=\"%n@%m %1~ %#\""
 elif [ "bash" = "$SH" ]; then
 	echo "PS1=\\"\\u@\\h \\W \\$\\""
 else
-  echo "PS1=\\"\\$LOGNAME@\\\`uname -n|cut -d'.' -f1\\\` \$\\""
+  echo "PS1=\\"\\$LOGNAME@\\\`uname -n | cut -d '.' -f1\\\` \$\\""
 fi`
 export PS1="\${PS1% } "
 
