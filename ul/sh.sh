@@ -340,7 +340,6 @@ else
 fi
 
 `if [ "zsh" = "$SH" ]; then
-  echo "__${SH}__"
   echo "PS1=\"%n@%m %1~ %#\""
 elif [ "bash" = "$SH" ]; then
 	echo "PS1=\\"\\u@\\h \\W \\$\\""
