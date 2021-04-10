@@ -6,10 +6,6 @@
 
 HOME="${HOME%/}"
 PLATFORM="`uname -s 2>/dev/null`"
-case "$_OS_NAME_" in
-  MSYS_NT-*|MINGW??_NT-*)
-    _OS_NAME_="WinNT" ;;
-esac
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 SH="${SH}"
 if [ -z "$SH" ]; then
@@ -33,8 +29,6 @@ else
   echo_n=
   echo_c='\c'
 fi
-
-
 
 
 save_as () {
