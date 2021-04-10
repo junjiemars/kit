@@ -16,7 +16,7 @@ if [ -z "$SH" ]; then
   if `ps -cp $$ -o command='' &>/dev/null`; then
     SH="`ps -cp $$ -o command='' | tr -d '-'`"
   else
-    SH="basename $SHELL"
+    SH="`basename $SHELL`"
   fi
 fi
 
