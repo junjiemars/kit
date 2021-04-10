@@ -10,7 +10,7 @@ case "$_OS_NAME_" in
   MSYS_NT-*|MINGW??_NT-*)
     _OS_NAME_="WinNT" ;;
 esac
-SH="${SH:-`ps -cp $$ -o command='' | tr -d '-'`}"
+SH="${SH:-`ps -p $$ -o command='' | tr -d '-'`}"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 
 
