@@ -20,7 +20,7 @@ jobs:
         env:
           SHELL: /bin/bash
         run: |
-          bash ./test.sh
+          ./test.sh
 
 
   MacOS:
@@ -33,7 +33,7 @@ jobs:
         env:
           SHELL: /bin/zsh
         run: |
-          zsh ./test.sh
+          ./test.sh
 
 
   Windows:
@@ -54,7 +54,7 @@ jobs:
       env:
         SHELL: /bin/bash
       run: |
-         bash ./test.sh
+         ./test.sh
 
 
 # EOF
