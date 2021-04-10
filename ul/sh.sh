@@ -562,7 +562,7 @@ fi`
 check_java_env () {
   local javac="\${JAVA_HOME%/}/bin/javac"
   local java_home=
-  if test -x "\${javac}" && \${javac} -version 2>&1 >/dev/null; then
+  if test -x "\${javac}" && \${javac} -version &>/dev/null; then
     return 0
   else
     unset JAVA_HOME
