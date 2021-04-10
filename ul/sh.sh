@@ -238,6 +238,12 @@ END
 	echo "# PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
 fi`
 
+# o_check_racket_env=1
+# o_check_java_env=1
+# o_check_nvm_env=1
+# o_check_kube_env=1
+
+
 test -f \$HOME/.${SH}_init    && . \$HOME/.${SH}_init
 test -f \$HOME/.${SH}_vars    && . \$HOME/.${SH}_vars
 test -f \$HOME/.${SH}_paths   && . \$HOME/.${SH}_paths
@@ -617,10 +623,31 @@ check_kube_env () {
   return 1
 }
 
-check_racket_env
-check_java_env
-# check_nvm_env
-# check_kube_env
+`if on_linux; then
+   echo "snap_remove_disabled () {"
+   echo "  LANG=C snap list --all | awk '/disabled/{print \\\$1, \\\$3}' |"
+   echo "    while read snapname revision; do"
+   echo "      sudo snap remove \\"\\\$snapname\\" --revision=\\"\\\$revision\\""
+   echo "    done"
+   echo "}"
+fi`
+
+
+if [ "\$o_check_racket_env" -eq 1 ]; then
+  check_racket_env
+fi
+
+if [ "\$o_check_java_env" -eq 1 ]; then
+  check_java_env
+fi
+
+if [ "\$o_check_nvm_env" -eq 1 ]; then
+  check_nvm_env
+fi
+
+if [ "\$o_check_kube_env" -eq 1 ]; then
+  check_kube_env
+fi
 
 # declare vars
 
