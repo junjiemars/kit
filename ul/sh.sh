@@ -632,6 +632,13 @@ check_kube_env () {
    echo "}"
 fi`
 
+`if command -v dd &>/dev/null; then
+   echo "random_base64 () {"
+   echo "  local n=\\"\\\${1:-8}\\""
+   echo "  echo \\\`dd if=/dev/random bs=\\\$n|head -c\\\$n|base64 -b\\\$n|head -n1\\\`"
+   echo "}"
+fi`
+
 
 if [ "\$o_check_racket_env" = 1 ]; then
   check_racket_env
