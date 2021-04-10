@@ -10,8 +10,15 @@ case "$_OS_NAME_" in
   MSYS_NT-*|MINGW??_NT-*)
     _OS_NAME_="WinNT" ;;
 esac
-SH="${SH:-`ps -p $$ -o command='' | tr -d '-'`}"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
+SH="${SH}"
+if [ -z "$SH" ]; then
+  if `ps -cp $$ -o command='' &>/dev/null`; then
+    SH="`ps -cp $$ -o command='' | tr -d '-'`"
+  else
+    SH="basename $SHELL"
+  fi
+fi
 
 
 # check the echo's "-n" option and "\c" capability
@@ -26,6 +33,9 @@ else
   echo_n=
   echo_c='\c'
 fi
+
+
+
 
 save_as () {
   local f="$1"
