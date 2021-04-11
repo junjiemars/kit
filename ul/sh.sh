@@ -635,7 +635,7 @@ fi`
 `if [ -r /dev/null ]; then
    echo "random_base64 () {"
    echo "  local n=\\"\\\${1:-8}\\""
-   echo "  echo \\"\\\`cat /dev/random|head -c\\\$n|base64 -b\\\$n|head -n1\\\`\\""
+   echo "  echo \\"\\\`cat /dev/random|head -c\\\$n|base64|head -c\\\$n\\\`\\""
    echo "}"
 fi`
 
