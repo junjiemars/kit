@@ -614,10 +614,8 @@ check_nvm_env () {
 check_kube_env () {
   local d="\${HOME}/.kube/kube-${SH}.sh"
   if \`type -p kubectl &>/dev/null\`; then
-     if [ ! -s "\$d" ]; then
-        SHELL=$SHELL kubectl completion ${SH} >"\$d"
-     fi
-     . "\$d"
+    SHELL=$SHELL kubectl completion ${SH} >"\$d"
+    . "\$d"
     return 0
   fi
   return 1
