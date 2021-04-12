@@ -238,10 +238,10 @@ END
 	echo "# PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
 fi`
 
-# o_check_racket_env=1
-# o_check_java_env=1
-# o_check_nvm_env=1
-# o_check_kube_env=1
+o_check_racket_env=0
+o_check_java_env=0
+o_check_nvm_env=0
+o_check_kube_env=0
 
 
 test -f \$HOME/.${SH}_init    && . \$HOME/.${SH}_init
@@ -613,9 +613,9 @@ check_nvm_env () {
 
 check_kube_env () {
   local d="\${HOME}/.kube/kube-${SH}.sh"
-  if \`type -p kubectl 2>/dev/null\`; then
+  if \`type -p kubectl &>/dev/null\`; then
      if [ ! -s "\$d" ]; then
-        kubectl completion ${SH} >"\$d"
+        SHELL=$SHELL kubectl completion ${SH} >"\$d"
      fi
      . "\$d"
     return 0
@@ -640,19 +640,19 @@ fi`
 fi`
 
 
-if [ "\$o_check_racket_env" = 1 ]; then
+if [ "\$o_check_racket_env" -eq 1 ]; then
   check_racket_env
 fi
 
-if [ "\$o_check_java_env" = 1 ]; then
+if [ "\$o_check_java_env" -eq 1 ]; then
   check_java_env
 fi
 
-if [ "\$o_check_nvm_env" = 1 ]; then
+if [ "\$o_check_nvm_env" -eq 1 ]; then
   check_nvm_env
 fi
 
-if [ "\$o_check_kube_env" = 1 ]; then
+if [ "\$o_check_kube_env" -eq 1 ]; then
   check_kube_env
 fi
 
