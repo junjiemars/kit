@@ -632,10 +632,10 @@ check_kube_env () {
    echo "}"
 fi`
 
-`if [ -r /dev/null ]; then
+`if dd --version &>/dev/null && test -r /dev/random; then
    echo "random_base64 () {"
    echo "  local n=\\"\\\${1:-8}\\""
-   echo "  echo \\"\\\`cat /dev/random|head -c\\\$n|base64|head -c\\\$n\\\`\\""
+   echo "  echo \\"\\\`dd if=/dev/random bs=\\\$n count=1 status=none|head -c\\\$n|base64|head -c\\\$n\\\`\\""
    echo "}"
 fi`
 
