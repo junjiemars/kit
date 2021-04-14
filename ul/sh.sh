@@ -238,10 +238,10 @@ END
 	echo "# PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
 fi`
 
-o_check_racket_env=0
-o_check_java_env=0
-o_check_nvm_env=0
-o_check_kube_env=0
+# o_check_racket_env=no
+# o_check_java_env=no
+# o_check_nvm_env=no
+# o_check_kube_env=no
 
 
 test -f \$HOME/.${SH}_init    && . \$HOME/.${SH}_init
@@ -644,19 +644,19 @@ fi`
 fi`
 
 
-if [ "\$o_check_racket_env" -eq 1 ]; then
+if [ "\$o_check_racket_env" = "yes" ]; then
   check_racket_env
 fi
 
-if [ "\$o_check_java_env" -eq 1 ]; then
+if [ "\$o_check_java_env" = "yes" ]; then
   check_java_env
 fi
 
-if [ "\$o_check_nvm_env" -eq 1 ]; then
+if [ "\$o_check_nvm_env" = "yes" ]; then
   check_nvm_env
 fi
 
-if [ "\$o_check_kube_env" -eq 1 ]; then
+if [ "\$o_check_kube_env" = "yes" ]; then
   check_kube_env
 fi
 
