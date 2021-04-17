@@ -401,6 +401,7 @@ gen_dot_shell_aliases () {
 fi`
 #------------------------------------------------
 
+
 alias ..1='cd ../'
 alias ..2='cd ../../'
 alias ..3='cd ../../../'
@@ -409,17 +410,6 @@ alias ..4='cd ../../../../'
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
-
-exist_p () {
-  # command -v \${1} 1>/dev/null 2>&1; echo \$?
-  which \${1} 1>/dev/null 2>&1; echo \$?
-}
-
-diff_p () {
-  diff \${1} \${2} 1>/dev/null 2>&1; echo \$?
-}
-
-has_rlwrap=\$(exist_p 'rlwrap')
 
 `
 if on_darwin; then
@@ -434,6 +424,18 @@ else
   echo "alias l='ls -CF --color=auto'"
 fi
 `
+
+
+exist_p () {
+  # command -v \${1} 1>/dev/null 2>&1; echo \$?
+  which \${1} 1>/dev/null 2>&1; echo \$?
+}
+
+diff_p () {
+  diff \${1} \${2} 1>/dev/null 2>&1; echo \$?
+}
+
+has_rlwrap=\$(exist_p 'rlwrap')
 
 alias_racket () {
 	if [ 0 -eq \$has_rlwrap ]; then
