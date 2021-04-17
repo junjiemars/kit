@@ -210,12 +210,10 @@ fi`
 if [ "\$SHLVL" -eq 1 ]; then
 `if on_darwin; then
    echo "  clear"
-else
-   echo "  if [ -x /usr/bin/clear_console ]; then"
+elif [ -x /usr/bin/clear_console ]; then
    echo "    /usr/bin/clear_console -q"
-   echo "  else"
+else
    echo "    clear"
-   echo "  fi  "
 fi`
 fi
 
