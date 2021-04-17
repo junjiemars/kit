@@ -500,11 +500,11 @@ alias_emacs
 alias_racket
 alias_python
 
-`if [ 0 -eq $(exist_p rlwrap) ]; then
-   echo "alias_rlwrap_bin sbcl"
-   echo "alias_rlwrap_bin ecl"
-   echo "alias_rlwrap_bin openssl"
-fi`
+if [ 0 -eq \$(exist_p rlwrap) ]; then
+  alias_rlwrap_bin sbcl
+  alias_rlwrap_bin ecl
+  alias_rlwrap_bin openssl
+fi
 
 
 # eof
