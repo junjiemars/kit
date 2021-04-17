@@ -138,6 +138,18 @@ delete_tail_lines () {
   fi
 }
 
+
+exist_p () {
+  which ${1} 1>/dev/null 2>&1
+  echo $?
+}
+
+diff_p () {
+  diff ${1} ${2} 1>/dev/null 2>&1
+  echo $?
+}
+
+
 gen_dot_shell_profile () {
 	local profile="$HOME/.${SH}_profile"
   case "$SH" in
@@ -425,24 +437,28 @@ else
 fi
 `
 
-
-exist_p () {
-  # command -v \${1} 1>/dev/null 2>&1; echo \$?
-  which \${1} 1>/dev/null 2>&1; echo \$?
+where () {
+`if [ "$SH" = "zsh" ]; then
+   echo "  whence \\\$1"
+elif [ "$SH" = "bash" ]; then
+   echo "  command -v \\\$1"
+else
+   echo "   type -p \\\$1"
+fi`
 }
 
-diff_p () {
-  diff \${1} \${2} 1>/dev/null 2>&1; echo \$?
-}
+`
+declare -f exist_p
+`
 
-has_rlwrap=\$(exist_p 'rlwrap')
+`
+declare -f diff_p
+`
 
 alias_racket () {
-	if [ 0 -eq \$has_rlwrap ]; then
-		local p_racket=\$(exist_p 'racket')
-		if [ 0 -eq \$p_racket ]; then
-			alias racket='rlwrap racket'
-		fi
+	local p_racket=\$(exist_p 'racket')
+	if [ 0 -eq \$p_racket ]; then
+		alias racket='rlwrap racket'
 	fi
 }
 
@@ -457,7 +473,7 @@ alias_vi () {
 	local p_vi=\$(exist_p 'vi')
 	local p_vim=\$(exist_p 'vim')
 	if [ 0 -eq \$p_vi ] && [ 0 -eq \$p_vim ]; then
-	  if [ 0 -ne \$(diff_p \`type -p vi\` \`type -p vim\`) ]; then
+	  if [ 0 -ne \$(diff_p \`where vi\` \`where vim\`) ]; then
 	    alias vi=vim
 	  fi
 	fi
@@ -476,23 +492,8 @@ alias_python () {
 
 alias_rlwrap_bin () {
 	local bin="\$1"
-	local os="\$2"
-	local m=
-
-	if [ -n "\$os" ]; then
-		case "\$PLATFORM" in
-			\$os) m=0 ;;
-			*) m=1 ;;
-		esac
-	else
-		m=0
-	fi
-
-	if [ 0 -eq \$m -a 0 -eq \$has_rlwrap ]; then
-		local p_bin=\$(exist_p "\$bin")
-		if [ 0 -eq \$p_bin ]; then
-			alias \$(echo "\$bin")="rlwrap \$bin"
-		fi
+	if [ 0 -eq \$(exist_p "\$bin") ]; then
+		alias \$(echo "\$bin")="rlwrap \$bin"
 	fi
 }
 
@@ -500,10 +501,13 @@ alias_vi
 alias_emacs
 alias_racket
 alias_python
-alias_rlwrap_bin sbcl
-alias_rlwrap_bin ecl
-alias_rlwrap_bin openssl
-alias_rlwrap_bin lldb Linux
+
+`if [ 0 -eq $(exist_p rlwrap) ]; then
+   echo "alias_rlwrap_bin sbcl"
+   echo "alias_rlwrap_bin ecl"
+   echo "alias_rlwrap_bin openssl"
+fi`
+
 
 # eof
 END
