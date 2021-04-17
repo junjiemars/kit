@@ -568,7 +568,8 @@ check_racket_env () {
      echo "  setopt -o nomatch &>/dev/null"
 	 fi
 else
-   echo "  # nop, no found racket"
+   echo "  # nop"
+   echo "  :"
 fi`
 }
 
