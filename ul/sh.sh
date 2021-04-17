@@ -208,7 +208,15 @@ fi`
 # when leaving the console clear the screen to increase privacy
 
 if [ "\$SHLVL" -eq 1 ]; then
-  [ -x /usr/bin/clear_console ] && /usr/bin/clear_console -q
+`if on_darwin; then
+   echo "  clear"
+else
+   echo "  if [ -x /usr/bin/clear_console ]; then"
+   echo "    /usr/bin/clear_console -q"
+   echo "  else"
+   echo "    clear"
+   echo "  fi  "
+fi`
 fi
 
 # eof
