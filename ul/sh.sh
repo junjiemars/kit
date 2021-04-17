@@ -296,8 +296,6 @@ fi`
 #------------------------------------------------
 
 SHELL=`command -v $SH`
-PLATFORM="\`uname -s 2>/dev/null\`"
-MACHINE="\`uname -m 2>/dev/null\`"
 
 inside_docker_p () {
   [ ".\$INSIDE_DOCKER" = ".1" ] && return 0
@@ -560,18 +558,17 @@ OPT_OPEN="\${OPT_OPEN:-\$(choose_prefix)/open}"
 
 check_racket_env () {
 `if on_darwin; then
-		if [ "zsh" = "$SH" ]; then
-			echo "  setopt +o nomatch &>/dev/null"
-		fi
-    echo "  if \\\`ls -ldr /Applications/Racket* &>/dev/null\\\`; then"
-    echo "    RACKET_HOME=\"\\\`ls -ldr /Applications/Racket*|head -n1|sed -e 's_.*\\\(/Applications/Racket\\ v[0-9][0-9]*\\.[0-9][0-9]*\\\).*_\\1_g'\\\`\""
-    echo "  fi"
-		if [ "zsh" = "$SH" ]; then
-			echo "  setopt -o nomatch &>/dev/null"
-		fi
-  else
-    echo "  # nop"
-    echo "  :;"
+   if [ "zsh" = "$SH" ]; then
+   	echo "  setopt +o nomatch &>/dev/null"
+   fi
+   echo "  if \\\`ls -ldr /Applications/Racket* &>/dev/null\\\`; then"
+   echo "    RACKET_HOME=\"\\\`ls -ldr /Applications/Racket*|head -n1|sed -e 's_.*\\\(/Applications/Racket\\ v[0-9][0-9]*\\.[0-9][0-9]*\\\).*_\\1_g'\\\`\""
+   echo "  fi"
+	 if [ "zsh" = "$SH" ]; then
+     echo "  setopt -o nomatch &>/dev/null"
+	 fi
+else
+   echo "  # nop, no found racket"
 fi`
 }
 
