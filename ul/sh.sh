@@ -443,11 +443,11 @@ fi
 
 where () {
 `if [ "$SH" = "zsh" ]; then
-   echo "  whence \\\$1"
+   echo "  whence \\\$@"
 elif [ "$SH" = "bash" ]; then
-   echo "  command -v \\\$1"
+   echo "  command -v \\\$@"
 else
-   echo "   type -p \\\$1"
+   echo "   type -p \\\$@"
 fi`
 }
 
