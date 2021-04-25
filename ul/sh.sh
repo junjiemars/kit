@@ -361,7 +361,7 @@ pretty_term () {
 }
 
 # check prompt
-if [ "o_check_prompt_env" = "yes" ]; then
+if [ "\$o_check_prompt_env" = "yes" ]; then
   PROMPT_COMMAND="\$(pretty_prompt_command)"
   if [ -z "\$PROMPT_COMMAND" ]; then
     unset PROMPT_COMMAND
@@ -646,6 +646,7 @@ check_kube_env () {
   echo "    if [ ! -f "\\$m" ]; then"
   echo "cat << END > \"\\$m\""
   echo "export ZSH=\"\\$d\""
+  echo "DISABLE_AUTO_UPDATE=true"
   echo "ZSH_THEME=\"robbyrussell\""
   echo "#plugins=(git z nvm kubectl)"
   echo "source \"\\\\\\${ZSH}/oh-my-zsh.sh\""
