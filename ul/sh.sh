@@ -638,15 +638,25 @@ check_kube_env () {
   return 1
 }
 
-check_ohmyzsh_env () {
-  local d="\${HOME}/.oh-my-zsh/oh-my-zsh.sh"
-  local i="\${HOME}/.zsh_ohmyzsh"
-  if [ -f "\$d" -a -f "\$i" ]; then
-    . "\$i"
-    return \$?
-  fi
-  return 1
-}
+`if [ "zsh" = "$SH" ]; then
+  echo "check_ohmyzsh_env () {"
+  echo "  local d=\"\\${HOME}/.oh-my-zsh\""
+  echo "  local m=\"\\${HOME}/.zsh_ohmyzsh\""
+  echo "  if [ -f \"\\${d}/oh-my-zsh.sh\" ]; then"
+  echo "    if [ ! -f "\\$m" ]; then"
+  echo "cat << END > \"\\$m\""
+  echo "export ZSH=\"\\$d\""
+  echo "ZSH_THEME=\"robbyrussell\""
+  echo "#plugins=(git z nvm kubectl)"
+  echo "source \"\\\\\\${ZSH}/oh-my-zsh.sh\""
+  echo "END"
+  echo "    fi"
+  echo "    . \"\\$m\""
+  echo "    return \\$?"
+  echo "  fi"
+  echo "  return 1"
+  echo "}"
+fi`
 
 `if on_linux && snap --version &>/dev/null; then
    echo "snap_remove_disabled () {"
@@ -685,9 +695,11 @@ if [ "\$o_check_kube_env" = "yes" ]; then
   check_kube_env
 fi
 
-if [ "\$o_check_ohmyzsh_env" = "yes" ]; then
-  check_ohmyzsh_env
-fi
+`if [ "zsh" = "$SH" ]; then
+  echo "if [ \\"\\$o_check_ohmyzsh_env\" = \\"yes\\" ]; then"
+  echo "  check_ohmyzsh_env"
+  echo "fi"
+fi`
 
 # declare vars
 
