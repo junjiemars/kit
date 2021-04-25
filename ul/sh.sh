@@ -261,7 +261,9 @@ fi`
 # o_check_java_env=no
 # o_check_nvm_env=no
 # o_check_kube_env=no
-# o_check_ohmyzsh_env=no
+`if [ "zsh" = "$SH" ]; then
+  echo "# o_check_ohmyzsh_env=no"
+fi`
 
 
 test -f \$HOME/.${SH}_init    && . \$HOME/.${SH}_init
