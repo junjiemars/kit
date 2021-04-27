@@ -1247,10 +1247,41 @@ Open File=>=Settings=>=
 
 [[file:all/ide/idea/idea-jar-kit.sh][idea-jar-kit.sh]] import/export settings.
 
-- Navigation
-	- a
-	- b
+- Navigation: @@html:<kbd>@@C-N@@html:</kbd>@@
+	- go to declaration or usages: @@html:<kbd>@@C-N d@@html:</kbd>@@
+	- go to implementations: @@html:<kbd>@@C-N i@@html:</kbd>@@
+	- go to super method: @@html:<kbd>@@C-N u@@html:</kbd>@@
+	- show type hierarchy: @@html:<kbd>@@C-N t@@html:</kbd>@@
 
 - File
+	- close project: @@html:<kbd>@@C-x C-c@@html:</kbd>@@
+	- go to file: @@html:<kbd>@@C-x C-f@@html:</kbd>@@
+	- toggle readonly attribute: @@html:<kbd>@@C-x C-q@@html:</kbd>@@
+	- show New dialog: @@html:<kbd>@@C-X n@@html:</kbd>@@
+	- save all: @@html:<kbd>@@C-x C-s@@html:</kbd>@@
+
+- Window
+	- switcher: @@html:<kbd>@@C-x C-b@@html:</kbd>@@
+	- hide active tool window: @@html:<kbd>@@S-ESC@@html:</kbd>@@
+	- hide side tool window: @@html:<kbd>@@C-x ,@@html:</kbd>@@
+	- hide all tool window: @@html:<kbd>@@C-x 9@@html:</kbd>@@
+
+	- split:
+  	- unsplit all: @@html:<kbd>@@C-x 1@@html:</kbd>@@
+		- split right: @@html:<kbd>@@C-x 3@@html:</kbd>@@
+		- split down: @@html:<kbd>@@C-x 2@@html:</kbd>@@
+		- go to next splitter: @@html:<kbd>@@C-x C-o@@html:</kbd>@@
+
+	- resize:
+	  - stretch to left: @@html:<kbd>@@C-x {@@html:</kbd>@@
+		- stretch to left: @@html:<kbd>@@C-x }@@html:</kbd>@@
+		- stretch to top: @@html:<kbd>@@C-x _@@html:</kbd>@@
+    - stretch to bottom: @@html:<kbd>@@C-x +@@html:</kbd>@@
+
 - Editing
+
 - Debugging
+
+- Terminal
+	- close session: @@html:<kbd>@@C-W@@html:</kbd>@@
+	- new session: @@html:<kbd>@@C-T@@html:</kbd>@@
