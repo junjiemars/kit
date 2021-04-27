@@ -1,7 +1,7 @@
 #!/bin/bash
 #------------------------------------------------
 # target: make Idea's settings.jar
-# author: junjiemars@gmail.com
+# author: Junjie Mars
 #------------------------------------------------
 
 PREFIX=
