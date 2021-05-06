@@ -305,7 +305,25 @@ gen_dot_shell_init () {
 fi`
 #------------------------------------------------
 
-SHELL=`command -v $SH`
+SHELL=`if [ "$SH" = "zsh" ]; then
+  whence -p zsh
+elif [ "$SH" = "bash" ]; then
+  type -P bash
+else
+  command -v $SH
+fi`
+
+
+where () {
+`if [ "$SH" = "zsh" ]; then
+   echo "  # override the zsh builtin"
+   echo "  whence -p \\\$@"
+elif [ "$SH" = "bash" ]; then
+   echo "  type -P \\\$@"
+else
+   echo "   command -v \\\$@"
+fi`
+}
 
 inside_docker_p () {
   [ ".\$INSIDE_DOCKER" = ".1" ] && return 0
@@ -399,6 +417,7 @@ else
 fi
 `
 
+
 # eof
 END
   if [ 0 -eq $? ]; then
@@ -447,16 +466,6 @@ else
   echo "alias l='ls -CF --color=auto'"
 fi
 `
-
-where () {
-`if [ "$SH" = "zsh" ]; then
-   echo "  whence \\\$@"
-elif [ "$SH" = "bash" ]; then
-   echo "  command -v \\\$@"
-else
-   echo "   type -p \\\$@"
-fi`
-}
 
 `
 declare -f exist_p
@@ -604,7 +613,7 @@ check_java_env () {
   echo "    fi"
   echo "  fi"
 elif on_linux; then
-  echo "  javac=\\"\\\$(type -p javac 2>/dev/null)\\""
+  echo "  javac=\\"\\\$(where javac 2>/dev/null)\\""
   echo "  if [ -n \\"\\\${javac}\\" -a -x \\"\\\$javac\\" ]; then"
   echo "    java_home=\\"\\\$(readlink -f \\"\\\${javac}\\" | sed 's:/bin/javac::')\\""
   echo "    JAVA_HOME=\\"\\\${java_home}\\""
@@ -630,7 +639,7 @@ check_nvm_env () {
 
 check_kube_env () {
   local d="\${HOME}/.kube/kube-${SH}.sh"
-  if \`type -p kubectl &>/dev/null\`; then
+  if \`where kubectl &>/dev/null\`; then
     if [ ! -f "\$d" ]; then
       SHELL=$SHELL kubectl completion ${SH} >"\$d"
     fi
@@ -670,7 +679,7 @@ fi`
    echo "}"
 fi`
 
-`if type -p dd &>/dev/null && test -r /dev/random; then
+`if where dd &>/dev/null && test -r /dev/random; then
    echo "random_base64 () {"
    echo "  local n=\\"\\\${1:-8}\\""
    if on_darwin; then
