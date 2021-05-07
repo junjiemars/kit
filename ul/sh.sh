@@ -257,6 +257,7 @@ END
 fi`
 
 # o_check_prompt_env=no
+# o_check_lang_env=no
 # o_check_racket_env=no
 # o_check_java_env=no
 # o_check_nvm_env=no
@@ -380,7 +381,7 @@ pretty_term () {
   fi
 }
 
-# check prompt
+# check prompt env
 if [ "\$o_check_prompt_env" = "yes" ]; then
   PROMPT_COMMAND="\$(pretty_prompt_command)"
   if [ -z "\$PROMPT_COMMAND" ]; then
@@ -402,20 +403,23 @@ fi`
   export TERM
 fi
 
-# fix set locale failed
-# sudo localedef -i en_US -f UTF-8 en_US.UTF-8
-
-`
-if on_windows_nt; then
-  echo "# change code page to unicode"
-  echo "chcp.com 65001 &>/dev/null"
-  echo "export LANG=en_US.UTF-8"
-else
-  echo "if test -z \"\\$LANG\"; then"
-  echo "  export LANG=en_US.UTF-8"
-  echo "fi"
+# check lang env
+if [ "\$o_check_lang_env" = "yes" ]; then
+`if on_windows_nt; then
+    echo "  # change code page to unicode"
+    echo "  chcp.com 65001 &>/dev/null"
+    echo "  export LANG=en_US.UTF-8"
+  else
+    echo "  if test -z \"\\$LANG\"; then"
+    echo "    LANG=en_US.UTF-8"
+    echo "  fi"
+    echo "  export LANG=\\$LANG"
+    if on_linux; then
+      echo "  # fix set locale failed:"
+      echo "  # sudo localedef -i en_US -f UTF-8 en_US.UTF-8"
+    fi
+fi`
 fi
-`
 
 
 # eof
