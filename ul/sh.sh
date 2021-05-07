@@ -247,10 +247,10 @@ fi`
 END
   else
     echo $echo_n "+ append $rc ... $echo_c"
-    delete_tail_lines "# call .${SH}_init" "yes" "$HOME/.${SH}rc"
+    delete_tail_lines "\(# call .${SH}_init\)\|\(#----Nore ${SH}----\)" "yes" "$HOME/.${SH}rc"
   fi # end of ! -f "$rc"
 
-  echo "# call .${SH}_init" >> "$HOME/.${SH}rc"
+  echo "#----Nore ${SH}----" >> "$HOME/.${SH}rc"
   cat << END >> "$HOME/.${SH}rc"
 `if on_darwin -a test -d "/opt/local/bin"; then
   echo "# PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
