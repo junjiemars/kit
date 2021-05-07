@@ -252,9 +252,6 @@ END
 
   echo "#----Nore ${SH}----" >> "$HOME/.${SH}rc"
   cat << END >> "$HOME/.${SH}rc"
-`if on_darwin -a test -d "/opt/local/bin"; then
-  echo "# PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
-fi`
 
 # o_check_prompt_env=no
 # o_check_lang_env=no
@@ -265,19 +262,17 @@ fi`
 `if [ "zsh" = "$SH" ]; then
   echo "# o_check_ohmyzsh_env=no"
 fi`
+`if on_darwin; then
+  echo "# o_check_macports_env=no"
+fi`
 
+# o_export_path_env=no
+# o_export_libpath_env=no
 
 test -f \$HOME/.${SH}_init    && . \$HOME/.${SH}_init
 test -f \$HOME/.${SH}_vars    && . \$HOME/.${SH}_vars
 test -f \$HOME/.${SH}_paths   && . \$HOME/.${SH}_paths
 test -f \$HOME/.${SH}_aliases && . \$HOME/.${SH}_aliases
-
-export PATH
-`if on_linux; then
-  echo "# export LD_LIBRARY_PATH"
-elif on_darwin; then
-  echo "# export DYLD_LIBRARY_PATH"
-fi`
 
 # eof
 END
@@ -827,11 +822,29 @@ fi
 elif on_linux; then
   echo "LD_LIBRARY_PATH=\\"\\\$(uniq_path \\\${LD_LIBRARY_PATH})\\""
 elif on_darwin; then
+  if [ "\$o_check_macports_env" = "yes" ]; then
+    if test -d "/opt/local/bin"; then
+      echo "  PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
+    fi
+  fi
   echo "DYLD_LIBRARY_PATH=\\"\\\$(uniq_path \\\${DYLD_LIBRARY_PATH})\\""
 fi`
 PATH="\$(uniq_path \${PATH})"
 
-# other paths
+
+# export path env
+if [ "\$o_export_path_env" = "yes" ]; then
+  export PATH
+fi
+
+# export libpath env
+if [ "\$o_export_libpath_env" = "yes" ]; then
+`if on_linux; then
+  echo "    export LD_LIBRARY_PATH"
+elif on_darwin; then
+  echo "    export DYLD_LIBRARY_PATH"
+fi`
+fi
 
 # eof
 END
