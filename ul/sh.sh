@@ -582,7 +582,7 @@ check_racket_env () {
       echo "  setopt +o nomatch &>/dev/null"
    fi
    echo "  if \\\`ls -ldr /Applications/Racket* &>/dev/null\\\`; then"
-   echo "    RACKET_HOME=\"\\\`ls -ldr /Applications/Racket*|head -n1|sed -e 's_.*\\\(/Applications/Racket\\ v[0-9][0-9]*\\.[0-9][0-9]*\\\).*_\\1_g'\\\`\""
+   echo "    RACKET_HOME=\"\\\`ls -ldr /Applications/Racket* | head -n1 | sed -e 's_.*\\\(/Applications/Racket\\ v[0-9][0-9]*\\.[0-9][0-9]*\\\).*_\\1_g'\\\`\""
    echo "  fi"
    if [ "zsh" = "$SH" ]; then
      echo "  setopt -o nomatch &>/dev/null"
@@ -681,9 +681,9 @@ fi`
    echo "random_base64 () {"
    echo "  local n=\\"\\\${1:-8}\\""
    if on_darwin; then
-      echo "  dd if=/dev/random bs=\\\$n|head -c\\\$n|base64 -b\\\$n|head -n1"
+      echo "  dd if=/dev/random bs=\\\$n | head -c\\\$n | base64 -b\\\$n | head -n1"
     else
-      echo "  dd if=/dev/random bs=\\\$n count=1 status=none|head -c\\\$n|base64|head -c\\\$n"
+      echo "  dd if=/dev/random bs=\\\$n count=1 status=none | head -c\\\$n | base64 | head -c\\\$n"
    fi
    echo "}"
 fi`
