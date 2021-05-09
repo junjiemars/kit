@@ -140,7 +140,7 @@ delete_tail_lines () {
 
 
 exist_p () {
-  which ${1} 1>/dev/null 2>&1
+  where ${1} 1>/dev/null 2>&1
   echo $?
 }
 
@@ -255,6 +255,9 @@ END
 
 # o_check_prompt_env=no
 # o_check_lang_env=no
+`if on_darwin; then
+  echo "# o_check_macports_env=no"
+fi`
 # o_check_racket_env=no
 # o_check_java_env=no
 # o_check_nvm_env=no
@@ -262,10 +265,6 @@ END
 `if [ "zsh" = "$SH" ]; then
   echo "# o_check_ohmyzsh_env=no"
 fi`
-`if on_darwin; then
-  echo "# o_check_macports_env=no"
-fi`
-
 # o_export_path_env=no
 # o_export_libpath_env=no
 
