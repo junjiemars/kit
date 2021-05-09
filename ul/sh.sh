@@ -778,7 +778,6 @@ set_bin_paths () {
   done
 }
 
-
 set_bin_paths
 
 # chain basis \${OPT_RUN}/{bin,sbin} paths
@@ -793,6 +792,21 @@ if [ -n "\${OPT_RUN}" ]; then
   fi
 `
 fi
+
+`if on_darwin; then
+  echo "# macports"
+  echo "if [ \"\\$o_check_macports_env\" = \"yes\" ]; then"
+  echo "  if [ -x \"/opt/local/bin/port\" ]; then"
+  echo "    PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
+  echo "    if [ -d \"/opt/local/sbin\" ]; then"
+  echo "      PATH=\"/opt/local/sbin\\${PATH:+:\\${PATH}}\""
+  echo "    fi"
+  echo "    if [ -d \"/opt/local/lib\" ]; then"
+  echo "      DYLD_LIBRARY_PATH=\"/opt/local/lib\\${DYLD_LIBRARY_PATH:+:\\${DYLD_LIBRARY_PATH}}\""
+  echo "    fi"
+  echo "  fi"
+  echo "fi"
+fi`
 
 # racket home
 if [ -n "\$RACKET_HOME" ]; then
@@ -817,20 +831,15 @@ if [ -n "\$NVM_DIR" ]; then
   PATH="\`append_path \"\${NVM_DIR}\" \$PATH\`"
 fi
 
+
+PATH="\$(uniq_path \${PATH})"
 `if on_windows_nt; then
   echo "PATH=\\"\\\$(sort_path \\\${PATH})\\""
 elif on_linux; then
   echo "LD_LIBRARY_PATH=\\"\\\$(uniq_path \\\${LD_LIBRARY_PATH})\\""
 elif on_darwin; then
-  if [ "\$o_check_macports_env" = "yes" ]; then
-    if test -d "/opt/local/bin"; then
-      echo "  PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
-    fi
-  fi
   echo "DYLD_LIBRARY_PATH=\\"\\\$(uniq_path \\\${DYLD_LIBRARY_PATH})\\""
 fi`
-PATH="\$(uniq_path \${PATH})"
-
 
 # export path env
 if [ "\$o_export_path_env" = "yes" ]; then
@@ -840,9 +849,9 @@ fi
 # export libpath env
 if [ "\$o_export_libpath_env" = "yes" ]; then
 `if on_linux; then
-  echo "    export LD_LIBRARY_PATH"
+  echo "  export LD_LIBRARY_PATH"
 elif on_darwin; then
-  echo "    export DYLD_LIBRARY_PATH"
+  echo "  export DYLD_LIBRARY_PATH"
 fi`
 fi
 
