@@ -570,6 +570,9 @@ Location =/var/lib/snapd/snaps/=
 
 Just keep the current =ul/snap-rm.sh= version.
 
+** Screen
+- =kazam=: screen recording and capturing program.
+	
 * Docker
 	:PROPERTIES:
 	:CUSTOM_ID: docker
