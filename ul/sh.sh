@@ -637,11 +637,15 @@ check_nvm_env () {
 
 check_kube_env () {
   local d="\${HOME}/.kube/kube-${SH}.sh"
+  local c="\${HOME}/.kube/\${1}"
   if \`where kubectl &>/dev/null\`; then
     if [ ! -f "\$d" ]; then
       SHELL=$SHELL kubectl completion ${SH} >"\$d"
     fi
     . "\$d"
+    if [ -f "\$c" ]; then
+      export KUBECONFIG="\$c"
+    fi
     return 0
   fi
   return 1
