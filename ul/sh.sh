@@ -570,9 +570,9 @@ fi`
    echo "random_base64 () {"
    echo "  local n=\\"\\\${1:-8}\\""
    if on_darwin; then
-      echo "  dd if=/dev/random bs=\\\$n | head -c\\\$n | base64 -b\\\$n | head -n1"
+      echo "  dd if=/dev/random bs=\\\$n | head -c\\\$n | base64 -b\\\$n | head -n1 | xargs"
     else
-      echo "  dd if=/dev/random bs=\\\$n count=1 status=none | head -c\\\$n | base64 | head -c\\\$n"
+      echo "  dd if=/dev/random bs=\\\$n count=1 status=none | head -c\\\$n | base64 | head -c\\\$n | xargs"
    fi
    echo "}"
 fi`
