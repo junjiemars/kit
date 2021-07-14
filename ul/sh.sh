@@ -139,6 +139,17 @@ delete_tail_lines () {
 }
 
 
+where () {
+  if [ "$SH" = "zsh" ]; then
+    # override the zsh builtin
+    whence -p $@
+  elif [ "$SH" = "bash" ]; then
+    type -P $@
+  else
+    command -v $@
+  fi
+}
+
 exist_p () {
   where ${1} 1>/dev/null 2>&1
   echo $?
@@ -309,17 +320,10 @@ else
   command -v $SH
 fi`
 
+`
+declare -f where
+`
 
-where () {
-`if [ "$SH" = "zsh" ]; then
-   echo "  # override the zsh builtin"
-   echo "  whence -p \\\$@"
-elif [ "$SH" = "bash" ]; then
-   echo "  type -P \\\$@"
-else
-   echo "   command -v \\\$@"
-fi`
-}
 
 inside_docker_p () {
   [ ".\$INSIDE_DOCKER" = ".1" ] && return 0
