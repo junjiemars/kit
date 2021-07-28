@@ -37,3 +37,4 @@ ul/nginx.conf
 **/*.html
 
 **/*.zip
+**/*.jar
