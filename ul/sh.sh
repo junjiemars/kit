@@ -892,6 +892,8 @@ if [ "\$o_export_libpath_env" = "yes" ]; then
   echo "  export LD_LIBRARY_PATH"
 elif on_darwin; then
   echo "  export DYLD_LIBRARY_PATH"
+else
+  echo "  : #void"
 fi`
 fi
 
