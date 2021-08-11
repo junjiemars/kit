@@ -82,6 +82,9 @@
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift close_bracket" />
   </action>
   <action id="EditorForwardParagraphWithSelection" />
+  <action id="EditorIndentLineOrSelection">
+    <keyboard-shortcut first-keystroke="tab" />
+  </action>
   <action id="EditorIndentSelection" />
   <action id="EditorJoinLines">
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 6" />
@@ -138,8 +141,10 @@
     <keyboard-shortcut first-keystroke="alt x" />
   </action>
   <action id="GotoClass">
-    <keyboard-shortcut first-keystroke="shift alt g" />
-    <keyboard-shortcut first-keystroke="shift ctrl s" second-keystroke="c" />
+    <keyboard-shortcut first-keystroke="ctrl h" second-keystroke="c" />
+  </action>
+  <action id="GotoDeclaration">
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="d" />
   </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
@@ -155,12 +160,10 @@
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="u" />
   </action>
   <action id="GotoSymbol">
-    <keyboard-shortcut first-keystroke="shift ctrl alt n" />
-    <keyboard-shortcut first-keystroke="shift ctrl s" second-keystroke="s" />
+    <keyboard-shortcut first-keystroke="ctrl h" second-keystroke="s" />
   </action>
   <action id="GotoTypeDeclaration">
-    <mouse-shortcut keystroke="shift control button1" />
-    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="d" />
+    <keyboard-shortcut first-keystroke="alt period" />
   </action>
   <action id="HideAllWindows">
     <keyboard-shortcut first-keystroke="shift ctrl f12" />
