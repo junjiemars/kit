@@ -144,7 +144,7 @@
     <keyboard-shortcut first-keystroke="ctrl h" second-keystroke="c" />
   </action>
   <action id="GotoDeclaration">
-    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="d" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="period" />
   </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
@@ -163,7 +163,7 @@
     <keyboard-shortcut first-keystroke="ctrl h" second-keystroke="s" />
   </action>
   <action id="GotoTypeDeclaration">
-    <keyboard-shortcut first-keystroke="alt period" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="d" />
   </action>
   <action id="HideAllWindows">
     <keyboard-shortcut first-keystroke="shift ctrl f12" />
