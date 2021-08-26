@@ -32,6 +32,7 @@
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="equals" />
   </action>
   <action id="CloseAllEditors" />
+  <action id="CloseGotItTooltip" />
   <action id="CloseProject">
     <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl c" />
   </action>
@@ -139,6 +140,7 @@
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 2" />
   </action>
   <action id="EmacsStyleIndent" />
+  <action id="EscUnfollowUserAction" />
   <action id="EvaluateExpression">
     <keyboard-shortcut first-keystroke="alt f8" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="e" />
@@ -152,7 +154,6 @@
   <action id="FocusEditor" />
   <action id="Forward">
     <keyboard-shortcut first-keystroke="alt period" />
-    <keyboard-shortcut first-keystroke="escape" second-keystroke="period" />
   </action>
   <action id="Git.Pull">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="p" />
@@ -166,7 +167,7 @@
   </action>
   <action id="GotoDeclaration">
     <mouse-shortcut keystroke="control button1" />
-    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="d" />
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="period" />
   </action>
   <action id="GotoImplementation">
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="i" />
@@ -185,6 +186,7 @@
   </action>
   <action id="GotoTypeDeclaration">
     <mouse-shortcut keystroke="shift control button1" />
+    <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="d" />
   </action>
   <action id="HideAllWindows">
     <keyboard-shortcut first-keystroke="shift ctrl f12" />
@@ -306,6 +308,7 @@
   <action id="SwitchUp">
     <keyboard-shortcut first-keystroke="shift alt up" />
   </action>
+  <action id="Terminal.SwitchFocusToEditor" />
   <action id="ToggleBookmark">
     <keyboard-shortcut first-keystroke="f11" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="b" />
@@ -351,6 +354,10 @@
   </action>
   <action id="Vcs.ShowTabbedFileHistory">
     <keyboard-shortcut first-keystroke="shift ctrl g" second-keystroke="h" />
+  </action>
+  <action id="VcsShowPrevChangeMarker">
+    <keyboard-shortcut first-keystroke="shift ctrl alt up" />
+    <keyboard-shortcut first-keystroke="ctrl u" second-keystroke="space" />
   </action>
   <action id="ViewBreakpoints">
     <keyboard-shortcut first-keystroke="shift ctrl f8" />
