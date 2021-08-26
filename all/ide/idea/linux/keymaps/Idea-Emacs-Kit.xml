@@ -256,7 +256,6 @@
     <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="shift d" />
   </action>
   <action id="ShowBookmarks">
-    <keyboard-shortcut first-keystroke="shift f11" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="x" />
   </action>
   <action id="ShowModulesDependencies">
@@ -310,11 +309,9 @@
   </action>
   <action id="Terminal.SwitchFocusToEditor" />
   <action id="ToggleBookmark">
-    <keyboard-shortcut first-keystroke="f11" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="b" />
   </action>
   <action id="ToggleBookmarkWithMnemonic">
-    <keyboard-shortcut first-keystroke="ctrl f11" />
     <keyboard-shortcut first-keystroke="shift ctrl n" second-keystroke="m" />
   </action>
   <action id="ToggleBreakpointEnabled">
