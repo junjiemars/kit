@@ -89,12 +89,14 @@
   <action id="EditorCut">
     <keyboard-shortcut first-keystroke="shift delete" />
   </action>
+  <action id="EditorDeleteLine">
+    <keyboard-shortcut first-keystroke="shift ctrl back_space" />
+  </action>
   <action id="EditorHungryBackSpace">
     <keyboard-shortcut first-keystroke="escape" second-keystroke="back_slash" />
   </action>
   <action id="EditorIndentSelection" />
   <action id="EditorJoinLines">
-    <keyboard-shortcut first-keystroke="shift ctrl j" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 6" />
     <keyboard-shortcut first-keystroke="shift alt 6" />
   </action>
@@ -117,7 +119,13 @@
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift b" />
   </action>
   <action id="EditorSplitLine">
-    <keyboard-shortcut first-keystroke="ctrl alt o" />
+    <keyboard-shortcut first-keystroke="ctrl j" />
+  </action>
+  <action id="EditorStartNewLine">
+    <keyboard-shortcut first-keystroke="ctrl o" />
+  </action>
+  <action id="EditorStartNewLineBefore">
+    <keyboard-shortcut first-keystroke="alt minus" second-keystroke="ctrl o" />
   </action>
   <action id="EditorTab">
     <keyboard-shortcut first-keystroke="tab" />
@@ -195,7 +203,11 @@
   <action id="HideSideWindows">
     <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="comma" />
   </action>
+  <action id="InsertLiveTemplate" />
   <action id="IpnbCodeCellAction" />
+  <action id="JumpToLastChange">
+    <keyboard-shortcut first-keystroke="ctrl u" second-keystroke="ctrl space" />
+  </action>
   <action id="MethodDown">
     <keyboard-shortcut first-keystroke="alt n" />
   </action>
