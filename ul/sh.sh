@@ -642,6 +642,9 @@ check_completion_env () {
      echo "    source \"\\\$c\""
      echo "  fi"
    fi
+else
+   echo "  # nop"
+   echo ":"
 fi`
 }
 
