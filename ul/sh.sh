@@ -269,6 +269,7 @@ END
 `if on_darwin; then
   echo "# o_check_macports_env=no"
 fi`
+# o_check_completion_env=no
 # o_check_racket_env=no
 # o_check_java_env=no
 # o_check_nvm_env=no
@@ -633,6 +634,17 @@ OPT_OPEN="\${OPT_OPEN:-\$(choose_prefix)/open}"
 [ -d "\${OPT_RUN}" ]  && export OPT_RUN=\${OPT_RUN}
 [ -d "\${OPT_OPEN}" ] && export OPT_OPEN=\${OPT_OPEN}
 
+check_completion_env () {
+`if on_linux; then
+   if [ "bash" = "$SH" ]; then
+     echo "  local c=\"/etc/profile.d/bash_completion.sh\""
+     echo "  if [ -f \"\\\$c\" ]; then"
+     echo "    source \"\\\$c\""
+     echo "  fi"
+   fi
+fi`
+}
+
 check_racket_env () {
 `if on_darwin; then
    if [ "zsh" = "$SH" ]; then
@@ -729,6 +741,9 @@ check_kube_env () {
   echo "}"
 fi`
 
+if [ "\$o_check_completion_env" = "yes" ]; then
+  check_completion_env
+fi
 
 if [ "\$o_check_racket_env" = "yes" ]; then
   check_racket_env
