@@ -558,7 +558,8 @@ gen_dot_shell_utils () {
 fi`
 #------------------------------------------------
 
-date_from_epoch () {
+date_from_epoch ()
+{
   local e="\$@"
   if [ -z "\$e" ]; then
     e="0 -u"
@@ -573,7 +574,18 @@ else
 fi`
 }
 
-random_base64 () {
+os_release ()
+{
+  if [ -f "/etc/os-release" ]; then
+    cat "/etc/os-release"
+  else
+    # nop
+    :
+  fi
+}
+
+random_base64 ()
+{
 `if where dd &>/dev/null && test -r /dev/random; then
    echo "  local n=\\"\\\${1:-8}\\""
    if on_darwin; then
@@ -588,7 +600,8 @@ fi`
 }
 
 `if on_linux && snap --version &>/dev/null; then
-   echo "snap_remove_disabled () {"
+   echo "snap_remove_disabled ()"
+   echo "{"
    echo "  LANG=C snap list --all | awk '/disabled/{print \\\$1, \\\$3}' |"
    echo "    while read snapname revision; do"
    echo "      sudo snap remove \\"\\\$snapname\\" --revision=\\"\\\$revision\\""
