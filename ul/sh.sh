@@ -558,23 +558,41 @@ gen_dot_shell_utils () {
 fi`
 #------------------------------------------------
 
-`if on_linux && snap --version &>/dev/null; then
-   echo "snap_remove_disabled () {"
-   echo "  LANG=C snap list --all | awk '/disabled/{print \\\$1, \\\$3}' |"
-   echo "    while read snapname revision; do"
-   echo "      sudo snap remove \\"\\\$snapname\\" --revision=\\"\\\$revision\\""
-   echo "    done"
-   echo "}"
+date_from_epoch () {
+  local e="\$@"
+  if [ -z "\$e" ]; then
+    e="0 -u"
+  fi
+`if on_linux; then
+  echo "  date -d@\\\$e"
+elif on_darwin; then
+  echo " date -r\\\$e"
+else
+  echo "  # nop"
+  echo "  :"
 fi`
+}
 
+random_base64 () {
 `if where dd &>/dev/null && test -r /dev/random; then
-   echo "random_base64 () {"
    echo "  local n=\\"\\\${1:-8}\\""
    if on_darwin; then
       echo "  dd if=/dev/random bs=\\\$n | head -c\\\$n | base64 -b\\\$n | head -n1 | xargs"
     else
       echo "  dd if=/dev/random bs=\\\$n count=1 status=none | head -c\\\$n | base64 | head -c\\\$n | xargs"
    fi
+else
+   echo "  # nop"
+   echo "  :"
+fi`
+}
+
+`if on_linux && snap --version &>/dev/null; then
+   echo "snap_remove_disabled () {"
+   echo "  LANG=C snap list --all | awk '/disabled/{print \\\$1, \\\$3}' |"
+   echo "    while read snapname revision; do"
+   echo "      sudo snap remove \\"\\\$snapname\\" --revision=\\"\\\$revision\\""
+   echo "    done"
    echo "}"
 fi`
 
