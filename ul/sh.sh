@@ -749,7 +749,7 @@ check_kube_env () {
     if [ -f "\$c" ]; then
       export KUBECONFIG="\$c"
     fi
-    if \`inside_emacs_p\` && \`where emacsclient\`; then
+    if \`inside_emacs_p\` && \`where emacsclient &>/dev/null\`; then
       export KUBE_EDITOR=emacsclient
     fi
     return 0
