@@ -741,6 +741,7 @@ check_nvm_env () {
 check_kube_env () {
   local d="\${HOME}/.kube/kube-${SH}.sh"
   local c="\${HOME}/.kube/\${1}"
+  local r="\${HOME}/.kube/.recent"
   if \`where kubectl &>/dev/null\`; then
     if [ ! -f "\$d" ]; then
       SHELL=$SHELL kubectl completion ${SH} >"\$d"
@@ -748,6 +749,9 @@ check_kube_env () {
     . "\$d"
     if [ -f "\$c" ]; then
       export KUBECONFIG="\$c"
+      cp "\$c" "\$r"
+    elif [ -f "\$r" ]; then
+      export KUBECONFIG="\$r"
     fi
     if \`inside_emacs_p\` && \`where emacsclient &>/dev/null\`; then
       export KUBE_EDITOR=emacsclient
