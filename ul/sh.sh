@@ -679,6 +679,7 @@ else
 fi`
 }
 
+# https://racket-lang.org
 check_racket_env () {
 `if on_darwin; then
    if [ "zsh" = "$SH" ]; then
@@ -696,6 +697,7 @@ else
 fi`
 }
 
+# https://openjdk.java.net
 check_java_env () {
   local javac="\${JAVA_HOME%/}/bin/javac"
   local java_home=
@@ -738,6 +740,7 @@ check_nvm_env () {
   return 1
 }
 
+# https://kubernetes.io/docs/reference/kubectl/overview/
 check_kube_env () {
   local d="\${HOME}/.kube/kube-${SH}.sh"
   local c="\${HOME}/.kube/\${1}"
@@ -762,6 +765,7 @@ check_kube_env () {
 }
 
 `if [ "zsh" = "$SH" ]; then
+  echo "# https://ohmyz.sh"
   echo "check_ohmyzsh_env () {"
   echo "  local d=\"\\${HOME}/.oh-my-zsh\""
   echo "  local m=\"\\${HOME}/.zsh_ohmyzsh\""
