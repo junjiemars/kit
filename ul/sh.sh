@@ -623,7 +623,8 @@ fi`
 fi`
 
 `if on_linux && unzip -h &>/dev/null; then
-   echo "unzip_zhcn () {"
+   echo "unzip_zhcn ()"
+   echo "{"
    echo "  unzip -Ogb2312 \\\$@"
    echo "}"
 fi`
