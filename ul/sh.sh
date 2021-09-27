@@ -607,6 +607,19 @@ fi`
    echo "      sudo snap remove \\"\\\$snapname\\" --revision=\\"\\\$revision\\""
    echo "    done"
    echo "}"
+   echo ""
+   echo "snapd_disable ()"
+   echo "{"
+   echo "  sudo systemctl stop snapd"
+   echo "  sudo systemctl disable snapd"
+   echo "}"
+   echo ""
+
+   echo "snapd_enable ()"
+   echo "{"
+   echo "  sudo systemctl enable snapd"
+   echo "  sudo systemctl restart snapd"
+   echo "}"
 fi`
 
 `if on_linux && unzip -h &>/dev/null; then
