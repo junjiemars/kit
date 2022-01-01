@@ -1,0 +1,13 @@
+version: '2.0'
+
+services:
+  ubuntu-dev:
+    image: junjiemars/ubuntu-dev:latest
+    container_name: bone-ubuntu-dev
+    hostname: ubuntu
+    privileged: true
+    working_dir: /home/u
+    environment:
+      - INSIDE_DOCKER=1
+    ports:
+      - 9701:9701

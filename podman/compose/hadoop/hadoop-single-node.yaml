@@ -1,0 +1,19 @@
+version: '2.0'
+
+services:
+  hadoop-single-node-dev:
+    image: junjiemars/java-openjdk-dev:latest
+    container_name: hadoop-single-node-dev
+    hostname: openjdk
+    privileged: true
+    working_dir: /home/u
+    environment:
+      - INSIDE_DOCKER=1
+      - SHELL=/bin/bash
+    volumes:
+      - /opt/open/:/opt/open/
+      - ${OPT_LAB}:/opt/lab/
+      - ${M2_DIR}:/home/u/.m2
+    ports:
+      - 9870:9870
+      - 8088:8088

@@ -1,0 +1,47 @@
+#+TITLE: ElasticSearch
+
+* Cluster
+
+	** Info
+	#+BEGIN_SRC sh
+curl http://localhost:9200/
+	#+END_SRC
+	
+	** Nodes
+	#+BEGIN_SRC sh
+curl -XPUT 'localhost:9200/_cluster/settings?pretty' -H 'Content-Type: application/json' -d'
+{
+  "transient": {
+    "discovery.zen.minimum_master_nodes": 3
+  }
+}
+	#+END_SRC
+
+	** Replications
+	#+BEGIN_SRC sh
+curl -XPUT 'localhost:9200/_settings?pretty' -H 'Content-Type: application/json' -d'
+{
+    "index" : {
+        "number_of_replicas" : 2
+    }
+}'
+	#+END_SRC
+
+	** Exclude a node from cluster
+	#+BEGIN_SRC sh
+curl -XPUT localhost:9200/_cluster/settings -H 'Content-Type: application/json' -d '{
+  "transient" :{
+      "cluster.routing.allocation.exclude._ip" : "10.0.0.1"
+   }
+}';echo
+	#+END_SRC
+
+	** Reenable shard allocation
+	#+BEGIN_SRC sh
+curl -XPUT localhost:9200/_cluster/settings -d '{
+  "transient" :{
+        "cluster.routing.allocation.enable" : "all"
+   }
+}';echo
+	#+END_SRC
+
