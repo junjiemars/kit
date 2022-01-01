@@ -1,4 +1,5 @@
 # podman machine
+# https://podman.io
 
 IMAGE_NAME ?= centos
 
@@ -22,11 +23,11 @@ init:
 exit:
 	podman machine stop
 
-start: $(compose_file) stop init
+start: $(compose_file) stop
 	podman-compose -f $<  up $(START_FLAGS)
 
 stop: $(compose_file)
-	podman-compose -f $<  stop
+	podman-compose -f $< stop
 
 exec: start
 	podman exec -e LINES=$(LINES) \
@@ -35,8 +36,8 @@ exec: start
 							-it -u u \
 							$(bone_dev_container) /bin/bash
 
-remove: $(compose_file) stop
-	podman-compose -f $<  rm $(REMOVE_FLAGS)
+# remove: $(compose_file) stop
+# 	podman-compose -f $<  rm $(REMOVE_FLAGS)
 
 clean: $(compose_file) remove
 	podman rmi $(image_tag)
