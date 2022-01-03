@@ -17,8 +17,7 @@ build: $(podman_file)
 	podman build $(BUILD_FLAGS) -t $(image_tag) -f $< .
 
 init:
-	podman machine init
-	podman machine start
+	podman container ls || podman machine start
 
 exit:
 	podman machine stop
@@ -27,7 +26,7 @@ start: $(compose_file) stop
 	podman-compose -f $<  up $(START_FLAGS)
 
 stop: $(compose_file)
-	podman-compose -f $< stop
+	podman container ls && podman-compose -f $< stop
 
 exec: start
 	podman exec -e LINES=$(LINES) \
