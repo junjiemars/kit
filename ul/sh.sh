@@ -560,14 +560,18 @@ fi`
 
 date_from_epoch ()
 {
-  local e="\$@"
-  if [ -z "\$e" ]; then
-    e="0"
-  fi
 `if on_linux; then
-  echo "  date -d@\\\$e -u"
+  echo "  if [ -z \\"\\\$@\\" ]; then"
+  echo "    date -d@0 -u"
+  echo "  else"
+  echo "    date -d@\\\$@"
+  echo "  fi"
 elif on_darwin; then
-  echo " date -r\\\$e -u"
+  echo "  if [ -z \\"\\\$@\\" ]; then"
+  echo "    date -r0 -u"
+  echo "  else"
+  echo "    date -r\\\$@"
+  echo "  fi"
 else
   echo "  # nop"
   echo "  :"
