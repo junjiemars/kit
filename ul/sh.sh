@@ -561,13 +561,13 @@ fi`
 date_from_epoch ()
 {
 `if on_linux; then
-  echo "  if [ -z \\"\\\$@\\" ]; then"
+  echo "  if [ \\\$# -eq 0 ]; then"
   echo "    date -d@0 -u"
   echo "  else"
   echo "    date -d@\\\$@"
   echo "  fi"
 elif on_darwin; then
-  echo "  if [ -z \\"\\\$@\\" ]; then"
+  echo "  if [ \\\$# -eq 0 ]; then"
   echo "    date -r0 -u"
   echo "  else"
   echo "    date -r\\\$@"
