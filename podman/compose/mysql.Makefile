@@ -3,7 +3,7 @@
 
 START_FLAGS ?= -d --remove-orphans
 
-compose_file := mysql.yml
+compose_file := $(CURDIR)/mysql.yml
 
 start: $(compose_file) stop
 	podman-compose -f $<  up $(START_FLAGS)
