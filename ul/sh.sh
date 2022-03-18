@@ -562,12 +562,12 @@ date_from_epoch ()
 {
   local e="\$@"
   if [ -z "\$e" ]; then
-    e="0 -u"
+    e="0"
   fi
 `if on_linux; then
-  echo "  date -d@\\\$e"
+  echo "  date -d@\\\$e -u"
 elif on_darwin; then
-  echo " date -r\\\$e"
+  echo " date -r\\\$e -u"
 else
   echo "  # nop"
   echo "  :"
@@ -576,12 +576,16 @@ fi`
 
 os_release ()
 {
-  if [ -f "/etc/os-release" ]; then
-    cat "/etc/os-release"
-  else
-    # nop
-    :
-  fi
+`if on_darwin; then
+  echo "  sw_vers -productVersion"
+elif on_linux; then
+  echo "  if [ -f \\"/etc/os-release\\" ]; then"
+  echo "    cat /etc/os-release"
+  echo "  fi"
+else
+  # nop
+  :
+fi`
 }
 
 random_base64 ()
