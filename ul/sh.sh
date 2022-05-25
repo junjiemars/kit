@@ -665,7 +665,7 @@ fi`
 
 `
 if on_windows_nt; then
-  echo "function choose_prefix {"
+  echo "choose_prefix () {"
   echo "  if [ -d \"/d/\" ]; then"
   echo "    [ -d \"/d/opt\" ] || mkdir -p \"/d/opt\""
   echo "    echo \"/d/opt\""
@@ -675,7 +675,7 @@ if on_windows_nt; then
   echo "  fi"
   echo "}"
 else
-  echo "function choose_prefix {"
+  echo "choose_prefix () {"
   echo "  echo \"/opt\""
   echo "}"
 fi
