@@ -27,7 +27,7 @@ set undolevels=1000
 set fileencoding=utf8
 
 " line number
-set number
+" set number
 set cursorline " :p
 hi cursorline cterm=none
 hi cursorlinenr term=bold ctermfg=yellow gui=bold guifg=yellow
