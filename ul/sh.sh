@@ -586,6 +586,8 @@ elif on_linux; then
   echo "  if [ -f \\"/etc/os-release\\" ]; then"
   echo "    cat /etc/os-release"
   echo "  fi"
+elif on_windows_nt; then
+  echo "  systeminfo | grep '^OS Version'"
 else
   echo "  # nop"
   echo "  :"
