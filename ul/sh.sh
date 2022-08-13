@@ -587,8 +587,8 @@ elif on_linux; then
   echo "    cat /etc/os-release"
   echo "  fi"
 else
-  # nop
-  :
+  echo "  # nop"
+  echo "  :"
 fi`
 }
 
