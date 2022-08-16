@@ -274,6 +274,7 @@ fi`
 # o_check_java_env=no
 # o_check_nvm_env=no
 # o_check_kube_env=no
+# o_check_bun_env=no
 `if [ "zsh" = "$SH" ]; then
   echo "# o_check_ohmyzsh_env=no"
 fi`
@@ -788,6 +789,17 @@ check_kube_env () {
   return 1
 }
 
+# https://github.com/oven-sh/bun
+check_bun_env () {
+  local d="\$HOME/.bun"
+  if [ -x "\${d}/bin/bun" ]; then
+    BUN_DIR="\${d}/bin"
+    return 0
+  fi
+  return 1
+}
+
+
 `if [ "zsh" = "$SH" ]; then
   echo "# https://ohmyz.sh"
   echo "check_ohmyzsh_env () {"
@@ -829,6 +841,11 @@ fi
 if [ "\$o_check_kube_env" = "yes" ]; then
   check_kube_env
 fi
+
+if [ "\$o_check_bun_env" = "yes" ]; then
+  check_bun_env
+fi
+
 
 `if [ "zsh" = "$SH" ]; then
   echo "if [ \\"\\$o_check_ohmyzsh_env\" = \\"yes\\" ]; then"
@@ -953,6 +970,11 @@ fi
 # nvm home
 if [ -n "\$NVM_DIR" ]; then
   PATH="\`append_path \"\${NVM_DIR}\" \$PATH\`"
+fi
+
+# bun home
+if [ -n "\$BUN_DIR" ]; then
+  PATH="\`append_path \"\${BUN_DIR}\" \$PATH\`"
 fi
 
 
