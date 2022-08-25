@@ -275,6 +275,7 @@ fi`
 # o_check_nvm_env=no
 # o_check_kube_env=no
 # o_check_bun_env=no
+# o_check_rust_env=no
 `if [ "zsh" = "$SH" ]; then
   echo "# o_check_ohmyzsh_env=no"
 fi`
@@ -799,6 +800,24 @@ check_bun_env () {
   return 1
 }
 
+check_rust_env () {
+  local cargo_dir="\$HOME/.cargo"
+  local src=
+  if \`rustc --version &>/dev/null\` && \`cargo --version &>/dev/null\`; then
+    if [ -d "\${cargo_dir}/bin" ]; then
+       src=\$(rustc --print sysroot)/lib/rustlib/src/rust
+       if [ -d \$src ]; then
+         RUST_SRC_PATH="\${src}"
+       fi
+       CARGO_DIR="\${cargo_dir}/bin"
+       return 0
+    fi
+  else
+    unset CARGO_DIR
+  fi
+  return 1
+}
+
 
 `if [ "zsh" = "$SH" ]; then
   echo "# https://ohmyz.sh"
@@ -844,6 +863,10 @@ fi
 
 if [ "\$o_check_bun_env" = "yes" ]; then
   check_bun_env
+fi
+
+if [ "\$o_check_rust_env" = "yes" ]; then
+  check_rust_env
 fi
 
 
@@ -975,6 +998,14 @@ fi
 # bun home
 if [ -n "\$BUN_DIR" ]; then
   PATH="\`append_path \"\${BUN_DIR}\" \$PATH\`"
+fi
+
+# rust home
+if [ -n "\$CARGO_DIR" ]; then
+  PATH="\`append_path \"\${CARGO_DIR}\" \$PATH\`"
+  if [ -n "\$RUST_SRC_PATH" ]; then
+    export RUST_SRC_PATH
+  fi
 fi
 
 
