@@ -525,7 +525,7 @@ alias_rlwrap_bin () {
 
 alias_vi
 alias_emacs
-alias_racket
+# alias_racket
 alias_python
 
 if [ 0 -eq \$(exist_p rlwrap) ]; then
