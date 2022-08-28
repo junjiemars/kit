@@ -805,15 +805,20 @@ check_rust_env () {
   local src=
   if \`rustc --version &>/dev/null\` && \`cargo --version &>/dev/null\`; then
     if [ -d "\${cargo_dir}/bin" ]; then
-       src=\$(rustc --print sysroot)/lib/rustlib/src/rust
-       if [ -d \$src ]; then
-         RUST_SRC_PATH="\${src}"
-       fi
        CARGO_DIR="\${cargo_dir}/bin"
-       return 0
+    else
+      unset CARGO_DIR
     fi
+    src="\$(rustc --print sysroot)/lib/rustlib/src/rust"
+    if [ -d "\$src" ]; then
+      RUST_SRC_PATH="\${src}"
+    else
+      unset RUST_SRC_PATH
+    fi
+    return 0
   else
     unset CARGO_DIR
+    unset RUST_SRC_PATH
   fi
   return 1
 }
@@ -1000,12 +1005,12 @@ if [ -n "\$BUN_DIR" ]; then
   PATH="\`append_path \"\${BUN_DIR}\" \$PATH\`"
 fi
 
-# rust home
+# rust home: cargo, src
 if [ -n "\$CARGO_DIR" ]; then
   PATH="\`append_path \"\${CARGO_DIR}\" \$PATH\`"
-  if [ -n "\$RUST_SRC_PATH" ]; then
-    export RUST_SRC_PATH
-  fi
+fi
+if [ -n "\$RUST_SRC_PATH" ]; then
+  export RUST_SRC_PATH
 fi
 
 
