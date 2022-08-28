@@ -811,14 +811,14 @@ check_rust_env () {
     fi
     src="\$(rustc --print sysroot)/lib/rustlib/src/rust"
     if [ -d "\$src" ]; then
-      RUST_SRC_PATH="\${src}"
+      RUST_SRC_DIR="\${src}"
     else
-      unset RUST_SRC_PATH
+      unset RUST_SRC_DIR
     fi
     return 0
   else
     unset CARGO_DIR
-    unset RUST_SRC_PATH
+    unset RUST_SRC_DIR
   fi
   return 1
 }
@@ -978,7 +978,7 @@ fi
 fi`
 
 # racket home
-if [ -n "\$RACKET_HOME" ]; then
+if [ "\$o_check_racket_env" = "yes" -a -n "\$RACKET_HOME" ]; then
 `if on_windows_nt; then
   echo "  RACKET_HOME=\\$(posix_path \"\\$RACKET_HOME\")"
 fi`
@@ -987,7 +987,7 @@ fi
 unset RACKET_HOME
 
 # java home
-if [ -n "\$JAVA_HOME" ]; then
+if [ "\$o_check_java_env" = "yes" -a -n "\$JAVA_HOME" ]; then
 `if on_windows_nt; then
   echo "  JAVA_HOME=\\$(posix_path \"\\${JAVA_HOME}\")"
 fi`
@@ -996,21 +996,21 @@ fi`
 fi
 
 # nvm home
-if [ -n "\$NVM_DIR" ]; then
+if [ "\$o_check_nvm_env" = "yes" -a -n "\$NVM_DIR" ]; then
   PATH="\`append_path \"\${NVM_DIR}\" \$PATH\`"
 fi
 
 # bun home
-if [ -n "\$BUN_DIR" ]; then
+if [ "\$o_check_bun_env" = "yes" -a -n "\$BUN_DIR" ]; then
   PATH="\`append_path \"\${BUN_DIR}\" \$PATH\`"
 fi
 
 # rust home: cargo, src
-if [ -n "\$CARGO_DIR" ]; then
+if [ "\$o_check_rust_env" = "yes" -a -n "\$CARGO_DIR" ]; then
   PATH="\`append_path \"\${CARGO_DIR}\" \$PATH\`"
 fi
-if [ -n "\$RUST_SRC_PATH" ]; then
-  export RUST_SRC_PATH
+if [ "\$o_check_rust_env" = "yes" -a -n "\$RUST_SRC_DIR" ]; then
+  export RUST_SRC_DIR
 fi
 
 
