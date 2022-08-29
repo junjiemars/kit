@@ -164,9 +164,9 @@ diff_p () {
 gen_dot_shell_profile () {
   local profile="$HOME/.${SH}_profile"
   case "$SH" in
-    zsh)  profile="$HOME/.zprofile" ;;
     bash) profile="$HOME/.bash_profile" ;;
-    sh|*) profile="$HOME/.profile" ;;
+    zsh)  profile="$HOME/.zprofile" ;;
+    sh)   profile="$HOME/.profile" ;;
   esac
 
   save_as "$profile"
@@ -184,7 +184,9 @@ gen_dot_shell_profile () {
 fi`
 #------------------------------------------------
 
-test -r \$HOME/.${SH}rc && . \$HOME/.${SH}rc
+`if [ "zsh" != "$SH" ]; then
+echo "test -r \\$HOME/.\${SH}rc && . \\$HOME/.\${SH}rc"
+fi`
 
 # eof
 END
