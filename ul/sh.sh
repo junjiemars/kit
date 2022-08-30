@@ -185,7 +185,7 @@ fi`
 #------------------------------------------------
 
 `if [ "zsh" = "$SH" ]; then
-   echo "# test -r \\$HOME/.\${SH}rc && . \\$HOME/.\${SH}rc"
+   echo ""
 elif [ "bash" = "$SH" ]; then
    echo "test -r \\$HOME/.\${SH}rc && . \\$HOME/.\${SH}r"c
 elif [ "sh" = "$SH" ]; then
