@@ -184,8 +184,12 @@ gen_dot_shell_profile () {
 fi`
 #------------------------------------------------
 
-`if [ "zsh" != "$SH" ]; then
-echo "test -r \\$HOME/.\${SH}rc && . \\$HOME/.\${SH}rc"
+`if [ "zsh" = "$SH" ]; then
+   echo "# test -r \\$HOME/.\${SH}rc && . \\$HOME/.\${SH}rc"
+elif [ "bash" = "$SH" ]; then
+   echo "test -r \\$HOME/.\${SH}rc && . \\$HOME/.\${SH}r"c
+elif [ "sh" = "$SH" ]; then
+   echo "test -r \\$HOME/.\${SH}rc && . \\$HOME/.\${SH}r"c
 fi`
 
 # eof
