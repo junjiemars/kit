@@ -471,6 +471,7 @@ if on_darwin; then
   echo "alias ll='ls -lh -G'"
   echo "alias l='ls -CF -G'"
   echo "alias tailf='tail -f'"
+  echo "# alias stat='stat -x'"
 else
   echo "alias ls='ls --color=auto'"
   echo "alias ll='ls -lh --color=auto'"
