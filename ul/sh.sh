@@ -535,7 +535,6 @@ alias_emacs
 alias_python
 
 if [ 0 -eq \$(exist_p rlwrap) ]; then
-  alias_rlwrap_bin sbcl
   alias_rlwrap_bin ecl
   alias_rlwrap_bin openssl
 fi
