@@ -16,13 +16,18 @@ bone_dev_container := bone-$(IMAGE_NAME)-dev
 build: $(podman_file)
 	podman build $(BUILD_FLAGS) -t $(image_tag) -f $< .
 
-init:
-	podman container ls || podman machine start
-
 exit:
 	podman machine stop
 
-start: $(compose_file) stop
+init: init-container
+
+init-machine:
+	podman machine ls || podman machine init
+
+init-container: init-container
+	podman container ls || podman machine start
+
+start: $(compose_file) stop init
 	podman-compose -f $<  up $(START_FLAGS)
 
 stop: $(compose_file)
