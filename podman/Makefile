@@ -24,7 +24,7 @@ init: init-container
 init-machine:
 	podman machine ls || podman machine init
 
-init-container: init-container
+init-container: init-machine
 	podman container ls || podman machine start
 
 start: $(compose_file) stop init
