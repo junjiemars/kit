@@ -31,6 +31,7 @@
     <keyboard-shortcut first-keystroke="shift alt f9" />
     <keyboard-shortcut first-keystroke="shift ctrl d" second-keystroke="equals" />
   </action>
+  <action id="ClassNameCompletion" />
   <action id="CloseAllEditors" />
   <action id="CloseGotItTooltip" />
   <action id="CloseProject">
@@ -118,6 +119,12 @@
     <keyboard-shortcut first-keystroke="shift ctrl left" />
     <keyboard-shortcut first-keystroke="escape" second-keystroke="shift b" />
   </action>
+  <action id="EditorSelectLine">
+    <keyboard-shortcut first-keystroke="ctrl alt l" />
+  </action>
+  <action id="EditorSelectWord">
+    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 2" />
+  </action>
   <action id="EditorSplitLine">
     <keyboard-shortcut first-keystroke="ctrl j" />
   </action>
@@ -145,7 +152,6 @@
   </action>
   <action id="EditorToggleStickySelection">
     <keyboard-shortcut first-keystroke="ctrl space" />
-    <keyboard-shortcut first-keystroke="escape" second-keystroke="shift 2" />
   </action>
   <action id="EmacsStyleIndent" />
   <action id="EscUnfollowUserAction" />
@@ -291,6 +297,9 @@
   </action>
   <action id="SliceForward">
     <keyboard-shortcut first-keystroke="shift ctrl a" second-keystroke="shift f" />
+  </action>
+  <action id="SmartTypeCompletion">
+    <keyboard-shortcut first-keystroke="ctrl alt slash" />
   </action>
   <action id="Stop">
     <keyboard-shortcut first-keystroke="ctrl f2" />
