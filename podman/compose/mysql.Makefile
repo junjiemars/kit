@@ -1,5 +1,7 @@
 # mysql Makefile
 # https://hub.docker.com/_/mysql
+# on Ubuntu: /etc/containers/registries.conf
+# unqualified-search-registries = ["docker.io"]
 
 START_FLAGS ?= -d --remove-orphans
 
