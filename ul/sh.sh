@@ -30,6 +30,16 @@ else
   echo_c='\c'
 fi
 
+# check the sed's "-i" option
+echo -e "a\nb\nc" > .sed_i.test
+if [ -f .sed_i.test ]; then
+  if sed -i'.off' -e'1d' .sed_i.test; then
+    sed_i=-i
+    rm .sed_i.test.off
+  fi
+  rm .sed_i.test
+fi
+
 
 save_as () {
   local f="$1"
@@ -110,19 +120,12 @@ sort_path () {
   echo $echo_n "${sorted}${echo_c}"
 }
 
-get_sed_opt_i () {
-  if on_darwin; then
-    echo "-i$1"
-  else
-    echo "-i$1"
-  fi
-}
 
 delete_tail_lines () {
   local h="$1"
   local lines="$2"
   local f="$3"
-  local sed_opt_i="`get_sed_opt_i .pre`"
+  local sed_opt_i="${sed_i}.pre"
 
   [ -f "$f" ] || return 1
 
@@ -348,9 +351,6 @@ inside_emacs_p () {
   test -n "\$INSIDE_EMACS"
 }
 
-`
-declare -f get_sed_opt_i
-`
 
 `
 declare -f delete_tail_lines
