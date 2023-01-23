@@ -112,7 +112,7 @@ sort_path () {
 
 get_sed_opt_i () {
   if on_darwin; then
-    echo "-i $1"
+    echo "-i$1"
   else
     echo "-i$1"
   fi
