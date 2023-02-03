@@ -34,3 +34,41 @@ select k1,ts from t1 where ts > '2023-02-03 16:22:19';
 select current_timestamp();
 
 
+
+-- join
+
+DROP TABLE IF EXISTS j1;
+CREATE TABLE j1 (
+  k  VARCHAR(32)				NOT NULL				COMMENT 'XXX',
+  n  VARCHAR(32)				DEFAULT NULL		COMMENT 'XXX',
+  PRIMARY KEY(k)
+);
+DROP TABLE IF EXISTS j2;
+CREATE TABLE j2 (
+  k2  VARCHAR(32)				NOT NULL				COMMENT 'XXX',
+  n2  VARCHAR(32)				DEFAULT NULL		COMMENT 'XXX',
+  PRIMARY KEY(k2)
+);
+
+insert into j1 values('1','x');
+insert into j1 values('2','xx');
+insert into j2 values('1','y');
+insert into j2 values('2','yy');
+insert into j2 values('3','yyy');
+
+
+select * from j1;
+
+select * from j2;
+
+select j1.*, j2.* from j1 join j2;
+select j1.*, j2.* from j1 cross join j2;
+select j1.*, j2.* from j1 inner join j2;
+select j1.*, j2.* from j1, j2;
+select j1.*, j2.* from j1 inner join j2 on j1.k = j2.k2;
+select j1.*, j2.* from j1, j2 where j1.k = j2.k2;
+
+select j1.*, j2.* from j1 left join j2 on j1.k = j2.k2;
+
+
+
