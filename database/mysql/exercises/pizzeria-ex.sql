@@ -111,6 +111,26 @@ inner join eats E on S.pizza = E.pizza
 where S.price < 10 and E.name = 'Amy'
 ;
 
+-- e. Find all pizzerias that are frequented by only females or only males.
+
+-- find all frequented by females or males
+
+select P.*, F.pizzeria  from person P
+inner join frequents F on P.name = F.name
+where P.gender in ('female', 'male')
+;
+
+-- find all frequented by only females or only males
+
+
+
+-- final
+
+select distinct F.pizzeria from person P
+inner join frequents F on P.name = F.name
+where P.gender in ('female', 'male')
+;
+
 
 -- https://www.cbcb.umd.edu/confcour/Spring2011/CMSC424/Relational_algebra.pdf
 
