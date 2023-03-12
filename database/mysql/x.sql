@@ -72,3 +72,8 @@ select j1.*, j2.* from j1 left join j2 on j1.k = j2.k2;
 
 
 
+
+
+-- status
+
+show table status where name='titles'\G
