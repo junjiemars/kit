@@ -955,7 +955,7 @@ set_bin_paths () {
 set_bin_paths
 
 # chain basis \${OPT_RUN}/{bin,sbin} paths
-if [ -n "\${OPT_RUN}" ]; then
+if [ -d "\${OPT_RUN}" ]; then
   PATH="\`append_path \${OPT_RUN}/bin \${PATH}\`"
   PATH="\`append_path \${OPT_RUN}/sbin \${PATH}\`"
 `
@@ -971,10 +971,10 @@ fi
   echo "# macports"
   echo "if [ \"\\$o_check_macports_env\" = \"yes\" ]; then"
   echo "  if [ -x \"/opt/local/bin/port\" ]; then"
-  echo "    PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
   echo "    if [ -d \"/opt/local/sbin\" ]; then"
   echo "      PATH=\"/opt/local/sbin\\${PATH:+:\\${PATH}}\""
   echo "    fi"
+  echo "    PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
   echo "    if [ -d \"/opt/local/lib\" ]; then"
   echo "      DYLD_LIBRARY_PATH=\"/opt/local/lib\\${DYLD_LIBRARY_PATH:+:\\${DYLD_LIBRARY_PATH}}\""
   echo "    fi"
