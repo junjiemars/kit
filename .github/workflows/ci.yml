@@ -49,7 +49,7 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         update: true
-        install: git mingw-w64-x86_64-gcc mingw-w64-x86_64
+        install: git mingw-w64-x86_64-gcc
     - name: Build and Test
       env:
         SHELL: /bin/bash
