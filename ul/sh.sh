@@ -588,7 +588,7 @@ fi`
 os_release ()
 {
 `if on_darwin; then
-  echo "  sw_vers -productVersion"
+  echo "  sw_vers"
 elif on_linux; then
   echo "  if [ -f \\"/etc/os-release\\" ]; then"
   echo "    cat /etc/os-release"
