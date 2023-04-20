@@ -534,15 +534,14 @@ echo "kyber" | sudo tee /sys/block/sda/queue/scheduler
 #+END_SRC
 
 Persistent scheduler.
+- create =/etc/udev/rules.d/60-scheduler.rules= if it didn't exist.
+- then add =ACTION=="add|change", KERNEL=="sda", ATTR{queue/scheduler}="kyber"= into it.
 #+BEGIN_SRC sh
-	# check first
-	grep GRUB_CMDLINE_LINUX /etc/default/grub
+	# in /etc/default/grub
+	# GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1 scsi_mod.use_blk_mq=1"
 
-	# then add/change elevator into it
-	echo "GRUB_CMDLINE_LINUX="elevator:sda=kyber" >> /etc/default/grub
-
-	# finally apply the changes
-  update-grub2
+	sudo udevadm control --reload
+	sudo udevadm trigger
 #+END_SRC
 
 
