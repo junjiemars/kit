@@ -361,7 +361,7 @@ wireshark-chmodbpf has the following notes:
     A startup item has been generated that will start wireshark-chmodbpf with
     launchd, and will be enabled automatically on activation. Execute the
     following command to manually _disable_ it:
-    
+
       sudo port unload wireshark-chmodbpf
 #+END_QUOTE
 
@@ -384,7 +384,7 @@ agents and XPC services.
 - [[https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html][Creating Launch Daemons and Agents]]
 
 ** APFS
-	 
+
 
 *** References
 - [[https://blog.cugu.eu/post/apfs/][APFS filesystem format]]
@@ -397,6 +397,8 @@ agents and XPC services.
 	:PROPERTIES:
 	:CUSTOM_ID: ubuntu
 	:END:
+
+Using Ubuntu as example to explain Linux.
 
 ** Booting
 	 :PROPERTIES:
@@ -502,6 +504,8 @@ less /proc/sys/vm/swappiness
 
 *** Disk
 
+IO request follows VFS -> Cache -> Scheduler -> Driver.
+
 #+BEGIN_SRC sh
 $ cat /proc/vmstat | grep -E "dirty|writeback"
 
@@ -512,6 +516,36 @@ vm.dirty_bytes = 0
 vm.dirty_writeback_centisecs = 500
 vm.dirty_expire_centisecs = 3000
 #+END_SRC
+
+*** Scheduler
+
+What scheduler?
+#+BEGIN_SRC sh
+cat /sys/block/sda/queue/scheduler
+#+END_SRC
+
+#+RESULTS:
+: [mq-deadline] none
+
+Change scheduler.
+#+BEGIN_SRC sh
+sudo modprobe kyber-iosched
+echo "kyber" | sudo tee /sys/block/sda/queue/scheduler
+#+END_SRC
+
+Persistent scheduler.
+#+BEGIN_SRC sh
+	# check first
+	grep GRUB_CMDLINE_LINUX /etc/default/grub
+
+	# then add/change elevator into it
+	echo "GRUB_CMDLINE_LINUX="elevator:sda=kyber" >> /etc/default/grub
+
+	# finally apply the changes
+  update-grub2
+#+END_SRC
+
+
 
 *** Memory
 
@@ -551,7 +585,7 @@ less /proc/buddyinfo
 =cpufreqd=
 
 #+BEGIN_SRC sh
-# show old 
+# show old
 for i in 0 1 2 3; do cat /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor; done
 # trans powersave to performance
 # /etc/rc.local
@@ -585,7 +619,7 @@ Just keep the current =ul/snap-rm.sh= version.
 
 ** Screen
 - =kazam=: screen recording and capturing program.
-	
+
 * Docker
 	:PROPERTIES:
 	:CUSTOM_ID: docker
@@ -595,7 +629,7 @@ Just keep the current =ul/snap-rm.sh= version.
 	 :PROPERTIES:
 	 :CUSTOM_ID: docker_on_linux
 	 :END:
-	 
+
 *** Run docker client via non root
 
 Docker daemon run as root user in a group called =docker= by default.
@@ -612,7 +646,7 @@ $ sudo reboot now
 	 :PROPERTIES:
 	 :CUSTOM_ID: basic_centos_development_environment
 	 :end:
-	 
+
 Include basic building/networking tools, emacs/vim editors for
 c/c++/clang/python/lua development. You can use root or default
 sudoer: =u/Hell0= to login and play.
@@ -723,7 +757,7 @@ since 7/29/2016. If you need =Docker Machine= you can check
 	 :PROPERTIES:
 	 :CUSTOM_ID: basic_java_development_environment
 	 :END:
-	 
+
 - Building tools: [[http://ant.apache.org][ant]], [[https://maven.apache.org][maven]], [[http://boot-clj.com][boot]], [[https://gradle.org][gradle]];
 - Java programming lanuage: [[https://clojure.org][clojure]], [[http://www.groovy-lang.org][groovy]], [[http://www.scala-lang.org][scala]];
 
@@ -742,7 +776,7 @@ $ docker run -w /home/u -h centos -u u -it --rm java-dev /bin/bash
 
 - as daemon
 #+BEGIN_SRC sh
-$ docker run --name java-dev -w /home/u -h centos --privileged -d java-dev 
+$ docker run --name java-dev -w /home/u -h centos --privileged -d java-dev
 $ docker exec -it -u u java-dev /bin/bash
 #+END_SRC
 
@@ -804,7 +838,7 @@ $ docker run --name xe11g2 -p 1521:1521 -p 8080:9000 -d junjiemars/xe11g2:latest
 
 *** Access Windows dir in Docker Host
 
-- Configure =Shared folders= on VirtualBox: 
+- Configure =Shared folders= on VirtualBox:
 #+BEGIN_EXAMPLE
 <vbox-folder-label-name> -> <windows-local-dir>
 #+END_EXAMPLE
@@ -823,7 +857,7 @@ $ docker run -d -v <vbox-folder-label-name>:<docker-host-mount-dir> <image>
 
 *** =tty= mode
 
-If you got =cannot enable tty mode on non tty input=, so 
+If you got =cannot enable tty mode on non tty input=, so
 #+BEGIN_SRC sh
 $ docker-machine ssh <default>
 #+END_SRC
@@ -842,7 +876,7 @@ $ docker-machine scp <host-path> <machine>:<machine-path>
 
 - container -> host
 #+BEGIN_SRC sh
-# copy from container to machine 
+# copy from container to machine
 $ docker cp <container-path> <machine-path>
 # copy from machine to host
 $ docker-machine scp <machine>:<machine-path> <host-path>
@@ -860,7 +894,7 @@ $ docker-machine scp <machine>:<machine-path> <host-path>
 The default =docker0= virtual bridge interface let communications:
 - container -> container
 - container -> host
-- host -> container 
+- host -> container
 
 *** Overlay
 
@@ -980,7 +1014,7 @@ make -C docker/compose/ -f oraclexe.Makefile start
 You can using raw =sqlplus= command program or an awsome tool
 =sqlplus.sh=, or Emacs.
 
-    
+
 ** Sqlite
 
 *** Scheme
@@ -1032,7 +1066,7 @@ git config --global http.proxy 'socks5://127.0.0.1:<port>'
 
 git config --global --unset http.proxy
 #+END_SRC
-    
+
 *** Issue
 
 **** =cannot checkout branch - error: pathsepc=
@@ -1252,7 +1286,7 @@ Find the configuration file: =idea64.vmoptions= at
 - =-XX:+UseParallelGC=: faster responsibilies but may be unstable
 - =-XX:+UseAdaptiveSizePolicy=: faster responsibilies but may be unstable
 - =-XX:-UseConcMarkSweepGC=: faster responsibilies but may be unstable
-	
+
 **** Unified Gradle
 
 Default gradle home at =~/.gradle=.
@@ -1270,6 +1304,6 @@ Open File=>=Settings=>=
 	# import from kit
 	./idea-jar-kit.sh -a=.
 
-	# list 
+	# list
 	./idea-jar-kit.sh -l=
 #+END_SRC
