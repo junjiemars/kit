@@ -916,7 +916,9 @@ fi`
 append_path () {
   local new="\$1"
   local paths="\${@:2}"
-  echo "\${paths:+\$paths:}\$new"
+  if [ -n "\$new" -a -d "\$new" ]; then
+    echo "\${paths:+\$paths:}\$new"
+  fi
 }
 
 uniq_path () {
@@ -939,6 +941,7 @@ fi
 set_bin_paths () {
   local paths=(
     '/usr/local/bin'
+    '/usr/local/sbin'
     '/usr/bin'
     '/bin'
     '/usr/sbin'
@@ -946,9 +949,7 @@ set_bin_paths () {
   )
 
   for d in "\${paths}"; do
-    if [ -d "\${d}" ]; then
-      PATH="\`append_path \${d} \$PATH\`"
-    fi
+    PATH="\`append_path \${d} \$PATH\`"
   done
 }
 
