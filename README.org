@@ -400,6 +400,18 @@ agents and XPC services.
 
 Using Ubuntu as example to explain Linux.
 
+** Hardware
+
+Hardware is the basis.
+
+=lshw=
+
+=lsmod=
+
+=modprobe=
+
+=dmesg=
+
 ** Booting
 	 :PROPERTIES:
 	 :CUSTOM_ID: ubuntu_booting
@@ -472,10 +484,6 @@ systemctl status acpid
 
 ** Performance
 
-*** Hardware
-
-=dmidecode=
-
 *** Limits
 
 =/etc/security/limits.conf=, replace =user1= with real user name.
@@ -489,6 +497,11 @@ user1 	 hard     nproc          200000
 user1 	 soft     nofile         200000
 user1 	 hard     nofile         200000
 #+END_EXAMPLE
+
+*** Kernel Parameters
+
+=sysctl=
+
 
 *** Swap
 
@@ -506,16 +519,7 @@ less /proc/sys/vm/swappiness
 
 IO request follows VFS -> Cache -> Scheduler -> Driver.
 
-#+BEGIN_SRC sh
-$ cat /proc/vmstat | grep -E "dirty|writeback"
-
-vm.dirty_background_ratio = 5
-vm.dirty_background_bytes = 0
-vm.dirty_ratio = 10
-vm.dirty_bytes = 0
-vm.dirty_writeback_centisecs = 500
-vm.dirty_expire_centisecs = 3000
-#+END_SRC
+=iostat=
 
 **** Scheduler
 
@@ -550,6 +554,29 @@ ACTION=="add|change", KERNEL=="sda", ATTR{queue/scheduler}="kyber"
 	sudo udevadm trigger
 #+END_SRC
 
+*** Virtual Memory
+
+=vmstat=
+
+=/proc/sys/vm=
+
+
+#+BEGIN_SRC elisp
+	(let ((write/s 1200.0) (memory 8000.0))
+		(let* ((dirty-ratio (* (/ write/s memory) 100))
+					 (background-ratio (ceiling (/ dirty-ratio 2.0))))
+			(list dirty-ratio background-ratio)))
+#+END_SRC
+
+#+RESULTS:
+| 15.0 | 8 |
+
+#+BEGIN_SRC example
+vm.dirty_background_ratio = 6
+vm.dirty_ratio = 12
+vm.dirty_writeback_centisecs = 500
+vm.dirty_expire_centisecs = 3000
+#+END_SRC
 
 *** Memory
 
