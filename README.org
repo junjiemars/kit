@@ -502,7 +502,7 @@ sysctl -a |*grep swap.*
 less /proc/sys/vm/swappiness
 #+END_SRC
 
-*** Disk
+*** IO
 
 IO request follows VFS -> Cache -> Scheduler -> Driver.
 
@@ -517,7 +517,7 @@ vm.dirty_writeback_centisecs = 500
 vm.dirty_expire_centisecs = 3000
 #+END_SRC
 
-*** Scheduler
+**** Scheduler
 
 What scheduler?
 #+BEGIN_SRC sh
@@ -534,16 +534,21 @@ echo "kyber" | sudo tee /sys/block/sda/queue/scheduler
 #+END_SRC
 
 Persistent scheduler.
-- create =/etc/udev/rules.d/60-scheduler.rules= if it didn't exist.
-- then add =ACTION=="add|change", KERNEL=="sda", ATTR{queue/scheduler}="kyber"= into it.
-#+BEGIN_SRC sh
-	# in /etc/default/grub
-	# GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1 scsi_mod.use_blk_mq=1"
+- change =/etc/default/grub=
+#+BEGIN_SRC example
+GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1 scsi_mod.use_blk_mq=1"
+#+END_SRC
 
+- create =/etc/udev/rules.d/60-scheduler.rules= if it didn't exist.
+#+BEGIN_SRC example
+ACTION=="add|change", KERNEL=="sda", ATTR{queue/scheduler}="kyber"
+#+END_SRC
+
+- apply =udev=
+#+BEGIN_SRC sh
 	sudo udevadm control --reload
 	sudo udevadm trigger
 #+END_SRC
-
 
 
 *** Memory
