@@ -828,6 +828,7 @@ check_rust_env () {
   local b="\${cargo_dir}/bin"
   if [ -d "\$b" ] && \`\${b}/rustc --version &>/dev/null\` && \`\${b}/cargo --version &>/dev/null\`; then
     export CARGO_HOME="\${cargo_dir}"
+    return 0
   else
     unset CARGO_HOME
   fi
