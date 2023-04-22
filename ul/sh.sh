@@ -5,22 +5,39 @@
 #------------------------------------------------
 
 HOME="${HOME%/}"
-PLATFORM="`uname -s 2>/dev/null`"
+PH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
+# check basis commands
+set -e
+awk=`PATH=$PH command -v awk`
+basename=`PATH=$PH command -v basename`
+cat=`PATH=$PH command -v cat`
+cp=`PATH=$PH command -v cp`
+cut=`PATH=$PH command -v cut`
+date=`PATH=$PH command -v date`
+grep=`PATH=$PH command -v grep`
+ps=`PATH=$PH command -v ps`
+rm=`PATH=$PH command -v rm`
+sed=`PATH=$PH command -v sed`
+tr=`PATH=$PH command -v tr`
+uname=`PATH=$PH command -v uname`
+set +e
+
+PLATFORM="`$uname -s 2>/dev/null`"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 SH="${SH}"
 if [ -z "$SH" ]; then
-  if `ps -cp $$ -o command='' &>/dev/null`; then
-    SH="`ps -cp $$ -o command='' | tr -d '-'`"
+  if `$ps -cp $$ -o command='' &>/dev/null`; then
+    SH="`$ps -cp $$ -o command='' | $tr -d '-'`"
   else
-    SH="`basename $SHELL`"
+    SH="`$basename $SHELL`"
   fi
 fi
 
 
 # check the echo's "-n" option and "\c" capability
-if echo "test\c" | grep -q c; then
+if echo "test\c" | $grep -q c; then
   echo_c=
-  if echo -n test | tr '\n' _ | grep -q _; then
+  if echo -n test | $tr '\n' _ | $grep -q _; then
     echo_n=
   else
     echo_n=-n
@@ -33,11 +50,11 @@ fi
 # check the sed's "-i" option
 echo -e "a\nb\nc" > .sed_i.test
 if [ -f .sed_i.test ]; then
-  if sed -i'.off' -e'1d' .sed_i.test; then
+  if $sed -i'.off' -e'1d' .sed_i.test; then
     sed_i=-i
-    rm .sed_i.test.off
+    $rm .sed_i.test.off
   fi
-  rm .sed_i.test
+  $rm .sed_i.test
 fi
 
 
@@ -48,9 +65,9 @@ save_as () {
 
   if [ -n "$f" -a -f "$f" ]; then
     if [ -n "$ori" -a -f "$ori" ]; then
-      cp $f $pre
+      $cp $f $pre
     else
-      cp $f $ori
+      $cp $f $ori
     fi
   fi
 }
@@ -79,28 +96,25 @@ on_linux () {
 posix_path () {
   local p="$@"
   local v=
-  if echo "$p" | grep -q "^[a-zA-Z]:[\/\\].*$"; then
-    if [ "abc" = `echo "ABC" | sed -e 's#\([A-Z]*\)#\L\1#g'` ]; then
-      v=$(echo "\\$p" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\L\1\\#')
+  if echo "$p" | $grep -q "^[a-zA-Z]:[\/\\].*$"; then
+    if [ "abc" = `echo "ABC" | $sed -e 's#\([A-Z]*\)#\L\1#g'` ]; then
+      v=$(echo "\\$p" | $sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\L\1\\#')
     else
-      local car="`echo $p | cut -d':' -f1`"
-      local cdr="`echo $p | cut -d':' -f2`"
+      local car="`echo $p | $cut -d':' -f1`"
+      local cdr="`echo $p | $cut -d':' -f2`"
       if [ "$p" = "${car}:${cdr}" ]; then
-        v=$(echo $car | tr [:upper:] [:lower:])
-        v=$(echo "\\${v}${cdr}" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')
+        v=$(echo $car | $tr [:upper:] [:lower:])
+        v=$(echo "\\${v}${cdr}" | $sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')
       else
-        v=$(echo "\\$p" | sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')
+        v=$(echo "\\$p" | $sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')
       fi
     fi;
   fi
-  echo "$v" | sed -e 's#\\#\/#g'
+  echo "$v" | $sed -e 's#\\#\/#g'
 }
 
 sort_path () {
   # Windows: let MSYS_NT and user defined commands first
-  local awk='/bin/awk'
-  local tr='/usr/bin/tr'
-  local grep='/usr/bin/grep'
   local paths="$@"
   local opt_p="`/usr/bin/dirname $OPT_RUN`"
   local win_p="^/c/"
@@ -115,7 +129,7 @@ sort_path () {
 
   win="`echo "$paths\c" | $tr ':' '\n' | $grep "$win_p" | $tr '\n' ':' `"
 
-  sorted="`echo "${ori}${opt:+$opt }${win}\c" | $awk '!xxx[$0]++' | sed -e 's#:$##' -e 's#:\  *\/#:\/#g' `"
+  sorted="`echo "${ori}${opt:+$opt }${win}\c" | $awk '!xxx[$0]++' | $sed -e 's#:$##' -e 's#:\  *\/#:\/#g' `"
 
   echo $echo_n "${sorted}${echo_c}"
 }
@@ -129,24 +143,24 @@ delete_tail_lines () {
 
   [ -f "$f" ] || return 1
 
-  local line_no=`grep -m1 -n "^${h}" $f | cut -d':' -f1`
-  echo $line_no | grep -q '^[0-9][0-9]*$' || return 1
+  local line_no=`$grep -m1 -n "^${h}" $f | $cut -d':' -f1`
+  echo $line_no | $grep -q '^[0-9][0-9]*$' || return 1
 
   if [ 0 -lt $line_no ]; then
     if [ "yes" = "$lines" ]; then
-      sed $sed_opt_i -e "$line_no,\$d" "$f"
+      $sed $sed_opt_i -e "$line_no,\$d" "$f"
     else
-      sed $sed_opt_i -e "${line_no}d" "$f"
+      $sed $sed_opt_i -e "${line_no}d" "$f"
     fi
   fi
 }
 
 
 where () {
-  if [ "$SH" = "zsh" ]; then
+  if [ "$SHELL" = "zsh" ]; then
     # override the zsh builtin
     whence -p $@
-  elif [ "$SH" = "bash" ]; then
+  elif [ "$SHELL" = "bash" ]; then
     type -P $@
   else
     command -v $@
@@ -174,7 +188,7 @@ gen_dot_shell_profile () {
 
   save_as "$profile"
   echo $echo_n "+ generate $profile ... $echo_c"
-  cat << END > "$profile"
+  $cat << END > "$profile"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
 # file: $profile
@@ -188,7 +202,7 @@ fi`
 #------------------------------------------------
 
 `if [ "zsh" = "$SH" ]; then
-   echo ""
+   echo "# test -r \\$HOME/.${SH}rc && . \\$HOME/.${SH}r"c
 elif [ "bash" = "$SH" ]; then
    echo "test -r \\$HOME/.\${SH}rc && . \\$HOME/.\${SH}r"c
 elif [ "sh" = "$SH" ]; then
@@ -211,7 +225,7 @@ gen_dot_shell_logout () {
   fi
   save_as "$logout"
   echo $echo_n "+ generate $logout ... $echo_c"
-  cat << END > "$logout"
+  $cat << END > "$logout"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
 # file: $logout
@@ -224,7 +238,7 @@ gen_dot_shell_logout () {
 fi`
 #------------------------------------------------
 
-# `basename ${logout}`: executed by ${SH}(1) when login shell exits.
+# `$basename ${logout}`: executed by ${SH}(1) when login shell exits.
 # when leaving the console clear the screen to increase privacy
 
 if [ "\$SHLVL" -eq 1 ]; then
@@ -251,7 +265,7 @@ gen_dot_shell_rc () {
   save_as "$rc"
   if [ ! -f "$rc" ]; then
     echo $echo_n "+ generate $rc ... $echo_c"
-    cat << END > "$rc"
+    $cat << END > "$rc"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
 # file: $rc
@@ -271,7 +285,7 @@ END
   fi # end of ! -f "$rc"
 
   echo "#----Nore ${SH}----" >> "$HOME/.${SH}rc"
-  cat << END >> "$HOME/.${SH}rc"
+  $cat << END >> "$HOME/.${SH}rc"
 
 # o_check_prompt_env=no
 # o_check_lang_env=no
@@ -311,7 +325,7 @@ gen_dot_shell_init () {
   local init="$HOME/.${SH}_init"
   save_as "$init"
   echo $echo_n "+ generate $init ... $echo_c"
-  cat << END > "$init"
+  $cat << END > "$init"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
 # file: $init
@@ -443,7 +457,7 @@ gen_dot_shell_aliases () {
   local aliases="$HOME/.${SH}_aliases"
   save_as "$aliases"
   echo $echo_n "+ generate $aliases ... $echo_c"
-  cat << END > "$aliases"
+  $cat << END > "$aliases"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
 # target: $aliases
@@ -553,7 +567,7 @@ gen_dot_shell_utils () {
   local utils="$HOME/.${SH}_utils"
   save_as "$utils"
   echo $echo_n "+ generate $utils ... $echo_c"
-  cat << END > "$utils"
+  $cat << END > "$utils"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
 # target: $utils
@@ -660,7 +674,7 @@ gen_dot_shell_vars () {
   local vars="$HOME/.${SH}_vars"
   save_as "$vars"
   echo $echo_n "+ generate $vars ... $echo_c"
-  cat << END > "$vars"
+  $cat << END > "$vars"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
 # target: $vars
@@ -901,7 +915,7 @@ gen_dot_shell_paths () {
   local paths="$HOME/.${SH}_paths"
   save_as "$paths"
   echo $echo_n "+ generate $paths ... $echo_c"
-  cat << END > "$paths"
+  $cat << END > "$paths"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
 # target: $paths
@@ -918,13 +932,15 @@ append_path () {
   local paths="\${@:2}"
   if [ -n "\$new" -a -d "\$new" ]; then
     echo "\${paths:+\$paths:}\$new"
+  else
+    echo "\${paths}"
   fi
 }
 
 uniq_path () {
   local paths="\$@"
-  paths=\`echo "\$paths" | tr ':' '\n' | awk '!a[\$0]++'\`
-  paths=\`echo "\$paths" | tr '\n' ':' | sed -e 's_:\$__g'\`
+  paths=\`echo "\$paths" | $tr ':' '\n' | $awk '!a[\$0]++'\`
+  paths=\`echo "\$paths" | $tr '\n' ':' | $sed -e 's_:\$__g'\`
   echo "\$paths"
 }
 
@@ -943,8 +959,8 @@ set_bin_paths () {
     '/usr/local/bin'
     '/usr/local/sbin'
     '/usr/bin'
-    '/bin'
     '/usr/sbin'
+    '/bin'
     '/sbin'
   )
 
@@ -953,7 +969,6 @@ set_bin_paths () {
   done
 }
 
-set_bin_paths
 
 # chain basis \${OPT_RUN}/{bin,sbin} paths
 if [ -d "\${OPT_RUN}" ]; then
@@ -1031,6 +1046,7 @@ fi`
 
 # export path env
 if [ "\$o_export_path_env" = "yes" ]; then
+  set_bin_paths
   export PATH
 fi
 
@@ -1057,7 +1073,7 @@ END
 gen_dot_vimrc () {
   local rc="$HOME/.vimrc"
   echo $echo_n "+ generate $rc ... $echo_c"
-  cat << END > "$rc"
+  $cat << END > "$rc"
 "------------------------------------------------
 " target: $rc
 " author: Junjie Mars
@@ -1136,7 +1152,7 @@ END
   fi
 }
 
-BEGIN=`date +%s`
+BEGIN=`$date +%s`
 echo "setup ${PLATFORM}'s $SH env ..."
 
 gen_dot_shell_profile
@@ -1151,9 +1167,9 @@ gen_dot_shell_utils
 
 gen_dot_vimrc $HOME/.vimrc
 
+export PATH
 . $HOME/.${SH}rc
 
-
-END=`date +%s`
+END=`$date +%s`
 echo
 echo "... elpased $(( ${END}-${BEGIN} )) seconds, successed."
