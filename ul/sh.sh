@@ -824,24 +824,12 @@ check_bun_env () {
 }
 
 check_rust_env () {
-  local cargo_dir="\$HOME/.cargo"
-  local src=
-  if \`rustc --version &>/dev/null\` && \`cargo --version &>/dev/null\`; then
-    if [ -d "\${cargo_dir}/bin" ]; then
-       CARGO_DIR="\${cargo_dir}/bin"
-    else
-      unset CARGO_DIR
-    fi
-    src="\$(rustc --print sysroot)/lib/rustlib/src/rust"
-    if [ -d "\$src" ]; then
-      RUST_SRC_DIR="\${src}"
-    else
-      unset RUST_SRC_DIR
-    fi
-    return 0
+  local cargo_dir="\${HOME}/.cargo"
+  local b="\${cargo_dir}/bin"
+  if [ -d "\$b" ] && \`\${b}/rustc --version &>/dev/null\` && \`\${b}/cargo --version &>/dev/null\`; then
+    export CARGO_HOME="\${cargo_dir}"
   else
-    unset CARGO_DIR
-    unset RUST_SRC_DIR
+    unset CARGO_HOME
   fi
   return 1
 }
@@ -935,7 +923,13 @@ append_path () {
   local new="\$1"
   local paths="\${@:2}"
   if [ -n "\$new" -a -d "\$new" ]; then
-    echo "\${paths:+\$paths:}\$new"
+    case ":${PATH}:" in
+      *:"$new":*)
+        ;;
+      *)
+        echo "\${paths:+\$paths:}\$new"
+        ;;
+    esac
   else
     echo "\${paths}"
   fi
@@ -1030,12 +1024,9 @@ if [ "\$o_check_bun_env" = "yes" -a -n "\$BUN_DIR" ]; then
   PATH="\`append_path \"\${BUN_DIR}\" \$PATH\`"
 fi
 
-# rust home: cargo, src
-if [ "\$o_check_rust_env" = "yes" -a -n "\$CARGO_DIR" ]; then
-  PATH="\`append_path \"\${CARGO_DIR}\" \$PATH\`"
-fi
-if [ "\$o_check_rust_env" = "yes" -a -n "\$RUST_SRC_DIR" ]; then
-  export RUST_SRC_DIR
+# rust home: cargo, rustc
+if [ "\$o_check_rust_env" = "yes" -a -n "\$CARGO_HOME" ]; then
+  PATH="\`append_path \"\${CARGO_HOME}/bin\" \$PATH\`"
 fi
 
 
