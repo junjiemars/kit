@@ -157,14 +157,18 @@ delete_tail_lines () {
 
 
 where () {
-  if [ "$SHELL" = "zsh" ]; then
-    # override the zsh builtin
-    whence -p $@
-  elif [ "$SHELL" = "bash" ]; then
-    type -P $@
-  else
-    command -v $@
-  fi
+  case "$SHELL" in
+    */zsh)
+      # override the zsh builtin
+      whence -p $@
+      ;;
+    */bash)
+      type -P $@
+      ;;
+    *)
+      command -v $@
+      ;;
+  esac
 }
 
 exist_p () {
