@@ -835,6 +835,36 @@ check_rust_env () {
   return 1
 }
 
+check_rust_src_env () {
+  local rc="\`rustc --print sysroot 2>/dev/null\`"
+  local hash="\`rustc -vV|grep -e '^commit-hash'|sed -e 's#commit-hash: \\(.*\\)#\\1#g' 2>/dev/null\`"
+  local etc="\${rc}/lib/rustlib/src/rust/src/etc"
+  local tag="\${etc}/ctags.rust"
+  local tag_src="https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/ctags.rust"
+  local gdb="\${rc}/lib/rustlib/etc/gdb_load_rust_pretty_printers.py"
+  local lldb="\${rc}/lib/rustlib/etc/lldb_commands"
+  local from="/rustc/\${hash}"
+  local src="\${rc}/lib/rustlib/src/rust"
+  if [ -n "\$rc" ] && [ -d "\$rc" ]; then
+    if ! [ -f "\$tag" ]; then
+      mkdir -p "\${etc}"
+      curl --proto '=https' --tlsv1.2 -sSf "\$tag_src" -o "\$tag"
+    fi
+    if [ -n "\$hash" ] && [ -d "\$src" ]; then
+      if [ -f "\$gdb" ] && ! \`grep 'set substitute-path' \$gdb &>/dev/null\`; then
+        cp \$gdb \${gdb}.b0
+        echo ${echo_n} "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
+      fi
+      if [ -f "\$lldb" ] && ! \`grep 'settings set target.source-map' \$lldb &>/dev/null\`; then
+        cp \$lldb \${lldb}.b0
+        echo ${echo_n} "settings set target.source-map \$from \$src" >> \$lldb
+      fi
+    fi
+  else
+    echo "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
+  fi
+}
+
 
 `if [ "zsh" = "$SH" ]; then
   echo "# https://ohmyz.sh"
