@@ -836,6 +836,7 @@ check_rust_env () {
 }
 
 check_rust_src_env () {
+  local force="\$1"
   local rc="\`rustc --print sysroot 2>/dev/null\`"
   local hash="\`rustc -vV|grep -e '^commit-hash'|sed -e 's#commit-hash: \\(.*\\)#\\1#g' 2>/dev/null\`"
   local etc="\${rc}/lib/rustlib/src/rust/src/etc"
@@ -851,13 +852,23 @@ check_rust_src_env () {
       curl --proto '=https' --tlsv1.2 -sSf "\$tag_src" -o "\$tag"
     fi
     if [ -n "\$hash" ] && [ -d "\$src" ]; then
-      if [ -f "\$gdb" ] && ! \`grep 'set substitute-path' \$gdb &>/dev/null\`; then
-        cp \$gdb \${gdb}.b0
-        echo ${echo_n} "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
+      if [ -f "\$gdb" ]; then
+         if [ "\$force" = "renew" ]; then
+           sed ${sed_i}.b1 "/set substitute-path/"d \$gdb
+         fi
+         if ! \`grep 'set substitute-path' \$gdb &>/dev/null\`; then
+           cp \$gdb \${gdb}.b0
+           echo ${echo_n} "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
+         fi
       fi
-      if [ -f "\$lldb" ] && ! \`grep 'settings set target.source-map' \$lldb &>/dev/null\`; then
-        cp \$lldb \${lldb}.b0
-        echo ${echo_n} "settings set target.source-map \$from \$src" >> \$lldb
+      if [ -f "\$lldb" ]; then
+        if [ "\$force" = "renew" ]; then
+          sed ${sed_i}.b1 "/settings set target\.source-map/"d \$lldb
+        fi
+        if ! \`grep 'settings set target.source-map' \$lldb &>/dev/null\`; then
+          cp \$lldb \${lldb}.b0
+          echo ${echo_n} "settings set target.source-map \$from \$src" >> \$lldb
+        fi
       fi
     fi
   else
