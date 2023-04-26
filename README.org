@@ -412,6 +412,17 @@ Hardware is the basis.
 
 =dmesg=
 
+Intel CPU
+#+BEGIN_SRC sh
+	sudo apt install intel-microcode
+#+END_SRC
+
+AMD CPU
+#+BEGIN_SRC sh
+	sudo apt install amd64-microcode
+#+END_SRC
+
+
 ** Booting
 	 :PROPERTIES:
 	 :CUSTOM_ID: ubuntu_booting
