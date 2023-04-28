@@ -809,6 +809,8 @@ check_kube_env () {
       export KUBE_EDITOR=emacsclient
     fi
     return 0
+  else
+    echo 'https://kubernetes.io/docs/tasks/tools/#kubectl'
   fi
   return 1
 }
