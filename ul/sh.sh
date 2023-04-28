@@ -715,13 +715,13 @@ OPT_OPEN="\${OPT_OPEN:-\$(choose_prefix)/open}"
 [ -d "\${OPT_OPEN}" ] && export OPT_OPEN=\${OPT_OPEN}
 
 check_completion_env () {
-`if on_linux; then
-   if [ "bash" = "$SH" ]; then
-     echo "  local c=\"/etc/profile.d/bash_completion.sh\""
-     echo "  if [ -f \"\\\$c\" ]; then"
-     echo "    source \"\\\$c\""
-     echo "  fi"
-   fi
+`if [ "bash" = "$SH" ]; then
+   echo "  local c=\"/etc/profile.d/bash_completion.sh\""
+   echo "  if [ -f \"\\\$c\" ]; then"
+   echo "    source \"\\\$c\""
+   echo "  fi"
+elif [ "zsh" = "$SH" ]; then
+   echo "  autoload -Uz compinit && compinit"
 else
    echo "  # nop"
    echo ":"
@@ -791,14 +791,18 @@ check_nvm_env () {
 
 # https://kubernetes.io/docs/reference/kubectl/overview/
 check_kube_env () {
-  local d="\${HOME}/.kube/kube-${SH}.sh"
-  local c="\${HOME}/.kube/\${1}"
-  local r="\${HOME}/.kube/.recent"
+  local d="\${HOME}/.kube"
+  local s="\${d}/kube-${SH}.sh"
+  local c="\${d}/\${1}"
+  local r="\${d}/.recent"
   if \`where kubectl &>/dev/null\`; then
-    if [ ! -f "\$d" ]; then
-      SHELL=$SHELL kubectl completion ${SH} >"\$d"
+    if [ ! -f "\$s" ]; then
+      [ -d "\$d" ] || mkdir -p "\$d"
+      SHELL=$SHELL kubectl completion ${SH} >"\$s"
     fi
-    . "\$d"
+    if [ -r "\$s" ]; then
+      check_completion_env && . "\$s"
+    fi
     if [ -f "\$c" ]; then
       export KUBECONFIG="\$c"
       cp "\$c" "\$r"
