@@ -634,7 +634,7 @@ else
 fi`
 }
 
-outbound_ip()
+outbound_ip ()
 {
   local u="https://checkip.dns.he.net"
   if \`where curl &>/dev/null\`; then
