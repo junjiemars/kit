@@ -634,6 +634,16 @@ else
 fi`
 }
 
+outbound_ip()
+{
+  local u="https://checkip.dns.he.net"
+  if \`where curl &>/dev/null\`; then
+    curl -sL "\$u"|grep 'Your IP address'|sed -E 's/Your.*: ([.0-9]+).*/\1/'
+  else
+    echo "\$u"
+  fi
+}
+
 `if on_linux && snap --version &>/dev/null; then
    echo "snap_remove_disabled ()"
    echo "{"
