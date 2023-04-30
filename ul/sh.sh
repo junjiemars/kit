@@ -674,6 +674,33 @@ fi`
    echo "}"
 fi`
 
+`if on_darwin; then
+   echo "find_unwanted ()"
+   echo "{"
+   echo "   local what=\"\\$@\""
+   echo "   local app_dir=\"/Applications\""
+   echo "   local sup_dir=\"~/Library/Application Support\""
+   echo "   local str_dir=\"~/Library/Saved Application State\""
+   echo "   local cch_dir1=\"/Library/Caches\""
+   echo "   local cch_dir2=\"~/Library/Caches\""
+   echo "   local prf_dir=\"~/Library/Preferences\""
+   echo "   local plg_dir=\"~/Library/Internet Plug-Ins\""
+   echo "   local crs_dir=\"~/Library/Application Support/CrashReporter\""
+   echo "   local lib_dir1=\"/Library\""
+   echo "   local lib_dir2=\"~/Library\""
+   echo "   echo \"check \\$app_dir ...\""
+   echo "   echo \"check \\$sup_dir ...\""
+   echo "   echo \"check \\$str_dir ...\""
+   echo "   echo \"check \\$cch_dir2 ...\""
+   echo "   echo \"check \\$cch_dir1 ...\""
+   echo "   echo \"check \\$prf_dir ...\""
+   echo "   echo \"check \\$plg_dir ...\""
+   echo "   echo \"check \\$crs_dir ...\""
+   echo "   echo \"check \\$lib_dir2 ...\""
+   echo "   echo \"check \\$lib_dir1 ...\""
+   echo "}"
+fi`
+
 # eof
 END
   if [ 0 -eq $? ]; then
