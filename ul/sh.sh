@@ -550,6 +550,10 @@ alias_rlwrap_bin () {
 alias_vi
 alias_emacs
 # alias_racket
+`if on_linux && [ "$SH" = "bash" ]; then
+   echo "# bsd ps style"
+   echo "alias ps='ps w'"
+fi`
 alias_python
 
 if [ 0 -eq \$(exist_p rlwrap) ]; then
