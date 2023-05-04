@@ -755,6 +755,18 @@ OPT_OPEN="\${OPT_OPEN:-\$(choose_prefix)/open}"
 [ -d "\${OPT_RUN}" ]  && export OPT_RUN=\${OPT_RUN}
 [ -d "\${OPT_OPEN}" ] && export OPT_OPEN=\${OPT_OPEN}
 
+
+# https://github.com/oven-sh/bun
+check_bun_env () {
+  local d="\$HOME/.bun"
+  if [ -x "\${d}/bin/bun" ]; then
+    BUN_DIR="\${d}/bin"
+    return 0
+  fi
+  return 1
+}
+
+# $SH completion
 check_completion_env () {
 `if [ "bash" = "$SH" ]; then
    echo "  local c=\"/etc/profile.d/bash_completion.sh\""
@@ -766,24 +778,6 @@ elif [ "zsh" = "$SH" ]; then
 else
    echo "  # nop"
    echo ":"
-fi`
-}
-
-# https://racket-lang.org
-check_racket_env () {
-`if on_darwin; then
-   if [ "zsh" = "$SH" ]; then
-      echo "  setopt +o nomatch &>/dev/null"
-   fi
-   echo "  if \\\`ls -ldr /Applications/Racket* &>/dev/null\\\`; then"
-   echo "    RACKET_HOME=\"\\\`ls -ldr /Applications/Racket* | head -n1 | sed -e 's_.*\\\(/Applications/Racket\\ v[0-9][0-9]*\\.[0-9][0-9]*\\\).*_\\1_g'\\\`\""
-   echo "  fi"
-   if [ "zsh" = "$SH" ]; then
-     echo "  setopt -o nomatch &>/dev/null"
-   fi
-else
-   echo "  # nop"
-   echo "  :"
 fi`
 }
 
@@ -818,18 +812,6 @@ fi`
   return 1
 }
 
-# https://github.com/nvm-sh/nvm
-check_nvm_env () {
-  local d="\$HOME/.nvm"
-  if [ -s "\${d}/nvm.sh" ]; then
-    NVM_DIR="\$d"
-    . "\${d}/nvm.sh"
-    [ -s "\${d}/bash_completion" ] && . "\${d}/bash_completion"
-    return 0
-  fi
-  return 1
-}
-
 # https://kubernetes.io/docs/reference/kubectl/overview/
 check_kube_env () {
   local d="\${HOME}/.kube"
@@ -860,16 +842,37 @@ check_kube_env () {
   return 1
 }
 
-# https://github.com/oven-sh/bun
-check_bun_env () {
-  local d="\$HOME/.bun"
-  if [ -x "\${d}/bin/bun" ]; then
-    BUN_DIR="\${d}/bin"
+# https://github.com/nvm-sh/nvm
+check_nvm_env () {
+  local d="\$HOME/.nvm"
+  if [ -s "\${d}/nvm.sh" ]; then
+    NVM_DIR="\$d"
+    . "\${d}/nvm.sh"
+    [ -s "\${d}/bash_completion" ] && . "\${d}/bash_completion"
     return 0
   fi
   return 1
 }
 
+# https://racket-lang.org
+check_racket_env () {
+`if on_darwin; then
+   if [ "zsh" = "$SH" ]; then
+      echo "  setopt +o nomatch &>/dev/null"
+   fi
+   echo "  if \\\`ls -ldr /Applications/Racket* &>/dev/null\\\`; then"
+   echo "    RACKET_HOME=\"\\\`ls -ldr /Applications/Racket* | head -n1 | sed -e 's_.*\\\(/Applications/Racket\\ v[0-9][0-9]*\\.[0-9][0-9]*\\\).*_\\1_g'\\\`\""
+   echo "  fi"
+   if [ "zsh" = "$SH" ]; then
+     echo "  setopt -o nomatch &>/dev/null"
+   fi
+else
+   echo "  # nop"
+   echo "  :"
+fi`
+}
+
+# https://www.rust-lang.org/
 check_rust_env () {
   local cargo_dir="\${HOME}/.cargo"
   local b="\${cargo_dir}/bin"
