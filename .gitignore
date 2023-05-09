@@ -38,3 +38,7 @@ ul/nginx.conf
 
 **/*.zip
 **/*.jar
+
+# qemu
+**/*.qcow2
+**/*.iso
