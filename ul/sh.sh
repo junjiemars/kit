@@ -295,6 +295,7 @@ END
 # o_check_lang_env=no
 `if on_darwin; then
   echo "# o_check_macports_env=no"
+  echo "# o_check_llvm_env=no"
 fi`
 # o_check_completion_env=no
 # o_check_racket_env=no
@@ -1074,8 +1075,7 @@ if [ -d "\${OPT_RUN}" ]; then
 fi
 
 `if on_darwin; then
-  echo "# macports"
-  echo "if [ \"\\$o_check_macports_env\" = \"yes\" ]; then"
+  echo "check_macports_env () {"
   echo "  if [ -x \"/opt/local/bin/port\" ]; then"
   echo "    if [ -d \"/opt/local/sbin\" ]; then"
   echo "      PATH=\"/opt/local/sbin\\${PATH:+:\\${PATH}}\""
@@ -1085,6 +1085,31 @@ fi
   echo "      DYLD_LIBRARY_PATH=\"/opt/local/lib\\${DYLD_LIBRARY_PATH:+:\\${DYLD_LIBRARY_PATH}}\""
   echo "    fi"
   echo "  fi"
+  echo "}"
+
+  echo "check_llvm_env () {"
+  echo "  local p=\"/opt/local/bin/port\""
+  echo "  local l=\"/opt/local/libexec\""
+  echo "  local d=\"\\${l}/llvm/bin\""
+  echo "  if [ -x \"\\$p\" -a -d \"\\$l\" ]; then"
+  echo "    if [ ! -d \"\\$d\" ]; then"
+  echo "      ls -d \\${d}*"
+  echo "    else"
+  echo "      PATH=\"\\\`append_path \\${d} \\$PATH\\\`\""
+  echo "    fi"
+  echo "  fi"
+  echo "}"
+fi`
+
+`if on_darwin; then
+  echo "# macports"
+  echo "if [ \"\\$o_check_macports_env\" = \"yes\" ]; then"
+  echo "  check_macports_env"
+  echo "fi"
+
+  echo "# darwin llvm"
+  echo "if [ \"\\$o_check_llvm_env\" = \"yes\" ]; then"
+  echo "  check_llvm_env"
   echo "fi"
 fi`
 
