@@ -1086,7 +1086,7 @@ fi
   echo "    fi"
   echo "  fi"
   echo "}"
-
+  echo ""
   echo "check_llvm_env () {"
   echo "  local p=\"/opt/local/bin/port\""
   echo "  local l=\"/opt/local/libexec\""
@@ -1107,7 +1107,7 @@ fi`
   echo "  check_macports_env"
   echo "fi"
 
-  echo "# darwin llvm"
+  echo "# llvm"
   echo "if [ \"\\$o_check_llvm_env\" = \"yes\" ]; then"
   echo "  check_llvm_env"
   echo "fi"
