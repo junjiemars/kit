@@ -855,6 +855,21 @@ check_nvm_env () {
   return 1
 }
 
+# https://podman.io
+check_podman_env () {
+  local d="\${HOME}/.config"
+  local r="\${d}/registries.conf"
+  local c="\$1"
+  case "\$c" in
+    mirror)
+      echo "[registries.search]\nregistries = ['registry.access.redhat.com','registry.redhat.io','docker.io']" >> "\$r"
+      ;;
+    *)
+      where podman; echo "\$d"
+      ;;
+  esac
+}
+
 # https://racket-lang.org
 check_racket_env () {
 `if on_darwin; then
