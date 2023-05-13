@@ -5,16 +5,19 @@
 
 # START_FLAGS ?= -d --remove-orphans
 
-nacos_name := nacos-quick
+nacos_name := nacos-dev
 nacos_image := nacos/nacos-server:2.0.2
+nacos_port ?= 8848
 
 start:
-	podman run --name nacos-quick -e MODE=standalone  \
-    -p 8848:8848                                    \
+	podman run --name $(nacos-dev)                \
+    -e MODE=standalone                          \
+    -p $(nacos_port):8848                       \
     -d $(nacos_image)
 
 stop:
 	podman container stop $(nacos_name)
+	podman container rm -f $(nacos_name)
 
 inspect:
 	podman container inspect $(nacos_name)
