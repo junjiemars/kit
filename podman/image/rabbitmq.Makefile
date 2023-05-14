@@ -8,8 +8,8 @@
 
 rabbitmq_name := rabbitmq-dev
 rabbitmq_image := rabbitmq:3-management
-rabbitmq_user ?= user
-rabbitmq_password ?= password
+rabbitmq_user ?= guest
+rabbitmq_password ?= guest
 
 start:
 	podman run --name $(rabbitmq_name)              \
