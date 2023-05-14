@@ -1,4 +1,5 @@
-# mysql Makefile
+# nacos Makefile
+# https://nacos.io/zh-cn/docs/what-is-nacos.html
 # https://hub.docker.com/r/nacos/nacos-server
 # on Ubuntu: /etc/containers/registries.conf
 # unqualified-search-registries = ["docker.io"]
@@ -10,7 +11,7 @@ nacos_image := nacos/nacos-server:2.0.2
 nacos_port ?= 8848
 
 start:
-	podman run --name $(nacos-dev)                \
+	podman run --name $(nacos_name)               \
     -e MODE=standalone                          \
     -p $(nacos_port):8848                       \
     -d $(nacos_image)
