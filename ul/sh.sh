@@ -856,18 +856,24 @@ check_nvm_env () {
 }
 
 # https://www.python.org
-# https://pypi.org/project/pip/
-# https://virtualenv.pypa.io
 check_python_env () {
   if where python; then
     echo "\`python --version\`"
   fi
   if where virtualenv; then
     echo "\`virtualenv --version\`"
+  else
+    echo "https://virtualenv.pypa.io"
   fi
   if where pip; then
     echo "\`pip --version\`"
     echo "\`pip config list\`"
+    echo "mirrors:"
+    echo "https://pypi.org/simple"
+    echo "https://pypi.tuna.tsinghua.edu.cn/simple"
+    echo "https://mirrors.aliyun.com/pypi/simple"
+  else
+    echo "https://pypi.org/project/pip/"
   fi
 }
 
