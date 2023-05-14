@@ -855,6 +855,22 @@ check_nvm_env () {
   return 1
 }
 
+# https://www.python.org
+# https://pypi.org/project/pip/
+# https://virtualenv.pypa.io
+check_python_env () {
+  if where python; then
+    echo "\`python --version\`"
+  fi
+  if where virtualenv; then
+    echo "\`virtualenv --version\`"
+  fi
+  if where pip; then
+    echo "\`pip --version\`"
+    echo "\`pip config list\`"
+  fi
+}
+
 # https://podman.io
 check_podman_env () {
   local d="\${HOME}/.config"
