@@ -23,12 +23,12 @@ stop:
 inspect:
 	podman container inspect $(nacos_name)
 
-# exec: start
-# 	podman exec -e LINES=$(LINES) \
-# 							-e COLUMNS=$(COLUMNS) \
-# 							-e TERM=$(TERM) \
-# 							-it -u u \
-# 							mysql-dev /bin/bash
+exec:
+	podman exec -e LINES=$(LINES)                 \
+              -e COLUMNS=$(COLUMNS)             \
+              -e TERM=$(TERM)                   \
+              -it                               \
+              $(nacos_name) /bin/bash
 
-# remove: $(compose_file) stop
-# 	podman-compose -f $< down
+
+.PHONY: start stop inspect exec

@@ -33,5 +33,6 @@ exec:
               -it                               \
 							$(rabbitmq_name) /bin/bash
 
+.PHONY: start stop inspect exec
 
 # EOF
