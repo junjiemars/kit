@@ -13,6 +13,9 @@ nacos_port ?= 8848
 start:
 	podman run --name $(nacos_name)               \
     -e MODE=standalone                          \
+    -e JVM_XMX=512m                             \
+    -e JVM_XMS=64m                              \
+    -e JVM_XMN=64m                              \
     -p $(nacos_port):8848                       \
     -d $(nacos_image)
 

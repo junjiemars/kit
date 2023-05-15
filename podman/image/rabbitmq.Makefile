@@ -10,6 +10,9 @@ rabbitmq_user ?= guest
 rabbitmq_password ?= guest
 rabbitmq_port ?= 5672
 
+    # -e RABBITMQ_VM_MEMORY_HIGH_WATERMARK=0.2      \
+
+
 start:
 	podman run --name $(rabbitmq_name)              \
     -e RABBITMQ_DEFAULT_USER=$(rabbitmq_user)     \
