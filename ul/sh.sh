@@ -642,8 +642,13 @@ fi`
 outbound_ip ()
 {
   local u="https://checkip.dns.he.net"
+  local v="\$1"
   if \`where curl &>/dev/null\`; then
-    curl -sL "\$u"|grep 'Your IP address'|sed -E 's/Your.*: ([.:0-9a-z]+).*/\1/'
+    case "\$v" in
+      -6) v="-6" ;;
+      *)  v="-4" ;;
+    esac
+    curl \$v -sL "\$u"|grep 'Your IP address'|sed -E 's/Your.*: ([.:0-9a-z]+).*/\1/'
   else
     echo "\$u"
   fi
