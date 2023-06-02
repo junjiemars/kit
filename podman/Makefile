@@ -22,7 +22,8 @@ exit:
 init: init-container
 
 init-machine:
-	podman machine ls || podman machine init
+	podman machine inspect podman-default-machine &>/dev/null || podman machine init --cpus=2 --memory=2048 --disk-size=64
+	# podman system connection default podman-machine-default-root
 
 init-container: init-machine
 	podman container ls || podman machine start
