@@ -9,8 +9,8 @@ build_flags ?= -rm
 remove_flags ?= -force
 stats_flags ?= --no-reset --no-stream
 
-podman_file := $(CURDIR)/dev/$(IMAGE_NAME).dockerfile
-compose_file := $(CURDIR)/compose/$(IMAGE_NAME)-dev.yaml
+podman_file := dev/$(IMAGE_NAME).dockerfile
+compose_file := compose/$(IMAGE_NAME)-dev.yaml
 image_tag := junjiemars/$(IMAGE_NAME)-dev:latest
 container_name := bone-$(IMAGE_NAME)-dev
 
