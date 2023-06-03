@@ -1,56 +1,28 @@
 # podman machine
 # https://podman.io
 
-IMAGE_NAME ?= centos
-
-BUILD_FLAGS ?= --rm
-START_FLAGS ?= -d --remove-orphans
-REMOVE_FLAGS ?= --force
-
-podman_file := dev/$(IMAGE_NAME).dockerfile
-compose_file := compose/$(IMAGE_NAME)-dev.yaml
-image_tag := junjiemars/$(IMAGE_NAME)-dev:latest
-bone_dev_container := bone-$(IMAGE_NAME)-dev
+PODMAN_MACHINE_NAME ?= podman-machine-default
+PODMAN_CPUS ?= 2
+PODMAN_MEMORY ?= 2048
+PODMAN_DISK_SIZE ?= 64
 
 
-build: $(podman_file)
-	podman build $(BUILD_FLAGS) -t $(image_tag) -f $< .
+init:
+	podman machine inspect $(PODMAN_DEFAULT_MACHINE) &>/dev/null \
+    || podman machine init \
+         --cpus=$(PODMAN_CPUS) \
+         --memory=$(PODMAN_MEMORY) \
+         --disk-size=$(PODMAN_DISK_SIZE)
+	# podman system connection default podman_machine-default-root
 
-exit:
-	podman machine stop
+start: init
+	podman machine start $(PODMAN_MACHINE_NAME)
 
-init: init-container
+stop:
+	podman machine stop $(PODMAN_MACHINE_NAME)
 
-init-machine:
-	podman machine inspect podman-default-machine &>/dev/null || podman machine init --cpus=2 --memory=2048 --disk-size=64
-	# podman system connection default podman-machine-default-root
+remove: 
+	podman machine rm $(PODMAN_MACHINE_NAME)
 
-init-container: init-machine
-	podman container ls || podman machine start
 
-start: $(compose_file) stop init
-	podman-compose -f $<  up $(START_FLAGS)
-
-stop: $(compose_file)
-	podman container ls && podman-compose -f $< stop
-
-exec: start
-	podman exec -e LINES=$(LINES) \
-							-e COLUMNS=$(COLUMNS) \
-							-e TERM=$(TERM) \
-							-it -u u \
-							$(bone_dev_container) /bin/bash
-
-# remove: $(compose_file) stop
-# 	podman-compose -f $<  rm $(REMOVE_FLAGS)
-
-clean: $(compose_file) remove
-	podman rmi $(image_tag)
-
-push: build
-	podman push $(image_tag)
-
-pull:
-	podman pull $(image_tag)
-
-.PHONY: build start stop exec remove clean push pull
+.PHONY: init start stop remove
