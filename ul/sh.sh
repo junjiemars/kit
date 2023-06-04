@@ -1247,9 +1247,6 @@ set tabstop=2
 " indent uses 2 characters
 set shiftwidth=2
 
-" spaces instead of tabs
-"set noexpandtab
-
 " history
 set history=50
 
