@@ -1248,11 +1248,11 @@ set shiftwidth=2
 set tabstop=2
 
 " expand tab
-if has("autocmd")
-   set expandtab
-   autocmd FileType make set noexpandtab
-   autocmd FileType python set noexpandtab
-endif
+"if has("autocmd")
+"   set expandtab
+"   autocmd FileType make set noexpandtab
+"   autocmd FileType python set noexpandtab
+"endif
 
 " history
 set history=50
