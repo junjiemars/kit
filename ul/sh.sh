@@ -1241,11 +1241,18 @@ fi`
 " nocompatible
 "set nocompatible
 
+" indent uses 2 characters
+set shiftwidth=2
+
 " tabs are 2 characters
 set tabstop=2
 
-" indent uses 2 characters
-set shiftwidth=2
+" expand tab
+if has("autocmd")
+   set expandtab
+   autocmd FileType make set noexpandtab
+   autocmd FileType python set noexpandtab
+endif
 
 " history
 set history=50
