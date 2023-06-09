@@ -822,6 +822,7 @@ fi`
 check_kube_env () {
   local d="\${HOME}/.kube"
   local s="\${d}/kube-${SH}.sh"
+  local a="\${d}/argo-${SH}.sh"
   local c="\${d}/\${1}"
   local r="\${d}/.recent"
   if \`where kubectl &>/dev/null\`; then
@@ -841,11 +842,21 @@ check_kube_env () {
     if \`inside_emacs_p\` && \`where emacsclient &>/dev/null\`; then
       export KUBE_EDITOR=emacsclient
     fi
-    return 0
   else
     echo 'https://kubernetes.io/docs/tasks/tools/#kubectl'
+    return 1
   fi
-  return 1
+  if \`where argo &>/dev/null\`; then
+    if [ ! -f "\$a" ]; then
+      SHELL=$SHELL argo completion ${SH} >"\$a"
+    fi
+    if [ -r "\$a" ]; then
+      check_completion_env && . "\$a"
+    fi
+  else
+    echo 'https://argoproj.github.io/argo-workflows/'
+  fi
+  return 0
 }
 
 # https://github.com/nvm-sh/nvm
