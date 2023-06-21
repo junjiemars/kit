@@ -1,12 +1,11 @@
-# mysql Makefile
-# https://hub.docker.com/_/mysql
+# redis Makefile
+# https://hub.docker.com/_/redis
 # on Ubuntu: /etc/containers/registries.conf
 # unqualified-search-registries = ["docker.io"]
 
 START_FLAGS ?= -d
-# START_FLAGS ?= -d --remove-orphans
 
-compose_file := $(CURDIR)/mysql.yml
+compose_file := $(CURDIR)/redis.yml
 
 start: $(compose_file) stop
 	podman-compose -f $<  up $(START_FLAGS)
@@ -19,7 +18,7 @@ exec: start
 							-e COLUMNS=$(COLUMNS) \
 							-e TERM=$(TERM) \
 							-it -u u \
-							mysql-dev /bin/bash
+							redis-dev /bin/bash
 
 remove: $(compose_file) stop
 	podman-compose -f $< down
