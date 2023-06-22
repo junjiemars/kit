@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #------------------------------------------------
 # target: make Idea's settings.jar
 # author: Junjie Mars
@@ -10,7 +10,7 @@ JAR_NAME="${JAR_NAME:-settings.zip}"
 function set_kit_prefix() {
   local p="$HOME/.config/JetBrains"
   local d=
-  
+
   if [ -d "$p" ]; then
     d="`find $HOME/.config/JetBrains -maxdepth 1 -type d | sort -r | head -n1`"
   else
@@ -67,7 +67,7 @@ case "$@" in
 			exit 1
 		else
 			KIT_WHERE=$(set_os_prefix "$KIT_WHERE")
-			[ -d "$KIT_WHERE" ] || mkdir -p "$KIT_WHERE"; 
+			[ -d "$KIT_WHERE" ] || mkdir -p "$KIT_WHERE";
 			echo "extracting [${PREFIX}] to [$KIT_WHERE] ..."
 			cd "$KIT_WHERE" ; jar xvf "$PREFIX"
 		fi
@@ -98,4 +98,3 @@ case "$@" in
 		exit 1
 		;;
 esac
-
