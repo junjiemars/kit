@@ -12,7 +12,8 @@ init:
     || podman machine init \
          --cpus=$(PODMAN_CPUS) \
          --memory=$(PODMAN_MEMORY) \
-         --disk-size=$(PODMAN_DISK_SIZE)
+         --disk-size=$(PODMAN_DISK_SIZE) \
+         --rootful=false
 	# podman system connection default $(podman_machine_name)-root
 
 start: init
