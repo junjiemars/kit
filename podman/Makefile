@@ -5,6 +5,7 @@ PODMAN_MACHINE_NAME ?= podman-machine-default
 PODMAN_CPUS ?= 2
 PODMAN_MEMORY ?= 2048
 PODMAN_DISK_SIZE ?= 64
+PODMAN_LOG_LEVEL ?= trace
 
 
 init:
@@ -13,7 +14,8 @@ init:
          --cpus=$(PODMAN_CPUS) \
          --memory=$(PODMAN_MEMORY) \
          --disk-size=$(PODMAN_DISK_SIZE) \
-         --rootful=false
+         --rootful=false \
+         --log-level=$(PODMAN_LOG_LEVEL)
 	# podman system connection default $(podman_machine_name)-root
 
 start: init
@@ -22,9 +24,8 @@ start: init
 stop:
 	podman machine stop $(PODMAN_MACHINE_NAME)
 
-remove: 
+remove:
 	podman machine rm $(PODMAN_MACHINE_NAME)
 
 
 .PHONY: init start stop remove
-
