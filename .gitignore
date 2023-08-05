@@ -42,3 +42,6 @@ ul/nginx.conf
 # qemu
 **/*.qcow2
 **/*.iso
+
+# podman
+podman/capture.pcap
