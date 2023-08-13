@@ -9,7 +9,7 @@ PODMAN_LOG_LEVEL ?= info
 
 
 init:
-	podman machine inspect $(PODMAN_DEFAULT_MACHINE) &>/dev/null \
+	podman machine inspect $(PODMAN_MACHINE_NAME) &>/dev/null \
     || podman machine init \
          --cpus=$(PODMAN_CPUS) \
          --memory=$(PODMAN_MEMORY) \
