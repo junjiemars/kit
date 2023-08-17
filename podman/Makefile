@@ -9,16 +9,13 @@ PODMAN_LOG_LEVEL ?= info
 
 
 init:
-	podman machine inspect $(PODMAN_MACHINE_NAME) &>/dev/null \
-    || podman machine init \
+	podman machine init \
          --cpus=$(PODMAN_CPUS) \
          --memory=$(PODMAN_MEMORY) \
          --disk-size=$(PODMAN_DISK_SIZE) \
-         --rootful=false \
          --log-level=$(PODMAN_LOG_LEVEL)
-	# podman system connection default $(podman_machine_name)-root
 
-start: init
+start:
 	podman machine start $(PODMAN_MACHINE_NAME) --log-level=$(PODMAN_LOG_LEVEL)
 
 stop:

@@ -1,16 +1,23 @@
 version: "3"
 
+# podman machine ssh
+# sysctl -w vm.max_map_count=524288
+# sysctl -w fs.file-max=131072
+
 services:
   sonarqube:
     image: sonarqube:lts-community
     container_name: sonarqube-dev
-    # restart: always
-    sysctl:
-      - vm.max_map_count=524288
-      - fs.file-max=131072
+    # sysctls:
+    #   - vm.max_map_count=524288
+    #   - fs.file-max=131072
+    ulimits:
+      nofile: 131072
+      nproc: 8192
     depends_on:
       - db
     environment:
+      SONAR_SEARCH_JAVAADDITIONALOPTS: -Ddiscovery.type='single-node' -Dnode.store.allow_mmap=false
       SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
       SONAR_JDBC_USERNAME: sonar
       SONAR_JDBC_PASSWORD: sonar
