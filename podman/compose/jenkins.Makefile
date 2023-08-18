@@ -8,8 +8,11 @@ START_FLAGS ?= -d
 
 compose_file := $(CURDIR)/jenkins.yml
 
-start: $(compose_file) stop
+up: $(compose_file) stop
 	podman-compose -f $< up $(START_FLAGS)
+
+start: $(compose_file)
+	podman-compose -f $< start
 
 stop: $(compose_file)
 	podman-compose -f $< stop
