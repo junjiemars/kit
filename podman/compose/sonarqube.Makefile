@@ -12,7 +12,7 @@ start: $(compose_file) stop
 	podman-compose -f $< up $(START_FLAGS)
 
 stop: $(compose_file)
-	podman-compose -f $< down
+	podman-compose -f $< stop
 
 exec:
 	podman exec -e LINES=$(LINES) \
@@ -21,5 +21,5 @@ exec:
 							-it -u u \
 							sonarqube-dev /bin/bash
 
-remove: $(compose_file) stop
+down: $(compose_file) stop
 	podman-compose -f $< down

@@ -3,11 +3,12 @@ version: "3"
 # podman machine ssh
 
 services:
-  sonarqube:
+  jenkins:
     image: jenkins/jenkins:lts
     container_name: jenkins-dev
+    restart: on-failure
     logging:
-      driver: none
+      driver: k8s-file
     volumens:
       - jenkins-data:/var/jenkins_home
     ports:
