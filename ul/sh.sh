@@ -154,33 +154,20 @@ delete_tail_lines () {
 }
 
 
-case "$SH" in
-  */zsh)
-    # override the zsh builtin
-    alias where="whence -p $@"
-    ;;
-  */bash)
-    alias where="type -P $@"
-    ;;
-  *)
-    alias where=command -v $@
-    ;;
-esac
-
-# where () {
-#   case "$SH" in
-#     */zsh)
-#       # override the zsh builtin
-#       whence -p $@
-#       ;;
-#     */bash)
-#       type -P $@
-#       ;;
-#     *)
-#       command -v $@
-#       ;;
-#   esac
-# }
+where () {
+  case "$SH" in
+    */zsh | zsh)
+      # override the zsh builtin
+      whence -p $@
+      ;;
+    */bash | bash)
+      type -P $@
+      ;;
+    *)
+      command -v $@
+      ;;
+  esac
+}
 
 exist_p () {
   where ${1} 1>/dev/null 2>&1
@@ -362,9 +349,16 @@ else
   command -v $SH
 fi`
 
-`
-declare -f where
-`
+
+where () {
+  `if [ "zsh" = "$SH" ]; then
+      echo "whence -p \\$@"
+   elif [ "bash" = "$SH" ]; then
+      echo "type -P \\$@"
+   else
+      echo "command -v \\$@"
+   fi`
+}
 
 
 inside_docker_p () {
@@ -381,10 +375,6 @@ inside_emacs_p () {
   test -n "\$INSIDE_EMACS"
 }
 
-
-`
-declare -f delete_tail_lines
-`
 
 pretty_prompt_command () {
   local o="\${PROMPT_COMMAND}"
@@ -509,13 +499,17 @@ else
 fi
 `
 
-`
-declare -f exist_p
-`
+exist_p () {
+  where \${1} 1>/dev/null 2>&1
+  echo \$?
+}
 
-`
-declare -f diff_p
-`
+
+diff_p () {
+  diff \${1} \${2} 1>/dev/null 2>&1
+  echo \$?
+}
+
 
 alias_racket () {
   local p_racket=\$(exist_p 'racket')
