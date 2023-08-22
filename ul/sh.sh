@@ -24,13 +24,11 @@ set +e
 
 PLATFORM="`$uname -s 2>/dev/null`"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
-SH="${SH}"
-if [ -z "$SH" ]; then
-  if `$ps -cp $$ -o command='' &>/dev/null`; then
-    SH="`$ps -cp $$ -o command='' | $tr -d '-'`"
-  else
-    SH="`$basename $SHELL`"
-  fi
+SH=`$ps -cp $$ -o command='' 2>/dev/null`
+if [ -n "$SH" ]; then
+  SH="`$ps -cp $$ -o command='' | $tr -d '-'`"
+else
+  SH="`$basename $SHELL`"
 fi
 
 
@@ -654,7 +652,7 @@ outbound_ip ()
   fi
 }
 
-`if on_linux && snap --version &>/dev/null; then
+`if on_linux && where snap &>/dev/null; then
    echo "snap_remove_disabled ()"
    echo "{"
    echo "  LANG=C snap list --all | awk '/disabled/{print \\\$1, \\\$3}' |"
@@ -677,7 +675,7 @@ outbound_ip ()
    echo "}"
 fi`
 
-`if on_linux && unzip -h &>/dev/null; then
+`if on_linux && where unzip &>/dev/null; then
    echo "unzip_zhcn ()"
    echo "{"
    echo "  unzip -Ogb2312 \\\$@"
@@ -1033,7 +1031,7 @@ fi
 
 
 `if [ "zsh" = "$SH" ]; then
-  echo "if [ \\"\\$o_check_ohmyzsh_env\" = \\"yes\\" ]; then"
+  echo "if [ \\"\\$o_check_ohmyzsh_env\\" = \\"yes\\" ]; then"
   echo "  check_ohmyzsh_env"
   echo "fi"
 fi`
@@ -1099,15 +1097,7 @@ fi
 `
 
 set_bin_paths () {
-  local paths=(
-    '/usr/local/bin'
-    '/usr/local/sbin'
-    '/usr/bin'
-    '/usr/sbin'
-    '/bin'
-    '/sbin'
-  )
-
+  local paths="`echo $PH | tr ':' '\n'`"
   for d in "\${paths}"; do
     PATH="\`append_path \${d} \$PATH\`"
   done
@@ -1314,6 +1304,7 @@ END
     echo "no"
   fi
 }
+
 
 BEGIN=`$date +%s`
 echo "setup ${PLATFORM}'s $SH env ..."
