@@ -154,20 +154,33 @@ delete_tail_lines () {
 }
 
 
-where () {
-  case "$SH" in
-    */zsh)
-      # override the zsh builtin
-      PATH=$PH whence -p $@
-      ;;
-    */bash)
-      PATH=$PH type -P $@
-      ;;
-    *)
-      $PATH=$PH command -v $@
-      ;;
-  esac
-}
+case "$SH" in
+  */zsh)
+    # override the zsh builtin
+    alias where="whence -p $@"
+    ;;
+  */bash)
+    alias where="type -P $@"
+    ;;
+  *)
+    alias where=command -v $@
+    ;;
+esac
+
+# where () {
+#   case "$SH" in
+#     */zsh)
+#       # override the zsh builtin
+#       whence -p $@
+#       ;;
+#     */bash)
+#       type -P $@
+#       ;;
+#     *)
+#       command -v $@
+#       ;;
+#   esac
+# }
 
 exist_p () {
   where ${1} 1>/dev/null 2>&1
@@ -420,7 +433,7 @@ if [ "\$o_check_prompt_env" = "yes" ]; then
 elif [ "bash" = "$SH" ]; then
   echo "  PS1=\\"\\u@\\h \\W \\$\\""
 else
-  echo "  PS1=\\"\\$LOGNAME@\\\`uname -n | cut -d '.' -f1\\\` \\$\\""
+  echo "  PS1=\\"\\$LOGNAME@\\\`$uname -n | $cut -d '.' -f1\\\` \\$\\""
 fi`
   export PS1="\${PS1% } "
 
@@ -1065,9 +1078,10 @@ fi`
 
 append_path () {
   local new="\$1"
-  local paths="\${@:2}"
+  shift 1
+  local paths="\${@}"
   if [ -n "\$new" -a -d "\$new" ]; then
-    case ":${PATH}:" in
+    case ":\${PATH}:" in
       *:"$new":*)
         ;;
       *)
@@ -1202,6 +1216,7 @@ fi`
 # export path env
 if [ "\$o_export_path_env" = "yes" ]; then
   set_bin_paths
+  PATH="\$(uniq_path \${PATH})"
   export PATH
 fi
 
@@ -1215,6 +1230,8 @@ else
   echo "  : #void"
 fi`
 fi
+
+
 
 # eof
 END
