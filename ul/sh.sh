@@ -155,16 +155,16 @@ delete_tail_lines () {
 
 
 where () {
-  case "$SHELL" in
+  case "$SH" in
     */zsh)
       # override the zsh builtin
-      whence -p $@
+      PATH=$PH whence -p $@
       ;;
     */bash)
-      type -P $@
+      PATH=$PH type -P $@
       ;;
     *)
-      command -v $@
+      $PATH=$PH command -v $@
       ;;
   esac
 }
@@ -420,7 +420,7 @@ if [ "\$o_check_prompt_env" = "yes" ]; then
 elif [ "bash" = "$SH" ]; then
   echo "  PS1=\\"\\u@\\h \\W \\$\\""
 else
-  echo "  PS1=\\"\\$LOGNAME@\\\`uname -n | cut -d '.' -f1\\\` \$\\""
+  echo "  PS1=\\"\\$LOGNAME@\\\`uname -n | cut -d '.' -f1\\\` \\$\\""
 fi`
   export PS1="\${PS1% } "
 
@@ -1097,8 +1097,8 @@ fi
 `
 
 set_bin_paths () {
-  local paths="`echo $PH | tr ':' '\n'`"
-  for d in "\${paths}"; do
+  local paths="$PH"
+  for d in \`echo \${paths} | $tr ':' '\n'\`; do
     PATH="\`append_path \${d} \$PATH\`"
   done
 }
