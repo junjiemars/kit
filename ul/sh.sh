@@ -182,7 +182,11 @@ gen_dot_shell_profile () {
   local callrc="test -r \${HOME}/.${SH}rc && . \${HOME}/.${SH}rc"
   case "$SH" in
     bash) profile="$HOME/.bash_profile" ;;
-    zsh) profile="$HOME/.zprofile" ;;
+    zsh) profile="$HOME/.zprofile"
+         if on_darwin; then
+           callrc="# test -r \${HOME}/.${SH}rc && . \${HOME}/.${SH}rc"
+         fi
+         ;;
     sh) profile="$HOME/.profile" ;;
   esac
   save_as "$profile"
@@ -255,15 +259,14 @@ gen_dot_shell_rc () {
   local nb=""
   local ne=""
   if on_darwin; then
-    mc="\
+    mc="
 # o_check_macports_env=no:
-# o_check_llvm_env=no
-"
+# o_check_llvm_env=no:"
   fi
   case "$SH" in
     zsh)
-      sc="\
-# o_check_ohmyzsh_env=no
+      sc="
+# o_check_ohmyzsh_env=no:
 "
       ;;
   esac
@@ -279,19 +282,19 @@ gen_dot_shell_rc () {
 # o_check_rust_env=no:
 # o_export_path_env=no:
 # o_export_libpath_env=no:
-${mc}:
-${sc}:
+${mc}
+${sc}
 test -f \$HOME/.${SH}_init    && . \$HOME/.${SH}_init:
 test -f \$HOME/.${SH}_vars    && . \$HOME/.${SH}_vars:
 test -f \$HOME/.${SH}_paths   && . \$HOME/.${SH}_paths:
 test -f \$HOME/.${SH}_utils   && . \$HOME/.${SH}_utils:
 test -f \$HOME/.${SH}_aliases && . \$HOME/.${SH}_aliases:
-:
 "
   save_as "$rc"
   if [ ! -f "$rc" ]; then
     echo $echo_n "+ generate $rc ... $echo_c"
-    cc=`echo ${cc} | $sed 's/: /\n/g'`
+    cc=`echo ${cc} | $sed 's/:$//g'`
+    echo "XX:$cc"
     $cat << END > "$rc"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -312,19 +315,19 @@ ${cc}
 # eof
 END
   else
-    nb=`grep -n '^#----Nore' $rc | cut -d':' -f1`
-    ne=`grep -n '# eof' $rc | cut -d':' -f1`
-    cc=`echo $cc | sed 's/: /\\\\\\n/g'`
+    nb=`$grep -n '^#----Nore' $rc | $cut -d':' -f1`
+    ne=`$grep -n '# eof' $rc | $cut -d':' -f1`
+    cc=`echo $cc | $sed 's/:*$/\\\/g'`
     if test $nb -gt 0 &>/dev/null; then
-      echo $echo_n "+ append $rc ... $echo_c"
+      echo $echo_n "+ update $rc ... $echo_c"
       nb=$(( ${nb}+1 ))
       ne=$(( ${ne} ))
       $sed ${sed_i}.pre \
            -e "${nb},${ne}d" \
-           -e "/^#----Nore/a\
+           -e '/^#----Nore/a\'"
 ${cc}\
 \
-\n# eof" $rc
+# eof" $rc &>/dev/null
     fi
   fi
   if [ 0 -eq $? ]; then
