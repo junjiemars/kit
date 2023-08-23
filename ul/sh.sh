@@ -291,8 +291,8 @@ test -f \$HOME/.${SH}_utils   && . \$HOME/.${SH}_utils:
 test -f \$HOME/.${SH}_aliases && . \$HOME/.${SH}_aliases:
 "
   save_as "$rc"
+  echo $echo_n "+ generate $rc ... $echo_c"
   if [ ! -f "$rc" ]; then
-    echo $echo_n "+ generate $rc ... $echo_c"
     ss=`echo ${ss} | $sed 's/:$//g'`
     $cat << END > "$rc"
 #### -*- mode:sh -*- vim:ft=sh
