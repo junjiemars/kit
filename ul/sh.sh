@@ -255,7 +255,7 @@ gen_dot_shell_rc () {
   local rc="$HOME/.${SH}rc"
   local mc=""
   local sc=""
-  local cc=""
+  local ss=""
   local nb=""
   local ne=""
   if on_darwin; then
@@ -270,7 +270,7 @@ gen_dot_shell_rc () {
 "
       ;;
   esac
-  cc="\
+  ss="\
 # o_check_prompt_env=no:
 # o_check_lang_env=no:
 # o_check_completion_env=no:
@@ -293,8 +293,7 @@ test -f \$HOME/.${SH}_aliases && . \$HOME/.${SH}_aliases:
   save_as "$rc"
   if [ ! -f "$rc" ]; then
     echo $echo_n "+ generate $rc ... $echo_c"
-    cc=`echo ${cc} | $sed 's/:$//g'`
-    echo "XX:$cc"
+    ss=`echo ${ss} | $sed 's/:$//g'`
     $cat << END > "$rc"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -310,22 +309,21 @@ fi`
 
 
 #----Nore ${SH}----
-${cc}
+${ss}
 
 # eof
 END
   else
     nb=`$grep -n '^#----Nore' $rc | $cut -d':' -f1`
     ne=`$grep -n '# eof' $rc | $cut -d':' -f1`
-    cc=`echo $cc | $sed 's/:*$/\\\/g'`
+    ss=`echo $ss | $sed 's/:*$/\\\/g'`
     if test $nb -gt 0 &>/dev/null; then
-      echo $echo_n "+ update $rc ... $echo_c"
       nb=$(( ${nb}+1 ))
       ne=$(( ${ne} ))
       $sed ${sed_i}.pre \
            -e "${nb},${ne}d" \
            -e '/^#----Nore/a\'"
-${cc}\
+${ss}\
 \
 # eof" $rc &>/dev/null
     fi
