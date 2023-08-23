@@ -22,14 +22,11 @@ tr=`PATH=$PH command -v tr`
 uname=`PATH=$PH command -v uname`
 set +e
 
+# check shell
 PLATFORM="`$uname -s 2>/dev/null`"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
-SH=`$ps -cp $$ -o command='' 2>/dev/null`
-if [ -n "$SH" ]; then
-  SH="`$ps -cp $$ -o command='' | $tr -d '-'`"
-else
-  SH="`$basename $SHELL`"
-fi
+SHELL="`$ps -p $$ -ocommand='' 2>/dev/null|$cut -d' ' -f1|$tr -d '-'`"
+SH="`$basename $SHELL`"
 
 
 # check the echo's "-n" option and "\c" capability
@@ -203,13 +200,7 @@ gen_dot_shell_profile () {
 fi`
 #------------------------------------------------
 
-`if [ "zsh" = "$SH" ]; then
-   echo "# test -r \\$HOME/.${SH}rc && . \\$HOME/.${SH}r"c
-elif [ "bash" = "$SH" ]; then
-   echo "test -r \\$HOME/.\${SH}rc && . \\$HOME/.\${SH}r"c
-elif [ "sh" = "$SH" ]; then
-   echo "test -r \\$HOME/.\${SH}rc && . \\$HOME/.\${SH}r"c
-fi`
+test -r \${HOME}/.${SH}rc && \${HOME}/.${SH}rc
 
 # eof
 END
