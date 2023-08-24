@@ -13,6 +13,7 @@ basename=`PATH=$PH command -v basename`
 cat=`PATH=$PH command -v cat`
 cp=`PATH=$PH command -v cp`
 cut=`PATH=$PH command -v cut`
+diff=`PATH=$PH command -v diff`
 date=`PATH=$PH command -v date`
 grep=`PATH=$PH command -v grep`
 ps=`PATH=$PH command -v ps`
@@ -144,6 +145,17 @@ where () {
       ;;
   esac
 }
+
+exist_p () {
+  where ${1} 2>&1 &>/dev/null
+  echo $?
+}
+
+diff_p () {
+  $diff ${1} ${2} 2>&1 &>/dev/null
+  echo $?
+}
+
 
 
 gen_dot_shell_profile () {
@@ -480,7 +492,7 @@ exist_p () {
 
 
 diff_p () {
-  diff \${1} \${2} 1>/dev/null 2>&1
+  $diff \${1} \${2} 1>/dev/null 2>&1
   echo \$?
 }
 
@@ -553,6 +565,7 @@ END
 
 gen_dot_shell_utils () {
   local utils="$HOME/.${SH}_utils"
+  local rc=0
   save_as "$utils"
   echo $echo_n "+ generate $utils ... $echo_c"
   $cat << END > "$utils"
@@ -633,7 +646,9 @@ outbound_ip ()
   fi
 }
 
-`if on_linux && where snap &>/dev/null; then
+`if on_linux; then
+  rc=$(PATH=$PH command -v snap >/dev/null 2>&1; echo $?)
+  if [ $rc -eq 0 ]; then
    echo "snap_remove_disabled ()"
    echo "{"
    echo "  LANG=C snap list --all | awk '/disabled/{print \\\$1, \\\$3}' |"
@@ -654,13 +669,14 @@ outbound_ip ()
    echo "  sudo systemctl enable snapd"
    echo "  sudo systemctl restart snapd"
    echo "}"
-fi`
-
-`if on_linux && where unzip &>/dev/null; then
+  fi
+  rc=$(PATH=$PH command -v unzip >/dev/null 2>&1; echo $?)
+  if [ $rc -eq 0 ]; then
    echo "unzip_zhcn ()"
    echo "{"
    echo "  unzip -Ogb2312 \\\$@"
    echo "}"
+  fi
 fi`
 
 `if on_darwin; then
@@ -1066,13 +1082,11 @@ uniq_path () {
   echo "\$paths"
 }
 
-`
-declare -f posix_path
-`
+`[ "sh" = "$SH" ] || declare -f posix_path`
 
 `
 if on_windows_nt; then
-  declare -f sort_path
+  [ "sh" = "$SH" ] || declare -f sort_path
 fi
 `
 
