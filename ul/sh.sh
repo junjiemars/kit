@@ -145,16 +145,6 @@ where () {
   esac
 }
 
-exist_p () {
-  where ${1} 1>/dev/null 2>&1
-  echo $?
-}
-
-diff_p () {
-  diff ${1} ${2} 1>/dev/null 2>&1
-  echo $?
-}
-
 
 gen_dot_shell_profile () {
   local profile="$HOME/.${SH}_profile"
@@ -1026,8 +1016,6 @@ fi
   echo "  check_ohmyzsh_env"
   echo "fi"
 fi`
-
-# declare vars
 
 # eof
 END
