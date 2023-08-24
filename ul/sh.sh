@@ -130,27 +130,6 @@ sort_path () {
 }
 
 
-delete_tail_lines () {
-  local h="$1"
-  local lines="$2"
-  local f="$3"
-  local sed_opt_i="${sed_i}.pre"
-
-  [ -f "$f" ] || return 1
-
-  local line_no=`$grep -m1 -n "^${h}" $f | $cut -d':' -f1`
-  echo $line_no | $grep -q '^[0-9][0-9]*$' || return 1
-
-  if [ 0 -lt $line_no ]; then
-    if [ "yes" = "$lines" ]; then
-      $sed $sed_opt_i -e "$line_no,\$d" "$f"
-    else
-      $sed $sed_opt_i -e "${line_no}d" "$f"
-    fi
-  fi
-}
-
-
 where () {
   case "$SH" in
     */zsh | zsh)
@@ -253,23 +232,23 @@ END
 
 gen_dot_shell_rc () {
   local rc="$HOME/.${SH}rc"
-  local mc=""
-  local sc=""
+  local mc=":"
+  local sc=":"
   local ss=""
-  local nb=""
-  local ne=""
+  local nh="#----Nore ${SH}----"
+  case "$SH" in
+    bash)
+      ;;
+    zsh)
+      sc="\
+# o_check_ohmyzsh_env=no:"
+      ;;
+  esac
   if on_darwin; then
-    mc="
+    mc="\
 # o_check_macports_env=no:
 # o_check_llvm_env=no:"
   fi
-  case "$SH" in
-    zsh)
-      sc="
-# o_check_ohmyzsh_env=no:
-"
-      ;;
-  esac
   ss="\
 # o_check_prompt_env=no:
 # o_check_lang_env=no:
@@ -293,7 +272,7 @@ test -f \$HOME/.${SH}_aliases && . \$HOME/.${SH}_aliases:
   save_as "$rc"
   echo $echo_n "+ generate $rc ... $echo_c"
   if [ ! -f "$rc" ]; then
-    ss=`echo ${ss} | $sed 's/:$//g'`
+    ss=`echo "${ss}" | $sed 's/:$//g'`
     $cat << END > "$rc"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -307,26 +286,20 @@ test -f \$HOME/.${SH}_aliases && . \$HOME/.${SH}_aliases:
 fi`
 #------------------------------------------------
 
-
-#----Nore ${SH}----
+${nh}
 ${ss}
 
 # eof
 END
   else
-    nb=`$grep -n '^#----Nore' $rc | $cut -d':' -f1`
-    ne=`$grep -n '# eof' $rc | $cut -d':' -f1`
-    ss=`echo $ss | $sed 's/:*$/\\\/g'`
-    if test $nb -gt 0 &>/dev/null; then
-      nb=$(( ${nb}+1 ))
-      ne=$(( ${ne} ))
-      $sed ${sed_i}.pre \
-           -e "${nb},${ne}d" \
-           -e '/^#----Nore/a\'"
-${ss}\
+    nh="${nh}\\"
+    ss=`echo "$ss" | $sed 's/:$/\\\/g'`
+    $sed ${sed_i}.pre '/^#----Nore/,$c\'"
+${nh}
 \
-# eof" $rc &>/dev/null
-    fi
+${ss}
+\
+# eof" $rc >/dev/null
   fi
   if [ 0 -eq $? ]; then
     echo "yes"
