@@ -419,12 +419,12 @@ fi
 
 # check lang env
 if [ "\$o_check_lang_env" = "yes" ]; then
- `if on_windows_nt; then
-    echo " # change code page to unicode"
-    echo " chcp.com 65001 &>/dev/null"
-    echo " export LANG=en_US.UTF-8"
- else
-    echo " if test -z \"\\$LANG\"; then"
+  `if on_windows_nt; then
+     echo " # change code page to unicode"
+     echo " chcp.com 65001 &>/dev/null"
+     echo " export LANG=en_US.UTF-8"
+  else
+    echo "if test -z \"\\$LANG\"; then"
     if on_linux; then
       echo "    # fix set locale failed:"
       echo "    # sudo localedef -i en_US -f UTF-8 en_US.UTF-8"
@@ -434,7 +434,7 @@ if [ "\$o_check_lang_env" = "yes" ]; then
     fi
     echo "  fi"
     echo "  export LANG"
- fi`
+  fi`
 fi
 
 
