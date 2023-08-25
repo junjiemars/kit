@@ -4,7 +4,7 @@ services:
   redis:
     image: redis
     container_name: redis-dev
-    restart: always
+    restart: on-failure
     ports:
       - 6379:6379
 

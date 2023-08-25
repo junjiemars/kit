@@ -1,0 +1,12 @@
+version: "3"
+
+# podman machine ssh
+
+services:
+  memcached:
+    image: memcached:1.6
+    container_name: memcached-dev
+    logging:
+      driver: k8s-file
+    ports:
+      - "11211:11211"
