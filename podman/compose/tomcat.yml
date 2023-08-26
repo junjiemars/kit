@@ -12,7 +12,6 @@ services:
     command: "catalina.sh run"
     logging:
       driver: k8s-file
-    # command: "catalina.sh run"
     volumes:
       - tomcat_root:/usr/local/tomcat
     ports:
