@@ -9,6 +9,7 @@ services:
     container_name: tomcat-dev
     environment:
       JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    command: "catalina.sh run"
     logging:
       driver: k8s-file
     # command: "catalina.sh run"
