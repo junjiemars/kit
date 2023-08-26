@@ -1,5 +1,7 @@
 version: '3.0'
 
+# https://github.com/docker-library/redis/blob/master/README.md
+
 services:
   redis:
     image: redis:6

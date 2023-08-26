@@ -1,8 +1,11 @@
 version: "3"
 
+# https://github.com/docker-library/tomcat/blob/master/README.md
+
 services:
   tomcat:
-    image: tomcat:8
+    image: tomcat:10
+    # image: tomcat:8-jre8
     container_name: tomcat-dev
     environment:
       JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
