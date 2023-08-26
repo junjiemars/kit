@@ -8,7 +8,7 @@ START_FLAGS ?= -d
 
 compose_file := $(CURDIR)/tomcat.yml
 
-up: $(compose_file) down
+up: $(compose_file)
 	podman-compose -f $< up $(START_FLAGS)
 
 start: $(compose_file)
@@ -19,9 +19,10 @@ stop: $(compose_file)
 
 exec:
 	podman exec -e LINES=$(LINES) \
-							-e COLUMNS=$(COLUMNS) \
-							-e TERM=$(TERM) \
-							tomcat-dev /bin/bash
+	            -e COLUMNS=$(COLUMNS) \
+	            -e TERM=$(TERM) \
+	            -it \
+	            tomcat-dev /bin/bash
 
 down: $(compose_file) stop
 	podman-compose -f $< down

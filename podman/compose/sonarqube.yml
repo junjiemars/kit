@@ -10,6 +10,9 @@ services:
   sonarqube:
     image: sonarqube:lts-community
     container_name: sonarqube-dev
+    # privileged: true
+    # group_add:
+    #   - keep-groups
     # sysctls:
     #   - vm.max_map_count=524288
     #   - fs.file-max=131072
@@ -38,12 +41,12 @@ services:
       POSTGRES_USER: sonar
       POSTGRES_PASSWORD: sonar
     volumes:
-      - postgresql:/var/lib/postgresql
-      - postgresql_data:/var/lib/postgresql/data
+      - sonarqube_postgresql:/var/lib/postgresql
+      - sonarqube_postgresql_data:/var/lib/postgresql/data
 
 volumes:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_logs:
-  postgresql:
-  postgresql_data:
+  sonarqube_postgresql:
+  sonarqube_postgresql_data:

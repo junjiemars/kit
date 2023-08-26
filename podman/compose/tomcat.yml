@@ -10,13 +10,10 @@ services:
       driver: k8s-file
     # command: "catalina.sh run"
     volumes:
-      - tomcat_webapps:/usr/local/tomcat/webapps
-      - tomcat_logs:/usr/local/tomcat/logs
+      - tomcat_root:/usr/local/tomcat
     ports:
       - 9080:8080
       - 9085:5005
-      - 9089:8089
 
 volumes:
-  tomcat_webapps:
-  tomcat_logs:
+  tomcat_root:

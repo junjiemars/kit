@@ -2,22 +2,27 @@
 # https://hub.docker.com/_/redis
 # on Ubuntu: /etc/containers/registries.conf
 # unqualified-search-registries = ["docker.io"]
+# podman search -f is-official=true
 
 START_FLAGS ?= -d
 
 compose_file := $(CURDIR)/redis.yml
 
-start: $(compose_file) stop
-	podman-compose -f $<  up $(START_FLAGS)
+up: $(compose_file)
+	podman-compose -f $< up $(START_FLAGS)
+
+start: $(compose_file)
+	podman-compose -f $< start
 
 stop: $(compose_file)
-	podman-compose -f $<  down
+	podman-compose -f $< stop
 
 exec: start
 	podman exec -e LINES=$(LINES) \
-							-e COLUMNS=$(COLUMNS) \
-							-e TERM=$(TERM) \
-							redis-dev /bin/bash
+	            -e COLUMNS=$(COLUMNS) \
+	            -e TERM=$(TERM) \
+	            -it \
+	            redis-dev /bin/bash
 
-remove: $(compose_file) stop
+down: $(compose_file) stop
 	podman-compose -f $< down
