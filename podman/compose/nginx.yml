@@ -4,12 +4,20 @@ version: '3.0'
 # sudo sysctl -w net.ipv4.ip_unprivileged_port_start=80
 
 services:
-  redis:
+  nginx:
     image: nginx
     container_name: nginx-dev
     restart: on-failure
+    volumes:
+      - nginx_etc:/etc/nginx
+      - nginx_log:/var/log/nginx
     ports:
       - 80:80
       - 443:443
+
+volumes:
+  nginx_etc:
+  nginx_log:
+
 
 
