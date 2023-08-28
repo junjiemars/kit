@@ -4,19 +4,19 @@ version: "3"
 
 services:
   tomcat:
-    image: tomcat:10
-    # image: tomcat:8-jre8
+    # image: tomcat:10
+    image: tomcat:8-jdk8
     container_name: tomcat-dev
     environment:
-      JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=127.0.0.1:5005"
     command: "catalina.sh run"
     logging:
       driver: k8s-file
     volumes:
       - tomcat_root:/usr/local/tomcat
     ports:
-      - 9080:8080
-      - 9085:5005
+      - 8080:8080
+      - 8085:5005
 
 volumes:
   tomcat_root:
