@@ -8,25 +8,25 @@ HOME="${HOME%/}"
 PH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
 # check basis commands
 set -e
-awk=`PATH=$PH command -v awk`
-basename=`PATH=$PH command -v basename`
-cat=`PATH=$PH command -v cat`
-cp=`PATH=$PH command -v cp`
-cut=`PATH=$PH command -v cut`
-diff=`PATH=$PH command -v diff`
-date=`PATH=$PH command -v date`
-grep=`PATH=$PH command -v grep`
-ps=`PATH=$PH command -v ps`
-rm=`PATH=$PH command -v rm`
-sed=`PATH=$PH command -v sed`
-tr=`PATH=$PH command -v tr`
-uname=`PATH=$PH command -v uname`
+awk=$(PATH=$PH command -v awk)
+basename=$(PATH=$PH command -v basename)
+cat=$(PATH=$PH command -v cat)
+cp=$(PATH=$PH command -v cp)
+cut=$(PATH=$PH command -v cut)
+diff=$(PATH=$PH command -v diff)
+date=$(PATH=$PH command -v date)
+grep=$(PATH=$PH command -v grep)
+ps=$(PATH=$PH command -v ps)
+rm=$(PATH=$PH command -v rm)
+sed=$(PATH=$PH command -v sed)
+tr=$(PATH=$PH command -v tr)
+uname=$(PATH=$PH command -v uname)
 set +e
 
 # check shell
-PLATFORM="`$uname -s 2>/dev/null`"
+PLATFORM="$($uname -s 2>/dev/null)"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
-SHELL="`$ps -p $$ -ocommand='' 2>/dev/null|$cut -d' ' -f1|$tr -d '-'`"
+SHELL="$($ps -p $$ -ocommand='' 2>/dev/null|$cut -d' ' -f1|$tr -d '-')"
 SH="`$basename $SHELL`"
 
 
