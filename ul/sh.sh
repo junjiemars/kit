@@ -22,9 +22,27 @@ tr=$(PATH=$PH command -v tr)
 uname=$(PATH=$PH command -v uname)
 # check shell
 PLATFORM=$($uname -s 2>/dev/null)
+on_windows_nt () {
+ case "$PLATFORM" in
+   MSYS_NT*|MINGW*) return 0 ;;
+   *) return 1 ;;
+ esac
+}
+on_darwin () {
+  case "$PLATFORM" in
+    Darwin) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+on_linux () {
+  case "$PLATFORM" in
+    Linux) return 0 ;;
+    *) return 1 ;;
+  esac
+}
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 SHELL=$($ps -p$$ -ocommand 2>/dev/null|$sed 1d|$cut -d ' ' -f1|$tr -d '-')
-if test -z "$SHELL" && echo "$PLATFORM" | grep 'MINGW.._NT' 2>/dev/null; then
+if test -z "$SHELL" && on_windows_nt; then
   SHELL="/usr/bin/bash"
 fi
 SH="$($basename $SHELL)"
@@ -68,26 +86,7 @@ save_as () {
   fi
 }
 
-on_windows_nt () {
- case "$PLATFORM" in
-   MSYS_NT*|MINGW*) return 0 ;;
-   *) return 1 ;;
- esac
-}
 
-on_darwin () {
-  case "$PLATFORM" in
-    Darwin) return 0 ;;
-    *) return 1 ;;
-  esac
-}
-
-on_linux () {
-  case "$PLATFORM" in
-    Linux) return 0 ;;
-    *) return 1 ;;
-  esac
-}
 
 sort_path () {
   # Windows: let MSYS_NT and user defined commands first
@@ -1055,11 +1054,23 @@ posix_path() {
   echo \${cdr}
 }
 
-`
-if on_windows_nt; then
-  [ "sh" = "$SH" ] || declare -f sort_path
-fi
-`
+$(if on_windows_nt; then
+sort_path () {
+  # Windows: let MSYS_NT and user defined commands first
+  local ps=\$@
+  local opt_p=\$($dirname \$OPT_RUN)
+  local win_p="^/c/"
+  local opt=
+  local ori=
+  local win=
+  local sorted=
+  opt=\$(echo "\${ps}${echo_c}"|$tr ':' '\\n'|$grep "\$opt_p"|$tr '\\n' ':')
+  ori=\$(echo "\${ps}${echo_c}"|$tr ':' '\\n'|$grep -v "\$opt_p"|$grep -v "\$win_p" | $tr '\\n' ':')
+  win=\$(echo "\${ps}${echo_c}"|$tr ':' '\\n'|$grep "\$win_p" | $tr '\\n' ':')
+  sorted=\$(echo "\${ori}\${opt:+\$opt }\${win}${echo_c}"|$awk '!xxx[\\$0]++'|$sed -e 's#:\\$##' -e 's#:\\  *\\/#:\\/#g')
+  echo $echo_n "\${sorted}${echo_c}"
+}
+fi)
 
 set_bin_paths () {
   local paths="$PH"
