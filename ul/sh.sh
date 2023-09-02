@@ -43,7 +43,7 @@ on_linux () {
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 SHELL=$($ps -p$$ -ocommand 2>/dev/null|$sed 1d|$cut -d ' ' -f1|$tr -d '-')
 if test -z "$SHELL" && on_windows_nt; then
-  SHELL="/usr/bin/bash"
+  SHELL=$(PATH=$PH command -v bash)
 fi
 SH="$($basename $SHELL)"
 set +e
