@@ -13,7 +13,6 @@ basename=$(PATH=$PH command -v basename)
 cat=$(PATH=$PH command -v cat)
 cp=$(PATH=$PH command -v cp)
 cut=$(PATH=$PH command -v cut)
-diff=$(PATH=$PH command -v diff)
 date=$(PATH=$PH command -v date)
 grep=$(PATH=$PH command -v grep)
 ps=$(PATH=$PH command -v ps)
@@ -130,12 +129,6 @@ exist_p () {
   where ${1} 2>&1 &>/dev/null
   echo $?
 }
-
-diff_p () {
-  $diff ${1} ${2} 2>&1 &>/dev/null
-  echo $?
-}
-
 
 
 gen_dot_shell_profile () {
@@ -472,13 +465,6 @@ exist_p () {
   echo \$?
 }
 
-
-diff_p () {
-  $diff \${1} \${2} 1>/dev/null 2>&1
-  echo \$?
-}
-
-
 alias_racket () {
   local p_racket=\$(exist_p 'racket')
   if [ 0 -eq \$p_racket ]; then
@@ -490,16 +476,6 @@ alias_emacs () {
   local p_emacs=\$(exist_p 'emacs')
   if [ 0 -eq \$p_emacs ]; then
     alias emacs='emacs -nw'
-  fi
-}
-
-alias_vi () {
-  local p_vi=\$(exist_p 'vi')
-  local p_vim=\$(exist_p 'vim')
-  if [ 0 -eq \$p_vi ] && [ 0 -eq \$p_vim ]; then
-    if [ 0 -ne \$(diff_p \`where vi\` \`where vim\`) ]; then
-      alias vi=vim
-    fi
   fi
 }
 
@@ -521,7 +497,6 @@ alias_rlwrap_bin () {
   fi
 }
 
-alias_vi
 alias_emacs
 # alias_racket
 `if on_linux && [ "$SH" = "bash" ]; then
