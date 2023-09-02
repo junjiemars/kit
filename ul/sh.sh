@@ -1070,6 +1070,9 @@ posix_path() {
   local cdr=\$(echo \$@ | $cut -d':' -f2 | $sed 's#\\\\#\/#g')
   if [ \${#car} -lt \${#cdr} ]; then
     car=\$(echo \$car | $tr '[:upper:]' '[:lower:]')
+  if on_windows; then
+    cdr=/\${car}\${cdr}
+  else
     cdr=\${car}:\${cdr}
   fi
   echo \${cdr}
