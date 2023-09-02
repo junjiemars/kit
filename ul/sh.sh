@@ -1017,8 +1017,8 @@ uniq_path () {
 }
 
 posix_path() {
-  local car=\$(echo \$@ | $cut -d':' -f1 | $sed 's#\\\\#\/#g')
-  local cdr=\$(echo \$@ | $cut -d':' -f2 | $sed 's#\\\\#\/#g')
+  local car=\$(echo \$@ | $cut -d ':' -f1 | $sed 's#\\\\#\/#g')
+  local cdr=\$(echo \$@ | $cut -d ':' -f2 | $sed 's#\\\\#\/#g')
   if [ \${#car} -lt \${#cdr} ]; then
     car=\$(echo \$car | $tr '[:upper:]' '[:lower:]')
     $(if on_windows_nt; then
@@ -1058,26 +1058,24 @@ set_bin_paths () {
 
 # chain basis \${OPT_RUN}/{bin,sbin} paths
 if [ -d "\${OPT_RUN}" ]; then
-  PATH="\`append_path \${OPT_RUN}/bin \${PATH}\`"
-  PATH="\`append_path \${OPT_RUN}/sbin \${PATH}\`"
-`
-  if on_linux; then
-    echo "  LD_LIBRARY_PATH=\\"\\\$(append_path \\\${OPT_RUN}/lib \\\${LD_LIBRARY_PATH})\\""
+  PATH=\$(append_path "\${OPT_RUN}/bin" "\${PATH}")
+  PATH=\$(append_path "\${OPT_RUN}/sbin" "\${PATH}")
+  $(if on_linux; then
+    echo "LD_LIBRARY_PATH=\$(append_path \"\${OPT_RUN}/lib\" \"\${LD_LIBRARY_PATH})\""
   elif on_darwin; then
-    echo "  DYLD_LIBRARY_PATH=\\"\\\$(append_path \\\${OPT_RUN}/lib \\\${DYLD_LIBRARY_PATH})\\""
-  fi
-`
+    echo "DYLD_LIBRARY_PATH=\$(append_path \"\${OPT_RUN}/lib\" \"\${DYLD_LIBRARY_PATH}\")"
+  fi)
 fi
 
-`if on_darwin; then
+$(if on_darwin; then
   echo "check_macports_env () {"
   echo "  if [ -x \"/opt/local/bin/port\" ]; then"
   echo "    if [ -d \"/opt/local/sbin\" ]; then"
-  echo "      PATH=\"/opt/local/sbin\\${PATH:+:\\${PATH}}\""
+  echo "      PATH=\"/opt/local/sbin\${PATH:+:\${PATH}}\""
   echo "    fi"
-  echo "    PATH=\"/opt/local/bin\\${PATH:+:\\${PATH}}\""
+  echo "    PATH=\"/opt/local/bin\${PATH:+:\${PATH}}\""
   echo "    if [ -d \"/opt/local/lib\" ]; then"
-  echo "      DYLD_LIBRARY_PATH=\"/opt/local/lib\\${DYLD_LIBRARY_PATH:+:\\${DYLD_LIBRARY_PATH}}\""
+  echo "      DYLD_LIBRARY_PATH=\"/opt/local/lib\${DYLD_LIBRARY_PATH:+:\${DYLD_LIBRARY_PATH}}\""
   echo "    fi"
   echo "  fi"
   echo "}"
@@ -1085,28 +1083,26 @@ fi
   echo "check_llvm_env () {"
   echo "  local p=\"/opt/local/bin/port\""
   echo "  local l=\"/opt/local/libexec\""
-  echo "  local d=\"\\${l}/llvm/bin\""
-  echo "  if [ -x \"\\$p\" -a -d \"\\$l\" ]; then"
-  echo "    if [ ! -d \"\\$d\" ]; then"
-  echo "      ls -d \\${d}*"
+  echo "  local d=\"\${l}/llvm/bin\""
+  echo "  if [ -x \"\$p\" -a -d \"\$l\" ]; then"
+  echo "    if [ ! -d \"\$d\" ]; then"
+  echo "      ls -d \${d}*"
   echo "    else"
-  echo "      PATH=\"\\\`append_path \\${d} \\$PATH\\\`\""
+  echo "      PATH=\$(append_path \"\${d}\" \"\$PATH\")"
   echo "    fi"
   echo "  fi"
   echo "}"
-fi`
-
-`if on_darwin; then
+  echo ""
   echo "# macports"
-  echo "if [ \"\\$o_check_macports_env\" = \"yes\" ]; then"
+  echo "if [ \"\$o_check_macports_env\" = \"yes\" ]; then"
   echo "  check_macports_env"
   echo "fi"
-
+  echo ""
   echo "# llvm"
-  echo "if [ \"\\$o_check_llvm_env\" = \"yes\" ]; then"
+  echo "if [ \"\$o_check_llvm_env\" = \"yes\" ]; then"
   echo "  check_llvm_env"
   echo "fi"
-fi`
+fi)
 
 # racket home
 if [ "\$o_check_racket_env" = "yes" -a -n "\$RACKET_HOME" ]; then
