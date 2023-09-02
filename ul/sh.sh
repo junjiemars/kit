@@ -1031,21 +1031,21 @@ posix_path() {
 }
 
 $(if on_windows_nt; then
-echo 'sort_path () {'
-echo '  # Windows: let MSYS_NT and user defined commands first'
-echo '  local ps=\$@'
-echo '  local opt_p=\$($dirname \$OPT_RUN)'
-echo '  local win_p="^/c/"'
-echo '  local opt='
-echo '  local ori='
-echo '  local win='
-echo '  local sorted='
-echo '  opt=\$(echo "\${ps}${echo_c}"|$tr \':\' \'\n\'|$grep "\$opt_p"|$tr \'\n\' \':\')'
-echo '  ori=\$(echo "\${ps}${echo_c}"|$tr \':\' \'\n\'|$grep -v "\$opt_p"|$grep -v "\$win_p" | $tr \'\n\' \':\')
-echo '  win=\$(echo "\${ps}${echo_c}"|$tr \':\' \'\n\'|$grep "\$win_p" | $tr \'\n\' \':\')
-echo '  sorted=\$(echo "\${ori}\${opt:+\$opt }\${win}${echo_c}"|$awk \'!xxx[\$0]++\'|$sed -e \'s#:\$##\' -e \'s#:  *\/#:\/#g\')'
-echo '  echo $echo_n "\${sorted}${echo_c}"'
-echo '}'
+echo "sort_path () {"
+echo "  # Windows: let MSYS_NT and user defined commands first"
+echo "  local ps=\$@"
+echo "  local opt_p=\$($dirname \$OPT_RUN)"
+echo "  local win_p='^/c/'"
+echo "  local opt="
+echo "  local ori="
+echo "  local win="
+echo "  local sorted="
+echo "  opt=\$(echo \"\${ps}${echo_c}\"|$tr ':' '\n'|$grep \"\$opt_p\"|$tr '\n' ':')"
+echo "  ori=\$(echo \"\${ps}${echo_c}\"|$tr ':' '\n'|$grep -v \"\$opt_p\"|$grep -v \"\$win_p\" | $tr '\n' ':')"
+echo "  win=\$(echo \"\${ps}${echo_c}\"|$tr ':' '\n'|$grep \"\$win_p\" | $tr '\n' ':')"
+echo "  sorted=\$(echo \"\${ori}\${opt:+\$opt }\${win}${echo_c}\"|$awk '!xxx[\$0]++'|$sed -e 's#:\$##' -e 's#:  *\/#:\/#g')"
+echo "  echo $echo_n \"\${sorted}${echo_c}\""
+echo "}"
 fi)
 
 set_bin_paths () {
