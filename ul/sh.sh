@@ -27,7 +27,7 @@ set +e
 PLATFORM="$($uname -s 2>/dev/null)"
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 SHELL="$($ps -p $$ -ocommand='' 2>/dev/null|$cut -d' ' -f1|$tr -d '-')"
-SH="`$basename $SHELL`"
+SH="$($basename $SHELL)"
 
 
 # check the echo's "-n" option and "\c" capability
@@ -133,11 +133,11 @@ sort_path () {
 
 where () {
   case "$SH" in
-    */zsh | zsh)
+    zsh)
       # override the zsh builtin
       whence -p $@
       ;;
-    */bash | bash)
+    bash)
       type -P $@
       ;;
     *)
@@ -343,7 +343,7 @@ where () {
       echo "type -P \\$@"
    else
       echo "command -v \\$@"
-   fi`
+  fi`
 }
 
 
