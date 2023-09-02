@@ -1061,7 +1061,7 @@ if [ -d "\${OPT_RUN}" ]; then
   PATH=\$(append_path "\${OPT_RUN}/bin" "\${PATH}")
   PATH=\$(append_path "\${OPT_RUN}/sbin" "\${PATH}")
   $(if on_linux; then
-    echo "LD_LIBRARY_PATH=\$(append_path \"\${OPT_RUN}/lib\" \"\${LD_LIBRARY_PATH})\""
+    echo "LD_LIBRARY_PATH=\$(append_path \"\${OPT_RUN}/lib\" \"\${LD_LIBRARY_PATH}\")"
   elif on_darwin; then
     echo "DYLD_LIBRARY_PATH=\$(append_path \"\${OPT_RUN}/lib\" \"\${DYLD_LIBRARY_PATH}\")"
   fi)
