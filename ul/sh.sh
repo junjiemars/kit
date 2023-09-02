@@ -24,7 +24,7 @@ uname=$(PATH=$PH command -v uname)
 PLATFORM=$($uname -s 2>/dev/null)
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
 SHELL=$($ps -p$$ -ocommand 2>/dev/null|$sed 1d|$cut -d ' ' -f1|$tr -d '-')
-if test -z "$SHELL" && echo "$SHELL" | grep 'MINGW64_NT' 2>/dev/null; then
+if test -z "$SHELL" && echo "$PLATFORM" | grep 'MINGW.._NT' 2>/dev/null; then
   SHELL="/usr/bin/bash"
 fi
 SH="$($basename $SHELL)"
