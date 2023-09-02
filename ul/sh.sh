@@ -86,30 +86,6 @@ save_as () {
   fi
 }
 
-
-
-sort_path () {
-  # Windows: let MSYS_NT and user defined commands first
-  local paths="$@"
-  local opt_p="`/usr/bin/dirname $OPT_RUN`"
-  local win_p="^/c/"
-  local opt=
-  local ori=
-  local win=
-  local sorted=
-
-  opt="`echo "$paths\c" | $tr ':' '\n' | $grep "$opt_p" | $tr '\n' ':' `"
-
-  ori="`echo "$paths\c" | $tr ':' '\n' | $grep -v "$opt_p" | $grep -v "$win_p" | $tr '\n' ':' `"
-
-  win="`echo "$paths\c" | $tr ':' '\n' | $grep "$win_p" | $tr '\n' ':' `"
-
-  sorted="`echo "${ori}${opt:+$opt }${win}\c" | $awk '!xxx[$0]++' | $sed -e 's#:$##' -e 's#:\  *\/#:\/#g' `"
-
-  echo $echo_n "${sorted}${echo_c}"
-}
-
-
 where () {
   case "$SH" in
     zsh)
@@ -1034,10 +1010,10 @@ append_path () {
 }
 
 uniq_path () {
-  local paths="\$@"
-  paths=\`echo "\$paths" | $tr ':' '\n' | $awk '!a[\$0]++'\`
-  paths=\`echo "\$paths" | $tr '\n' ':' | $sed -e 's_:\$__g'\`
-  echo "\$paths"
+  local ps=$@
+  ps=\$(echo \$@ | $tr ':' '\n' | $awk '!a[\$0]++')
+  ps=\$(echo \$@ | $tr '\n' ':' | $sed -e 's_:\$__g')
+  echo "\$ps"
 }
 
 posix_path() {
@@ -1064,10 +1040,10 @@ sort_path () {
   local ori=
   local win=
   local sorted=
-  opt=\$(echo "\${ps}${echo_c}"|$tr ':' '\\n'|$grep "\$opt_p"|$tr '\\n' ':')
-  ori=\$(echo "\${ps}${echo_c}"|$tr ':' '\\n'|$grep -v "\$opt_p"|$grep -v "\$win_p" | $tr '\\n' ':')
-  win=\$(echo "\${ps}${echo_c}"|$tr ':' '\\n'|$grep "\$win_p" | $tr '\\n' ':')
-  sorted=\$(echo "\${ori}\${opt:+\$opt }\${win}${echo_c}"|$awk '!xxx[\\$0]++'|$sed -e 's#:\\$##' -e 's#:\\  *\\/#:\\/#g')
+  opt=\$(echo "\${ps}${echo_c}"|$tr ':' '\n'|$grep "\$opt_p"|$tr '\n' ':')
+  ori=\$(echo "\${ps}${echo_c}"|$tr ':' '\n'|$grep -v "\$opt_p"|$grep -v "\$win_p" | $tr '\n' ':')
+  win=\$(echo "\${ps}${echo_c}"|$tr ':' '\n'|$grep "\$win_p" | $tr '\n' ':')
+  sorted=\$(echo "\${ori}\${opt:+\$opt }\${win}${echo_c}"|$awk '!xxx[\$0]++'|$sed -e 's#:\$##' -e 's#:\  *\/#:\/#g')
   echo $echo_n "\${sorted}${echo_c}"
 }
 fi)
@@ -1167,13 +1143,13 @@ fi
 
 
 PATH="\$(uniq_path \${PATH})"
-`if on_windows_nt; then
-  echo "PATH=\\"\\\$(sort_path \\\${PATH})\\""
+$(if on_windows_nt; then
+  echo "PATH=\"\$(sort_path \${PATH})\""
 elif on_linux; then
-  echo "LD_LIBRARY_PATH=\\"\\\$(uniq_path \\\${LD_LIBRARY_PATH})\\""
+  echo "LD_LIBRARY_PATH=\"\$(uniq_path \${LD_LIBRARY_PATH})\""
 elif on_darwin; then
-  echo "DYLD_LIBRARY_PATH=\\"\\\$(uniq_path \\\${DYLD_LIBRARY_PATH})\\""
-fi`
+  echo "DYLD_LIBRARY_PATH=\"\$(uniq_path \${DYLD_LIBRARY_PATH})\""
+fi)
 
 # export path env
 if [ "\$o_export_path_env" = "yes" ]; then
