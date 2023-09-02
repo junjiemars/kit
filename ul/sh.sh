@@ -89,26 +89,6 @@ on_linux () {
   esac
 }
 
-posix_path () {
-  local p="$@"
-  local v=
-  if echo "$p" | $grep -q "^[a-zA-Z]:[\/\\].*$"; then
-    if [ "abc" = `echo "ABC" | $sed -e 's#\([A-Z]*\)#\L\1#g'` ]; then
-      v=$(echo "\\$p" | $sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\L\1\\#')
-    else
-      local car="`echo $p | $cut -d':' -f1`"
-      local cdr="`echo $p | $cut -d':' -f2`"
-      if [ "$p" = "${car}:${cdr}" ]; then
-        v=$(echo $car | $tr [:upper:] [:lower:])
-        v=$(echo "\\${v}${cdr}" | $sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')
-      else
-        v=$(echo "\\$p" | $sed -e 's#^\\\([a-zA-Z]\):[\/\\]#\\\1\\#')
-      fi
-    fi;
-  fi
-  echo "$v" | $sed -e 's#\\#\/#g'
-}
-
 sort_path () {
   # Windows: let MSYS_NT and user defined commands first
   local paths="$@"
@@ -1085,7 +1065,15 @@ uniq_path () {
   echo "\$paths"
 }
 
-`[ "sh" = "$SH" ] || declare -f posix_path`
+posix_path() {
+  local car=\$(echo \$@ | $cut -d':' -f1 | $sed 's#\\\\#\/#g')
+  local cdr=\$(echo \$@ | $cut -d':' -f2 | $sed 's#\\\\#\/#g')
+  if [ \${#car} -lt \${#cdr} ]; then
+    car=\$(echo \$car | $tr '[:upper:]' '[:lower:]')
+    cdr=\${car}:\${cdr}
+  fi
+  echo \${cdr}
+}
 
 `
 if on_windows_nt; then
