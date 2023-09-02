@@ -20,14 +20,12 @@ rm=$(PATH=$PH command -v rm)
 sed=$(PATH=$PH command -v sed)
 tr=$(PATH=$PH command -v tr)
 uname=$(PATH=$PH command -v uname)
-set +e
-
 # check shell
-PLATFORM="$($uname -s 2>/dev/null)"
+PLATFORM=$($uname -s 2>/dev/null)
 SH_ENV="https://raw.githubusercontent.com/junjiemars/kit/master/ul/sh.sh"
-SHELL="$($ps -p $$ -ocommand='' 2>/dev/null|$cut -d' ' -f1|$tr -d '-')"
+SHELL=$($ps -p$$ -ocommand 2>/dev/null|$sed 1d|$cut -d ' ' -f1|$tr -d '-')
 SH="$($basename $SHELL)"
-
+set +e
 
 # check the echo's "-n" option and "\c" capability
 if echo "test\c" | $grep -q c; then
@@ -1045,10 +1043,11 @@ posix_path() {
   local cdr=\$(echo \$@ | $cut -d':' -f2 | $sed 's#\\\\#\/#g')
   if [ \${#car} -lt \${#cdr} ]; then
     car=\$(echo \$car | $tr '[:upper:]' '[:lower:]')
-  if on_windows; then
-    cdr=/\${car}\${cdr}
-  else
-    cdr=\${car}:\${cdr}
+    $(if on_windows_nt; then
+      echo "cdr=/\${car}\${cdr}"
+    else
+      echo "cdr=\${car}:\${cdr}"
+    fi)
   fi
   echo \${cdr}
 }
@@ -1061,8 +1060,8 @@ fi
 
 set_bin_paths () {
   local paths="$PH"
-  for d in \`echo \${paths} | $tr ':' '\n'\`; do
-    PATH="\`append_path \${d} \$PATH\`"
+  for d in \$(echo \${paths} | $tr ':' '\n'); do
+    PATH="\$(append_path \${d} \$PATH)"
   done
 }
 
