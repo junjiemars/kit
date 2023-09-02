@@ -53,6 +53,7 @@ jobs:
     - name: Build and Test
       env:
         SHELL: /bin/bash
+        DEBUG: -x
       run: |
          ./test.sh
 

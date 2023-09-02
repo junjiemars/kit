@@ -19,7 +19,7 @@ echo "------------"
 
 # basic test
 if [ "basic" = "$_TEST_" ]; then
-  test_do $SHELL ul/sh.sh       || exit 1
+  test_do $SHELL $DEBUG ul/sh.sh || exit 1
 fi
 
 # eof
