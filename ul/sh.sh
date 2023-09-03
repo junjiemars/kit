@@ -224,7 +224,7 @@ test -f \$HOME/.${SH}_aliases && . \$HOME/.${SH}_aliases:
   save_as "$rc"
   echo $echo_n "+ generate $rc ... $echo_c"
   if [ ! -f "$rc" ]; then
-    ss=`echo "${ss}" | $sed 's/:$//g'`
+    ss=$(echo "${ss}" | $sed 's/:$//g')
     $cat << EOF > "$rc"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -245,7 +245,7 @@ ${ss}
 EOF
   else
     nh="${nh}\\"
-    ss=`echo "$ss" | $sed 's/:$/\\\/g'`
+    ss=$(echo "$ss" | $sed 's/:$/\\/g')
     $sed ${sed_i}.pre '/^#----Nore/,$c\'"
 ${nh}
 \
