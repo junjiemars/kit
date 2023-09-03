@@ -793,8 +793,8 @@ check_nvm_env () {
 # https://virtualenv.pypa.io
 # https://pypi.org/project/pip/
 check_python_env () {
-  local py=\$(where python || where python3 2>/dev/null)
-  local pi=\$(where pip || where pip3 2>/dev/null)
+  local py=\$(where python3 || where python 2>/dev/null)
+  local pi=\$(where pip3 || where pip 2>/dev/null)
   if [ -n "\$py" ]; then
     echo "python: \$(\$py --version)"
   fi
