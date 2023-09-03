@@ -4,8 +4,8 @@ version: "3"
 
 services:
   tomcat:
-    # image: tomcat:10
-    image: tomcat:8-jdk8
+    image: tomcat:10
+    # image: tomcat:8-jdk8
     container_name: tomcat-dev
     environment:
       JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005"
