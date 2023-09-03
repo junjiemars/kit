@@ -19,8 +19,10 @@ grep=$(PATH=$PH command -v grep)
 ps=$(PATH=$PH command -v ps)
 rm=$(PATH=$PH command -v rm)
 sed=$(PATH=$PH command -v sed)
+sort=$(PATH=$PH command -v sort)
 tr=$(PATH=$PH command -v tr)
 uname=$(PATH=$PH command -v uname)
+uniq=$(PATH=$PH command -v uniq)
 xargs=$(PATH=$PH command -v xargs)
 # check shell
 PLATFORM=$($uname -s 2>/dev/null)
@@ -530,6 +532,33 @@ else
 fi)
 }
 
+$(if on_darwin; then
+  echo "find_unwanted ()"
+  echo "{"
+  echo "   local what=\"\$@\""
+  echo "   local app_dir=\"/Applications\""
+  echo "   local sup_dir=\"~/Library/Application Support\""
+  echo "   local str_dir=\"~/Library/Saved Application State\""
+  echo "   local cch_dir1=\"/Library/Caches\""
+  echo "   local cch_dir2=\"~/Library/Caches\""
+  echo "   local prf_dir=\"~/Library/Preferences\""
+  echo "   local plg_dir=\"~/Library/Internet Plug-Ins\""
+  echo "   local crs_dir=\"~/Library/Application Support/CrashReporter\""
+  echo "   local lib_dir1=\"/Library\""
+  echo "   local lib_dir2=\"~/Library\""
+  echo "   echo \"check \$app_dir ...\""
+  echo "   echo \"check \$sup_dir ...\""
+  echo "   echo \"check \$str_dir ...\""
+  echo "   echo \"check \$cch_dir2 ...\""
+  echo "   echo \"check \$cch_dir1 ...\""
+  echo "   echo \"check \$prf_dir ...\""
+  echo "   echo \"check \$plg_dir ...\""
+  echo "   echo \"check \$crs_dir ...\""
+  echo "   echo \"check \$lib_dir2 ...\""
+  echo "   echo \"check \$lib_dir1 ...\""
+  echo "}"
+fi)
+
 os_release ()
 {
 $(if on_darwin; then
@@ -544,17 +573,6 @@ else
   echo "  # nop"
   echo "  :"
 fi)
-}
-
-random_base64 ()
-{
-   local n=\${1:-8}
-   if test -r /dev/random && where base64 &>/dev/null; then
-      $dd if=/dev/random bs=\$n | $sed 1q | base64 | $cut -c 1-\$n
-   else
-      echo "# missing /dev/random or base64"
-      return 1
-   fi
 }
 
 outbound_ip ()
@@ -572,64 +590,53 @@ outbound_ip ()
   fi
 }
 
-$(if on_linux; then
-  rc=$(PATH=$PH command -v snap >/dev/null 2>&1; echo $?)
-  if [ $rc -eq 0 ]; then
-   echo "snap_remove_disabled ()"
-   echo "{"
-   echo "  LANG=C snap list --all | $awk '/disabled/{print \$1, \$3}' |"
-   echo "    while read snapname revision; do"
-   echo "      sudo snap remove \"\$snapname\" --revision=\"\$revision\""
-   echo "    done"
-   echo "}"
-   echo ""
-   echo "snapd_disable ()"
-   echo "{"
-   echo "  sudo systemctl stop snapd"
-   echo "  sudo systemctl disable snapd"
-   echo "}"
-   echo ""
+random_base64 ()
+{
+   local n=\${1:-8}
+   if test -r /dev/random && where base64 &>/dev/null; then
+      $dd if=/dev/random bs=\$n | $sed 1q | base64 | $cut -c 1-\$n
+   else
+      echo "# missing /dev/random or base64"
+      return 1
+   fi
+}
 
-   echo "snapd_enable ()"
-   echo "{"
-   echo "  sudo systemctl enable snapd"
-   echo "  sudo systemctl restart snapd"
-   echo "}"
-  fi
-  rc=$(PATH=$PH command -v unzip >/dev/null 2>&1; echo $?)
-  if [ $rc -eq 0 ]; then
-   echo "unzip_zhcn ()"
-   echo "{"
-   echo "  unzip -Ogb2312 \$@"
-   echo "}"
-  fi
+$(if on_linux && exist_p snap; then
+  echo "snap_remove_disabled ()"
+  echo "{"
+  echo "  LANG=C snap list --all | $awk '/disabled/{print \$1, \$3}' |"
+  echo "    while read snapname revision; do"
+  echo "      sudo snap remove \"\$snapname\" --revision=\"\$revision\""
+  echo "    done"
+  echo "}"
+  echo ""
+  echo "snapd_disable ()"
+  echo "{"
+  echo "  sudo systemctl stop snapd"
+  echo "  sudo systemctl disable snapd"
+  echo "}"
+  echo ""
+  echo "snapd_enable ()"
+  echo "{"
+  echo "  sudo systemctl enable snapd"
+  echo "  sudo systemctl restart snapd"
+  echo "}"
 fi)
 
-$(if on_darwin; then
-   echo "find_unwanted ()"
-   echo "{"
-   echo "   local what=\"\$@\""
-   echo "   local app_dir=\"/Applications\""
-   echo "   local sup_dir=\"~/Library/Application Support\""
-   echo "   local str_dir=\"~/Library/Saved Application State\""
-   echo "   local cch_dir1=\"/Library/Caches\""
-   echo "   local cch_dir2=\"~/Library/Caches\""
-   echo "   local prf_dir=\"~/Library/Preferences\""
-   echo "   local plg_dir=\"~/Library/Internet Plug-Ins\""
-   echo "   local crs_dir=\"~/Library/Application Support/CrashReporter\""
-   echo "   local lib_dir1=\"/Library\""
-   echo "   local lib_dir2=\"~/Library\""
-   echo "   echo \"check \$app_dir ...\""
-   echo "   echo \"check \$sup_dir ...\""
-   echo "   echo \"check \$str_dir ...\""
-   echo "   echo \"check \$cch_dir2 ...\""
-   echo "   echo \"check \$cch_dir1 ...\""
-   echo "   echo \"check \$prf_dir ...\""
-   echo "   echo \"check \$plg_dir ...\""
-   echo "   echo \"check \$crs_dir ...\""
-   echo "   echo \"check \$lib_dir2 ...\""
-   echo "   echo \"check \$lib_dir1 ...\""
-   echo "}"
+word_frequency () {
+  $tr -cs A-Za-z\' '\n' \\
+    | $tr A-Z a-z \\
+    | $sort \\
+    | $uniq -c \\
+    | $sort -k1,1nr -k2 \\
+    | $sed \${1:-24}q
+}
+
+$(if on_linux && exist_p unzip; then
+  echo "unzip_zhcn ()"
+  echo "{"
+  echo "  unzip -Ogb2312 \$@"
+  echo "}"
 fi)
 
 # eof
