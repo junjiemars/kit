@@ -105,7 +105,6 @@ where () {
 
 exist_p () {
   where ${1} 2>&1 &>/dev/null
-  echo $?
 }
 
 
@@ -439,37 +438,34 @@ fi
 `
 
 exist_p () {
-  where \${1} 1>/dev/null 2>&1
-  echo \$?
+  where \${1} 2>&1 >/dev/null
 }
 
 alias_racket () {
-  local p_racket=\$(exist_p 'racket')
-  if [ 0 -eq \$p_racket ]; then
+  if exist_p racket; then
     alias racket='rlwrap racket'
   fi
 }
 
 alias_emacs () {
-  local p_emacs=\$(exist_p 'emacs')
-  if [ 0 -eq \$p_emacs ]; then
+  if exist_p emacs; then
     alias emacs='emacs -nw'
   fi
 }
 
 alias_python () {
-  if where python3 &>/dev/null; then
+  if exist_p python3; then
     alias python=python3
   fi
-  if where pip3 &>/dev/null; then
+  if exist_p pip3; then
     alias pip=pip3
   fi
 }
 
 alias_rlwrap_bin () {
   local bin=\$1
-  if where "\$bin" &>/dev/null; then
-    alias \$bin="rlwrap \$(where \$bin)"
+  if exist_p \$bin; then
+    alias \$bin="rlwrap \$bin"
   fi
 }
 
@@ -481,7 +477,7 @@ $(if on_linux && [ "$SH" = "bash" ]; then
 fi)
 alias_python
 
-if where rlwrap &>/dev/null; then
+if exist_p rlwrap; then
   alias_rlwrap_bin ecl
   alias_rlwrap_bin ed
   alias_rlwrap_bin openssl
