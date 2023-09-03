@@ -554,42 +554,38 @@ fi)
 
 random_base64 ()
 {
-`if where dd &>/dev/null && test -r /dev/random; then
-   echo "  local n=\\"\\\${1:-8}\\""
-   if on_darwin; then
-      echo "  dd if=/dev/random bs=\\\$n | head -c\\\$n | base64 -b\\\$n | head -n1 | xargs"
-    else
-      echo "  dd if=/dev/random bs=\\\$n count=1 status=none | head -c\\\$n | base64 | head -c\\\$n | xargs"
+   local n=\${1:-8}
+   if test -r /dev/random && where base64 &>/dev/null; then
+      $dd if=/dev/random bs=\$n | $sed 1q | base64 | $cut -c 1-\$n
+   else
+      echo "# missing /dev/random or base64"
+      return 1
    fi
-else
-   echo "  # nop"
-   echo "  :"
-fi`
 }
 
 outbound_ip ()
 {
   local u="https://checkip.dns.he.net"
-  local v="\$1"
-  if \`where curl &>/dev/null\`; then
+  local v=\$1
+  if where curl &>/dev/null; then
     case "\$v" in
       -6) v="-6" ;;
       *)  v="-4" ;;
     esac
-    curl \$v -sL "\$u"|grep 'Your IP address'|sed -E 's/Your.*: ([.:0-9a-z]+).*/\1/'
+    curl \$v -sL "\$u" | $grep 'Your IP address' | $sed -E 's/Your.*: ([.:0-9a-z]+).*/\1/'
   else
-    echo "\$u"
+    echo "# cutl \$u"
   fi
 }
 
-`if on_linux; then
+$(if on_linux; then
   rc=$(PATH=$PH command -v snap >/dev/null 2>&1; echo $?)
   if [ $rc -eq 0 ]; then
    echo "snap_remove_disabled ()"
    echo "{"
-   echo "  LANG=C snap list --all | awk '/disabled/{print \\\$1, \\\$3}' |"
+   echo "  LANG=C snap list --all | $awk '/disabled/{print \$1, \$3}' |"
    echo "    while read snapname revision; do"
-   echo "      sudo snap remove \\"\\\$snapname\\" --revision=\\"\\\$revision\\""
+   echo "      sudo snap remove \"\$snapname\" --revision=\"\$revision\""
    echo "    done"
    echo "}"
    echo ""
@@ -610,15 +606,15 @@ outbound_ip ()
   if [ $rc -eq 0 ]; then
    echo "unzip_zhcn ()"
    echo "{"
-   echo "  unzip -Ogb2312 \\\$@"
+   echo "  unzip -Ogb2312 \$@"
    echo "}"
   fi
-fi`
+fi)
 
-`if on_darwin; then
+$(if on_darwin; then
    echo "find_unwanted ()"
    echo "{"
-   echo "   local what=\"\\$@\""
+   echo "   local what=\"\$@\""
    echo "   local app_dir=\"/Applications\""
    echo "   local sup_dir=\"~/Library/Application Support\""
    echo "   local str_dir=\"~/Library/Saved Application State\""
@@ -629,18 +625,18 @@ fi`
    echo "   local crs_dir=\"~/Library/Application Support/CrashReporter\""
    echo "   local lib_dir1=\"/Library\""
    echo "   local lib_dir2=\"~/Library\""
-   echo "   echo \"check \\$app_dir ...\""
-   echo "   echo \"check \\$sup_dir ...\""
-   echo "   echo \"check \\$str_dir ...\""
-   echo "   echo \"check \\$cch_dir2 ...\""
-   echo "   echo \"check \\$cch_dir1 ...\""
-   echo "   echo \"check \\$prf_dir ...\""
-   echo "   echo \"check \\$plg_dir ...\""
-   echo "   echo \"check \\$crs_dir ...\""
-   echo "   echo \"check \\$lib_dir2 ...\""
-   echo "   echo \"check \\$lib_dir1 ...\""
+   echo "   echo \"check \$app_dir ...\""
+   echo "   echo \"check \$sup_dir ...\""
+   echo "   echo \"check \$str_dir ...\""
+   echo "   echo \"check \$cch_dir2 ...\""
+   echo "   echo \"check \$cch_dir1 ...\""
+   echo "   echo \"check \$prf_dir ...\""
+   echo "   echo \"check \$plg_dir ...\""
+   echo "   echo \"check \$crs_dir ...\""
+   echo "   echo \"check \$lib_dir2 ...\""
+   echo "   echo \"check \$lib_dir1 ...\""
    echo "}"
-fi`
+fi)
 
 # eof
 END
