@@ -658,8 +658,7 @@ $(if [ -f "${vars}.ori" ]; then
 fi)
 #------------------------------------------------
 
-`
-if on_windows_nt; then
+$(if on_windows_nt; then
   echo "choose_prefix () {"
   echo "  if [ -d \"/d/\" ]; then"
   echo "    [ -d \"/d/opt\" ] || mkdir -p \"/d/opt\""
@@ -673,8 +672,7 @@ else
   echo "choose_prefix () {"
   echo "  echo \"/opt\""
   echo "}"
-fi
-`
+fi)
 
 OPT_RUN="\${OPT_RUN:-\$(choose_prefix)/run}"
 OPT_OPEN="\${OPT_OPEN:-\$(choose_prefix)/open}"
@@ -695,17 +693,17 @@ check_bun_env () {
 
 # $SH completion
 check_completion_env () {
-`if [ "bash" = "$SH" ]; then
+$(if [ "bash" = "$SH" ]; then
    echo "  local c=\"/etc/profile.d/bash_completion.sh\""
-   echo "  if [ -f \"\\\$c\" ]; then"
-   echo "    source \"\\\$c\""
+   echo "  if [ -f \"\$c\" ]; then"
+   echo "    . \"\$c\""
    echo "  fi"
 elif [ "zsh" = "$SH" ]; then
    echo "  autoload -Uz compinit && compinit"
 else
    echo "  # nop"
    echo ":"
-fi`
+fi)
 }
 
 # https://openjdk.java.net
@@ -717,25 +715,26 @@ check_java_env () {
   else
     unset JAVA_HOME
   fi
-`if on_darwin; then
+$(if on_darwin; then
+  echo "  # check JAVA_HOME only"
   echo "  java_home='/usr/libexec/java_home'"
-  echo "  if [ -L \\"\\\$java_home\\" ]; then"
-  echo "    JAVA_HOME=\\"\\\$(\\\${java_home} 2>/dev/null)\\""
-  echo "    javac=\\"\\\${JAVA_HOME%/}/bin/javac\\""
-  echo "    if [ -x \\"\\\${javac}\\" ]; then"
+  echo "  if [ -L \"\$java_home\" ]; then"
+  echo "    JAVA_HOME=\"\$java_home\""
+  echo "    javac=\"\${JAVA_HOME%/}/bin/javac\""
+  echo "    if [ -x \"\${javac}\" ]; then"
   echo "      return 0"
   echo "    fi"
   echo "  fi"
 elif on_linux; then
-  echo "  javac=\\"\\\$(where javac 2>/dev/null)\\""
-  echo "  if [ -n \\"\\\${javac}\\" -a -x \\"\\\$javac\\" ]; then"
-  echo "    java_home=\\"\\\$(readlink -f \\"\\\${javac}\\" | sed 's:/bin/javac::')\\""
-  echo "    JAVA_HOME=\\"\\\${java_home}\\""
+  echo "  javac=\"\$(where javac 2>/dev/null)\""
+  echo "  if [ -n \"\${javac}\" -a -x \"\$javac\" ]; then"
+  echo "    java_home=\"\$($dirname \$(readlink -f \"\${javac}\"))\""
+  echo "    JAVA_HOME=\"\${java_home}\""
   echo "    return 0"
   echo "  fi"
 elif on_windows_nt; then
   echo "  # nop"
-fi`
+fi)
   return 1
 }
 
@@ -746,7 +745,7 @@ check_kube_env () {
   local a="\${d}/argo-${SH}.sh"
   local c="\${d}/\${1}"
   local r="\${d}/.recent"
-  if \`where kubectl &>/dev/null\`; then
+  if exist_p kubectl; then
     if [ ! -f "\$s" ]; then
       [ -d "\$d" ] || mkdir -p "\$d"
       SHELL=$SHELL kubectl completion ${SH} >"\$s"
@@ -760,14 +759,14 @@ check_kube_env () {
     elif [ -f "\$r" ]; then
       export KUBECONFIG="\$r"
     fi
-    if \`inside_emacs_p\` && \`where emacsclient &>/dev/null\`; then
+    if inside_emacs_p && exist_p emacsclient; then
       export KUBE_EDITOR=emacsclient
     fi
   else
     echo 'https://kubernetes.io/docs/tasks/tools/#kubectl'
     return 1
   fi
-  if \`where argo &>/dev/null\`; then
+  if exist_p argo; then
     if [ ! -f "\$a" ]; then
       SHELL=$SHELL argo completion ${SH} >"\$a"
     fi
