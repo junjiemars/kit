@@ -25,19 +25,19 @@ xargs=$(PATH=$PH command -v xargs)
 # check shell
 PLATFORM=$($uname -s 2>/dev/null)
 on_windows_nt () {
- case "$PLATFORM" in
+ case $PLATFORM in
    MSYS_NT*|MINGW*) return 0 ;;
    *) return 1 ;;
  esac
 }
 on_darwin () {
-  case "$PLATFORM" in
+  case $PLATFORM in
     Darwin) return 0 ;;
     *) return 1 ;;
   esac
 }
 on_linux () {
-  case "$PLATFORM" in
+  case $PLATFORM in
     Linux) return 0 ;;
     *) return 1 ;;
   esac
@@ -89,7 +89,7 @@ save_as () {
 }
 
 where () {
-  case "$SH" in
+  case $SH in
     zsh)
       # override the zsh builtin
       whence -p $@
@@ -111,7 +111,7 @@ exist_p () {
 gen_dot_shell_profile () {
   local profile="$HOME/.${SH}_profile"
   local callrc="test -r \${HOME}/.${SH}rc && . \${HOME}/.${SH}rc"
-  case "$SH" in
+  case $SH in
     bash) profile="$HOME/.bash_profile" ;;
     zsh) profile="$HOME/.zprofile"
          if on_darwin; then
@@ -188,7 +188,7 @@ gen_dot_shell_rc () {
   local sc=":"
   local ss=""
   local nh="#----Nore ${SH}----"
-  case "$SH" in
+  case $SH in
     bash)
       ;;
     zsh)
@@ -562,7 +562,7 @@ outbound_ip ()
   local u="https://checkip.dns.he.net"
   local v=\$1
   if where curl &>/dev/null; then
-    case "\$v" in
+    case \$v in
       -6) v="-6" ;;
       *)  v="-4" ;;
     esac
@@ -816,7 +816,7 @@ check_podman_env () {
   local d="\${HOME}/.config"
   local r="\${d}/registries.conf"
   local c="\$1"
-  case "\$c" in
+  case \$c in
     mirror)
       echo "[registries.search]\nregistries = ['registry.access.redhat.com','registry.redhat.io','docker.io']" >> "\$r"
       ;;
@@ -986,7 +986,7 @@ append_path () {
   shift 1
   local paths="\${@}"
   if [ -n "\$new" -a -d "\$new" ]; then
-    case ":\${PATH}:" in
+    case :\${PATH}: in
       *:"$new":*)
         ;;
       *)
