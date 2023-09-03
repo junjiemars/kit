@@ -467,21 +467,21 @@ alias_python () {
 }
 
 alias_rlwrap_bin () {
-  local bin="\$1"
-  if [ 0 -eq \$(exist_p "\$bin") ]; then
-    alias \$(echo "\$bin")="rlwrap \$bin"
+  local bin=\$1
+  if where "\$bin" &>/dev/null; then
+    alias \$bin="rlwrap \$(where \$bin)"
   fi
 }
 
 alias_emacs
 # alias_racket
-`if on_linux && [ "$SH" = "bash" ]; then
+$(if on_linux && [ "$SH" = "bash" ]; then
    echo "# bsd ps style"
    echo "alias ps='ps w'"
-fi`
+fi)
 alias_python
 
-if [ 0 -eq \$(exist_p rlwrap) ]; then
+if where rlwrap &>/dev/null; then
   alias_rlwrap_bin ecl
   alias_rlwrap_bin ed
   alias_rlwrap_bin openssl
