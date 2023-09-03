@@ -282,11 +282,11 @@ SHELL=$SHELL
 
 where () {
   $(if [ "zsh" = "$SH" ]; then
-      echo "whence -p \$@"
-   elif [ "bash" = "$SH" ]; then
-      echo "type -P \\$@"
-   else
-      echo "command -v \$@"
+    echo "whence -p \$@"
+  elif [ "bash" = "$SH" ]; then
+    echo "type -P \$@"
+  else
+    echo "command -v \$@"
   fi)
 }
 
