@@ -1246,7 +1246,7 @@ END
 }
 
 
-BEGIN=`$date +%s`
+BEGIN=$($date +%s)
 echo "setup ${PLATFORM}'s $SH env ..."
 
 gen_dot_shell_profile
@@ -1264,6 +1264,10 @@ gen_dot_vimrc $HOME/.vimrc
 export PATH
 . $HOME/.${SH}rc
 
-END=`$date +%s`
+unset PH
+unset SH
+unset PLATFORM
+
+END=$($date +%s)
 echo
 echo "... elpased $(( ${END}-${BEGIN} )) seconds, successed."
