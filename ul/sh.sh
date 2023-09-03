@@ -79,11 +79,11 @@ save_as () {
   local ori="${f}.ori"
   local pre="${f}.pre"
 
-  if [ -n "$f" -a -f "$f" ]; then
-    if [ -n "$ori" -a -f "$ori" ]; then
-      $cp $f $pre
+  if [ -n "$f" ] && [ -f "$f" ]; then
+    if [ -n "$ori" ] && [ -f "$ori" ]; then
+      $cp "$f" "$pre"
     else
-      $cp $f $ori
+      $cp "$f" "$ori"
     fi
   fi
 }
