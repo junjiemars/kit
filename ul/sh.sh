@@ -739,6 +739,7 @@ fi)
 }
 
 # https://kubernetes.io/docs/reference/kubectl/overview/
+# https://argoproj.github.io/argo-workflows/
 check_kube_env () {
   local d="\${HOME}/.kube"
   local s="\${d}/kube-${SH}.sh"
@@ -763,7 +764,6 @@ check_kube_env () {
       export KUBE_EDITOR=emacsclient
     fi
   else
-    echo 'https://kubernetes.io/docs/tasks/tools/#kubectl'
     return 1
   fi
   if exist_p argo; then
@@ -773,8 +773,6 @@ check_kube_env () {
     if [ -r "\$a" ]; then
       check_completion_env && . "\$a"
     fi
-  else
-    echo 'https://argoproj.github.io/argo-workflows/'
   fi
   return 0
 }
@@ -792,24 +790,24 @@ check_nvm_env () {
 }
 
 # https://www.python.org
+# https://virtualenv.pypa.io
+# https://pypi.org/project/pip/
 check_python_env () {
-  if where python; then
-    echo "\`python --version\`"
+  local py=\$(where python || where python3 2>/dev/null)
+  local pi=\$(where pip || where pip3 2>/dev/null)
+  if [ -n "\$py" ]; then
+    echo "python: \$(\$py --version)"
   fi
-  if where virtualenv; then
-    echo "\`virtualenv --version\`"
-  else
-    echo "https://virtualenv.pypa.io"
+  if exist_p virtualenv; then
+    echo "virtualenv: \$(virtualenv --version)"
   fi
-  if where pip; then
-    echo "\`pip --version\`"
-    echo "\`pip config list\`"
-    echo "mirrors:"
+  if [ -n "\$pi" ]; then
+    echo "pip: \$(\$pi --version)"
+    echo "pip config: \$(\$pi config list)"
+    echo "pip mirrors:"
     echo "https://pypi.org/simple"
     echo "https://pypi.tuna.tsinghua.edu.cn/simple"
     echo "https://mirrors.aliyun.com/pypi/simple"
-  else
-    echo "https://pypi.org/project/pip/"
   fi
 }
 
