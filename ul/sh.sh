@@ -458,12 +458,10 @@ alias_emacs () {
 }
 
 alias_python () {
-  local p_p3=\$(exist_p 'python3')
-  local p_pip3=\$(exist_p 'pip3')
-  if [ 0 -eq \$p_p3 ]; then
+  if where python3 &>/dev/null; then
     alias python=python3
   fi
-  if [ 0 -eq \$p_pip3 ]; then
+  if where pip3 &>/dev/null; then
     alias pip=pip3
   fi
 }
