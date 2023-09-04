@@ -624,6 +624,7 @@ $(if on_linux && exist_p snap; then
   echo "}"
 fi)
 
+# Doug McIlroy
 word_frequency () {
   $tr -cs A-Za-z\' '\n' \\
     | $tr A-Z a-z \\
