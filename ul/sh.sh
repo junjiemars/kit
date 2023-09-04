@@ -15,6 +15,7 @@ cp=$(PATH=$PH command -v cp)
 cut=$(PATH=$PH command -v cut)
 date=$(PATH=$PH command -v date)
 dd=$(PATH=$PH command -v dd)
+find=$(PATH=$PH command -v find)
 grep=$(PATH=$PH command -v grep)
 ps=$(PATH=$PH command -v ps)
 rm=$(PATH=$PH command -v rm)
@@ -687,6 +688,17 @@ OPT_OPEN="\${OPT_OPEN:-\$(choose_prefix)/open}"
 [ -d "\${OPT_RUN}" ]  && export OPT_RUN=\${OPT_RUN}
 [ -d "\${OPT_OPEN}" ] && export OPT_OPEN=\${OPT_OPEN}
 
+
+# https://github.com/gitbito/bitoai
+# https://github.com/gitbito/CLI
+check_bito_env () {
+  local l="/var/log/bito/bitocli.log"
+  if exist_p bito; then
+    echo version: \$(bito -v)
+    echo log: \$(test -f "\$l" && echo "\$l")
+    bito config --list
+  fi
+}
 
 # https://github.com/oven-sh/bun
 check_bun_env () {
