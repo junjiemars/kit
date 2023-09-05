@@ -519,15 +519,15 @@ date_from_epoch ()
   local fmt="+%Y-%m-%d %H:%M:%S"
 $(if on_linux; then
   echo "  if [ \$# -eq 0 ]; then"
-  echo "    date -u -d@0 \$fmt"
+  echo "    date -u -d@0 \"\$fmt\""
   echo "  else"
-  echo "    date -u -d@\$@ \$fmt"
+  echo "    date -u -d@\$@ \"\$fmt\""
   echo "  fi"
 elif on_darwin; then
   echo "  if [ \$# -eq 0 ]; then"
-  echo "    date -u -r0 \$fmt"
+  echo "    date -u -r0 \"\$fmt\""
   echo "  else"
-  echo "    date -u -r\$@ \$fmt"
+  echo "    date -u -r\$@ \"\$fmt\""
   echo "  fi"
 else
   echo "  # nop"
