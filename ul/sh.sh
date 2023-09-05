@@ -516,18 +516,41 @@ fi)
 # utc date
 date_from_epoch ()
 {
-  local s="\'%Y-%m-%d %H:%M:%S\'"
+  local fmt="+%Y-%m-%d %H:%M:%S"
 $(if on_linux; then
   echo "  if [ \$# -eq 0 ]; then"
-  echo "    date -u -d@0 +'%Y-%m-%d %H:%M:%S'"
+  echo "    date -u -d@0 \$fmt"
   echo "  else"
-  echo "    date -u -d@\$@ +'%Y-%m-%d %H:%M:%S'"
+  echo "    date -u -d@\$@ \$fmt"
   echo "  fi"
 elif on_darwin; then
   echo "  if [ \$# -eq 0 ]; then"
-  echo "    date -u -r0"
+  echo "    date -u -r0 \$fmt"
   echo "  else"
-  echo "    date -r\$@"
+  echo "    date -u -r\$@ \$fmt"
+  echo "  fi"
+else
+  echo "  # nop"
+  echo "  :"
+fi)
+}
+
+date_to_epoch ()
+{
+  local fmt="%Y-%m-%d %H:%M:%S"
+$(if on_linux; then
+  echo "  local out=\"+%s\""
+  echo "  if [ \$# -eq 0 ]; then"
+  echo "    date -u \$out"
+  echo "  else"
+  echo "    date -u -d@\"\$@\" \$out"
+  echo "  fi"
+elif on_darwin; then
+  echo "  local out=\"+%s\""
+  echo "  if [ \$# -eq 0 ]; then"
+  echo "    date -u \$out"
+  echo "  else"
+  echo "    date -u -j -f\$fmt \"\$@\" \$out"
   echo "  fi"
 else
   echo "  # nop"
