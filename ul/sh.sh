@@ -543,7 +543,7 @@ $(if on_linux; then
   echo "  if [ \$# -eq 0 ]; then"
   echo "    date -u \$out"
   echo "  else"
-  echo "    date -u -d@\"\$@\" \$out"
+  echo "    date -u -d\"\$@\" \$out"
   echo "  fi"
 elif on_darwin; then
   echo "  if [ \$# -eq 0 ]; then"
