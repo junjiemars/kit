@@ -538,15 +538,14 @@ fi)
 date_to_epoch ()
 {
   local fmt="%Y-%m-%d %H:%M:%S"
+  local out="+%s"
 $(if on_linux; then
-  echo "  local out=\"+%s\""
   echo "  if [ \$# -eq 0 ]; then"
   echo "    date -u \$out"
   echo "  else"
   echo "    date -u -d@\"\$@\" \$out"
   echo "  fi"
 elif on_darwin; then
-  echo "  local out=\"+%s\""
   echo "  if [ \$# -eq 0 ]; then"
   echo "    date -u \$out"
   echo "  else"
