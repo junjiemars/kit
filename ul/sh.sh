@@ -513,17 +513,19 @@ $(if [ -f "${utils}.ori" ]; then
 fi)
 #------------------------------------------------
 
+# utc date
 date_from_epoch ()
 {
+  local s="\'%Y-%m-%d %H:%M:%S\'"
 $(if on_linux; then
   echo "  if [ \$# -eq 0 ]; then"
-  echo "    date -d@0 -u"
+  echo "    date -u -d@0 +'%Y-%m-%d %H:%M:%S'"
   echo "  else"
-  echo "    date -d@\$@"
+  echo "    date -u -d@\$@ +'%Y-%m-%d %H:%M:%S'"
   echo "  fi"
 elif on_darwin; then
   echo "  if [ \$# -eq 0 ]; then"
-  echo "    date -r0 -u"
+  echo "    date -u -r0"
   echo "  else"
   echo "    date -r\$@"
   echo "  fi"
