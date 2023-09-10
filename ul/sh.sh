@@ -107,7 +107,7 @@ where () {
 }
 
 exist_p () {
-  where ${1} 2>&1 &>/dev/null
+  where ${1} >/dev/null
 }
 
 
