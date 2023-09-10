@@ -362,13 +362,13 @@ if [ "\$o_check_prompt_env" = "yes" ]; then
     export PROMPT_COMMAND
   fi
 
-`if [ "zsh" = "$SH" ]; then
+$(if [ "zsh" = "$SH" ]; then
   echo "  PS1=\"%n@%m %1~ %#\""
 elif [ "bash" = "$SH" ]; then
-  echo "  PS1=\\"\\u@\\h \\W \\$\\""
+  echo "  PS1=\"\u@\h \W \$\""
 else
-  echo "  PS1=\\"\\$LOGNAME@\\\`$uname -n | $cut -d '.' -f1\\\` \\$\\""
-fi`
+  echo "  PS1=\"\$LOGNAME@\$($uname -n | $cut -d '.' -f1\) \$\""
+fi)
   export PS1="\${PS1% } "
 
   TERM="\$(pretty_term)"
@@ -377,12 +377,12 @@ fi
 
 # check lang env
 if [ "\$o_check_lang_env" = "yes" ]; then
-  `if on_windows_nt; then
+  $(if on_windows_nt; then
      echo " # change code page to unicode"
      echo " chcp.com 65001 &>/dev/null"
      echo " export LANG=en_US.UTF-8"
   else
-    echo "if test -z \"\\$LANG\"; then"
+    echo "if test -z \"\$LANG\"; then"
     if on_linux; then
       echo "    # fix set locale failed:"
       echo "    # sudo localedef -i en_US -f UTF-8 en_US.UTF-8"
@@ -392,7 +392,7 @@ if [ "\$o_check_lang_env" = "yes" ]; then
     fi
     echo "  fi"
     echo "  export LANG"
-  fi`
+  fi)
 fi
 
 
@@ -903,10 +903,11 @@ check_rust_env () {
   fi
 }
 
+# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 check_rust_src_env () {
   local force="\$1"
-  local rc="\`rustc --print sysroot 2>/dev/null\`"
-  local hash="\`rustc -vV|grep -e '^commit-hash'|sed -e 's#commit-hash: \\(.*\\)#\\1#g' 2>/dev/null\`"
+  local rc="\$(rustc --print sysroot 2>/dev/null)"
+  local hash="\$(rustc -vV|sed -n '/^commit-hash/s;commit-hash: \(.*\);\1;' 2>/dev/null)"
   local etc="\${rc}/lib/rustlib/src/rust/src/etc"
   local tag="\${etc}/ctags.rust"
   local tag_src="https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/ctags.rust"
@@ -922,50 +923,48 @@ check_rust_src_env () {
     if [ -n "\$hash" ] && [ -d "\$src" ]; then
       if [ -f "\$gdb" ]; then
          if [ "\$force" = "renew" ]; then
-           sed ${sed_i}.b1 "/set substitute-path/"d \$gdb
+           sed ${sed_i}.b1 '/set substitute-path/d' \$gdb
          fi
-         if ! \`grep 'set substitute-path' \$gdb &>/dev/null\`; then
+         if ! $grep 'set substitute-path' \$gdb &>/dev/null; then
            cp \$gdb \${gdb}.b0
            echo ${echo_n} "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
          fi
       fi
       if [ -f "\$lldb" ]; then
         if [ "\$force" = "renew" ]; then
-          sed ${sed_i}.b1 "/settings set target\.source-map/"d \$lldb
+          sed ${sed_i}.b1 '/settings set target\.source-map/d' \$lldb
         fi
-        if ! \`grep 'settings set target.source-map' \$lldb &>/dev/null\`; then
+        if ! $grep 'settings set target.source-map' \$lldb &>/dev/null; then
           cp \$lldb \${lldb}.b0
           echo ${echo_n} "settings set target.source-map \$from \$src" >> \$lldb
         fi
       fi
     fi
-  else
-    echo "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
   fi
 }
 
 
-`if [ "zsh" = "$SH" ]; then
+$(if [ "zsh" = "$SH" ]; then
   echo "# https://ohmyz.sh"
   echo "check_ohmyzsh_env () {"
-  echo "  local d=\"\\${HOME}/.oh-my-zsh\""
-  echo "  local m=\"\\${HOME}/.zsh_ohmyzsh\""
-  echo "  if [ -f \"\\${d}/oh-my-zsh.sh\" ]; then"
-  echo "    if [ ! -f "\\$m" ]; then"
-  echo "cat << END > \"\\$m\""
-  echo "export ZSH=\"\\$d\""
+  echo "  local d=\"\${HOME}/.oh-my-zsh\""
+  echo "  local m=\"\${HOME}/.zsh_ohmyzsh\""
+  echo "  if [ -f \"\${d}/oh-my-zsh.sh\" ]; then"
+  echo "    if [ ! -f "\$m" ]; then"
+  echo "cat << EOF > \"\$m\""
+  echo "export ZSH=\"\$d\""
   echo "DISABLE_AUTO_UPDATE=true"
   echo "ZSH_THEME=\"robbyrussell\""
   echo "#plugins=(git z nvm kubectl)"
-  echo "source \"\\\\\\${ZSH}/oh-my-zsh.sh\""
-  echo "END"
+  echo ". \"\${ZSH}/oh-my-zsh.sh\""
+  echo "EOF"
   echo "    fi"
-  echo "    . \"\\$m\""
-  echo "    return \\$?"
+  echo "    . \"\$m\""
+  echo "    return \$?"
   echo "  fi"
   echo "  return 1"
   echo "}"
-fi`
+fi)
 
 if [ "\$o_check_completion_env" = "yes" ]; then
   check_completion_env
@@ -996,11 +995,11 @@ if [ "\$o_check_rust_env" = "yes" ]; then
 fi
 
 
-`if [ "zsh" = "$SH" ]; then
-  echo "if [ \\"\\$o_check_ohmyzsh_env\\" = \\"yes\\" ]; then"
+$(if [ "zsh" = "$SH" ]; then
+  echo "if [ \"\$o_check_ohmyzsh_env\" = \"yes\" ]; then"
   echo "  check_ohmyzsh_env"
   echo "fi"
-fi`
+fi)
 
 # eof
 EOF
@@ -1141,35 +1140,35 @@ fi)
 
 # racket home
 if [ "\$o_check_racket_env" = "yes" -a -n "\$RACKET_HOME" ]; then
-`if on_windows_nt; then
-  echo "  RACKET_HOME=\\$(posix_path \"\\$RACKET_HOME\")"
-fi`
-  PATH="\`append_path \"\$RACKET_HOME/bin\" \$PATH\`"
+$(if on_windows_nt; then
+  echo "  RACKET_HOME=\$(posix_path \"\$RACKET_HOME\")"
+fi)
+  PATH="\$(append_path \"\$RACKET_HOME/bin\" \$PATH)"
 fi
 unset RACKET_HOME
 
 # java home
 if [ "\$o_check_java_env" = "yes" -a -n "\$JAVA_HOME" ]; then
-`if on_windows_nt; then
-  echo "  JAVA_HOME=\\$(posix_path \"\\${JAVA_HOME}\")"
-fi`
-  PATH="\`append_path \"\${JAVA_HOME}\" \$PATH\`"
-  PATH="\`append_path \"\${JAVA_HOME}/bin\" \$PATH\`"
+$(if on_windows_nt; then
+  echo "  JAVA_HOME=\$(posix_path \"\${JAVA_HOME}\")"
+fi)
+  PATH="\$(append_path \"\${JAVA_HOME}\" \$PATH)"
+  PATH="\$(append_path \"\${JAVA_HOME}/bin\" \$PATH)"
 fi
 
 # nvm home
 if [ "\$o_check_nvm_env" = "yes" -a -n "\$NVM_DIR" ]; then
-  PATH="\`append_path \"\${NVM_DIR}\" \$PATH\`"
+  PATH="\$(append_path \"\${NVM_DIR}\" \$PATH)"
 fi
 
 # bun home
 if [ "\$o_check_bun_env" = "yes" -a -n "\$BUN_DIR" ]; then
-  PATH="\`append_path \"\${BUN_DIR}\" \$PATH\`"
+  PATH="\$(append_path \"\${BUN_DIR}\" \$PATH)"
 fi
 
 # rust home: cargo, rustc
 if [ "\$o_check_rust_env" = "yes" -a -n "\$CARGO_HOME" ]; then
-  PATH="\`append_path \"\${CARGO_HOME}/bin\" \$PATH\`"
+  PATH="\$(append_path \"\${CARGO_HOME}/bin\" \$PATH)"
 fi
 
 
@@ -1191,13 +1190,13 @@ fi
 
 # export libpath env
 if [ "\$o_export_libpath_env" = "yes" ]; then
-`if on_linux; then
+$(if on_linux; then
   echo "  export LD_LIBRARY_PATH"
 elif on_darwin; then
   echo "  export DYLD_LIBRARY_PATH"
 else
   echo "  : #void"
-fi`
+fi)
 fi
 
 
