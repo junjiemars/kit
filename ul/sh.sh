@@ -71,7 +71,7 @@ fi
 # check the sed's "-i" option
 echo -e "a\nb\nc" > .sed_i.test
 if [ -f .sed_i.test ]; then
-  if $sed -i'.off' -e'1d' .sed_i.test; then
+  if $sed -i'.off' '1d' .sed_i.test; then
     sed_i=-i
     $rm .sed_i.test.off
   fi
@@ -873,7 +873,7 @@ $(if on_darwin; then
       echo "  setopt +o nomatch &>/dev/null"
    fi
    echo "  if \$ls -ldr /Applications/Racket* &>/dev/null; then"
-   echo "    RACKET_HOME=\"\$($ls -ldr /Applications/Racket* | sed 1q | sed 's;.*\(/Applications/Racket v[0-9][0-9]*\.[0-9][0-9]*\).*;\1;g')\""
+   echo "    RACKET_HOME=\"\$($ls -ldr /Applications/Racket* | $sed 1q | $sed 's;.*\(/Applications/Racket v[0-9][0-9]*\.[0-9][0-9]*\).*;\1;g')\""
    echo "  fi"
    if [ "zsh" = "$SH" ]; then
      echo "  setopt -o nomatch &>/dev/null"
@@ -907,7 +907,7 @@ check_rust_env () {
 check_rust_src_env () {
   local force="\$1"
   local rc="\$(rustc --print sysroot 2>/dev/null)"
-  local hash="\$(rustc -vV|sed -n '/^commit-hash/s;commit-hash: \(.*\);\1;' 2>/dev/null)"
+  local hash="\$(rustc -vV|$sed -n '/^commit-hash/s;commit-hash: \(.*\);\1;' 2>/dev/null)"
   local etc="\${rc}/lib/rustlib/src/rust/src/etc"
   local tag="\${etc}/ctags.rust"
   local tag_src="https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/ctags.rust"
@@ -1046,7 +1046,7 @@ append_path () {
 uniq_path () {
   local ps=$@
   ps=\$(echo \$@ | $tr ':' '\n' | $awk '!a[\$0]++')
-  ps=\$(echo \$@ | $tr '\n' ':' | $sed -e 's_:\$__g')
+  ps=\$(echo \$@ | $tr '\n' ':' | $sed 's_:\$__g')
   echo "\$ps"
 }
 
