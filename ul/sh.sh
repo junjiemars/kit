@@ -17,6 +17,7 @@ date=$(PATH=$PH command -v date)
 dd=$(PATH=$PH command -v dd)
 find=$(PATH=$PH command -v find)
 grep=$(PATH=$PH command -v grep)
+iconv=$(PATH=$PH command -v iconv)
 ps=$(PATH=$PH command -v ps)
 rm=$(PATH=$PH command -v rm)
 sed=$(PATH=$PH command -v sed)
@@ -293,6 +294,9 @@ where () {
   fi)
 }
 
+exist_p () {
+  where \${1} >/dev/null
+}
 
 inside_container_p () {
   [ ".\$INSIDE_CONTAINER" = ".1" ] && return 0
@@ -440,10 +444,6 @@ else
 fi
 `
 
-exist_p () {
-  where \${1} 2>&1 >/dev/null
-}
-
 alias_racket () {
   if exist_p racket; then
     alias racket='rlwrap racket'
@@ -530,8 +530,7 @@ elif on_darwin; then
   echo "    date -u -r\$@ \"\$fmt\""
   echo "  fi"
 else
-  echo "  # nop"
-  echo "  :"
+  echo "  return 1"
 fi)
 }
 
@@ -552,8 +551,7 @@ elif on_darwin; then
   echo "    date -u -j -f\"\$fmt\" \"\$@\" \"\$out\""
   echo "  fi"
 else
-  echo "  # nop"
-  echo "  :"
+  echo "  return 1"
 fi)
 }
 
@@ -595,8 +593,7 @@ elif on_linux; then
 elif on_windows_nt; then
   echo "  systeminfo | grep '^OS Version'"
 else
-  echo "  # nop"
-  echo "  :"
+  echo "  return 1"
 fi)
 }
 
@@ -604,26 +601,17 @@ outbound_ip ()
 {
   local u="https://checkip.dns.he.net"
   local v=\$1
-  if where curl &>/dev/null; then
-    case \$v in
-      -6) v="-6" ;;
-      *)  v="-4" ;;
-    esac
-    curl \$v -sL "\$u" | $grep 'Your IP address' | $sed -E 's/Your.*: ([.:0-9a-z]+).*/\1/'
-  else
-    echo "# cutl \$u"
-  fi
+  case \$v in
+    -6) v="-6" ;;
+    *) v="-4" ;;
+  esac
+  curl \$v -sL "\$u" | $sed -n '/^Your IP.*/s;^Your IP.* \([.:a-z0-9][.:a-z0-9]*\)</body>\$;\1;p'
 }
 
-random_base64 ()
+random_range ()
 {
    local n=\${1:-8}
-   if test -r /dev/random && where base64 &>/dev/null; then
-      $dd if=/dev/random bs=\$n | $sed 1q | base64 | $cut -c 1-\$n
-   else
-      echo "# missing /dev/random or base64"
-      return 1
-   fi
+   $dd if=/dev/random bs=\$((n*4)) | $sed 1q | $iconv -c -t ASCII | $tr -cd '[:print:]' | $cut -c 1-\$n
 }
 
 $(if on_linux && exist_p snap; then
