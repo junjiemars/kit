@@ -95,23 +95,11 @@ save_as () {
 
 where () {
   case $SH in
-    zsh)
-      # override the zsh builtin
-      whence -p $@
-      ;;
-    bash)
-      type -P $@
-      ;;
-    *)
-      command -v $@
-      ;;
+    zsh) whence -p $@ ;;
+    bash) type -P $@ ;;
+    *) command -v $@ ;;
   esac
 }
-
-exist_p () {
-  where ${1} &>/dev/null
-}
-
 
 gen_dot_shell_profile () {
   local profile="$HOME/.${SH}_profile"
@@ -286,6 +274,7 @@ SHELL=$SHELL
 
 
 where () {
+  # check the path of external command
   $(if [ "zsh" = "$SH" ]; then
     echo "whence -p \$@"
   elif [ "bash" = "$SH" ]; then
@@ -296,7 +285,8 @@ where () {
 }
 
 exist_p () {
-  where \${1} >/dev/null
+  # check the existence of external command
+  where \$1 &>/dev/null
 }
 
 inside_container_p () {
@@ -620,7 +610,7 @@ random_range ()
      | $cut -c 1-\$n
 }
 
-$(if on_linux && exist_p snap; then
+$(if on_linux && where snap &>/dev/null; then
   echo "snap_remove_disabled ()"
   echo "{"
   echo "  LANG=C snap list --all | $awk '/disabled/{print \$1, \$3}' |"
@@ -652,7 +642,7 @@ word_frequency () {
     | $sed \${1:-24}q
 }
 
-$(if on_linux && exist_p unzip; then
+$(if on_linux && where unzip &>/dev/null; then
   echo "unzip_zhcn ()"
   echo "{"
   echo "  unzip -Ogb2312 \$@"
