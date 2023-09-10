@@ -601,17 +601,24 @@ outbound_ip ()
 {
   local u="https://checkip.dns.he.net"
   local v=\$1
-  case \$v in
-    -6) v="-6" ;;
-    *) v="-4" ;;
-  esac
-  curl \$v -sL "\$u" | $sed -n '/^Your IP.*/s;^Your IP.* \([.:a-z0-9][.:a-z0-9]*\)</body>\$;\1;p'
+  if exist_p curl; then
+    case \$v in
+      -6) v="-6" ;;
+      *) v="-4" ;;
+    esac
+    curl \$v -sL "\$u" \\
+      | $sed -n '/^Your IP.*/s;^Your IP.* \([.:a-z0-9]*\)</body>\$;\1;p'
+  fi
 }
 
 random_range ()
 {
    local n=\${1:-8}
-   $dd if=/dev/random bs=\$((n*4)) | $sed 1q | $iconv -c -t ASCII | $tr -cd '[:print:]' | $cut -c 1-\$n
+   $dd if=/dev/random bs=\$(( n*4 )) \\
+     | $sed 1q \\
+     | $iconv -c -t ascii//TRANSLIT \\
+     | $tr -cd '[:print:]' \\
+     | $cut -c 1-\$n
 }
 
 $(if on_linux && exist_p snap; then
