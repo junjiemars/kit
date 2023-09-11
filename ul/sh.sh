@@ -286,7 +286,7 @@ where () {
 
 exist_p () {
   # check the existence of external command
-  where \$1 &>/dev/null
+  where \$1 2>&1 >/dev/null
 }
 
 inside_container_p () {
@@ -357,7 +357,7 @@ $(if [ "zsh" = "$SH" ]; then
 elif [ "bash" = "$SH" ]; then
   echo "  PS1=\"\u@\h \W \$\""
 else
-  echo "  PS1=\"\$LOGNAME@\$($uname -n | $cut -d '.' -f1\) \$\""
+  echo "  PS1=\"\$LOGNAME@\$($uname -n | $cut -d '.' -f1) \$\""
 fi)
   export PS1="\${PS1% } "
 
@@ -610,7 +610,7 @@ random_range ()
      | $cut -c 1-\$n
 }
 
-$(if on_linux && where snap &>/dev/null; then
+$(if on_linux && where snap 2>&1 >/dev/null; then
   echo "snap_remove_disabled ()"
   echo "{"
   echo "  LANG=C snap list --all | $awk '/disabled/{print \$1, \$3}' |"
@@ -642,7 +642,7 @@ word_frequency () {
     | $sed \${1:-24}q
 }
 
-$(if on_linux && where unzip &>/dev/null; then
+$(if on_linux && where unzip 2>&1 >/dev/null; then
   echo "unzip_zhcn ()"
   echo "{"
   echo "  unzip -Ogb2312 \$@"
