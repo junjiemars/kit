@@ -1269,7 +1269,7 @@ set path+=**
 $(if [ "zsh" = "$SH" ]; then
   echo "\"set shell=zsh\ --rcs"
 else
-  echo "\"set shell=bash\ --rcfile\ ~/.bashrc"
+  echo "\"set shell=bash\ --rcfile\ ${HOME}/.bashrc"
 fi)
 
 END
