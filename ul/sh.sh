@@ -274,7 +274,7 @@ SHELL=$SHELL
 
 
 where () {
-  # check the path of external command
+  # check the path of non-builtins
   $(if [ "zsh" = "$SH" ]; then
     echo "whence -p \$@"
   elif [ "bash" = "$SH" ]; then
@@ -285,7 +285,7 @@ where () {
 }
 
 exist_p () {
-  # check the existence of external command
+  # check the existence of non-builtins
   where \$1 2>&1 >/dev/null
 }
 
