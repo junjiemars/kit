@@ -988,6 +988,13 @@ $ docker run --name n0 -w /home/u -h n0 -v <host-path>:/opt/vol -d <docker-image
 $ docker run --name n0 -w /home/u -h n0 -v ~/.bash_history:/home/u/.bash_history -d <docker-image>
 #+END_SRC
 
+* Podman
+
+#+BEGIN_SRC sh
+	cd kit/podman
+	make -C compose -f <xxx.Makefile> up
+#+END_SRC
+
 * Raspberry
 	:PROPERTIES:
 	:CUSTOM_ID: raspbian
