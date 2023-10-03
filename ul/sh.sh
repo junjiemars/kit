@@ -181,6 +181,7 @@ gen_dot_shell_rc () {
   local sc=":"
   local ss=""
   local nh="#----Nore ${SH}----"
+  test -d "$HOME/.nore/$SH" || mkdir -p "$HOME/.nore/$SH"
   case $SH in
     bash)
       ;;
@@ -208,11 +209,11 @@ gen_dot_shell_rc () {
 # o_export_libpath_env=no:
 ${mc}
 ${sc}
-test -f \$HOME/.${SH}_init    && . \$HOME/.${SH}_init:
-test -f \$HOME/.${SH}_vars    && . \$HOME/.${SH}_vars:
-test -f \$HOME/.${SH}_paths   && . \$HOME/.${SH}_paths:
-test -f \$HOME/.${SH}_utils   && . \$HOME/.${SH}_utils:
-test -f \$HOME/.${SH}_aliases && . \$HOME/.${SH}_aliases:
+test -f \$HOME/.nore/${SH}/init    && . \$HOME/.nore/${SH}/init:
+test -f \$HOME/.nore/${SH}/vars    && . \$HOME/.nore/${SH}/vars:
+test -f \$HOME/.nore/${SH}/paths   && . \$HOME/.nore/${SH}/paths:
+test -f \$HOME/.nore/${SH}/utils   && . \$HOME/.nore/${SH}/utils:
+test -f \$HOME/.nore/${SH}/aliases && . \$HOME/.nore/${SH}/aliases:
 "
   save_as "$rc"
   echo $echo_n "+ generate $rc ... $echo_c"
@@ -254,7 +255,7 @@ ${ss}
 }
 
 gen_dot_shell_init () {
-  local init="$HOME/.${SH}_init"
+  local init="$HOME/.nore/${SH}/init"
   save_as "$init"
   echo $echo_n "+ generate $init ... $echo_c"
   $cat << EOF > "$init"
@@ -396,7 +397,7 @@ EOF
 }
 
 gen_dot_shell_aliases () {
-  local aliases="$HOME/.${SH}_aliases"
+  local aliases="$HOME/.nore/${SH}/aliases"
   save_as "$aliases"
   echo $echo_n "+ generate $aliases ... $echo_c"
   $cat << EOF > "$aliases"
@@ -486,7 +487,7 @@ EOF
 }
 
 gen_dot_shell_utils () {
-  local utils="$HOME/.${SH}_utils"
+  local utils="$HOME/.nore/${SH}/utils"
   local rc=0
   save_as "$utils"
   echo $echo_n "+ generate $utils ... $echo_c"
@@ -660,7 +661,7 @@ EOF
 
 
 gen_dot_shell_vars () {
-  local vars="$HOME/.${SH}_vars"
+  local vars="$HOME/.nore/${SH}/vars"
   save_as "$vars"
   echo $echo_n "+ generate $vars ... $echo_c"
   $cat << EOF > "$vars"
@@ -1001,7 +1002,7 @@ EOF
 }
 
 gen_dot_shell_paths () {
-  local paths="$HOME/.${SH}_paths"
+  local paths="$HOME/.nore/${SH}/paths"
   save_as "$paths"
   echo $echo_n "+ generate $paths ... $echo_c"
   $cat << END > "$paths"
