@@ -604,9 +604,8 @@ outbound_ip ()
 random_range ()
 {
    local n=\${1:-8}
-   $dd if=/dev/random bs=\$(( n*4 )) \\
-     | $sed 1q \\
-     | $iconv -c -t ascii//TRANSLIT \\
+   $dd if=/dev/random count=\$(( n*4 )) bs=1 status=none \\
+     | $iconv -c -t ascii//TRANSLIT 2>/dev/null \\
      | $tr -cd '[:print:]' \\
      | $cut -c 1-\$n
 }
