@@ -472,7 +472,7 @@ alias_python
 
 if exist_p rlwrap; then
   alias_rlwrap_bin ecl
-  alias_rlwrap_bin ed
+  # alias_rlwrap_bin ed
   alias_rlwrap_bin openssl
 fi
 
