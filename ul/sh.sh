@@ -1262,15 +1262,15 @@ set ruler
 " visual bell
 set novisualbell
 
-" search subdirs
-set path+=**
-
 " shell
 $(if [ "zsh" = "$SH" ]; then
   echo "\"set shell=zsh\ --rcs"
 else
   echo "\"set shell=bash\ --rcfile\ ${HOME}/.bashrc"
 fi)
+
+" search subdirs
+set path+=**
 
 END
   if [ 0 -eq $? ]; then
