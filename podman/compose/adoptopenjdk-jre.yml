@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  adoptopenjdk:
+    image: adoptopenjdk:11-jre-hotspot
+    container_name: adoptopenjdk-jre
+    environment:
+      XXX: "${XXX}"
+    command: sleep infinity
+    
