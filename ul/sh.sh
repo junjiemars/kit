@@ -29,6 +29,7 @@ tr=$(PATH=$PH command -v tr)
 uname=$(PATH=$PH command -v uname)
 uniq=$(PATH=$PH command -v uniq)
 xargs=$(PATH=$PH command -v xargs)
+
 # check shell
 PLATFORM=$($uname -s 2>/dev/null)
 on_windows_nt () {
@@ -60,14 +61,13 @@ set +e
 # check the echo's "-n" option and "\c" capability
 if echo "test\c" | $grep -q c; then
   echo_c=
-  if echo -n test | $tr '\n' _ | $grep -q _; then
-    echo_n=
-  else
-    echo_n=-n
-  fi
 else
-  echo_n=
   echo_c='\c'
+fi
+if echo -n test | $tr '\n' _ | $grep -q _; then
+  echo_n=
+else
+  echo_n=-n
 fi
 
 # check the sed's "-i" option
@@ -1019,9 +1019,9 @@ fi)
 #------------------------------------------------
 
 uniq_path() {
-  echo $echo_n \$@ \\
-    | $awk -vRS=':' \\
-        '\$0 && !a[\$0]++{printf "%s:",\$0}END{sub(/:*$/,"");print}'
+  echo $echo_n "\$@" | $awk -vRS=':' \\
+    '\$0 && !a[\$0]++{printf "%s:",\$0} \\
+    END{sub(/[:]*$/,"");print}'
 }
 
 posix_path() {
@@ -1277,11 +1277,13 @@ gen_dot_vimrc $HOME/.vimrc
 export PATH
 . $HOME/.${SH}rc
 
+unset echo_c
 unset echo_n
 unset PH
 unset PLATFORM
 unset sed_i
 unset SH
+unset SH_ENV
 
 END=$($date +%s)
 echo
