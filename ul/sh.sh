@@ -59,15 +59,13 @@ SH="$($basename $SHELL)"
 set +e
 
 # check the echo's "-n" option and "\c" capability
+echo_c='\c'
 if echo "test\c" | $grep -q c; then
   echo_c=
-else
-  echo_c='\c'
 fi
+echo_n=-n
 if echo -n test | $tr '\n' _ | $grep -q _; then
   echo_n=
-else
-  echo_n=-n
 fi
 
 # check the sed's "-i" option
