@@ -5,6 +5,8 @@ services:
     image: jupyter/datascience-notebook
     # image: jupyter/minimal-notebook
     container_name: jupyter-dev
+    environment:
+      PIP_INDEX_URL: "https://pypi.tuna.tsinghua.edu.cn/simple"
     logging:
       driver: k8s-file
     volumes:
