@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  adoptopenjdk:
+    image: adoptopenjdk/openjdk11
+    container_name: adoptopenjdk-dev
+    command: sleep infinity
+    

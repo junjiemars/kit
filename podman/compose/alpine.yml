@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  alpine:
+    image: alpine:latest
+    container_name: alpine-dev
+    command: sleep infinity
