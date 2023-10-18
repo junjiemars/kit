@@ -5,7 +5,9 @@
 #------------------------------------------------
 
 HOME="${HOME%/}"
-PH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
+PH="/usr/bin:/bin:/usr/sbin:/sbin"
+unset -f command 2>/dev/null
+
 # check basis commands
 set -e
 awk=$(PATH=$PH command -v awk)
@@ -1016,28 +1018,10 @@ $(if [ -f "${paths}.ori" ]; then
 fi)
 #------------------------------------------------
 
-append_path () {
-  local new="\$1"
-  shift 1
-  local paths="\${@}"
-  if [ -n "\$new" -a -d "\$new" ]; then
-    case :\${PATH}: in
-      *:"$new":*)
-        ;;
-      *)
-        echo "\${paths:+\$paths:}\$new"
-        ;;
-    esac
-  else
-    echo "\${paths}"
-  fi
-}
-
-uniq_path () {
-  local ps=$@
-  ps=\$(echo \$@ | $tr ':' '\n' | $awk '!a[\$0]++')
-  ps=\$(echo \$@ | $tr '\n' ':' | $sed 's_:\$__g')
-  echo "\$ps"
+uniq_path() {
+  echo $echo_n \$@ \\
+    | $awk -vRS=':' \\
+        '\$0 && !a[\$0]++{printf "%s:",\$0}END{sub(/:*$/,"");print}'
 }
 
 posix_path() {
@@ -1073,23 +1057,26 @@ echo "}"
 fi)
 
 set_bin_paths () {
-  local paths="$PH"
+  local paths="\$@"
   for d in \$(echo \${paths} | $tr ':' '\n'); do
-    PATH="\$(append_path \${d} \$PATH)"
+    if [ -d "\${d}" ]; then
+      PATH="\${d}:\$PATH"
+    fi
   done
 }
 
-
-# chain basis \${OPT_RUN}/{bin,sbin} paths
-if [ -d "\${OPT_RUN}" ]; then
-  PATH=\$(append_path "\${OPT_RUN}/bin" "\${PATH}")
-  PATH=\$(append_path "\${OPT_RUN}/sbin" "\${PATH}")
-  $(if on_linux; then
-    echo "LD_LIBRARY_PATH=\$(append_path \"\${OPT_RUN}/lib\" \"\${LD_LIBRARY_PATH}\")"
-  elif on_darwin; then
-    echo "DYLD_LIBRARY_PATH=\$(append_path \"\${OPT_RUN}/lib\" \"\${DYLD_LIBRARY_PATH}\")"
-  fi)
-fi
+set_lib_paths () {
+  local paths="\$@"
+  for d in \$(echo \${paths} | $tr ':' '\n'); do
+    if [ -d "\${d}" ]; then
+      $(if on_linux; then
+        echo "LD_LIBRARY_PATH=\${d}:\${LD_LIBRARY_PATH}"
+      elif on_darwin; then
+        echo "DYLD_LIBRARY_PATH=\${d}:\${DYLD_LIBRARY_PATH}"
+      fi)
+    fi
+  done
+}
 
 $(if on_darwin; then
   echo "check_macports_env () {"
@@ -1112,7 +1099,7 @@ $(if on_darwin; then
   echo "    if [ ! -d \"\$d\" ]; then"
   echo "      ls -d \${d}*"
   echo "    else"
-  echo "      PATH=\$(append_path \"\${d}\" \"\$PATH\")"
+  echo "      PATH=\"\${d}:\$PATH\""
   echo "    fi"
   echo "  fi"
   echo "}"
@@ -1133,7 +1120,7 @@ if [ "\$o_check_racket_env" = "yes" -a -n "\$RACKET_HOME" ]; then
 $(if on_windows_nt; then
   echo "  RACKET_HOME=\$(posix_path \"\$RACKET_HOME\")"
 fi)
-  PATH="\$(append_path \"\$RACKET_HOME/bin\" \$PATH)"
+  PATH="\${RACKET_HOME}/bin:\$PATH"
 fi
 unset RACKET_HOME
 
@@ -1142,44 +1129,35 @@ if [ "\$o_check_java_env" = "yes" -a -n "\$JAVA_HOME" ]; then
 $(if on_windows_nt; then
   echo "  JAVA_HOME=\$(posix_path \"\${JAVA_HOME}\")"
 fi)
-  PATH="\$(append_path \"\${JAVA_HOME}\" \$PATH)"
-  PATH="\$(append_path \"\${JAVA_HOME}/bin\" \$PATH)"
+  PATH="\${JAVA_HOME}:\${JAVA_HOME}/bin:\$PATH"
 fi
 
 # nvm home
 if [ "\$o_check_nvm_env" = "yes" -a -n "\$NVM_DIR" ]; then
-  PATH="\$(append_path \"\${NVM_DIR}\" \$PATH)"
+  PATH="\${NVM_DIR}:\$PATH"
 fi
 
 # bun home
 if [ "\$o_check_bun_env" = "yes" -a -n "\$BUN_DIR" ]; then
-  PATH="\$(append_path \"\${BUN_DIR}\" \$PATH)"
+  PATH="\${BUN_DIR}:\$PATH"
 fi
 
 # rust home: cargo, rustc
 if [ "\$o_check_rust_env" = "yes" -a -n "\$CARGO_HOME" ]; then
-  PATH="\$(append_path \"\${CARGO_HOME}/bin\" \$PATH)"
+  PATH="\${CARGO_HOME}/bin:\$PATH"
 fi
 
 
-PATH="\$(uniq_path \${PATH})"
-$(if on_windows_nt; then
-  echo "PATH=\"\$(sort_path \${PATH})\""
-elif on_linux; then
-  echo "LD_LIBRARY_PATH=\"\$(uniq_path \${LD_LIBRARY_PATH})\""
-elif on_darwin; then
-  echo "DYLD_LIBRARY_PATH=\"\$(uniq_path \${DYLD_LIBRARY_PATH})\""
-fi)
-
 # export path env
 if [ "\$o_export_path_env" = "yes" ]; then
-  set_bin_paths
-  PATH="\$(uniq_path \${PATH})"
+  set_bin_paths "\${OPT_RUN}/bin:\${OPT_RUN}/sbin"
+  PATH="\$(uniq_path \$PATH)"
   export PATH
 fi
 
 # export libpath env
 if [ "\$o_export_libpath_env" = "yes" ]; then
+  set_lib_path "\${OPT_RUN}/lib"
 $(if on_linux; then
   echo "  export LD_LIBRARY_PATH"
 elif on_darwin; then
@@ -1299,9 +1277,11 @@ gen_dot_vimrc $HOME/.vimrc
 export PATH
 . $HOME/.${SH}rc
 
+unset echo_n
 unset PH
-unset SH
 unset PLATFORM
+unset sed_i
+unset SH
 
 END=$($date +%s)
 echo
