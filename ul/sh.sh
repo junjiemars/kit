@@ -1018,8 +1018,7 @@ fi)
 
 uniq_path() {
   echo $echo_n "\$@" | $awk -vRS=':' \\
-    '\$0 && !a[\$0]++{printf "%s:",\$0} \\
-    END{sub(/[:]*$/,"");print}'
+    '\$0 && !a[\$0]++{printf "%s:",\$0}' | $sed 's/:*$//'
 }
 
 posix_path() {
@@ -1061,6 +1060,7 @@ set_bin_paths () {
       PATH="\${d}:\$PATH"
     fi
   done
+  PATH="\$(uniq_path \$PATH)"
 }
 
 set_lib_paths () {
@@ -1074,7 +1074,16 @@ set_lib_paths () {
       fi)
     fi
   done
+$(if on_linux; then
+  echo "  LD_LIBRARY_PATH=\"\$(uniq_path \${LD_LIBRARY_PATH})\""
+elif on_darwin; then
+  echo "  DYLD_LIBRARY_PATH=\"\$(uniq_path \${DYLD_LIBRARY_PATH})\""
+fi)
 }
+
+# set basis bin/lib path
+set_bin_paths "\${OPT_RUN}/bin:\${OPT_RUN}/sbin"
+set_lib_paths "\${OPT_RUN}/lib"
 
 $(if on_darwin; then
   echo "check_macports_env () {"
@@ -1148,17 +1157,17 @@ fi
 
 # export path env
 if [ "\$o_export_path_env" = "yes" ]; then
-  set_bin_paths "\${OPT_RUN}/bin:\${OPT_RUN}/sbin"
   PATH="\$(uniq_path \$PATH)"
   export PATH
 fi
 
 # export libpath env
 if [ "\$o_export_libpath_env" = "yes" ]; then
-  set_lib_path "\${OPT_RUN}/lib"
 $(if on_linux; then
+  echo "  LD_LIBRARY_PATH=\"\$(uniq_path \$LD_LIBRARY_PATH)\""
   echo "  export LD_LIBRARY_PATH"
 elif on_darwin; then
+  echo "  DYLD_LIBRARY_PATH=\"\$(uniq_path \$DYLD_LIBRARY_PATH)\""
   echo "  export DYLD_LIBRARY_PATH"
 else
   echo "  : #void"
@@ -1272,6 +1281,7 @@ gen_dot_shell_utils
 
 gen_dot_vimrc $HOME/.vimrc
 
+
 export PATH
 . $HOME/.${SH}rc
 
@@ -1282,6 +1292,7 @@ unset PLATFORM
 unset sed_i
 unset SH
 unset SH_ENV
+
 
 END=$($date +%s)
 echo

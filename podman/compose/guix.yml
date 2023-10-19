@@ -1,0 +1,22 @@
+version: '3'
+services:
+  guix:
+    image: bmpvieira/guix:latest
+    container_name: guix-dev
+    privileged: true
+    volumes:
+      - guix_var:/var/guix
+      - guix_etc:/etc/guix
+    # command: sleep infinity
+    # command: ["guix", "system", "reconfigure", "/etc/config.scm"]    
+    command: ["guix", "daemon", "--build-users-group=guixbuild"]
+  # guix-shell:
+  #   image: guixsd/guix:latest
+  #   volumes:
+  #     - guix-store:/var/guix
+  #     - guix-profiles:/var/guix/profiles
+  #     - guix-config:/etc/guix
+  #   command: ["guix", "environment", "--ad-hoc", "bash"]
+volumes:
+  guix_var:
+  guix_etc:
