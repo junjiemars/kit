@@ -29,6 +29,7 @@ tr=$(PATH=$PH command -v tr)
 uname=$(PATH=$PH command -v uname)
 uniq=$(PATH=$PH command -v uniq)
 xargs=$(PATH=$PH command -v xargs)
+set +e
 
 # check shell
 PLATFORM=$($uname -s 2>/dev/null)
