@@ -15,7 +15,7 @@ test_do() {
 test_after() {
   local rc="${HOME}/.$(basename $SHELL)rc"
   if [ -f "$rc" -a -n "$GITHUB_ACTIONS" ]; then
-    sed -i .b0 's/^# o_export_path_env=no/o_export_path_env=yes/' "$rc"
+    sed -i.b0 's/^# o_export_path_env=no/o_export_path_env=yes/' "$rc"
   fi
 }
 
