@@ -18,10 +18,12 @@ cp=$(PATH=$PH command -v cp)
 cut=$(PATH=$PH command -v cut)
 date=$(PATH=$PH command -v date)
 dd=$(PATH=$PH command -v dd)
+env=$(PATH=$PH command -v env)
 find=$(PATH=$PH command -v find)
 grep=$(PATH=$PH command -v grep)
 iconv=$(PATH=$PH command -v iconv)
 ls=$(PATH=$PH command -v ls)
+mkdir=$(PATH=$PH command -v mkdir)
 printf=$(PATH=$PH command -v printf)
 ps=$(PATH=$PH command -v ps)
 rm=$(PATH=$PH command -v rm)
@@ -164,7 +166,7 @@ gen_dot_shell_rc () {
   local sc=":"
   local ss=""
   local nh="#----Nore ${SH}----"
-  test -d "$HOME/.nore/$SH" || mkdir -p "$HOME/.nore/$SH"
+  [ -d "$HOME/.nore/$SH" ] || $mkdir -p "$HOME/.nore/$SH"
   case $SH in
     bash)
       ;;
@@ -251,7 +253,6 @@ fi)
 
 SHELL=$SHELL
 
-
 where () {
   # check the path of non-builtins
   $(if [ "zsh" = "$SH" ]; then
@@ -275,7 +276,7 @@ inside_container_p () {
     return 0
   fi
   if [ -f /proc/1/cgroup ]; then
-    if cat /proc/1/cgroup | grep '/docker/' >/dev/null; then
+    if $cat /proc/1/cgroup | $grep '/docker/' >/dev/null; then
       export INSIDE_CONTAINER=1
       return 0
     fi
@@ -285,7 +286,7 @@ inside_container_p () {
 }
 
 inside_emacs_p () {
-  test -n "\$INSIDE_EMACS"
+  [ -n "\$INSIDE_EMACS" ]
 }
 
 
@@ -293,13 +294,14 @@ pretty_prompt_command () {
   local o="\${PROMPT_COMMAND}"
   local pc1=''
 
-  if test -n "\${o}"; then
+  if [ -n "\${o}" ]; then
     if inside_container_p || inside_emacs_p; then
       echo "\$pc1"
-      return
+      return 0
     fi
   fi
   echo "\$o"
+  return 1
 }
 
 pretty_term () {
@@ -308,7 +310,7 @@ pretty_term () {
 
   if [ -z "\$o" ]; then
     echo "\$t"
-    return
+    return 0
   fi
 
   if [ "dumb" = "\$o" ]; then
@@ -351,7 +353,7 @@ if [ "\$o_check_lang_env" = "yes" ]; then
      echo " chcp.com 65001 &>/dev/null"
      echo " export LANG=en_US.UTF-8"
   else
-    echo "if test -z \"\$LANG\"; then"
+    echo "if [ -z \"\$LANG\" ]; then"
     if on_linux; then
       echo "    # fix set locale failed:"
       echo "    # sudo localedef -i en_US -f UTF-8 en_US.UTF-8"
@@ -639,29 +641,6 @@ $(if [ -f "${vars}.ori" ]; then
 fi)
 #------------------------------------------------
 
-$(if on_windows_nt; then
-  echo "choose_prefix () {"
-  echo "  if [ -d \"/d/\" ]; then"
-  echo "    [ -d \"/d/opt\" ] || mkdir -p \"/d/opt\""
-  echo "    echo \"/d/opt\""
-  echo "  else"
-  echo "    [ -d \"/c/opt\" ] || mkdir -p \"/c/opt\""
-  echo "    echo \"/c/opt\""
-  echo "  fi"
-  echo "}"
-else
-  echo "choose_prefix () {"
-  echo "  echo \"/opt\""
-  echo "}"
-fi)
-
-OPT_RUN="\${OPT_RUN:-\$(choose_prefix)/run}"
-OPT_OPEN="\${OPT_OPEN:-\$(choose_prefix)/open}"
-
-[ -d "\${OPT_RUN}" ]  && export OPT_RUN=\${OPT_RUN}
-[ -d "\${OPT_OPEN}" ] && export OPT_OPEN=\${OPT_OPEN}
-
-
 # https://github.com/gitbito/bitoai
 # https://github.com/gitbito/CLI
 check_bito_env () {
@@ -704,7 +683,7 @@ fi)
 check_java_env () {
   local javac="\${JAVA_HOME%/}/bin/javac"
   local java_home=
-  if test -x "\${javac}" && \${javac} -version &>/dev/null; then
+  if [ -x "\${javac}" ] && \${javac} -version &>/dev/null; then
     return 0
   else
     unset JAVA_HOME
@@ -750,7 +729,7 @@ check_kube_env () {
     fi
     if [ -f "\$c" ]; then
       export KUBECONFIG="\$c"
-      cp "\$c" "\$r"
+      $cp "\$c" "\$r"
     elif [ -f "\$r" ]; then
       export KUBECONFIG="\$r"
     fi
@@ -897,7 +876,7 @@ check_rust_src_env () {
   local src="\${rc}/lib/rustlib/src/rust"
   if [ -n "\$rc" ] && [ -d "\$rc" ]; then
     if ! [ -f "\$tag" ]; then
-      mkdir -p "\${etc}"
+      $mkdir -p "\${etc}"
       curl --proto '=https' --tlsv1.2 -sSf "\$tag_src" -o "\$tag"
     fi
     if [ -n "\$hash" ] && [ -d "\$src" ]; then
@@ -906,16 +885,16 @@ check_rust_src_env () {
            sed -i .b1 '/set substitute-path/d' \$gdb
          fi
          if ! $grep 'set substitute-path' \$gdb &>/dev/null; then
-           cp \$gdb \${gdb}.b0
+           $cp \$gdb \${gdb}.b0
            $printf "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
          fi
       fi
       if [ -f "\$lldb" ]; then
         if [ "\$force" = "renew" ]; then
-          sed -i .b1 '/settings set target\.source-map/d' \$lldb
+          $sed -i .b1 '/settings set target\.source-map/d' \$lldb
         fi
         if ! $grep 'settings set target.source-map' \$lldb &>/dev/null; then
-          cp \$lldb \${lldb}.b0
+          $cp \$lldb \${lldb}.b0
           $printf "settings set target.source-map \$from \$src" >> \$lldb
         fi
       fi
@@ -999,7 +978,7 @@ gen_dot_shell_paths () {
   local paths="$HOME/.nore/${SH}/paths"
   save_as "$paths"
   $printf "+ generate $paths ... "
-  $cat << END > "$paths"
+  $cat << EOF > "$paths"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
 # target: $paths
@@ -1012,7 +991,7 @@ fi)
 #------------------------------------------------
 
 uniq_path() {
-  $printf "\$@" | $awk -v RS=':' \\
+  $printf "\$*" | $awk -v RS=':' \\
     '\$0 && !a[\$0]++{printf "%s:",\$0}' | $sed 's/:*$//'
 }
 
@@ -1030,11 +1009,26 @@ posix_path() {
   echo \${cdr}
 }
 
+check_opt_dir () {
+  $(if on_windows_nt; then
+    echo "  if [ -d \"\/d\" ]; then"
+    echo "    [ -d \"/d/opt\" ] || $mkdir -p \"/d/opt\""
+    echo "    echo \"/d/opt\""
+    echo "  else"
+    echo "    [ -d \"/c/opt\" ] || $mkdir -p \"/c/opt\""
+    echo "    echo \"/c/opt\""
+    echo "  fi"
+  else
+    echo "  [ -d \"/opt\" ] && echo \"/opt\""
+  fi)
+}
+
+
 $(if on_windows_nt; then
   echo "sort_path () {"
-  echo "  # Windows: let MSYS_NT and user defined commands first"
+  echo "  # let MSYS_NT and user defined commands first"
   echo "  local ps=\$@"
-  echo "  local opt_p=\$($dirname \$OPT_RUN)"
+  echo "  local opt_p=\$(check_opt_dir)/run/bin"
   echo "  local win_p='^/c/'"
   echo "  local opt="
   echo "  local ori="
@@ -1043,18 +1037,19 @@ $(if on_windows_nt; then
   echo "  opt=\$($printf \"\${ps}\"|$tr ':' '\n'|$grep \"\$opt_p\"|$tr '\n' ':')"
   echo "  ori=\$($printf \"\${ps}\"|$tr ':' '\n'|$grep -v \"\$opt_p\"|$grep -v \"\$win_p\" | $tr '\n' ':')"
   echo "  win=\$($printf \"\${ps}\"|$tr ':' '\n'|$grep \"\$win_p\" | $tr '\n' ':')"
-  echo "  sorted=\$($printf \"\${ori}\${opt:+\$opt }\${win}\"|$awk '!xxx[\$0]++'|$sed -e 's#:\$##' -e 's#:  *\/#:\/#g')"
+  echo "  sorted=\$($printf \"\${ori}\${opt:+\$opt }\${win}\""
   echo "  $printf \"\${sorted}\""
   echo "}"
 fi)
 
 check_path () {
-  local bin_path="\$PATH"
+  local bin_path="\$PATH:\$PH"
   $(if on_darwin; then
-    echo "  local lib_path=\"\$DYLD_LIBRARY_PATH\""
+    echo "local lib_path=\"\$DYLD_LIBRARY_PATH\""
   else
-    echo "  local lib_path=\"\$LD_LIBRARY_PATH\""
+    echo "local lib_path=\"\$LD_LIBRARY_PATH\""
   fi)
+  local opt_path="\$(check_opt_dir)"
 
   # bun
   if [ "\$o_check_bun_env" = "yes" -a -n "\$BUN_DIR" ]; then
@@ -1100,9 +1095,9 @@ check_path () {
 
   # racket
   if [ "\$o_check_racket_env" = "yes" -a -n "\$RACKET_HOME" ]; then
-  $(if on_windows_nt; then
-    echo "  RACKET_HOME=\$(posix_path \"\$RACKET_HOME\")"
-  fi)
+    $(if on_windows_nt; then
+      echo "  RACKET_HOME=\$(posix_path \"\$RACKET_HOME\")"
+    fi)
     bin_path="\${RACKET_HOME}/bin:\$bin_path"
   else
     unset RACKET_HOME
@@ -1115,16 +1110,24 @@ check_path () {
     unset CARGO_HOME
   fi
 
+  # /opt/run
+  bin_path="\${opt_path}/run/bin:\$bin_path"
+  lib_path="\${opt_path}/run/lib:\$lib_path"
+
+  $(if on_windows_nt; then
+    echo "    bin_path=\"$(sort_path \$bin_path)\""
+  fi)
+
   # export path env
   if [ "\$o_export_path_env" = "yes" ]; then
     PATH="\$(uniq_path \$bin_path)"
     export PATH
     $(if on_darwin; then
       echo ""
-      echo "    DYLD_LIBRARY_PATH=\"\$(uniq_path \$lib_path)\""
+      echo "    DYLD_LIBRARY_PATH=\"\$(uniq_path \${lib_path})\""
       echo "    export DYLD_LIBRARY_PATH"
     else
-      echo "    LD_LIBRARY_PATH=\"\$(uniq_path \$lib_path)\""
+      echo "    LD_LIBRARY_PATH=\"\$(uniq_path \${lib_path})\""
       echo "    export LD_LIBRARY_PATH"
     fi)
   fi
@@ -1132,7 +1135,7 @@ check_path () {
 check_path
 
 # eof
-END
+EOF
   echo_yes_or_no $?
 }
 
