@@ -883,7 +883,7 @@ check_rust_src_env () {
     if [ -n "\$hash" ] && [ -d "\$src" ]; then
       if [ -f "\$gdb" ]; then
          if [ "\$force" = "renew" ]; then
-           sed -i .b1 '/set substitute-path/d' \$gdb
+           sed -i.b1 '/set substitute-path/d' \$gdb
          fi
          if ! $grep 'set substitute-path' \$gdb &>/dev/null; then
            $cp \$gdb \${gdb}.b0
@@ -892,7 +892,7 @@ check_rust_src_env () {
       fi
       if [ -f "\$lldb" ]; then
         if [ "\$force" = "renew" ]; then
-          $sed -i .b1 '/settings set target\.source-map/d' \$lldb
+          $sed -i.b1 '/settings set target\.source-map/d' \$lldb
         fi
         if ! $grep 'settings set target.source-map' \$lldb &>/dev/null; then
           $cp \$lldb \${lldb}.b0
