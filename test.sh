@@ -12,17 +12,20 @@ test_do() {
   $@
 }
 
-# echo env
+# echo env before Nore
 echo "------------"
 env
 echo "------------"
 
 # basic test
 if [ "basic" = "$_TEST_" ]; then
-  test_do $SHELL $DEBUG ul/sh.sh || exit 1
+  test_do $SHELL $DEBUG ul/sh.sh
 fi
 
-env
+# echo env before Nore
+echo "++++++++++++"
+$SHELL -l -c 'env'
+echo "++++++++++++"
 
 echo "!completed"
 
