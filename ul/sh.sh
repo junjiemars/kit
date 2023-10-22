@@ -191,6 +191,7 @@ gen_dot_shell_rc () {
 # o_check_bun_env=no:
 # o_check_rust_env=no:
 # o_export_path_env=no:
+# o_export_libpath_env=no:
 ${mc}
 ${sc}
 test -f \$HOME/.nore/${SH}/init    && . \$HOME/.nore/${SH}/init:
@@ -574,7 +575,7 @@ outbound_ip ()
 random_range ()
 {
    local n=\${1:-8}
-   $dd if=/dev/urandom count=\$(( n*4 )) bs=1 status=none \\
+   $dd if=/dev/urandom count=\$(( n*4 )) bs=1 2>/dev/null \\
      | $iconv -c -t ascii//TRANSLIT 2>/dev/null \\
      | $tr -cd '[:print:]' \\
      | $cut -c 1-\$n
@@ -952,7 +953,7 @@ if [ "\$o_check_nvm_env" = "yes" ]; then
 fi
 
 if [ "\$o_check_kube_env" = "yes" ]; then
-  check_kube_env
+  check_kue_env
 fi
 
 if [ "\$o_check_bun_env" = "yes" ]; then
@@ -1122,8 +1123,11 @@ check_path () {
   if [ "\$o_export_path_env" = "yes" ]; then
     PATH="\$(uniq_path \$bin_path)"
     export PATH
+  fi
+
+  # export libpath env
+  if [ "\$o_export_libpath_env" = "yes" ]; then
     $(if on_darwin; then
-      echo ""
       echo "    DYLD_LIBRARY_PATH=\"\$(uniq_path \${lib_path})\""
       echo "    export DYLD_LIBRARY_PATH"
     else
