@@ -12,6 +12,13 @@ test_do() {
   $@
 }
 
+test_after() {
+  local rc="${HOME}/.$(basename $SHELL)rc"
+  if [ -f "$rc" -a -n "$GITHUB_ACTIONS" ]; then
+    sed -i .b0 's/^# o_export_path_env=no/o_export_path_env=yes/' "$rc"
+  fi
+}
+
 # echo env before Nore
 echo "------------"
 env
@@ -22,8 +29,10 @@ if [ "basic" = "$_TEST_" ]; then
   test_do $SHELL $DEBUG ul/sh.sh
 fi
 
-# echo env before Nore
+# echo env after Nore
+
 echo "++++++++++++"
+test_after
 $SHELL -l -c 'env'
 echo "++++++++++++"
 
