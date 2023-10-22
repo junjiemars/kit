@@ -22,4 +22,8 @@ if [ "basic" = "$_TEST_" ]; then
   test_do $SHELL $DEBUG ul/sh.sh || exit 1
 fi
 
+env
+
+echo "!completed"
+
 # eof
