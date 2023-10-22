@@ -225,7 +225,7 @@ EOF
   else
     nh="${nh}\\"
     ss=$(echo "$ss" | $sed 's/:$/\\/g')
-    $sed -i .pre '/^#----Nore/,$c\'"
+    $sed -i.pre '/^#----Nore/,$c\'"
 ${nh}
 \
 ${ss}
