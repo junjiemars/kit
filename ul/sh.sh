@@ -189,7 +189,6 @@ gen_dot_shell_rc () {
 # o_check_bun_env=no:
 # o_check_rust_env=no:
 # o_export_path_env=no:
-# o_export_libpath_env=no:
 ${mc}
 ${sc}
 test -f \$HOME/.nore/${SH}/init    && . \$HOME/.nore/${SH}/init:
@@ -1057,14 +1056,14 @@ check_path () {
     echo "  local lib_path=\"\$LD_LIBRARY_PATH\""
   fi)
 
-  # bun home
+  # bun
   if [ "\$o_check_bun_env" = "yes" -a -n "\$BUN_DIR" ]; then
     bin_path="\${BUN_DIR}:\$bin_path"
   else
     unset BUN_DIR
   fi
 
-  # java home
+  # java
   if [ "\$o_check_java_env" = "yes" -a -n "\$JAVA_HOME" ]; then
     $(if on_windows_nt; then
       echo "  JAVA_HOME=\$(posix_path \"\${JAVA_HOME}\")"
@@ -1092,14 +1091,14 @@ check_path () {
     echo "  fi"
   fi)
 
-  # nvm home
+  # nvm
   if [ "\$o_check_nvm_env" = "yes" -a -n "\$NVM_DIR" ]; then
     bin_path="\${NVM_DIR}:\$bin_path"
   else
     unset NVM_DIR
   fi
 
-  # racket home
+  # racket
   if [ "\$o_check_racket_env" = "yes" -a -n "\$RACKET_HOME" ]; then
   $(if on_windows_nt; then
     echo "  RACKET_HOME=\$(posix_path \"\$RACKET_HOME\")"
