@@ -8,7 +8,8 @@ HOME="${HOME%/}"
 PH="/usr/bin:/bin:/usr/sbin:/sbin"
 unset -f command 2>/dev/null
 
-# check basis commands
+# check env
+# check commands
 set -e
 awk=$(PATH=$PH command -v awk)
 basename=$(PATH=$PH command -v basename)
@@ -21,6 +22,7 @@ find=$(PATH=$PH command -v find)
 grep=$(PATH=$PH command -v grep)
 iconv=$(PATH=$PH command -v iconv)
 ls=$(PATH=$PH command -v ls)
+printf=$(PATH=$PH command -v printf)
 ps=$(PATH=$PH command -v ps)
 rm=$(PATH=$PH command -v rm)
 sed=$(PATH=$PH command -v sed)
@@ -29,8 +31,6 @@ tr=$(PATH=$PH command -v tr)
 uname=$(PATH=$PH command -v uname)
 uniq=$(PATH=$PH command -v uniq)
 xargs=$(PATH=$PH command -v xargs)
-set +e
-
 # check shell
 PLATFORM=$($uname -s 2>/dev/null)
 on_windows_nt () {
@@ -59,26 +59,16 @@ fi
 SH="$($basename $SHELL)"
 set +e
 
-# check the echo's "-n" option and "\c" capability
-echo_c='\c'
-if echo "test\c" | $grep -q c; then
-  echo_c=
-fi
-echo_n=-n
-if echo -n test | $tr '\n' _ | $grep -q _; then
-  echo_n=
-fi
 
-# check the sed's "-i" option
-echo -e "a\nb\nc" > .sed_i.test
-if [ -f .sed_i.test ]; then
-  if $sed -i'.off' '1d' .sed_i.test; then
-    sed_i=-i
-    $rm .sed_i.test.off
+echo_yes_or_no () {
+  local c="$1"
+  if [ 0 -eq $c ]; then
+    $printf "yes\n"
+  else
+    $printf "no\n"
   fi
-  $rm .sed_i.test
-fi
-
+  return $c
+}
 
 save_as () {
   local f="$1"
@@ -115,7 +105,7 @@ gen_dot_shell_profile () {
     sh) profile="$HOME/.profile" ;;
   esac
   save_as "$profile"
-  echo $echo_n "+ generate $profile ... $echo_c"
+  $printf "+ generate $profile ... "
   $cat << EOF > "$profile"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -133,11 +123,7 @@ ${callrc}
 
 # eof
 EOF
-  if [ 0 -eq $? ]; then
-    echo "yes"
-  else
-    echo "no"
-  fi
+  echo_yes_or_no $?
 }
 
 gen_dot_shell_logout () {
@@ -146,7 +132,7 @@ gen_dot_shell_logout () {
     logout="$HOME/.zlogout"
   fi
   save_as "$logout"
-  echo $echo_n "+ generate $logout ... $echo_c"
+  $printf "+ generate $logout ... "
   $cat << EOF > "$logout"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -169,11 +155,7 @@ fi
 
 # eof
 EOF
-  if [ 0 -eq $? ]; then
-    echo "yes"
-  else
-    echo "no"
-  fi
+  echo_yes_or_no $?
 }
 
 gen_dot_shell_rc () {
@@ -217,7 +199,7 @@ test -f \$HOME/.nore/${SH}/utils   && . \$HOME/.nore/${SH}/utils:
 test -f \$HOME/.nore/${SH}/aliases && . \$HOME/.nore/${SH}/aliases:
 "
   save_as "$rc"
-  echo $echo_n "+ generate $rc ... $echo_c"
+  $printf "+ generate $rc ... "
   if [ ! -f "$rc" ]; then
     ss=$(echo "${ss}" | $sed 's/:$//g')
     $cat << EOF > "$rc"
@@ -241,24 +223,20 @@ EOF
   else
     nh="${nh}\\"
     ss=$(echo "$ss" | $sed 's/:$/\\/g')
-    $sed ${sed_i}.pre '/^#----Nore/,$c\'"
+    $sed -i .pre '/^#----Nore/,$c\'"
 ${nh}
 \
 ${ss}
 \
 # eof" $rc >/dev/null
   fi
-  if [ 0 -eq $? ]; then
-    echo "yes"
-  else
-    echo "no"
-  fi
+  echo_yes_or_no $?
 }
 
 gen_dot_shell_init () {
   local init="$HOME/.nore/${SH}/init"
   save_as "$init"
-  echo $echo_n "+ generate $init ... $echo_c"
+  $printf "+ generate $init ... "
   $cat << EOF > "$init"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -387,20 +365,15 @@ if [ "\$o_check_lang_env" = "yes" ]; then
   fi)
 fi
 
-
 # eof
 EOF
-  if [ 0 -eq $? ]; then
-    echo "yes"
-  else
-    echo "no"
-  fi
+  echo_yes_or_no $?
 }
 
 gen_dot_shell_aliases () {
   local aliases="$HOME/.nore/${SH}/aliases"
   save_as "$aliases"
-  echo $echo_n "+ generate $aliases ... $echo_c"
+  $printf "+ generate $aliases ... "
   $cat << EOF > "$aliases"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -412,7 +385,6 @@ $(if [ -f "${aliases}.ori" ]; then
   echo "# origin backup: ${aliases}.ori"
 fi)
 #------------------------------------------------
-
 
 alias ..1='cd ../'
 alias ..2='cd ../../'
@@ -480,18 +452,14 @@ fi
 
 # eof
 EOF
-  if [ 0 -eq $? ]; then
-    echo "yes"
-  else
-    echo "no"
-  fi
+  echo_yes_or_no $?
 }
 
 gen_dot_shell_utils () {
   local utils="$HOME/.nore/${SH}/utils"
   local rc=0
   save_as "$utils"
-  echo $echo_n "+ generate $utils ... $echo_c"
+  $printf "+ generate $utils ... "
   $cat << EOF > "$utils"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -605,7 +573,7 @@ outbound_ip ()
 random_range ()
 {
    local n=\${1:-8}
-   $dd if=/dev/random count=\$(( n*4 )) bs=1 status=none \\
+   $dd if=/dev/urandom count=\$(( n*4 )) bs=1 status=none \\
      | $iconv -c -t ascii//TRANSLIT 2>/dev/null \\
      | $tr -cd '[:print:]' \\
      | $cut -c 1-\$n
@@ -652,18 +620,14 @@ fi)
 
 # eof
 EOF
-  if [ 0 -eq $? ]; then
-    echo "yes"
-  else
-    echo "no"
-  fi
+  echo_yes_or_no $?
 }
 
 
 gen_dot_shell_vars () {
   local vars="$HOME/.nore/${SH}/vars"
   save_as "$vars"
-  echo $echo_n "+ generate $vars ... $echo_c"
+  $printf "+ generate $vars ... "
   $cat << EOF > "$vars"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -808,6 +772,32 @@ check_kube_env () {
   return 0
 }
 
+$(if on_darwin; then
+  echo "# https://www.macports.org"
+  echo "check_macports_env () {"
+  echo "  local p=\"/opt/local/bin/port\""
+  echo "  if [ -x \"\$p\" ]; then"
+  echo "    MACPORTS_HOME=\"/opt/local\""
+  echo "    return 0"
+  echo "  else"
+  echo "    return 1"
+  echo "  fi"
+  echo "}"
+  echo ""
+  echo ""
+  echo "# https://llvm.org"
+  echo "check_llvm_env () {"
+  echo "  local p=\"/opt/local/bin/port\""
+  echo "  local l=\"/opt/local/libexec/llvm\""
+  echo "  if [ -x \"\$p\" -a -d \"\$l\" ]; then"
+  echo "    LLVM_DIR=\"\${l}\""
+  echo "    return 0"
+  echo "  else"
+  echo "    return 1"
+  echo "  fi"
+  echo "}"
+fi)
+
 # https://github.com/nvm-sh/nvm
 check_nvm_env () {
   local d="\$HOME/.nvm"
@@ -914,20 +904,20 @@ check_rust_src_env () {
     if [ -n "\$hash" ] && [ -d "\$src" ]; then
       if [ -f "\$gdb" ]; then
          if [ "\$force" = "renew" ]; then
-           sed ${sed_i}.b1 '/set substitute-path/d' \$gdb
+           sed -i .b1 '/set substitute-path/d' \$gdb
          fi
          if ! $grep 'set substitute-path' \$gdb &>/dev/null; then
            cp \$gdb \${gdb}.b0
-           echo ${echo_n} "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
+           $printf "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
          fi
       fi
       if [ -f "\$lldb" ]; then
         if [ "\$force" = "renew" ]; then
-          sed ${sed_i}.b1 '/settings set target\.source-map/d' \$lldb
+          sed -i .b1 '/settings set target\.source-map/d' \$lldb
         fi
         if ! $grep 'settings set target.source-map' \$lldb &>/dev/null; then
           cp \$lldb \${lldb}.b0
-          echo ${echo_n} "settings set target.source-map \$from \$src" >> \$lldb
+          $printf "settings set target.source-map \$from \$src" >> \$lldb
         fi
       fi
     fi
@@ -969,6 +959,16 @@ if [ "\$o_check_java_env" = "yes" ]; then
   check_java_env
 fi
 
+$(if on_darwin; then
+  echo "if [ \"\$o_check_macports_env\" = \"yes\" ]; then"
+  echo "  check_macports_env"
+  echo "fi"
+  echo ""
+  echo "if [ \"\$o_check_llvm_env\" = \"yes\" ]; then"
+  echo "  check_llvm_env"
+  echo "fi"
+fi)
+
 if [ "\$o_check_nvm_env" = "yes" ]; then
   check_nvm_env
 fi
@@ -985,7 +985,6 @@ if [ "\$o_check_rust_env" = "yes" ]; then
   check_rust_env
 fi
 
-
 $(if [ "zsh" = "$SH" ]; then
   echo "if [ \"\$o_check_ohmyzsh_env\" = \"yes\" ]; then"
   echo "  check_ohmyzsh_env"
@@ -994,17 +993,13 @@ fi)
 
 # eof
 EOF
-  if [ 0 -eq $? ]; then
-    echo "yes"
-  else
-    echo "no"
-  fi
+  echo_yes_or_no $?
 }
 
 gen_dot_shell_paths () {
   local paths="$HOME/.nore/${SH}/paths"
   save_as "$paths"
-  echo $echo_n "+ generate $paths ... $echo_c"
+  $printf "+ generate $paths ... "
   $cat << END > "$paths"
 #### -*- mode:sh -*- vim:ft=sh
 #------------------------------------------------
@@ -1018,7 +1013,7 @@ fi)
 #------------------------------------------------
 
 uniq_path() {
-  echo $echo_n "\$@" | $awk -v RS=':' \\
+  $printf "\$@" | $awk -v RS=':' \\
     '\$0 && !a[\$0]++{printf "%s:",\$0}' | $sed 's/:*$//'
 }
 
@@ -1037,158 +1032,114 @@ posix_path() {
 }
 
 $(if on_windows_nt; then
-echo "sort_path () {"
-echo "  # Windows: let MSYS_NT and user defined commands first"
-echo "  local ps=\$@"
-echo "  local opt_p=\$($dirname \$OPT_RUN)"
-echo "  local win_p='^/c/'"
-echo "  local opt="
-echo "  local ori="
-echo "  local win="
-echo "  local sorted="
-echo "  opt=\$(echo \"\${ps}${echo_c}\"|$tr ':' '\n'|$grep \"\$opt_p\"|$tr '\n' ':')"
-echo "  ori=\$(echo \"\${ps}${echo_c}\"|$tr ':' '\n'|$grep -v \"\$opt_p\"|$grep -v \"\$win_p\" | $tr '\n' ':')"
-echo "  win=\$(echo \"\${ps}${echo_c}\"|$tr ':' '\n'|$grep \"\$win_p\" | $tr '\n' ':')"
-echo "  sorted=\$(echo \"\${ori}\${opt:+\$opt }\${win}${echo_c}\"|$awk '!xxx[\$0]++'|$sed -e 's#:\$##' -e 's#:  *\/#:\/#g')"
-echo "  echo $echo_n \"\${sorted}${echo_c}\""
-echo "}"
-fi)
-
-set_bin_paths () {
-  local paths="\$@"
-  for d in \$(echo \${paths} | $tr ':' '\n'); do
-    if [ -d "\${d}" ]; then
-      PATH="\${d}:\$PATH"
-    fi
-  done
-  PATH="\$(uniq_path \$PATH)"
-}
-
-set_lib_paths () {
-  local paths="\$@"
-  for d in \$(echo \${paths} | $tr ':' '\n'); do
-    if [ -d "\${d}" ]; then
-      $(if on_linux; then
-        echo "LD_LIBRARY_PATH=\${d}:\${LD_LIBRARY_PATH}"
-      elif on_darwin; then
-        echo "DYLD_LIBRARY_PATH=\${d}:\${DYLD_LIBRARY_PATH}"
-      fi)
-    fi
-  done
-$(if on_linux; then
-  echo "  LD_LIBRARY_PATH=\"\$(uniq_path \${LD_LIBRARY_PATH})\""
-elif on_darwin; then
-  echo "  DYLD_LIBRARY_PATH=\"\$(uniq_path \${DYLD_LIBRARY_PATH})\""
-fi)
-}
-
-# set basis bin/lib path
-set_bin_paths "\${OPT_RUN}/bin:\${OPT_RUN}/sbin"
-set_lib_paths "\${OPT_RUN}/lib"
-
-$(if on_darwin; then
-  echo "check_macports_env () {"
-  echo "  if [ -x \"/opt/local/bin/port\" ]; then"
-  echo "    if [ -d \"/opt/local/sbin\" ]; then"
-  echo "      PATH=\"/opt/local/sbin\${PATH:+:\${PATH}}\""
-  echo "    fi"
-  echo "    PATH=\"/opt/local/bin\${PATH:+:\${PATH}}\""
-  echo "    if [ -d \"/opt/local/lib\" ]; then"
-  echo "      DYLD_LIBRARY_PATH=\"/opt/local/lib\${DYLD_LIBRARY_PATH:+:\${DYLD_LIBRARY_PATH}}\""
-  echo "    fi"
-  echo "  fi"
+  echo "sort_path () {"
+  echo "  # Windows: let MSYS_NT and user defined commands first"
+  echo "  local ps=\$@"
+  echo "  local opt_p=\$($dirname \$OPT_RUN)"
+  echo "  local win_p='^/c/'"
+  echo "  local opt="
+  echo "  local ori="
+  echo "  local win="
+  echo "  local sorted="
+  echo "  opt=\$($printf \"\${ps}\"|$tr ':' '\n'|$grep \"\$opt_p\"|$tr '\n' ':')"
+  echo "  ori=\$($printf \"\${ps}\"|$tr ':' '\n'|$grep -v \"\$opt_p\"|$grep -v \"\$win_p\" | $tr '\n' ':')"
+  echo "  win=\$($printf \"\${ps}\"|$tr ':' '\n'|$grep \"\$win_p\" | $tr '\n' ':')"
+  echo "  sorted=\$($printf \"\${ori}\${opt:+\$opt }\${win}\"|$awk '!xxx[\$0]++'|$sed -e 's#:\$##' -e 's#:  *\/#:\/#g')"
+  echo "  $printf \"\${sorted}\""
   echo "}"
-  echo ""
-  echo "check_llvm_env () {"
-  echo "  local p=\"/opt/local/bin/port\""
-  echo "  local l=\"/opt/local/libexec\""
-  echo "  local d=\"\${l}/llvm/bin\""
-  echo "  if [ -x \"\$p\" -a -d \"\$l\" ]; then"
-  echo "    if [ ! -d \"\$d\" ]; then"
-  echo "      ls -d \${d}*"
-  echo "    else"
-  echo "      PATH=\"\${d}:\$PATH\""
-  echo "    fi"
-  echo "  fi"
-  echo "}"
-  echo ""
-  echo "# macports"
-  echo "if [ \"\$o_check_macports_env\" = \"yes\" ]; then"
-  echo "  check_macports_env"
-  echo "fi"
-  echo ""
-  echo "# llvm"
-  echo "if [ \"\$o_check_llvm_env\" = \"yes\" ]; then"
-  echo "  check_llvm_env"
-  echo "fi"
 fi)
 
-# racket home
-if [ "\$o_check_racket_env" = "yes" -a -n "\$RACKET_HOME" ]; then
-$(if on_windows_nt; then
-  echo "  RACKET_HOME=\$(posix_path \"\$RACKET_HOME\")"
-fi)
-  PATH="\${RACKET_HOME}/bin:\$PATH"
-fi
-unset RACKET_HOME
+check_path () {
+  local bin_path="\$PATH"
+  $(if on_darwin; then
+    echo "  local lib_path=\"\$DYLD_LIBRARY_PATH\""
+  else
+    echo "  local lib_path=\"\$LD_LIBRARY_PATH\""
+  fi)
 
-# java home
-if [ "\$o_check_java_env" = "yes" -a -n "\$JAVA_HOME" ]; then
-$(if on_windows_nt; then
-  echo "  JAVA_HOME=\$(posix_path \"\${JAVA_HOME}\")"
-fi)
-  PATH="\${JAVA_HOME}:\${JAVA_HOME}/bin:\$PATH"
-fi
+  # bun home
+  if [ "\$o_check_bun_env" = "yes" -a -n "\$BUN_DIR" ]; then
+    bin_path="\${BUN_DIR}:\$bin_path"
+  else
+    unset BUN_DIR
+  fi
 
-# nvm home
-if [ "\$o_check_nvm_env" = "yes" -a -n "\$NVM_DIR" ]; then
-  PATH="\${NVM_DIR}:\$PATH"
-fi
+  # java home
+  if [ "\$o_check_java_env" = "yes" -a -n "\$JAVA_HOME" ]; then
+    $(if on_windows_nt; then
+      echo "  JAVA_HOME=\$(posix_path \"\${JAVA_HOME}\")"
+    fi)
+    bin_path="\${JAVA_HOME}:\${JAVA_HOME}/bin:\$bin_path"
+  else
+    unset JAVA_HOME
+  fi
 
-# bun home
-if [ "\$o_check_bun_env" = "yes" -a -n "\$BUN_DIR" ]; then
-  PATH="\${BUN_DIR}:\$PATH"
-fi
+  $(if on_darwin; then
+    echo "  # macports"
+    echo "  if [ \"\$o_check_macports_env\" = \"yes\" -a -n \"\$MACPORTS_HOME\" ]; then"
+    echo "    bin_path=\"\${MACPORTS_HOME}/bin:\${MACPORTS_HOME}/sbin:\$bin_path\""
+    echo "    lib_path=\"\${MACPORTS_HOME}/lib:\$lib_path\""
+    echo "  else"
+    echo "    unset MACPORTS_HOME"
+    echo "  fi"
+    echo ""
+    echo "  # llvm"
+    echo "  if [ \"\$o_check_llvm_env\" = \"yes\" -a -n \"\$LLVM_DIR\" ]; then"
+    echo "    bin_path=\"\${LLVM_DIR}/bin:\${LLVM_DIR}/sbin:\$bin_path\""
+    echo "    lib_path=\"\${LLVM_DIR}/lib:\$lib_path\""
+    echo "  else"
+    echo "    unset LLVM_DIR"
+    echo "  fi"
+  fi)
 
-# rust home: cargo, rustc
-if [ "\$o_check_rust_env" = "yes" -a -n "\$CARGO_HOME" ]; then
-  PATH="\${CARGO_HOME}/bin:\$PATH"
-fi
+  # nvm home
+  if [ "\$o_check_nvm_env" = "yes" -a -n "\$NVM_DIR" ]; then
+    bin_path="\${NVM_DIR}:\$bin_path"
+  else
+    unset NVM_DIR
+  fi
 
+  # racket home
+  if [ "\$o_check_racket_env" = "yes" -a -n "\$RACKET_HOME" ]; then
+  $(if on_windows_nt; then
+    echo "  RACKET_HOME=\$(posix_path \"\$RACKET_HOME\")"
+  fi)
+    bin_path="\${RACKET_HOME}/bin:\$bin_path"
+  else
+    unset RACKET_HOME
+  fi
 
-# export path env
-if [ "\$o_export_path_env" = "yes" ]; then
-  PATH="\$(uniq_path \$PATH)"
-  export PATH
-fi
+  # rust home: cargo, rustc
+  if [ "\$o_check_rust_env" = "yes" -a -n "\$CARGO_HOME" ]; then
+    bin_path="\${CARGO_HOME}/bin:\$bin_path"
+  else
+    unset CARGO_HOME
+  fi
 
-# export libpath env
-if [ "\$o_export_libpath_env" = "yes" ]; then
-$(if on_linux; then
-  echo "  LD_LIBRARY_PATH=\"\$(uniq_path \$LD_LIBRARY_PATH)\""
-  echo "  export LD_LIBRARY_PATH"
-elif on_darwin; then
-  echo "  DYLD_LIBRARY_PATH=\"\$(uniq_path \$DYLD_LIBRARY_PATH)\""
-  echo "  export DYLD_LIBRARY_PATH"
-else
-  echo "  : #void"
-fi)
-fi
-
-
+  # export path env
+  if [ "\$o_export_path_env" = "yes" ]; then
+    PATH="\$(uniq_path \$bin_path)"
+    export PATH
+    $(if on_darwin; then
+      echo ""
+      echo "    DYLD_LIBRARY_PATH=\"\$(uniq_path \$lib_path)\""
+      echo "    export DYLD_LIBRARY_PATH"
+    else
+      echo "    LD_LIBRARY_PATH=\"\$(uniq_path \$lib_path)\""
+      echo "    export LD_LIBRARY_PATH"
+    fi)
+  fi
+}
+check_path
 
 # eof
 END
-  if [ 0 -eq $? ]; then
-    echo "yes"
-  else
-    echo "no"
-  fi
+  echo_yes_or_no $?
 }
 
 gen_dot_vimrc () {
   local rc="$HOME/.vimrc"
-  echo $echo_n "+ generate $rc ... $echo_c"
+  $printf "+ generate $rc ... "
   $cat << END > "$rc"
 "------------------------------------------------
 " target: $rc
@@ -1259,11 +1210,7 @@ fi)
 set path+=**
 
 END
-  if [ 0 -eq $? ]; then
-    echo "yes"
-  else
-    echo "no"
-  fi
+  echo_yes_or_no $?
 }
 
 
@@ -1286,15 +1233,13 @@ gen_dot_vimrc $HOME/.vimrc
 export PATH
 . $HOME/.${SH}rc
 
-unset echo_c
-unset echo_n
 unset PH
 unset PLATFORM
-unset sed_i
 unset SH
 unset SH_ENV
 
 
 END=$($date +%s)
-echo
-echo "... elpased $(( ${END}-${BEGIN} )) seconds, successed."
+$printf "\n... elpased %d seconds, successed.\n" $(( ${END}-${BEGIN} ))
+
+# eof
