@@ -1,0 +1,13 @@
+version: '3'
+services:
+  nix:
+    image: nixos/nix:latest
+    container_name: nix-dev
+    volumes:
+      - nix_etc:/etc/nixos
+      - nix_data:/nix
+    command: [ "nixos-rebuild", "switch" ]
+
+volumes:
+  nix_etc:
+  nix_data:
