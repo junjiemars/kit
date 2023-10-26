@@ -6,8 +6,8 @@ services:
     volumes:
       - nix_etc:/etc/nixos
       - nix_data:/nix
-    command: [ "nixos-rebuild", "switch" ]
-
+    command: sleep infinity
+    
 volumes:
   nix_etc:
   nix_data:
