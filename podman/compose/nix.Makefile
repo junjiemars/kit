@@ -1,13 +1,13 @@
-# guix Makefile
-# https://guixlinux.org/
-# https://hub.docker.com/_/guix
+# nix Makefile
+# https://nixlinux.org/
+# https://hub.docker.com/_/nix
 # on Ubuntu: /etc/containers/registries.conf
 # unqualified-search-registries = ["docker.io"]
 
 START_FLAGS ?= -d
 # START_FLAGS ?= -d --remove-orphans
 
-compose_file := $(CURDIR)/guix.yml
+compose_file := $(CURDIR)/nix.yml
 
 up: $(compose_file)
 	podman-compose -f $< up $(START_FLAGS)
@@ -23,7 +23,7 @@ exec:
 	            -e COLUMNS=$(COLUMNS) \
 	            -e TERM=$(TERM) \
 	            -it \
-	            guix-dev /bin/sh
+	            nix-dev /bin/sh
 
 down: $(compose_file) stop
 	podman-compose -f $< down
