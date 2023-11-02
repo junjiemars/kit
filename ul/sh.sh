@@ -393,7 +393,6 @@ alias ..4='cd ../../../../'
 
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
 
 $(if on_darwin; then
   echo "alias ls='ls -G'"

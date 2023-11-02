@@ -9,6 +9,7 @@ exp-*.sql
 *.buf
 *.swp
 *.reg
+*.b0
 
 TAGS
 *.rkt~
