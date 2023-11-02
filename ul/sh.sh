@@ -354,7 +354,7 @@ if [ "\$o_check_lang_env" = "yes" ]; then
     echo "  chcp.com 65001 &>/dev/null"
     echo "  export LC_ALL=\"en_US.UTF-8\""
   elif on_darwin; then
-    echo "export LANG=\C.UTF-8\""
+    echo "export LC_ALL=\C.UTF-8\""
   elif on_linux; then
     echo "# sudo locale-gen C.UTF-8"
     echo "  # sudo dpkg-reconfigure locales"
