@@ -352,17 +352,16 @@ if [ "\$o_check_lang_env" = "yes" ]; then
   $(if on_windows_nt; then
     echo "# change code page to unicode"
     echo "  chcp.com 65001 &>/dev/null"
-    echo "  LANG=en_US.UTF-8"
+    echo "  export LC_ALL=\"en_US.UTF-8\""
   elif on_darwin; then
-    echo "LANG=C.UTF-8"
+    echo "export LANG=\C.UTF-8\""
   elif on_linux; then
     echo "# sudo locale-gen C.UTF-8"
     echo "  # sudo dpkg-reconfigure locales"
-    echo "  LANG=C.UTF-8"
+    echo "  export LC_ALL=\"C.UTF-8\""
   else
-    echo "  LANG=C"
+    echo "export LC_ALL=C"
   fi)
-  export LANG
 fi
 
 # eof
