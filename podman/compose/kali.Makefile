@@ -8,9 +8,11 @@
 kali_image_name := kalilinux/kali-rolling
 kali_container_name := kalilinux
 
-run:
+run: exists
 	podman container exec -it ${kali_container_name} /bin/bash
 
 exists:
 	podman container exists ${kali_container_name} \
 		|| podman run --name ${kali_container_name} ${kali_image_name}
+
+.PHONY: exists run
