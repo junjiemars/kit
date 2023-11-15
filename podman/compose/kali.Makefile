@@ -6,6 +6,11 @@
 # https://www.kali.org/docs/containers/using-kali-podman-images/
 
 kali_image_name := kalilinux/kali-rolling
+kali_container_name := kalilinux
 
 run:
-	podman run -it ${kali_image_name}
+	podman container exec -it ${kali_container_name} /bin/bash
+
+exists:
+	podman container exists ${kali_container_name} \
+		|| podman run --name ${kali_container_name} ${kali_image_name}
