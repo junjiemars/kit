@@ -15,4 +15,7 @@ exists:
 	podman container exists ${kali_container_name} \
 		|| podman run --name ${kali_container_name} ${kali_image_name}
 
-.PHONY: exists run
+stop:
+	podman container stop ${kali_container_name}
+
+.PHONY: exists run stop
