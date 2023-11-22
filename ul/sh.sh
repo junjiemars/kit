@@ -267,7 +267,7 @@ where () {
 
 exist_p () {
   # check the existence of non-builtins
-  where \$1 2>&1 >/dev/null
+  where \$1 >/dev/null 2>&1
 }
 
 inside_container_p () {
@@ -577,7 +577,7 @@ random_range ()
      | $cut -c 1-\$n
 }
 
-$(if on_linux && where snap 2>&1 >/dev/null; then
+$(if on_linux && where snap >/dev/null 2>&1; then
   echo "snap_remove_disabled ()"
   echo "{"
   echo "  LANG=C snap list --all | $awk '/disabled/{print \$1, \$3}' |"
@@ -609,7 +609,7 @@ word_frequency () {
     | $sed \${1:-24}q
 }
 
-$(if on_linux && where unzip 2>&1 >/dev/null; then
+$(if on_linux && where unzip >/dev/null 2>&1; then
   echo "unzip_zhcn ()"
   echo "{"
   echo "  unzip -Ogb2312 \$@"
