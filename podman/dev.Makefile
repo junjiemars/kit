@@ -18,6 +18,12 @@ container_name := bone-$(IMAGE_NAME)-dev
 build: $(podman_file)
 	podman build $(build_flags) -t $(image_tag) -f $< .
 
+up: $(compose_file)
+	podman-compose -f $< up -d
+
+down: $(compose-file)
+	podman-compose -f $< down
+
 start: $(compose_file) 
 	podman-compose -f $< start $(start_flags)
 
