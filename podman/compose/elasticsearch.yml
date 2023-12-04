@@ -7,17 +7,21 @@ services:
     environment:
       - node.name=elasticsearch
       - discovery.type=single-node
-      # - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      -  ingest.geoip.downloader.enabled=false
+      # - ELASTIC_USERNAME=elastic
+      # - ELASTIC_PASSWORD=B4iwoicWLDWHFCV6T_AB
+      - xpack.security.enabled=false
+      # - xpack.security.http.ssl.enabled=false
     ports:
       - 9200:9200
       - 9300:9300
     volumes:
-      - es_data:/usr/share/elasticsearch/data
+      - elasticsearch_data:/usr/share/elasticsearch/data
     # networks:
     #   - elastic
 volumes:
-  es_data:
+  elasticsearch_data:
     # driver: local
 # networks:
 #   elastic:
