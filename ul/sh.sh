@@ -182,7 +182,7 @@ gen_dot_shell_rc () {
   fi
   ss="\
 # o_check_prompt_env=no:
-# o_check_lang_env=no:
+# o_check_locale_env=no:
 # o_check_completion_env=no:
 # o_check_racket_env=no:
 # o_check_java_env=no:
@@ -290,7 +290,6 @@ inside_emacs_p () {
   [ -n "\$INSIDE_EMACS" ]
 }
 
-
 pretty_prompt_command () {
   local o="\${PROMPT_COMMAND}"
   local pc1=''
@@ -325,15 +324,13 @@ pretty_term () {
   fi
 }
 
-# check prompt env
-if [ "\$o_check_prompt_env" = "yes" ]; then
+check_prompt_env () {
   PROMPT_COMMAND="\$(pretty_prompt_command)"
   if [ -z "\$PROMPT_COMMAND" ]; then
     unset PROMPT_COMMAND
   else
     export PROMPT_COMMAND
   fi
-
 $(if [ "zsh" = "$SH" ]; then
   echo "  PS1=\"%n@%m %1~ %#\""
 elif [ "bash" = "$SH" ]; then
@@ -342,26 +339,40 @@ else
   echo "  PS1=\"\$LOGNAME@\$($uname -n | $cut -d '.' -f1) \$\""
 fi)
   export PS1="\${PS1% } "
-
   TERM="\$(pretty_term)"
   export TERM
-fi
+}
 
-# check lang env
-if [ "\$o_check_lang_env" = "yes" ]; then
+check_locale_env () {
   $(if on_windows_nt; then
     echo "# change code page to unicode"
     echo "  chcp.com 65001 &>/dev/null"
-    echo "  export LC_ALL=\"C.UTF-8\""
+    echo "  export LANG=\"en_US.UTF-8\""
   elif on_darwin; then
-    echo "export LC_ALL=\"C.UTF-8\""
+    echo "export LANG=\"en_US.UTF-8\""
+    echo "export LC_ALL=\"C\""
   elif on_linux; then
     echo "# sudo locale-gen C.UTF-8"
     echo "  # sudo dpkg-reconfigure locales"
-    echo "  export LC_ALL=\"C.UTF-8\""
+    echo "  local la=\$(locale -a|grep -e '^en_US\.utf8')"
+    echo "  if [ -z \"\$la\" ]; then"
+    echo "    la=\"en_US\""
+    echo "  fi"
+    echo "  export LANG=\"\$la\""
+    echo "  export LC_ALL=\"C\""
   else
     echo "export LC_ALL=C"
   fi)
+}
+
+# check prompt env
+if [ "\$o_check_prompt_env" = "yes" ]; then
+  check_prompt_env
+fi
+
+# check locale env
+if [ "\$o_check_locale_env" = "yes" ]; then
+  check_locale_env
 fi
 
 # eof

@@ -7,12 +7,15 @@ services:
     environment:
       - node.name=elasticsearch
       - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms256m -Xmx512m"
       -  ingest.geoip.downloader.enabled=false
-      # - ELASTIC_USERNAME=elastic
-      # - ELASTIC_PASSWORD=B4iwoicWLDWHFCV6T_AB
-      - xpack.security.enabled=false
-      # - xpack.security.http.ssl.enabled=false
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=B4iwoicWLDWHFCV6T_AB
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=false
+    resources:
+      limits:
+        cpu: 0.2
     ports:
       - 9200:9200
       - 9300:9300
