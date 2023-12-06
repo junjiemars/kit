@@ -790,7 +790,9 @@ check_nvm_env () {
   if [ -s "\${d}/nvm.sh" ]; then
     NVM_DIR="\$d"
     . "\${d}/nvm.sh"
-    [ -s "\${d}/bash_completion" ] && . "\${d}/bash_completion"
+    $(if [ "bash" = "$SH" ]; then
+      echo "[ -s \"\${d}/bash_completion\" ] && . \"\${d}/bash_completion\""
+    fi)
     return 0
   fi
   return 1
