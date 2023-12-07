@@ -344,6 +344,8 @@ fi)
 }
 
 check_locale_env () {
+  local la="en_US.UTF-8"
+  local lc="C.UTF-8"
   $(if on_windows_nt; then
     echo "# change code page to unicode"
     echo "  chcp.com 65001 &>/dev/null"
@@ -352,14 +354,11 @@ check_locale_env () {
     echo "export LANG=\"en_US.UTF-8\""
     echo "export LC_ALL=\"C\""
   elif on_linux; then
-    echo "# sudo locale-gen C.UTF-8"
-    echo "  # sudo dpkg-reconfigure locales"
-    echo "  local la=\$(locale -a|grep -e '^en_US\.utf8')"
-    echo "  if [ -z \"\$la\" ]; then"
-    echo "    la=\"en_US\""
+    echo "# sudo dpkg-reconfigure locales"
+    echo "  if \$(locale -a|grep \"$la\" &>/dev/null); then"
+    echo "    export LANG=\"\$la\""
     echo "  fi"
-    echo "  export LANG=\"\$la\""
-    echo "  export LC_ALL=\"C\""
+    echo "  export LC_ALL=\"\$lc\""
   else
     echo "export LC_ALL=C"
   fi)
