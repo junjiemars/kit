@@ -351,8 +351,8 @@ check_locale_env () {
     echo "  chcp.com 65001 &>/dev/null"
     echo "  export LANG=\"en_US.UTF-8\""
   elif on_darwin; then
-    echo "export LANG=\"en_US.UTF-8\""
-    echo "export LC_ALL=\"C\""
+    echo "export LANG=\"\$la\""
+    echo "  export LC_ALL=\"\$lc\""
   elif on_linux; then
     echo "# sudo dpkg-reconfigure locales"
     echo "  if \$(locale -a|grep \"$la\" &>/dev/null); then"
