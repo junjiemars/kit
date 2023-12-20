@@ -989,11 +989,32 @@ $ docker run --name n0 -w /home/u -h n0 -v ~/.bash_history:/home/u/.bash_history
 #+END_SRC
 
 * Podman
+  :PROPERTIES:
+	:CUSTOM_ID: podman
+	:END:
 
 #+BEGIN_SRC sh
 	cd kit/podman
 	make -C compose -f <xxx.Makefile> up
 #+END_SRC
+
+** Podman on Ubuntu
+   :PROPERTIES:
+	 :CUSTOM_ID: podman-on-ubuntu
+	 :END:
+
+#+BEGIN_SRC sh
+	# install podman
+	sudo apt install podman podman-gvproxy podman-plugins
+	# install podman-compose
+	sudo pip3 install podman-compose
+	# install CNI
+#+END_SRC
+
+** Podman on Darwin
+   :PROPERTIES:
+	 :CUSTOM_ID: podman-on-darwin
+	 :END:
 
 * Raspberry
 	:PROPERTIES:

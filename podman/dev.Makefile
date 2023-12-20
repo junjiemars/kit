@@ -22,13 +22,13 @@ up: $(compose_file)
 	podman-compose -f $< up -d
 
 down: $(compose-file)
-	podman-compose -f $< down
+	podman-compose -f $(compose_file) down
 
 start: $(compose_file) 
 	podman-compose -f $< start $(start_flags)
 
 stop: $(compose_file)
-	podman-compose -f $< stop
+	podman-compose -f $(compose_file) stop
 
 exec:
 	podman exec -e LINES=${LINES} \
