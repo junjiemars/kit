@@ -1011,6 +1011,8 @@ $ docker run --name n0 -w /home/u -h n0 -v ~/.bash_history:/home/u/.bash_history
 	# install CNI
 #+END_SRC
 
+https://github.com/containers/podman/issues/21024
+
 ** Podman on Darwin
    :PROPERTIES:
 	 :CUSTOM_ID: podman-on-darwin

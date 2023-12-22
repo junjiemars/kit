@@ -5,7 +5,7 @@ services:
     image: junjiemars/centos-dev:latest
     container_name: bone-centos-dev
     hostname: centos
-    privileged: true
+    # privileged: true
     working_dir: /home/u
     environment:
       - INSIDE_DOCKER=1
