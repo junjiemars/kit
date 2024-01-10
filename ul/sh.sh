@@ -1167,10 +1167,15 @@ $(if [ -f "${lsp}.ori" ]; then
 fi)
 #------------------------------------------------
 
-python_lsp () {
-  # python3 -m venv python_venv
-  # . python_venv/bin/activate
+python_lsp_install () {
+  # python3 -m venv pylsp_venv
+  # . pylsp_venv/bin/activate
   # pip install pylsp
+  # cat <<EOF > "pylsp.sh"
+  ##!/usr/bin/sh
+  #. pylsp_env/bin/activate
+  #exec pylsp $@
+  #EOF
 }
 
 # eof
