@@ -1170,7 +1170,7 @@ fi)
 python_lsp_install () {
   # python3 -m venv pylsp_venv
   # . pylsp_venv/bin/activate
-  # pip install pylsp
+  # pip install python-lsp-server
   # cat <<EOF > "pylsp.sh"
   ##!/usr/bin/sh
   #. pylsp_env/bin/activate
