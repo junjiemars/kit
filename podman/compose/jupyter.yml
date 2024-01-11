@@ -9,6 +9,9 @@ services:
       PIP_INDEX_URL: "https://pypi.tuna.tsinghua.edu.cn/simple"
     logging:
       driver: k8s-file
+    resources:
+      limits:
+        cpu: 0.2
     volumes:
       - jupyter_work:/home/jovyan/work
     ports:
