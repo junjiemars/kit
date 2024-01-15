@@ -1214,6 +1214,36 @@ switch_java_env () {
   export PATH="\$d/bin:\$PATH"
 }
 
+# https://openjdk.java.net
+check_java_env () {
+  local javac="\${JAVA_HOME%/}/bin/javac"
+  local java_home=
+  if [ -n "\${JAVA_HOME}" ] && [ -x "\${javac}" ]; then
+    $printf "%s\n" "\${JAVA_HOME}"
+    return 0
+  fi
+$(if on_darwin; then
+  echo "  java_home='/usr/libexec/java_home'"
+  echo "  if [ -L \"\$java_home\" ]; then"
+  echo "    javac=\"\${java_home}/bin/javac\""
+  echo "    if [ -x \"\${javac}\" ]; then"
+  echo "      $printf \"%s\n\" \"\${java_home}\""
+  echo "      return 0"
+  echo "    fi"
+  echo "  fi"
+elif on_linux; then
+  echo "  javac=\"\$(where javac 2>/dev/null)\""
+  echo "  if [ -n \"\${javac}\" -a -x \"\$javac\" ]; then"
+  echo "    java_home=\"\$(dirname \$(dirname \$(readlink -f \"\${javac}\")))\""
+  echo "    $printf \"%s\n\" \"\${java_home}\""
+  echo "    return 0"
+  echo "  fi"
+elif on_windows_nt; then
+  echo "  # nop"
+fi)
+  return 1
+}
+
 # eof
 EOF
   echo_yes_or_no $?
