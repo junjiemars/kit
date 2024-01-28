@@ -1178,6 +1178,10 @@ python_lsp_install () {
   #EOF
 }
 
+rust_lsp_install () {
+  #rustup component add rust-analyzer
+}
+
 # eof
 EOF
   echo_yes_or_no $?
