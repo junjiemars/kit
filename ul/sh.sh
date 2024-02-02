@@ -1253,8 +1253,8 @@ EOF
   echo_yes_or_no $?
 }
 
-gen_dot_vimrc () {
-  local rc="$HOME/.vimrc"
+gen_dot_exrc () {
+  local rc="$HOME/.exrc"
   $printf "+ generate $rc ... "
   $cat << END > "$rc"
 "------------------------------------------------
@@ -1345,7 +1345,7 @@ gen_dot_shell_utils
 gen_dot_shell_lsp
 gen_dot_shell_java
 
-gen_dot_vimrc $HOME/.vimrc
+gen_dot_exrc $HOME/.exrc
 
 
 export PATH
