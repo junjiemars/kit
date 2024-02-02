@@ -1267,6 +1267,8 @@ $(if [ -f "${rc}.ori" ]; then
 fi)
 "------------------------------------------------
 
+set exrc
+
 " nocompatible
 "set nocompatible
 
