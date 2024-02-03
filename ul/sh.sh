@@ -1296,7 +1296,7 @@ set undolevels=1000
 set fileencoding=utf8
 
 " line number
-set number
+set nonumber
 
 " syntax highlight
 syntax enable
