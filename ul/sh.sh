@@ -650,19 +650,6 @@ $(if [ -f "${vars}.ori" ]; then
 fi)
 #------------------------------------------------
 
-# https://github.com/gitbito/bitoai
-# https://github.com/gitbito/CLI
-check_bito_env () {
-  local h="$HOME/.bitoai"
-  local l="/var/log/bito/bitocli.log"
-  if exist_p bito; then
-    echo version: \$(bito -v)
-    echo home: \$(test -d "\$h" && echo "\$h")
-    echo log: \$(test -f "\$l" && echo "\$l")
-    bito config --list
-  fi
-}
-
 # https://github.com/oven-sh/bun
 check_bun_env () {
   local d="\$HOME/.bun"
