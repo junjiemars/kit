@@ -1012,10 +1012,12 @@ fi)
 #------------------------------------------------
 
 select_java_env () {
-  local d="\$1"
-  if [ -x "\${d}/bin/java" ]; then
-    export JAVA_HOME="\$d"
-    export PATH="\${d}/bin:\$(rm_path \$d))"
+  local javac="\$1"
+  local d=
+  if [ -x "\$javac" ]; then
+    d="\$(dirname \$javac)"
+    export JAVA_HOME="\$(dirname \$d)"
+    export PATH="\$d:\$(rm_path \$d)"
     return 0
   fi
 }
@@ -1023,9 +1025,8 @@ select_java_env () {
 check_java_env () {
   local javac="\$(where javac 2>/dev/null)"
   local java_home=
-  unset JAVA_HOME
   if [ -x "\$javac" -o -L "\$javac" ] ; then
-    JAVA_HOME="\$(dirname \$(dirname \$(readlink \$javac)))"
+    echo "\$(readlink \$javac)"
     return 0
   fi
 $(if on_darwin; then
@@ -1033,14 +1034,14 @@ $(if on_darwin; then
   echo "  if [ -L \"\$java_home\" ]; then"
   echo "    javac=\"\$(readlink \${java_home}/javac)\""
   echo "    if [ -x \"\$javac\" ]; then"
-  echo "      JAVA_HOME=\"\$(dirname \$(dirname \$javac))\""
+  echo "      echo \"\$javac\""
   echo "      return 0"
   echo "    fi"
   echo "  fi"
 elif on_linux; then
   echo "  javac=\"\$(where javac 2>/dev/null)\""
   echo "  if [ -x \"\$javac\" ]; then"
-  echo "    JAVA_HOME=\"\$(dirname \$(dirname \$(readlink -f \"\${javac}\")))\""
+  echo "    echo \"\$(readlink -f \"\$javac\")\""
   echo "    return 0"
   echo "  fi"
 elif on_windows_nt; then
@@ -1050,9 +1051,14 @@ fi)
 }
 
 export_java_env () {
-  if check_java_env; then
-    export JAVA_HOME
-    export PATH=\${JAVA_HOME}/bin:\$(rm_path \${JAVA_HOME})
+  local javac="\$(check_java_env 2>/dev/null)"
+  local d=
+  if [ -x "\$javac" ]; then
+    d="\$(dirname \$javac)"
+    export JAVA_HOME="\$(dirname \$(dirname \$d))"
+    export PATH=\$d:\$(rm_path \$d)
+  else
+    unset JAVA_HOME
   fi
 }
 
