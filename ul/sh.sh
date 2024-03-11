@@ -1012,18 +1012,12 @@ fi)
 #------------------------------------------------
 
 select_java_env () {
-  local d="\${1:-\$JAVA_HOME}"
-  if [ ! -d "\$d" ]; then
-    return 1
+  local d="\$1"
+  if [ -x "\${d}/bin/java" ]; then
+    export JAVA_HOME="\$d"
+    export PATH="\${d}/bin:\$(rm_path \$d))"
+    return 0
   fi
-  if [ ! -x "\${d}/bin/java" ]; then
-    return 1
-  fi
-  if [ ! -x "\${d}/bin/javac" ]; then
-    return 1
-  fi
-  export JAVA_HOME="\$d"
-  export PATH="\${d}/bin:\$(rm_path \$d))"
 }
 
 check_java_env () {
@@ -1059,10 +1053,6 @@ export_java_env () {
     export PATH=\${JAVA_HOME}/bin:\$(rm_path \${JAVA_HOME})
   fi
 }
-
-if [ "\$o_export_path_env" = "yes" ]; then
-  export_java_env
-fi
 
 # eof
 EOF
