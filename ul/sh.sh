@@ -1021,23 +1021,25 @@ select_java_env () {
 }
 
 check_java_env () {
-  local javac="\${JAVA_HOME%/}/bin/javac"
+  local javac="\$(where javac 2>/dev/null)"
   local java_home=
-  if [ -n "\${JAVA_HOME}" ] && [ -x "\${javac}" ]; then
+  unset JAVA_HOME
+  if [ -x "\$javac" -o -L "\$javac" ] ; then
+    JAVA_HOME="\$(dirname \$(dirname \$(readlink \$javac)))"
     return 0
   fi
 $(if on_darwin; then
   echo "  java_home='/usr/libexec/java_home'"
   echo "  if [ -L \"\$java_home\" ]; then"
-  echo "    javac=\"\${java_home}/bin/javac\""
-  echo "    if [ -x \"\${javac}\" ]; then"
-  echo "      JAVA_HOME=\"\${java_home}\""
+  echo "    javac=\"\$(readlink \${java_home}/javac)\""
+  echo "    if [ -x \"\$javac\" ]; then"
+  echo "      JAVA_HOME=\"\$(dirname \$(dirname \$javac))\""
   echo "      return 0"
   echo "    fi"
   echo "  fi"
 elif on_linux; then
   echo "  javac=\"\$(where javac 2>/dev/null)\""
-  echo "  if [ -n \"\${javac}\" -a -x \"\$javac\" ]; then"
+  echo "  if [ -x \"\$javac\" ]; then"
   echo "    JAVA_HOME=\"\$(dirname \$(dirname \$(readlink -f \"\${javac}\")))\""
   echo "    return 0"
   echo "  fi"
