@@ -1421,15 +1421,17 @@ check_rust_env () {
   local r="\${b}/rustc"
   local c="\${b}/cargo"
   if test -d "\$b" && \${r} -V &>/dev/null && \${c} -V &>/dev/null; then
-    CARGO_HOME="\${cargo_dir}"
+    $printf "%s\n" "\${cargo_dir}"
     return 0
   else
-    unset CARGO_HOME
     return 1
   fi
 }
 
-# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+install_rustup () {
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+}
+
 check_rust_src_env () {
   local force="\$1"
   local rc="\$(rustc --print sysroot 2>/dev/null)"
@@ -1470,8 +1472,11 @@ check_rust_src_env () {
 }
 
 export_rust_env () {
-  if check_rust_env; then
-    export PATH="\${CARGO_HOME}/bin:\$(rm_path \${CARGO_HOME}/bin)"
+  local h="\$(check_rust_env)";
+  unset CARGO_HOME
+  if [ -d "\$h" ]; then
+    CARGO_HOME="\$h"
+    export PATH="\${h}/bin:\$(rm_path \${h}/bin)"
   fi
 }
 
