@@ -1025,7 +1025,7 @@ select_java_env () {
 check_java_env () {
   local javac="\$(where javac 2>/dev/null)"
   local java_home=
-  if [ -x "\$javac" -o -L "\$javac" ] ; then
+  if [ -x "\$javac" -a -L "\$javac" ] ; then
     echo "\$(readlink \$javac)"
     return 0
   fi
