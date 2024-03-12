@@ -1011,17 +1011,6 @@ fi)
 # https://openjdk.java.net
 #------------------------------------------------
 
-select_java_env () {
-  local javac="\$1"
-  local d=
-  if [ -x "\$javac" ]; then
-    d="\$(dirname \$javac)"
-    export JAVA_HOME="\$(dirname \$d)"
-    export PATH="\$d:\$(rm_path \$d)"
-    return 0
-  fi
-}
-
 check_java_env () {
   local javac="\$(where javac 2>/dev/null)"
   local java_home=
@@ -1048,6 +1037,17 @@ elif on_windows_nt; then
   echo "  # nop"
 fi)
   return 1
+}
+
+select_java_env () {
+  local javac="\$1"
+  local d=
+  if [ -x "\$javac" ]; then
+    d="\$(dirname \$javac)"
+    export JAVA_HOME="\$(dirname \$d)"
+    export PATH="\$d:\$(rm_path \$d)"
+    return 0
+  fi
 }
 
 export_java_env () {
