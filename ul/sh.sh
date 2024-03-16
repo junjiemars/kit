@@ -1396,7 +1396,8 @@ EOF
 }
 
 gen_rust_env () {
-  local f="$HOME/.nore/${SH}/rust_env"
+	local r="${HOME}/.nore/${SH}"
+  local f="${r}/rust_env"
   save_as "$f"
   $printf "+ generate $f ... "
   $cat << EOF > "$f"
@@ -1430,6 +1431,15 @@ check_rust_env () {
 
 install_rustup () {
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+}
+
+check_rust_completion () {
+  local rc="${r}/rust_cargo_completion"
+  local ru="${r}/rust_rustup_completion"
+  rustup completions $SH cargo > \$rc
+	rustup completions $SH rustup > \$ru
+  . \$rc
+  . \$ru
 }
 
 check_rust_src_env () {
@@ -1482,6 +1492,10 @@ export_rust_env () {
 
 if [ "\$o_export_path_env" = "yes" ]; then
   export_rust_env
+fi
+
+if [ "\$o_check_completion_env" = "yes" ]; then
+  check_rust_completion
 fi
 
 # eof
