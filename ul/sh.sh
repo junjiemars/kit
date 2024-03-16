@@ -1422,7 +1422,7 @@ check_rust_env () {
   local r="\${b}/rustc"
   local sr="\$(\$r --print sysroot 2>/dev/null)"
   if [ -n "\$sr" -a -d "\$sr" -a -x "\$sr/bin/rustc" ]; then
-    echo "\$sr"
+    $printf "%s\n" "\$sr"
     return 0
   else
     return 1
@@ -1442,40 +1442,42 @@ check_rust_completion () {
   . \$ru
 }
 
-check_rust_src_env () {
+check_rust_src () {
   local force="\$1"
-  local rc="\$(rustc --print sysroot 2>/dev/null)"
+  local sr="\$(check_rust_env)"
+  if [ -z "\$sr" ]; then
+    return 1
+  fi
   local hash="\$(rustc -vV|$sed -n '/^commit-hash/s;commit-hash: \(.*\);\1;' 2>/dev/null)"
-  local etc="\${rc}/lib/rustlib/src/rust/src/etc"
+  local etc="\${sr}/lib/rustlib/src/rust/src/etc"
   local tag="\${etc}/ctags.rust"
   local tag_src="https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/ctags.rust"
-  local gdb="\${rc}/lib/rustlib/etc/gdb_load_rust_pretty_printers.py"
-  local lldb="\${rc}/lib/rustlib/etc/lldb_commands"
+  local gdb="\${sr}/lib/rustlib/etc/gdb_load_rust_pretty_printers.py"
+  local lldb="\${sr}/lib/rustlib/etc/lldb_commands"
   local from="/rustc/\${hash}"
-  local src="\${rc}/lib/rustlib/src/rust"
-  if [ -n "\$rc" ] && [ -d "\$rc" ]; then
-    if ! [ -f "\$tag" ]; then
-      $mkdir -p "\${etc}"
-      curl --proto '=https' --tlsv1.2 -sSf "\$tag_src" -o "\$tag"
+  local src="\${sr}/lib/rustlib/src/rust"
+
+  if ! [ -f "\$tag" ]; then
+    $mkdir -p "\${etc}"
+    curl --proto '=https' --tlsv1.2 -sSf "\$tag_src" -o "\$tag"
+  fi
+  if [ -n "\$hash" ] && [ -d "\$src" ]; then
+    if [ -f "\$gdb" ]; then
+       if [ "\$force" = "renew" ]; then
+         $sed -i.b1 '/set substitute-path/d' \$gdb
+       fi
+       if ! $grep 'set substitute-path' \$gdb &>/dev/null; then
+         $cp \$gdb \${gdb}.b0
+         $printf "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
+       fi
     fi
-    if [ -n "\$hash" ] && [ -d "\$src" ]; then
-      if [ -f "\$gdb" ]; then
-         if [ "\$force" = "renew" ]; then
-           sed -i.b1 '/set substitute-path/d' \$gdb
-         fi
-         if ! $grep 'set substitute-path' \$gdb &>/dev/null; then
-           $cp \$gdb \${gdb}.b0
-           $printf "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
-         fi
+    if [ -f "\$lldb" ]; then
+      if [ "\$force" = "renew" ]; then
+        $sed -i.b1 '/settings set target\.source-map/d' \$lldb
       fi
-      if [ -f "\$lldb" ]; then
-        if [ "\$force" = "renew" ]; then
-          $sed -i.b1 '/settings set target\.source-map/d' \$lldb
-        fi
-        if ! $grep 'settings set target.source-map' \$lldb &>/dev/null; then
-          $cp \$lldb \${lldb}.b0
-          $printf "settings set target.source-map \$from \$src" >> \$lldb
-        fi
+      if ! $grep 'settings set target.source-map' \$lldb &>/dev/null; then
+        $cp \$lldb \${lldb}.b0
+        $printf "settings set target.source-map \$from \$src" >> \$lldb
       fi
     fi
   fi
