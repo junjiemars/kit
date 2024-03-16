@@ -1420,9 +1420,9 @@ check_rust_env () {
   local cargo_dir="\${HOME}/.cargo"
   local b="\${cargo_dir}/bin"
   local r="\${b}/rustc"
-  local c="\${b}/cargo"
-  if test -d "\$b" && \${r} -V &>/dev/null && \${c} -V &>/dev/null; then
-    $printf "%s\n" "\${cargo_dir}"
+  local sr="\$(\$r --print sysroot 2>/dev/null)"
+  if [ -n "\$sr" -a -d "\$sr" -a -x "\$sr/bin/rustc" ]; then
+    echo "\$sr"
     return 0
   else
     return 1
@@ -1495,7 +1495,7 @@ if [ "\$o_export_path_env" = "yes" ]; then
 fi
 
 if [ "\$o_check_completion_env" = "yes" ]; then
-  check_rust_completion
+  # check_rust_completion
 fi
 
 # eof
