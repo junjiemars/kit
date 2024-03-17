@@ -14,6 +14,7 @@ set -e
 awk=$(PATH=$PH command -v awk)
 basename=$(PATH=$PH command -v basename)
 cat=$(PATH=$PH command -v cat)
+chmod=$(PATH=$PH command -v chmod)
 cp=$(PATH=$PH command -v cp)
 cut=$(PATH=$PH command -v cut)
 date=$(PATH=$PH command -v date)
@@ -1328,25 +1329,40 @@ make_python_pip_mirror () {
   # http://pypi.hustunique.com/
   # http://pypi.sdutlinux.org/
   # http://pypi.douban.com/simple/
-  if ! where pip3 &>/dev/null; then
+  if ! check_python_env &>/dev/null; then
     return 1
   fi
-  pip3 config set global.index-url "\$m"
+  pip config set global.index-url "\$m"
 }
 
-python_lsp_install () {
-  # python3 -m venv pylsp_venv
-  # . pylsp_venv/bin/activate
-  # pip install python-lsp-server
-  # cat <<EOF > "pylsp.sh"
-  ##!/usr/bin/sh
-  #. pylsp_env/bin/activate
-  #exec pylsp $@
-  #EOF
-}
-
+make_python_lsp () {
+  if ! check_python_env &>/dev/null; then
+    return 1
+  fi
+  local opt_bin="\$(check_opt_dir)/run/bin"
+  if [ ! -d "\$opt_bin" ]; then
+    return 1
+  fi
+  pip install python-lsp-server
+  local sr="\$(python -c'import sys;print(sys.prefix)' 2>/dev/null)"
+  local pylsp="\${sr}/bin/pylsp"
+  if [ ! -f "\$pylsp" ]; then
+    return 1
+  fi
+  local ve="\${sr}/bin/activate"
+  local pylsp_sh="\${opt_bin}/pylsp.sh"
+  cat <<END > "\$pylsp_sh"
+#!$(where sh)
+\$(if [ -f "\$ve" ]; then
+  echo ". \"\$ve\""
+fi)
+exec \$pylsp \\\$@
+END
+  $chmod u+x "\$pylsp_sh"
+$(echo "}")
 # eof
 EOF
+
   echo_yes_or_no $?
 }
 
