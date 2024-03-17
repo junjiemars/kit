@@ -262,6 +262,7 @@ inside_vim_p () {
 [ -f \$HOME/.nore/${SH}/vars ] && . \$HOME/.nore/${SH}/vars
 [ -f \$HOME/.nore/${SH}/paths ] && . \$HOME/.nore/${SH}/paths
 [ -f \$HOME/.nore/${SH}/utils ] && . \$HOME/.nore/${SH}/utils
+[ -f \$HOME/.nore/${SH}/utils ] && . \$HOME/.nore/${SH}/aliases
 [ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check
 
 # eof
@@ -283,6 +284,9 @@ gen_shell_aliases () {
 $(if [ -f "${aliases}.ori" ]; then
   echo "# origin backup: ${aliases}.ori"
 fi)
+$(if [ -f "${aliases}.pre" ]; then
+  echo "# previous backup: ${aliases}.pre"
+fi)
 #------------------------------------------------
 
 alias ..1='cd ../'
@@ -296,33 +300,17 @@ alias fgrep='fgrep --color=auto'
 $(if on_darwin; then
   echo "alias ls='ls -G'"
   echo "alias ll='ls -lh -G'"
-  echo "alias l='ls -CF -G'"
   echo "alias tailf='tail -f'"
-  echo "# alias stat='stat -x'"
+  echo "alias stat='stat -x'"
 else
   echo "alias ls='ls --color=auto'"
   echo "alias ll='ls -lh --color=auto'"
   echo "alias l='ls -CF --color=auto'"
 fi)
 
-alias_racket () {
-  if exist_p racket; then
-    alias racket='rlwrap racket'
-  fi
-}
-
 alias_emacs () {
   if exist_p emacs; then
     alias emacs='emacs -nw'
-  fi
-}
-
-alias_python () {
-  if exist_p python3; then
-    alias python=python3
-  fi
-  if exist_p pip3; then
-    alias pip=pip3
   fi
 }
 
@@ -334,19 +322,11 @@ alias_rlwrap_bin () {
 }
 
 alias_emacs
-# alias_racket
+
 $(if on_linux && [ "$SH" = "bash" ]; then
    echo "# bsd ps style"
    echo "alias ps='ps w'"
 fi)
-alias_python
-
-if exist_p rlwrap; then
-  alias_rlwrap_bin ecl
-  # alias_rlwrap_bin ed
-  alias_rlwrap_bin openssl
-fi
-
 
 # eof
 EOF
@@ -1318,22 +1298,40 @@ fi)
 #------------------------------------------------
 
 check_python_env () {
-  local py=\$(where python3 || where python 2>/dev/null)
-  local pi=\$(where pip3 || where pip 2>/dev/null)
-  if [ -n "\$py" ]; then
-    echo "python: \$(\$py --version)"
+  if where python3 &>/dev/null && pip3 &>/dev/null; then
+    $printf "%s: %s\n" "\$(python3 -V)" "\$(where python3)"
+    $printf "%s: %s\n" "\$(pip3 -V|cut -d ' ' -f1,2)" "\$(where pip3)"
+    return 0
   fi
-  if exist_p virtualenv; then
-    echo "virtualenv: \$(virtualenv --version)"
+  if where python &>/dev/null && where pip &>/dev/null; then
+    $printf "%s: %s\n" "\$(python3 -V)" "\$(where python)"
+    $printf "%s: %s\n" "\$(pip3 -V)" "\$(where pip)"
+    return 0
   fi
-  if [ -n "\$pi" ]; then
-    echo "pip: \$(\$pi --version)"
-    echo "pip config: \$(\$pi config list)"
-    echo "pip mirrors:"
-    echo "https://pypi.org/simple"
-    echo "https://pypi.tuna.tsinghua.edu.cn/simple"
-    echo "https://mirrors.aliyun.com/pypi/simple"
+  return 1
+}
+
+make_python_venv () {
+  local d="\$1"
+  if ! where python3 &>/dev/null; then
+    return 1
   fi
+  [ $# -eq 0 ] || d="\$(pwd)"
+  python3 -m venv "\$d" && $printf "%s\n" "\$d"
+}
+
+make_python_pip_mirror () {
+  local m="https://pypi.tuna.tsinghua.edu.cn/simple/"
+  # https://pypi.tuna.tsinghua.edu.cn/simple/
+  # https://pypi.mirrors.ustc.edu.cn/simple/
+  # http://mirrors.aliyun.com/pypi/simple/
+  # http://pypi.hustunique.com/
+  # http://pypi.sdutlinux.org/
+  # http://pypi.douban.com/simple/
+  if ! where pip3 &>/dev/null; then
+    return 1
+  fi
+  pip3 config set global.index-url "\$m"
 }
 
 python_lsp_install () {
