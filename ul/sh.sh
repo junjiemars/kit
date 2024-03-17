@@ -1448,7 +1448,8 @@ check_rust_src () {
   if [ -z "\$sr" ]; then
     return 1
   fi
-  local hash="\$(rustc -vV|$sed -n '/^commit-hash/s;commit-hash: \(.*\);\1;' 2>/dev/null)"
+  local rc="\${sr}/bin/rustc"
+  local hash="\$(\$rc -vV|$sed -n '/^commit-hash/s;^commit-hash: \(.*\)$;\1;p' 2>/dev/null)"
   local etc="\${sr}/lib/rustlib/src/rust/src/etc"
   local tag="\${etc}/ctags.rust"
   local tag_src="https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/ctags.rust"
@@ -1461,24 +1462,25 @@ check_rust_src () {
     $mkdir -p "\${etc}"
     curl --proto '=https' --tlsv1.2 -sSf "\$tag_src" -o "\$tag"
   fi
-  if [ -n "\$hash" ] && [ -d "\$src" ]; then
-    if [ -f "\$gdb" ]; then
-       if [ "\$force" = "renew" ]; then
-         $sed -i.b1 '/set substitute-path/d' \$gdb
-       fi
-       if ! $grep 'set substitute-path' \$gdb &>/dev/null; then
-         $cp \$gdb \${gdb}.b0
-         $printf "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
-       fi
+  if [ -z "\$hash" -o ! -d "\$src" ]; then
+    return 1
+  fi
+  if [ -f "\$gdb" ]; then
+     if [ "\$force" = "renew" ]; then
+       $sed -i.b1 '/set substitute-path/d' \$gdb
+     fi
+     if ! $grep 'set substitute-path' \$gdb &>/dev/null; then
+       $cp \$gdb \${gdb}.b0
+       $printf "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
+     fi
+  fi
+  if [ -f "\$lldb" ]; then
+    if [ "\$force" = "renew" ]; then
+      $sed -i.b1 '/settings set target\.source-map/d' \$lldb
     fi
-    if [ -f "\$lldb" ]; then
-      if [ "\$force" = "renew" ]; then
-        $sed -i.b1 '/settings set target\.source-map/d' \$lldb
-      fi
-      if ! $grep 'settings set target.source-map' \$lldb &>/dev/null; then
-        $cp \$lldb \${lldb}.b0
-        $printf "settings set target.source-map \$from \$src" >> \$lldb
-      fi
+    if ! $grep 'settings set target.source-map' \$lldb &>/dev/null; then
+      $cp \$lldb \${lldb}.b0
+      $printf "settings set target.source-map \$from \$src" >> \$lldb
     fi
   fi
 }
@@ -1487,7 +1489,8 @@ export_rust_env () {
   local h="\$(check_rust_env)";
   unset CARGO_HOME
   if [ -d "\$h" ]; then
-    CARGO_HOME="\$h"
+    CARGO_HOME="\${HOME}/.cargo"
+    PATH="\${CARGO_HOME}/bin:\$(rm_path \${CARGO_HOME}/bin)"
     export PATH="\${h}/bin:\$(rm_path \${h}/bin)"
   fi
 }
