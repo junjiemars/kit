@@ -1448,8 +1448,7 @@ check_rust_src () {
   if [ -z "\$sr" ]; then
     return 1
   fi
-  local rc="\${sr}/bin/rustc"
-  local hash="\$(\$rc -vV|$sed -n '/^commit-hash/s;^commit-hash: \(.*\)$;\1;p' 2>/dev/null)"
+  local hash="\$(\${sr}/bin/rustc -vV|$sed -n '/^commit-hash/s;^commit-hash: \(.*\)$;\1;p' 2>/dev/null)"
   local etc="\${sr}/lib/rustlib/src/rust/src/etc"
   local tag="\${etc}/ctags.rust"
   local tag_src="https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/ctags.rust"
