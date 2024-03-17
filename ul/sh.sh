@@ -530,6 +530,7 @@ o_check_bun_env=no
 o_check_java_env=no
 o_check_kube_env=no
 o_check_nvm_env=no
+o_check_python_env=yes
 o_check_racket_env=no
 o_check_rust_env=no
 $(if on_darwin; then
@@ -611,6 +612,11 @@ fi
 if [ "\$o_check_nvm_env" = "yes" ]; then
   [ -f "${vdir}/nvm_env" ] \\
     && . "${vdir}/nvm_env"
+fi
+
+if [ "\$o_check_python_env" = "yes" ]; then
+  [ -f "${vdir}/python_env" ] \\
+    && . "${vdir}/python_env"
 fi
 
 if [ "\$o_check_racket_env" = "yes" ]; then
@@ -1326,6 +1332,7 @@ exec \$pylsp \\\$@
 END
   $chmod u+x "\$pylsp_sh"
 $(echo "}")
+
 # eof
 EOF
 
