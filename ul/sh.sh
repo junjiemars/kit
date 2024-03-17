@@ -1304,8 +1304,8 @@ check_python_env () {
     return 0
   fi
   if where python &>/dev/null && where pip &>/dev/null; then
-    $printf "%s: %s\n" "\$(python3 -V)" "\$(where python)"
-    $printf "%s: %s\n" "\$(pip3 -V)" "\$(where pip)"
+    $printf "%s: %s\n" "\$(python -V)" "\$(where python)"
+    $printf "%s: %s\n" "\$(pip -V)" "\$(where pip)"
     return 0
   fi
   return 1
