@@ -1430,7 +1430,6 @@ check_rust_completion () {
 }
 
 make_rust_src_debug () {
-  local force="\$1"
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
@@ -1444,22 +1443,18 @@ make_rust_src_debug () {
     return 1
   fi
   if [ -f "\$gdb" ]; then
-     if [ "\$force" = "renew" ]; then
-       $sed -i.b1 '/set substitute-path/d' \$gdb
-     fi
      if ! $grep 'set substitute-path' \$gdb &>/dev/null; then
        $cp \$gdb \${gdb}.b0
-       $printf "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
      fi
+     $sed -i.b1 '/set substitute-path/d' \$gdb
+     $printf "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
   fi
   if [ -f "\$lldb" ]; then
-    if [ "\$force" = "renew" ]; then
-      $sed -i.b1 '/settings set target\.source-map/d' \$lldb
-    fi
     if ! $grep 'settings set target.source-map' \$lldb &>/dev/null; then
       $cp \$lldb \${lldb}.b0
-      $printf "settings set target.source-map \$from \$src" >> \$lldb
     fi
+    $sed -i.b1 '/settings set target\.source-map/d' \$lldb
+    $printf "settings set target.source-map \$from \$src" >> \$lldb
   fi
 }
 
