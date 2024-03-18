@@ -1500,7 +1500,7 @@ if [ "\$o_export_path_env" = "yes" ]; then
 fi
 
 if [ "\$o_check_completion_env" = "yes" ]; then
-  # check_rust_completion
+  : # check_rust_completion
 fi
 
 # eof
