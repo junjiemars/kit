@@ -1429,19 +1429,53 @@ check_rust_completion () {
   . \$ru
 }
 
-make_rust_src_debug () {
+check_rust_etc () {
+  local sr="\$(check_rust_env)"
+  if [ -z "\$sr" ]; then
+    return 1
+  fi
+  local etc="\${sr}/lib/rustlib/etc"
+  [ -d "\$etc" ] && echo "\$etc"
+}
+
+check_rust_src () {
+  local sr="\$(check_rust_env)"
+  if [ -z "\$sr" ]; then
+    return 1
+  fi
+  local src="\${sr}/lib/rustlib/src/rust"
+  [ -d "\$src" ] && echo "\$src"
+}
+
+check_rust_hash () {
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
   fi
   local hash="\$(\${sr}/bin/rustc -vV|$sed -n '/^commit-hash/s;^commit-hash: \(.*\)$;\1;p' 2>/dev/null)"
-  local gdb="\${sr}/lib/rustlib/etc/gdb_load_rust_pretty_printers.py"
-  local lldb="\${sr}/lib/rustlib/etc/lldb_commands"
-  local from="/rustc/\${hash}"
-  local src="\${sr}/lib/rustlib/src/rust"
-  if [ -z "\$hash" -o ! -d "\$src" ]; then
+  [ -n "\$hash" ] && echo "\$hash"
+}
+
+make_rust_debug () {
+  local sr="\$(check_rust_env)"
+  if [ -z "\$sr" ]; then
     return 1
   fi
+  local hash="\$(check_rust_hash)"
+  if [ -z "\$hash" ]; then
+    return 1
+  fi
+  local etc="\$(check_rust_etc)"
+  if [ -z "\$etc" ]; then
+    return 1
+  fi
+  local src="\$(check_rust_src)"
+  if [ -z "\$src" ]; then
+    return 1
+  fi
+  local gdb="\${etc}/gdb_load_rust_pretty_printers.py"
+  local lldb="\${etc}/lldb_commands"
+  local from="/rustc/\${hash}"
   if [ -f "\$gdb" ]; then
      if ! $grep 'set substitute-path' \$gdb &>/dev/null; then
        $cp \$gdb \${gdb}.b0
@@ -1458,25 +1492,40 @@ make_rust_src_debug () {
   fi
 }
 
-make_rust_src_tags () {
+check_rust_tags () {
+  local etc="\$(check_rust_etc)"
+  if [ -z "\$etc" ]; then
+    return 1
+  fi
+  $printf "%s\n" "\${etc}/.tags_emacs"
+}
+
+make_rust_tags () {
+  local args="\$@"
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
   fi
-  local etc="\${sr}/lib/rustlib/src/rust/src/etc"
+  local etc="\$(check_rust_etc)"
+  if [ -z "\$etc" ]; then
+    return 1
+  fi
+  local src="\$(check_rust_src)"
+  if [ -z "\$src" ]; then
+    return 1
+  fi
   local tag_opt="\${etc}/ctags.rust"
   local tag_src="https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/ctags.rust"
-  local src="\${sr}/lib/rustlib/src/rust"
-  if ! [ -f "\$tag_opt" ]; then
+  if [ ! -f "\$tag_opt" ]; then
     $mkdir -p "\${etc}"
     curl --proto '=https' --tlsv1.2 -sSf "\$tag_src" -o "\$tag_opt"
   fi
   if ! where ctags &>/dev/null; then
     return 1
   fi
-  local d="\${etc}/.tags_emacs"
+  local d="\$(check_rust_tags)"
   [ -f "\$d" ] && rm "\$d"
-  ctags -R -e -a -o \$d --options="\$tag_opt" \$src
+  ctags \$args -R -e -o \$d --options="\$tag_opt" \$src
   $printf "%s\n" "\$d"
 }
 
