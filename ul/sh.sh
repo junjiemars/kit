@@ -1404,16 +1404,15 @@ fi)
 #------------------------------------------------
 
 check_rust_env () {
-  local cargo_dir="\${HOME}/.cargo"
-  local b="\${cargo_dir}/bin"
-  local r="\${b}/rustc"
-  local sr="\$(\$r --print sysroot 2>/dev/null)"
-  if [ -n "\$sr" -a -d "\$sr" -a -x "\$sr/bin/rustc" ]; then
-    $printf "%s\n" "\$sr"
-    return 0
-  else
+  local rc="\${HOME}/.cargo/bin/rustc"
+  if [ ! -x "\$rc" ]; then
     return 1
   fi
+  local sr="\$(\$rc --print sysroot 2>/dev/null)"
+  if [ -z "\$sr" ]; then
+    return 1
+  fi
+  [ -x "\$sr/bin/rustc" ] && $printf "%s\n" "\$sr"
 }
 
 install_rustup () {
