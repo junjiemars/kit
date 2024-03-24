@@ -530,7 +530,7 @@ o_check_bun_env=no
 o_check_java_env=no
 o_check_kube_env=no
 o_check_nvm_env=no
-o_check_python_env=yes
+o_check_python_env=no
 o_check_racket_env=no
 o_check_rust_env=no
 $(if on_darwin; then
@@ -1271,52 +1271,75 @@ fi)
 #------------------------------------------------
 
 check_python_env () {
-  if where python3 &>/dev/null && pip3 &>/dev/null; then
-    $printf "%s: %s\n" "\$(python3 -V)" "\$(where python3)"
-    $printf "%s: %s\n" "\$(pip3 -V|cut -d ' ' -f1,2)" "\$(where pip3)"
+  local p3="\$(where python3 2>/dev/null)"
+  if [ -x "\$p3" ]; then
+    $printf "%s\n" "\$p3"
     return 0
   fi
-  if where python &>/dev/null && where pip &>/dev/null; then
-    $printf "%s: %s\n" "\$(python -V)" "\$(where python)"
-    $printf "%s: %s\n" "\$(pip -V)" "\$(where pip)"
+  p3="\$(where python 2>/dev/null)"
+  if [ -x "\$p3" ]; then
+    $printf "%s\n" "\$p3"
+    return 0
+  fi
+  return 1
+}
+
+check_python_pip () {
+  local p3="\$(where pip3 2>/dev/null)"
+  if [ -x "\$p3" ]; then
+    $printf "%s\n" "\$p3"
+    return 0
+  fi
+  p3="\$(where pip 2>/dev/null)"
+  if [ -x "\$p3" ]; then
+    $printf "%s\n" "\$p3"
     return 0
   fi
   return 1
 }
 
 make_python_venv () {
-  local d="\$1"
-  if ! where python3 &>/dev/null; then
+  local d="\${1:-\$(pwd)}"
+  local p="\$(check_python_env)"
+  if [ -z "\$p" ]; then
     return 1
   fi
-  [ $# -eq 0 ] || d="\$(pwd)"
-  python3 -m venv "\$d" && $printf "%s\n" "\$d"
+  \$p -m venv "\$d" && $printf "%s\n" "\$d"
+}
+
+check_python_pip_mirror () {
+  $printf "%s\n" 'https://pypi.tuna.tsinghua.edu.cn/simple/'
+  $printf "%s\n" 'https://pypi.mirrors.ustc.edu.cn/simple/'
+  $printf "%s\n" 'http://mirrors.aliyun.com/pypi/simple/'
+  $printf "%s\n" 'http://pypi.hustunique.com/'
+  $printf "%s\n" 'http://pypi.sdutlinux.org/'
+  $printf "%s\n" 'http://pypi.douban.com/simple/'
 }
 
 make_python_pip_mirror () {
-  local m="https://pypi.tuna.tsinghua.edu.cn/simple/"
-  # https://pypi.tuna.tsinghua.edu.cn/simple/
-  # https://pypi.mirrors.ustc.edu.cn/simple/
-  # http://mirrors.aliyun.com/pypi/simple/
-  # http://pypi.hustunique.com/
-  # http://pypi.sdutlinux.org/
-  # http://pypi.douban.com/simple/
-  if ! check_python_env &>/dev/null; then
+  local m="\${1:-'https://pypi.tuna.tsinghua.edu.cn/simple/'}"
+  local p="\$(check_python_pip)"
+  if [ -z "\$p" ]; then
     return 1
   fi
-  pip config set global.index-url "\$m"
+  \$p config set global.index-url "\$m"
 }
 
 make_python_lsp () {
-  if ! check_python_env &>/dev/null; then
+  local py="\$(check_python_env)"
+  if [ -z "\$py" ]; then
+    return 1
+  fi
+  local pip="\$(check_python_pip)"
+  if [ -z "\$pip" ]; then
     return 1
   fi
   local opt_bin="\$(check_opt_dir)/run/bin"
   if [ ! -d "\$opt_bin" ]; then
     return 1
   fi
-  pip install python-lsp-server
-  local sr="\$(python -c'import sys;print(sys.prefix)' 2>/dev/null)"
+  \$pip install python-lsp-server
+  local sr="\$(\$py -c'import sys;print(sys.prefix)' 2>/dev/null)"
   local pylsp="\${sr}/bin/pylsp"
   if [ ! -f "\$pylsp" ]; then
     return 1
