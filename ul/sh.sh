@@ -1317,7 +1317,7 @@ check_python_pip_mirror () {
 }
 
 make_python_pip_mirror () {
-  local m="\${1:-'https://pypi.tuna.tsinghua.edu.cn/simple/'}"
+  local m="\${1:-\$(check_python_pip_mirror|$sed -n '1p')}"
   local p="\$(check_python_pip)"
   if [ -z "\$p" ]; then
     return 1
