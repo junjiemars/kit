@@ -1277,11 +1277,11 @@ check_python_env () {
     return 0
   fi
   p3="\$(where python 2>/dev/null)"
-  if [ -x "\$p3" ]; then
-    $printf "%s\n" "\$p3"
-    return 0
+  if [ ! -x "\$p3" ]; then
+    return 1
   fi
-  return 1
+  local v3="\$(\$p3 -V|sed 's/^Python \([0-9]*\)\..*$/\1/' 2>/dev/null)"
+  [ "\$v3" -ge "3" ] && $printf "%s\n" "\$p3"
 }
 
 check_python_pip () {
@@ -1291,11 +1291,11 @@ check_python_pip () {
     return 0
   fi
   p3="\$(where pip 2>/dev/null)"
-  if [ -x "\$p3" ]; then
-    $printf "%s\n" "\$p3"
-    return 0
+  if [ ! -x "\$p3" ]; then
+    return 1
   fi
-  return 1
+  local v3="\$(\$p3 -V|sed 's/.*(python \([0-9]*\)\..*).*/\1/' 2>/dev/null)"
+  [ \$v3 -ge 3 ] && $printf "%s\n" "\$p3"
 }
 
 make_python_venv () {
