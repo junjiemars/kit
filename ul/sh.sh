@@ -887,6 +887,9 @@ gen_shell_completion_env () {
 $(if [ -f "${f}.ori" ]; then
   echo "# origin backup: ${f}.ori"
 fi)
+$(if [ -f "${f}.pre" ]; then
+  echo "# previous backup: ${f}.pre"
+fi)
 #------------------------------------------------
 
 check_completion_env () {
@@ -902,6 +905,8 @@ else
    echo ":"
 fi)
 }
+
+check_completion_env
 
 # eof
 EOF
