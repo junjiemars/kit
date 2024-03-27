@@ -974,23 +974,12 @@ check_java_env () {
     return 1
   fi
 $(if on_darwin; then
-  echo "  java_home='/usr/libexec/java_home'"
-  echo "  if [ -L \"\$java_home\" ]; then"
-  echo "    javac=\"\$(readlink \${java_home}/javac)\""
-  echo "    if [ -x \"\$javac\" ]; then"
-  echo "      echo \"\$javac\""
-  echo "      return 0"
-  echo "    fi"
-  echo "  fi"
+  echo "  [ -L \"\$javac\" ] && echo \$(readlink \"\$javac\")"
 elif on_linux; then
-  echo "  if [ -L \"\$javac\" ]; then"
-  echo "    echo \"\$(readlink -f \"\$javac\")\""
-  echo "    return 0"
-  echo "  fi"
+  echo "  [ -L \"\$javac\" ] && echo \$(readlink -f \"\$javac\")"
 elif on_windows_nt; then
   echo "  # nop"
 fi)
-  return 1
 }
 
 select_java_env () {
