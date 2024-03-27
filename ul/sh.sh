@@ -995,14 +995,17 @@ select_java_env () {
 
 export_java_env () {
   local javac="\$(check_java_env 2>/dev/null)"
-  local d=
-  if [ -x "\$javac" ]; then
-    d="\$(dirname \$javac)"
-    export JAVA_HOME="\$(dirname \$(dirname \$d))"
-    export PATH=\$d:\$(rm_path \$d)
-  else
-    unset JAVA_HOME
+  if [ ! -x \$javac ]; then
+    return 1
   fi
+  local d="\$(dirname \$javac)"
+  local java="\${d}/java"
+  if [ ! -x "\$java" ]; then
+    unset JAVA_HOME
+    return 1
+  fi
+  export JAVA_HOME="\$(dirname \$d)"
+  export PATH=\$d:\$(rm_path \$d)
 }
 
 make_java_lsp () {
