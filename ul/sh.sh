@@ -970,9 +970,8 @@ fi)
 check_java_env () {
   local javac="\$(where javac 2>/dev/null)"
   local java_home=
-  if [ -x "\$javac" -a -L "\$javac" ] ; then
-    echo "\$(readlink \$javac)"
-    return 0
+  if [ ! -x "\$javac" ] ; then
+    return 1
   fi
 $(if on_darwin; then
   echo "  java_home='/usr/libexec/java_home'"
@@ -984,8 +983,7 @@ $(if on_darwin; then
   echo "    fi"
   echo "  fi"
 elif on_linux; then
-  echo "  javac=\"\$(where javac 2>/dev/null)\""
-  echo "  if [ -x \"\$javac\" ]; then"
+  echo "  if [ -L \"\$javac\" ]; then"
   echo "    echo \"\$(readlink -f \"\$javac\")\""
   echo "    return 0"
   echo "  fi"
@@ -1016,6 +1014,13 @@ export_java_env () {
   else
     unset JAVA_HOME
   fi
+}
+
+make_java_lsp () {
+  # download https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.9.0/jdt-language-server-1.9.0-202203031534.tar.gz
+  # config
+  # generate startup script
+  : #nop
 }
 
 # eof
