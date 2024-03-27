@@ -969,7 +969,6 @@ fi)
 
 check_java_env () {
   local javac="\$(where javac 2>/dev/null)"
-  local java_home=
   if [ ! -x "\$javac" ] ; then
     return 1
   fi
@@ -978,23 +977,12 @@ $(if on_darwin; then
 elif on_linux; then
   echo "  [ -L \"\$javac\" ] && echo \$(readlink -f \"\$javac\")"
 elif on_windows_nt; then
-  echo "  # nop"
+  echo "  : # nop"
 fi)
 }
 
-select_java_env () {
-  local javac="\$1"
-  local d=
-  if [ -x "\$javac" ]; then
-    d="\$(dirname \$javac)"
-    export JAVA_HOME="\$(dirname \$d)"
-    export PATH="\$d:\$(rm_path \$d)"
-    return 0
-  fi
-}
-
 export_java_env () {
-  local javac="\$(check_java_env 2>/dev/null)"
+  local javac="\${1:-\$(check_java_env 2>/dev/null)}"
   if [ ! -x \$javac ]; then
     return 1
   fi
@@ -1006,6 +994,14 @@ export_java_env () {
   fi
   export JAVA_HOME="\$(dirname \$d)"
   export PATH=\$d:\$(rm_path \$d)
+}
+
+select_java_env () {
+  local javac="\$1"
+  if [ ! -x "\$javac" ]; then
+    return 1
+  fi
+  export_java_env "\$javac"
 }
 
 make_java_lsp () {
