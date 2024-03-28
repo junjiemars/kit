@@ -529,15 +529,14 @@ o_check_locale_env=yes
 o_check_bun_env=no
 o_check_java_env=no
 o_check_kube_env=no
+o_check_llvm_env=no
 o_check_nvm_env=no
 o_check_python_env=no
 o_check_racket_env=no
 o_check_rust_env=no
 $(if on_darwin; then
-  echo "o_check_llvm_env=yes"
   echo "o_check_macports_env=yes"
 else
-  echo "o_check_llvm_env=no"
   echo "o_check_macports_env=no"
 fi)
 
@@ -969,9 +968,6 @@ fi)
 
 check_java_env () {
   local javac="\$(where javac 2>/dev/null)"
-  if [ ! -x "\$javac" ] ; then
-    return 1
-  fi
   if ! \$javac -version &>/dev/null; then
     return 1
   fi
@@ -979,7 +975,7 @@ check_java_env () {
 }
 
 export_java_env () {
-  local javac="\${1:-\$(check_java_env 2>/dev/null)}"
+  local javac="\${1:-\$(check_java_env)}"
   local d="\$(dirname \$javac)"
   local java="\${d}/java"
   unset JAVA_HOME
@@ -1273,6 +1269,9 @@ gen_python_env () {
 $(if [ -f "${f}.ori" ]; then
   echo "# origin backup: ${f}.ori"
 fi)
+$(if [ -f "${f}.pre" ]; then
+  echo "# prvious backup: ${f}.pre"
+fi)
 # https://www.python.org
 # https://virtualenv.pypa.io
 # https://pypi.org/project/pip/
@@ -1280,12 +1279,12 @@ fi)
 
 check_python_env () {
   local p3="\$(where python3 2>/dev/null)"
-  if [ -x "\$p3" ]; then
+  if "\$p3" -V &>/dev/null; then
     $printf "%s\n" "\$p3"
     return 0
   fi
   p3="\$(where python 2>/dev/null)"
-  if [ ! -x "\$p3" ]; then
+  if ! "\$p3" -V &>/dev/null; then
     return 1
   fi
   local v3="\$(\$p3 -V|sed 's/^Python \([0-9]*\)\..*$/\1/' 2>/dev/null)"
@@ -1294,12 +1293,12 @@ check_python_env () {
 
 check_python_pip () {
   local p3="\$(where pip3 2>/dev/null)"
-  if [ -x "\$p3" ]; then
+  if "\$p3" -V &>/dev/null; then
     $printf "%s\n" "\$p3"
     return 0
   fi
   p3="\$(where pip 2>/dev/null)"
-  if [ ! -x "\$p3" ]; then
+  if ! "\$p3" -V &>/dev/null; then
     return 1
   fi
   local v3="\$(\$p3 -V|sed 's/.*(python \([0-9]*\)\..*).*/\1/' 2>/dev/null)"
