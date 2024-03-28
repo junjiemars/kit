@@ -972,13 +972,19 @@ check_java_env () {
   if [ ! -x "\$javac" ] ; then
     return 1
   fi
+  if [ ! -L "\$javac" ]; then
+    $printf "\%s\n" "\$javac"
+    return 0
+  fi
 $(if on_darwin; then
-  echo "  [ -L \"\$javac\" ] && echo \$(readlink \"\$javac\")"
+  echo "  javac=\"\$(readlink \"\$javac\")\""
 elif on_linux; then
-  echo "  [ -L \"\$javac\" ] && echo \$(readlink -f \"\$javac\")"
+  echo "  javac=\"\$(readlink -f \"\$javac\")\""
 elif on_windows_nt; then
   echo "  : # nop"
+  return 1
 fi)
+  [ -x "\$javac" ] && $printf "%s\n" "\$javac"
 }
 
 export_java_env () {
