@@ -973,7 +973,7 @@ check_java_env () {
     return 1
   fi
   if [ ! -L "\$javac" ]; then
-    $printf "\%s\n" "\$javac"
+    $printf "%s\n" "\$javac"
     return 0
   fi
 $(if on_darwin; then
