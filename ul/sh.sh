@@ -972,33 +972,37 @@ check_java_env () {
   if [ ! -x "\$javac" ] ; then
     return 1
   fi
-  if [ ! -L "\$javac" ]; then
-    $printf "%s\n" "\$javac"
-    return 0
+  if ! \$javac -version &>/dev/null; then
+    return 1
   fi
-$(if on_darwin; then
-  echo "  javac=\"\$(readlink \"\$javac\")\""
-elif on_linux; then
-  echo "  javac=\"\$(readlink -f \"\$javac\")\""
-elif on_windows_nt; then
-  echo "  : # nop"
-  return 1
-fi)
-  [ -x "\$javac" ] && $printf "%s\n" "\$javac"
+  $printf "%s\n" "\$javac"
 }
 
 export_java_env () {
   local javac="\${1:-\$(check_java_env 2>/dev/null)}"
-  if [ ! -x \$javac ]; then
-    return 1
-  fi
   local d="\$(dirname \$javac)"
   local java="\${d}/java"
+  unset JAVA_HOME
   if [ ! -x "\$java" ]; then
-    unset JAVA_HOME
     return 1
   fi
-  export JAVA_HOME="\$(dirname \$d)"
+  if ! "\$java" -version &>/dev/null; then
+    return 1
+  fi
+$(if on_darwin; then
+  echo "  d=\"\$(/usr/libexec/java_home 2>/dev/null)\""
+  echo "  if [ ! -d \"\$d\" ]; then"
+  echo "    return 1"
+  echo "  fi"
+  echo "  export JAVA_HOME=\"\$d\""
+elif on_linux; then
+  echo "  if [ -L \"\$javac \"]; then"
+  echo "    d=\"\$(readlink -f \"\$javac\")\""
+  echo "  fi"
+  echo "  export JAVA_HOME=\"\$(dirname \$d)\""
+else
+  echo "  export JAVA_HOME=\"\$(dirname \$d)\""
+fi)
   export PATH=\$d:\$(rm_path \$d)
 }
 
