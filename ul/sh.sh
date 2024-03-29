@@ -979,9 +979,6 @@ export_java_env () {
   local d="\$(dirname \$javac)"
   local java="\${d}/java"
   unset JAVA_HOME
-  if [ ! -x "\$java" ]; then
-    return 1
-  fi
   if ! "\$java" -version &>/dev/null; then
     return 1
   fi
@@ -992,8 +989,11 @@ $(if on_darwin; then
   echo "  fi"
   echo "  export JAVA_HOME=\"\$d\""
 elif on_linux; then
-  echo "  if [ -L \"\$javac \"]; then"
-  echo "    d=\"\$(readlink -f \"\$javac\")\""
+  echo "  if [ -L \"\$javac\" ]; then"
+  echo "    d=\"\$(dirname \$(readlink -f \"\$javac\"))\""
+  echo "    if [ ! -d \"\$d\" ]; then"
+  echo "      return 1"
+  echo "    fi"
   echo "  fi"
   echo "  export JAVA_HOME=\"\$(dirname \$d)\""
 else
