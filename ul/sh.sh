@@ -1521,7 +1521,15 @@ make_rust_debug () {
   fi
 }
 
-check_rust_tags () {
+check_rust_tags_option () {
+  local etc="\$(check_rust_etc)"
+  if [ -z "\$etc" ]; then
+    return 1
+  fi
+  $printf "%s\n" "\${etc}/ctags.rust"
+}
+
+check_rust_tags_file () {
   local etc="\$(check_rust_etc)"
   if [ -z "\$etc" ]; then
     return 1
@@ -1543,16 +1551,16 @@ make_rust_tags () {
   if [ -z "\$src" ]; then
     return 1
   fi
-  local tag_opt="\${etc}/ctags.rust"
-  local tag_src="https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/ctags.rust"
+  local tag_opt="\$(check_rust_tags_option)"
   if [ ! -f "\$tag_opt" ]; then
+    local opt_src="https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/ctags.rust"
     $mkdir -p "\${etc}"
-    curl --proto '=https' --tlsv1.2 -sSf "\$tag_src" -o "\$tag_opt"
+    curl --proto '=https' --tlsv1.2 -sSf "\$opt_src" -o "\$tag_opt"
   fi
   if ! where ctags &>/dev/null; then
     return 1
   fi
-  local d="\$(check_rust_tags)"
+  local d="\$(check_rust_tags_file)"
   [ -f "\$d" ] && rm "\$d"
   ctags \$args -R -e -o \$d --options="\$tag_opt" \$src
   $printf "%s\n" "\$d"
