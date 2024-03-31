@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  xxl-job-admin:
+    image: xuxueli/xxl-job-admin:2.3.0
+    container_name: xxl-job-admin
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    resources:
+      limits:
+        cpu: 0.1
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+      - SPRING_DATASOURCE_USERNAME=xxl_job
+      - SPRING_DATASOURCE_PASSWORD=example
+    volumes:
+      - xxl-job-admin_logs:/data/applogs
+#     depends_on:
+#       - mysql
+#   mysql:
+#     image: mysql:latest
+#     container_name: xxl-job-mysql
+#     ports:
+#       - "3306:3306"
+#     restart: on-failure
+#     resources:
+#       limits:
+#         cpu: 0.1
+#     environment:
+#       - MYSQL_ROOT_PASSWORD=example
+#       - MYSQL_DATABASE=xxl_job
+#     volumes:
+#       - ./xxl-job-admin.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  xxl-job-admin_logs:
+    

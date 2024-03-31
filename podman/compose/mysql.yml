@@ -1,21 +1,30 @@
-version: '2.0'
+version: '3.0'
 
 services:
-  db:
+  mysql:
     image: mysql
     container_name: mysql-dev
-    command: --default-authentication-plugin=mysql_native_password --lower_case_table_names=1
-    restart: always
+    # command: --default-authentication-plugin=mysql_native_password --lower_case_table_names=1
+    restart: on-failure # no always on-failure
     environment:
       MYSQL_ROOT_PASSWORD: example
+    resources:
+      limits:
+        cpu: 0.1
     ports:
       - 3306:3306
-
-  # adminer:
+    volumes:
+      - mysql_lib:/var/lib/mysql
+      - mysql_initdb:/docker-entrypoint-initdb.d
+  # mysql-adminer:
   #   image: adminer
-  #   container_name: adminer-dev
+  #   container_name: mysql-adminer-dev
   #   restart: always
   #   ports:
   #     - 8080:8080
-
+volumes:
+  mysql_lib:
+  mysql_initdb:
+    
+#eof
 
