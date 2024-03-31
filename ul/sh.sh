@@ -531,6 +531,7 @@ o_check_java_env=no
 o_check_kube_env=no
 o_check_llvm_env=no
 o_check_nvm_env=no
+o_check_podman_env=no
 o_check_python_env=no
 o_check_racket_env=no
 o_check_rust_env=no
@@ -611,6 +612,11 @@ fi
 if [ "\$o_check_nvm_env" = "yes" ]; then
   [ -f "${vdir}/nvm_env" ] \\
     && . "${vdir}/nvm_env"
+fi
+
+if [ "\$o_check_podman_env" = "yes" ]; then
+  [ -f "${vdir}/podman_env" ] \\
+    && . "${vdir}/podman_env"
 fi
 
 if [ "\$o_check_python_env" = "yes" ]; then
@@ -1237,18 +1243,19 @@ fi)
 #------------------------------------------------
 
 check_podman_env () {
-  local d="\${HOME}/.config"
-  local r="\${d}/registries.conf"
-  local c="\$1"
-  case \$c in
-    mirror)
-      echo "[registries.search]\nregistries = ['registry.access.redhat.com','registry.redhat.io','docker.io']" >> "\$r"
-      ;;
-    *)
-      where podman; echo "\$d"
-      ;;
-  esac
+  if ! podman -v &>/dev/null; then
+     return 1
+  fi
+  local r="\${HOME}/.config/registries.conf"
+  [ -r "\$r" ] && $printf "%s\n" "\$(where podman)"
 }
+
+check_podman_registry () {
+  $printf "%s\n" 'docker.io'
+  $printf "%s\n" 'registry.access.redhat.com'
+  $printf "%s\n" 'registry.redhat.io'
+}
+
 
 # eof
 EOF
