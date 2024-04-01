@@ -20,13 +20,13 @@ exec:
 							-e COLUMNS=$(COLUMNS) \
 							-e TERM=$(TERM) \
 							-it \
-							xxl-job-admin-dev /bin/bash
+							xxl-job-admin /bin/bash
 
 start: $(compose_file)
 	podman-compose -f $< start
 
-down: $(compose_file)
-	podman-compose -f $< down
+stop: $(compose_file)
+	podman-compose -f $< stop
 
 initdb: $(initdb_sql)
 	podman cp $< mysql-dev:/docker-entrypoint-initdb.d/init.sql
