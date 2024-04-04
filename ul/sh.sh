@@ -1103,15 +1103,41 @@ gen_llvm_env () {
 $(if [ -f "${f}.ori" ]; then
   echo "# origin backup: ${f}.ori"
 fi)
+$(if [ -f "${f}.pre" ]; then
+  echo "# previous backup: ${f}.pre"
+fi)
 # https://llvm.org
 #------------------------------------------------
 
-if [ \"\$o_check_llvm_env\" = \"yes\" -a -n \"\$LLVM_DIR\" ]; then
-  bin_path=\"\${LLVM_DIR}/bin:\${LLVM_DIR}/sbin:\$bin_path\"
-  lib_path=\"\${LLVM_DIR}/lib:\$lib_path\"
+# https://clangd.llvm.org/installation
+check_llvm_clangd () {
+  if clangd --version &>/dev/null; then
+    return 0
+  fi
+$(if on_darwin; then
+  echo "  echo \"sudo port install clang-12\""
+elif on_linux; then
+  echo "  echo \"sudo apt install clang-12\""
 else
-  unset LLVM_DIR
-fi
+  echo "  :"
+fi)
+  return 1
+}
+
+# https://github.com/rizsotto/Bear?tab=readme-ov-file
+check_bear () {
+  if bear --version &>/dev/null; then
+    return 0
+  fi
+$(if on_darwin; then
+  echo "  echo \"sudo port install bear\""
+elif on_linux; then
+  echo "  echo \"sudo apt install bear\""
+else
+  echo "  :"
+fi)
+  return 1
+}
 
 # eof
 EOF
@@ -1698,13 +1724,13 @@ gen_shell_completion_env
 gen_bun_env
 gen_java_env
 gen_kube_env
+gen_llvm_env
 gen_nvm_env
 gen_podman_env
 gen_python_env
 gen_racket_env
 gen_rust_env
 if on_darwin; then
-  gen_llvm_env
   gen_macports_env
 fi
 
