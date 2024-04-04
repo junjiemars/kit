@@ -1174,17 +1174,36 @@ check_macports_env () {
   fi
 }
 
+check_macports_llvm_env () {
+  local p="/opt/local/libexec/llvm"
+  if [ ! -d "\$p" ]; then
+    # sudo port install llvm-12
+    return 1
+  fi
+  $printf "%s\n" "\${p}"
+  return 0
+}
+
 export_macports_env () {
-  local p=""
+  local p=
   if ! check_macports_env; then
     return 1
   fi
+  local lp=
   if [ "\$o_export_path_env" = "yes" ]; then
+    lp="\$(check_macports_llvm_env)"
+    if [ -d "\${lp}/bin" ]; then
+      PATH=\${lp}/bin:\$(rm_path "\${lp}/bin" "\$PATH")
+    fi
     p=\${MACPORTS_HOME}/sbin:\$(rm_path "\${MACPORTS_HOME}/sbin" "\$PATH")
     p=\${MACPORTS_HOME}/bin:\$(rm_path "\${MACPORTS_HOME}/bin" "\$p")
     export PATH=\$p
   fi
   if [ "\$o_export_libpath_env" = "yes" ]; then
+    lp="\$(check_macports_llvm_env)"
+    if [ -d "\${lp}/lib" ]; then
+      DYLD_LIBRARY_PATH=\${lp}/lib:\$(rm_path "\${lp}/lib" "\$DYLD_LIBRARY_PATH")
+    fi
     p=\${MACPORTS_HOME}/lib:\$(rm_path "\${MACPORTS_HOME}/lib" "\$DYLD_LIBRARY_PATH")
     export DYLD_LIBRARY_PATH=\$p
   fi
