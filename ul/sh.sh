@@ -1352,7 +1352,9 @@ make_python_lsp () {
   if [ ! -d "\$opt_bin" ]; then
     return 1
   fi
-  \$pip install python-lsp-server
+  if ! \$pip install python-lsp-server &>/dev/null; then
+    \$pip install python-lsp-server
+  fi
   local sr="\$(\$py -c'import sys;print(sys.prefix)' 2>/dev/null)"
   local pylsp="\${sr}/bin/pylsp"
   if [ ! -f "\$pylsp" ]; then
