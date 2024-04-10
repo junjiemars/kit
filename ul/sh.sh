@@ -658,20 +658,31 @@ $(if [ -f "${f}.pre" ]; then
 fi)
 #------------------------------------------------
 
+norm_path() {
+  echo \$1 \\
+    | $tr ':' '\n' \\
+    | $sed '/^$/d' \\
+    | $tr '\n' ':' \\
+    | $sed 's_:*\$__'
+}
+
 uniq_path() {
   $printf "\$*" \\
     | $awk -v RS=':' '\$0 && !a[\$0]++{printf "%s:",\$0}' \\
-    | $sed 's/:*$//'
+    | $sed 's_:*\$__'
 }
 
 rm_path() {
-  local pd="\$1"
-  local ph="\${2:-\$PATH}"
+  local pd="\$(norm_path \$1)"
+  local ph="\$(norm_path \$2)"
+  if [ -z "\$pd" -o -z "\$ph" ]; then
+    return 1
+  fi
   local pr=\$(echo \$ph \\
               | $tr ':' '\n' \\
-              | $grep -v "\$pd" \\
+              | $grep -v "^\${pd}\$" \\
               | $tr '\n' ':' \\
-              | $sed 's/:*\$//')
+              | $sed 's_:*\$__')
   $printf "%s\n" \$pr
 }
 
@@ -1005,7 +1016,9 @@ elif on_linux; then
 else
   echo "  export JAVA_HOME=\"\$(dirname \$d)\""
 fi)
-  export PATH=\$d:\$(rm_path \$d)
+  local p="\$PATH"
+  p="\$(norm_path \$d:\$(rm_path \$d \$p))"
+  [ -z "\$p" ] || export PATH="\$p"
 }
 
 select_java_env () {
@@ -1165,53 +1178,68 @@ fi)
 #------------------------------------------------
 
 check_macports_env () {
-  if [ -x "/opt/local/bin/port" ]; then
-    MACPORTS_HOME=/opt/local
-    return 0
-  else
-    unset MACPORTS_HOME
+  if [ ! -x "/opt/local/bin/port" ]; then
     return 1
   fi
+  printf "%s\n" "/opt/local"
+  return 0
 }
 
 check_macports_llvm_env () {
   local p="/opt/local/libexec/llvm"
-  if [ ! -d "\$p" ]; then
+  if [ ! -L "\$p" ]; then
     # sudo port install llvm-12
     return 1
   fi
-  $printf "%s\n" "\${p}"
+  $printf "%s\n" "\$p"
   return 0
 }
 
-export_macports_env () {
-  local p=
-  if ! check_macports_env; then
+export_macports_path () {
+  local h="\$(check_macports_env)"
+  if [ -z "\$h" ]; then
     return 1
   fi
-  local lp=
-  if [ "\$o_export_path_env" = "yes" ]; then
-    lp="\$(check_macports_llvm_env)"
-    if [ -d "\${lp}/bin" ]; then
-      PATH=\${lp}/bin:\$(rm_path "\${lp}/bin" "\$PATH")
-    fi
-    p=\${MACPORTS_HOME}/sbin:\$(rm_path "\${MACPORTS_HOME}/sbin" "\$PATH")
-    p=\${MACPORTS_HOME}/bin:\$(rm_path "\${MACPORTS_HOME}/bin" "\$p")
-    export PATH=\$p
+  local p=
+  local o=
+  o="\$(check_macports_llvm_env)"
+  p="\$PATH"
+  if [ -d "\${o}/bin" ]; then
+    p="\${o}/bin:\$(rm_path \${o}/bin \$p)"
   fi
-  if [ "\$o_export_libpath_env" = "yes" ]; then
-    lp="\$(check_macports_llvm_env)"
-    if [ -d "\${lp}/lib" ]; then
-      DYLD_LIBRARY_PATH=\${lp}/lib:\$(rm_path "\${lp}/lib" "\$DYLD_LIBRARY_PATH")
-    fi
-    p=\${MACPORTS_HOME}/lib:\$(rm_path "\${MACPORTS_HOME}/lib" "\$DYLD_LIBRARY_PATH")
-    export DYLD_LIBRARY_PATH=\$p
+  if [ -d "\${h}/sbin" ]; then
+    p="\$(norm_path \${h}/sbin:\$(rm_path \${h}/sbin \$p))"
   fi
-  return 0
+  if [ -d "\${h}/bin" ]; then
+    p="\$(norm_path \${h}/bin:\$(rm_path \${h}/bin \$p))"
+  fi
+  [ -z "\$p" ] || export PATH="\$p"
 }
 
-if [ "\$o_check_macports_env" = "yes" ]; then
-  export_macports_env
+export_macports_libpath () {
+  local h="\$(check_macports_env)"
+  if [ -z "\$h" ]; then
+    return 1
+  fi
+  local p=
+  local o=
+  o="\$(check_macports_llvm_env)"
+  p="\$DYLD_LIBRARY_PATH"
+  if [ -d "\${o}/lib" ]; then
+    p="\$(norm_path \${o}/lib:\$(rm_path \${o}/lib \$p))"
+  fi
+  if [ -d "\${h}/lib" ]; then
+    p="\$(norm_path \${h}/lib:\$(rm_path \${h}/lib \$p))"
+  fi
+  [ -z "\$p" ] || export DYLD_LIBRARY_PATH="\$p"
+}
+
+if [ "\$o_export_path_env" = "yes" ]; then
+  export_macports_path
+fi
+
+if [ "\$o_export_libpath_env" = "yes" ]; then
+  export_macports_libpath
 fi
 
 # eof
@@ -1624,9 +1652,16 @@ export_rust_env () {
   local h="\$(check_rust_env)";
   unset CARGO_HOME
   if [ -d "\$h" ]; then
-    CARGO_HOME="\${HOME}/.cargo"
-    PATH="\${CARGO_HOME}/bin:\$(rm_path \${CARGO_HOME}/bin)"
-    export PATH="\${h}/bin:\$(rm_path \${h}/bin)"
+    local o="\${HOME}/.cargo"
+    local p="\$PATH"
+    if [ -d "\${o}/bin" ]; then
+      p="\$(norm_path \${o}/bin:\$(rm_path \${o}/bin \$p))"
+      CARGO_HOME="\${o}"
+    fi
+    if [ -d "\${h}/bin" ]; then
+      p="\$(norm_path \${h}/bin:\$(rm_path \${h}/bin \$p))"
+    fi
+    export PATH="\$p"
   fi
 }
 
