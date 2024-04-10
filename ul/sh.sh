@@ -859,6 +859,9 @@ gen_shell_locale_env () {
 $(if [ -f "${f}.ori" ]; then
   echo "# origin backup: ${f}.ori"
 fi)
+$(if [ -f "${f}.pre" ]; then
+  echo "# previous backup: ${f}.pre"
+fi)
 #------------------------------------------------
 
 check_locale_env () {
@@ -874,7 +877,7 @@ elif on_darwin; then
 elif on_linux; then
   $printf "  # sudo dpkg-reconfigure locales\n"
   $printf "  if \$(locale -a|grep \"$la\" 2>/dev/null >&2); then\n"
-  $printf "    export LANG=\"\$la\"\n"
+  printf "    export LANG=\"\$la\"\n"
   $printf "  fi\n"
   $printf "  export LC_ALL=\"\$lc\"\n"
 else
