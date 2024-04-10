@@ -862,26 +862,24 @@ fi)
 #------------------------------------------------
 
 check_locale_env () {
-  $(if on_windows_nt; then
-    echo "# change code page to unicode"
-    echo "  chcp.com 65001 &>/dev/null"
-    echo "  export LANG=\"en_US.UTF-8\""
-  elif on_darwin; then
-    echo "local la=\"en_US.utf8\""
-    echo "local lc=\"en_US.utf8\""
-    echo "export LANG=\"\$la\""
-    echo "  export LC_ALL=\"\$lc\""
-  elif on_linux; then
-    echo "local la=\"en_US.utf8\""
-    echo "local lc=\"en_US.utf8\""
-    echo "# sudo dpkg-reconfigure locales"
-    echo "  if \$(locale -a|grep \"$la\" 2>/dev/null >&2); then"
-    echo "    export LANG=\"\$la\""
-    echo "  fi"
-    echo "  export LC_ALL=\"\$lc\""
-  else
-    echo "export LC_ALL=C"
-  fi)
+  local la="en_US.utf8"
+  local lc="en_US.utf8"
+$(if on_windows_nt; then
+  $printf "  # change code page to unicode\n"
+  $printf "  chcp.com 65001 &>/dev/null\n"
+  $printf "  export LANG=\"\$la\"\n"
+elif on_darwin; then
+  $printf "  export LANG=\"\$la\"\n"
+  $printf "  export LC_ALL=\"\$lc\"\n"
+elif on_linux; then
+  $printf "  # sudo dpkg-reconfigure locales\n"
+  $printf "  if \$(locale -a|grep \"$la\" 2>/dev/null >&2); then\n"
+  $printf "    export LANG=\"\$la\"\n"
+  $printf "  fi\n"
+  $printf "  export LC_ALL=\"\$lc\"\n"
+else
+  $printf "export LC_ALL=C"
+fi)
 }
 
 # eof
