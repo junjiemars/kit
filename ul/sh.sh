@@ -1338,7 +1338,11 @@ make_oracle_sqlplus_sh () {
   cat <<END > "\$sqlplus_sh"
 #!$SHELL
 export ORACLE_HOME="\$(dirname \$s)"
-export LD_LIBRARY_PATH="\$(dirname \$s)"
+$(if on_darwin; then
+echo "export DYLD_LIBRARY_PATH=\"\$(dirname \$s)\""
+else
+echo "export LD_LIBRARY_PATH=\"\$(dirname \$s)\""
+fi)
 export NLS_LANG="\${NLS_PATH:-AMERICAN_AMERICA.UTF8}"
 exec \$s \\\$@
 END
