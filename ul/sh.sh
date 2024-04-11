@@ -1317,51 +1317,32 @@ fi)
 # https://developer.oracle.com/
 #------------------------------------------------
 
-sqlplus=
-
 check_oracle_env () {
   :
 }
 
 export_oracle_env () {
-  local d="\$1"
-  unset ORACLE_HOME
-  unset NLS_LANG
-  if [ -d "\$d" ]; then
-    return 1
-  fi
-  export ORACLE_HOME="\$d"
-  export NLS_LANG="AMERICAN_AMERICA.UTF8"
-  local p="\$LD_LIBRARY_PATH"
-  p="\$(norm_path \$d:\$(rm_path \$d \$p))"
-  [ ! -d "\$p" ] || export LD_LIBRARY_PATH="\$p"
+  :
 }
 
-select_oracle_sqlplus_env () {
+make_oracle_sqlplus_sh () {
   local s="\$1"
   if [ ! -x "\$s" ]; then
     return 1
   fi
-  local d="\$(dirname \$s)"
-  sqlplus="\$s"
-  if [ -f "\${d}/libsqlplus.so" ]; then
-    export_oracle_env "\$d"
-    return 0
-  fi
-  if [ -f "\${d}/lib/libocci.so" ]; then
-    export_oracle_env "\$d"
-    return 0
-  fi
-  sqlplus=
-  return 1
-}
-
-run_oracle_sqlplus () {
-  echo "\$sqlplus \$@"
-  if [ -z "\$sqlplus" -o ! -x "\$sqlplus" ]; then
+  local opt_bin="\$(check_opt_dir)/run/bin"
+  if [ ! -d "\$opt_bin" ]; then
     return 1
   fi
-  exec \$sqlplus \$@
+  local sqlplus_sh="\${opt_bin}/sqlplus.sh"
+  cat <<END > "\$sqlplus_sh"
+#!$SHELL
+export ORACLE_HOME="\$(dirname \$s)"
+export LD_LIBRARY_PATH="\$(dirname \$s)"
+export NLS_LANG="\${NLS_PATH:-AMERICAN_AMERICA.UTF8}"
+exec \$s \\\$@
+END
+  $chmod u+x "\$sqlplus_sh"
 }
 
 if [ "\$o_check_oracle_env" = "yes" ]; then
@@ -1514,7 +1495,7 @@ make_python_lsp () {
   local ve="\${sr}/bin/activate"
   local pylsp_sh="\${opt_bin}/pylsp.sh"
   cat <<END > "\$pylsp_sh"
-#!$(where sh)
+#!$SHELL
 \$(if [ -f "\$ve" ]; then
   echo ". \"\$ve\""
 fi)
