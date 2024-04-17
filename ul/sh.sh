@@ -933,6 +933,7 @@ export_java_env () {
   fi
 $(if on_darwin; then
   echo "  d=\"\$(/usr/libexec/java_home 2>/dev/null)\""
+  echo "  # filter version: /usr/libexec/java_home -F -v 17"
   echo "  if [ ! -d \"\$d\" ]; then"
   echo "    return 1"
   echo "  fi"
