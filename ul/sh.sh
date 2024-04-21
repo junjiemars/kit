@@ -1674,6 +1674,7 @@ gen_unix_env () {
 #   $SH <($SH_ENV)
 #	https://github.com/mit-pdos/xv6-public.git
 # https://github.com/mit-pdos/xv6-riscv.git
+# https://github.com/rstallman/UNIX-System-V-Release-4-source-code.git
 #------------------------------------------------
 
 EOF
