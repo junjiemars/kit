@@ -29,8 +29,10 @@ mkdir=$(PATH=$PH command -v mkdir)
 printf=$(PATH=$PH command -v printf)
 ps=$(PATH=$PH command -v ps)
 rm=$(PATH=$PH command -v rm)
+stat=$(PATH=$PH command -v stat)
 sed=$(PATH=$PH command -v sed)
 sort=$(PATH=$PH command -v sort)
+tail=$(PATH=$PH command -v tail)
 tr=$(PATH=$PH command -v tr)
 uname=$(PATH=$PH command -v uname)
 uniq=$(PATH=$PH command -v uniq)
@@ -282,18 +284,18 @@ alias ..2='cd ../../'
 alias ..3='cd ../../../'
 alias ..4='cd ../../../../'
 
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
+alias grep="$grep --color=auto"
+alias fgrep="$grep -F --color=auto"
 
 $(if on_darwin; then
-  echo "alias ls='ls -G'"
-  echo "alias ll='ls -lh -G'"
-  echo "alias tailf='tail -f'"
-  echo "alias stat='stat -x'"
+  echo "alias ls=\"$ls -G\""
+  echo "alias ll=\"$ls -lh -G\""
+  echo "alias tailf=\"$tail -f\""
+  echo "# alias stat=\"$stat -x\""
 else
-  echo "alias ls='ls --color=auto'"
-  echo "alias ll='ls -lh --color=auto'"
-  echo "alias l='ls -CF --color=auto'"
+  echo "alias ls=\"$ls --color=auto\""
+  echo "alias ll=\"$ls -lh --color=auto\""
+  echo "alias l=\"$ls -CF --color=auto\""
 fi)
 
 alias_emacs () {
