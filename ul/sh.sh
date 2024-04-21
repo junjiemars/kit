@@ -24,6 +24,7 @@ env=$(PATH=$PH command -v env)
 find=$(PATH=$PH command -v find)
 grep=$(PATH=$PH command -v grep)
 iconv=$(PATH=$PH command -v iconv)
+locale=$(PATH=$PH command -v locale)
 ls=$(PATH=$PH command -v ls)
 mkdir=$(PATH=$PH command -v mkdir)
 printf=$(PATH=$PH command -v printf)
@@ -284,18 +285,18 @@ alias ..2='cd ../../'
 alias ..3='cd ../../../'
 alias ..4='cd ../../../../'
 
-alias grep="$grep --color=auto"
-alias fgrep="$grep -F --color=auto"
+alias grep='grep --color=auto'
+alias fgrep='grep -F --color=auto'
 
 $(if on_darwin; then
-  echo "alias ls=\"$ls -G\""
-  echo "alias ll=\"$ls -lh -G\""
-  echo "alias tailf=\"$tail -f\""
-  echo "# alias stat=\"$stat -x\""
+  echo "alias ls='ls -G'"
+  echo "alias ll='ls -lh -G'"
+  echo "alias tailf='tail -f'"
+  echo "# alias stat='stat -x'"
 else
-  echo "alias ls=\"$ls --color=auto\""
-  echo "alias ll=\"$ls -lh --color=auto\""
-  echo "alias l=\"$ls -CF --color=auto\""
+  echo "alias ls='ls --color=auto'"
+  echo "alias ll='ls -lh --color=auto'"
+  echo "alias l='ls -CF --color=auto'"
 fi)
 
 alias_emacs () {
@@ -496,14 +497,14 @@ gen_shell_vars () {
   local fnew="${fb}.new"
   local fold="${fb}.old"
   local fent="${fb}.ent"
-  cat <<EOF>"$fnew"
+  $cat <<EOF>"$fnew"
 o_check_prompt_env=yes
 o_check_completion_env=yes
 o_check_locale_env=yes
 o_check_logout_env=no
 o_check_path_env=yes
 o_check_util_env=yes
-o_check_alias_env=yes
+o_check_alias_env=no
 o_check_bun_env=no
 o_check_java_env=no
 o_check_kube_env=no
@@ -522,12 +523,15 @@ fi)
 o_export_libpath_env=no
 o_export_path_env=yes
 EOF
-  $cp "$fnew" "$fbuf"
+  $cat </dev/null > "$fbuf"
   if [ -f "$f" ]; then
     $cat "$fnew"|$sed -n 's/^\(o_.*_env\)=.*$/\1/p' > "$fent"
     $cat "$f"|$sed -n 's/^\(o_.*_env\)=.*$/\1/p' > "$fold"
     $grep -f "$fent" "$f" 2>/dev/null >> "$fbuf"
     $grep -vf "$fold" "$fnew" 2>/dev/null >> "$fbuf"
+  fi
+  if ! $grep '^o_.*_env=.*$' "$fbuf" &>/dev/null; then
+    $cp "$fnew" "$fbuf"
   fi
   $printf "+ generate $f ... "
   $cat << EOF > "$f"
@@ -545,7 +549,7 @@ $(if [ -f "${f}.pre" ]; then
 fi)
 #------------------------------------------------
 
-$($cat "${fbuf}"|$sort|uniq)
+$($cat "${fbuf}"|$sort|$uniq)
 
 # eof
 EOF
@@ -565,6 +569,11 @@ gen_shell_check () {
 #   $SH <($SH_ENV)
 #------------------------------------------------
 
+if [ "\$o_check_path_env" = "yes" ]; then
+  [ -f "${h}/path_env" ] \\
+    && . "${h}/path_env"
+fi
+
 if [ "\$o_check_prompt_env" = "yes" ]; then
   [ -f "${h}/prompt_env" ] \\
 	  && . "${h}/prompt_env"
@@ -578,11 +587,6 @@ fi
 if [ "\$o_check_completion_env" = "yes" ]; then
   [ -f "${h}/completion_env" ] \\
     && . "${h}/completion_env"
-fi
-
-if [ "\$o_check_path_env" = "yes" ]; then
-  [ -f "${h}/path_env" ] \\
-    && . "${h}/path_env"
 fi
 
 if [ "\$o_check_util_env" = "yes" ]; then
@@ -737,14 +741,13 @@ $(if on_windows_nt; then
 fi)
 
 export_path_env () {
-  local bin_path="\$PATH:\$PH"
+  local bin_path="\${PATH}:${PH}"
   $(if on_darwin; then
     echo "local lib_path=\"\$DYLD_LIBRARY_PATH\""
   else
     echo "local lib_path=\"\$LD_LIBRARY_PATH\""
   fi)
   local opt_path="\$(check_opt_dir)"
-
   # /opt/run
   bin_path="\${opt_path}/run/bin:\$bin_path"
   lib_path="\${opt_path}/run/lib:\$lib_path"
@@ -752,21 +755,25 @@ export_path_env () {
   $(if on_windows_nt; then
     echo "bin_path=\"$(sort_path \$bin_path)\""
   fi)
-
+  local p=""
   # export path env
-  if [ "\$o_export_path_env" = "yes" ]; then
-    export PATH="\$(uniq_path \$bin_path)"
+  if [ "\$o_check_path_env" = "yes" ]; then
+    p="\$(norm_path \$(uniq_path \$bin_path))"
+    [ -z "\$p" ] || export PATH="\$p"
   fi
-
   # export libpath env
   if [ "\$o_export_libpath_env" = "yes" ]; then
     $(if on_darwin; then
-      echo "export DYLD_LIBRARY_PATH=\"\$(uniq_path \${lib_path})\""
+      p="\"\$(norm_path \$(uniq_path \${lib_path}))\""
+      echo "[ -z \"\$p\" ] || export DYLD_LIBRARY_PATH=\"\$p\""
     else
-      echo "export LD_LIBRARY_PATH=\"\$(uniq_path \${lib_path})\""
+      p="\"\$(norm_path \$(uniq_path \${lib_path}))\""
+      echo "[ -z \"\$p\" ] || export LD_LIBRARY_PATH=\"\$p\""
     fi)
   fi
 }
+
+export_path_env
 
 # eof
 EOF
