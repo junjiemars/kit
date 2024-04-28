@@ -17,7 +17,7 @@ E_EXEC=
 
 check_version() {
 	local b="$1"
-	
+
 	if [ ! -x "$b" ]; then
 		echo "!invalid emacs bin path: $b"
 		return 1
@@ -27,7 +27,7 @@ check_version() {
 	if [ -z "$v" ]; then
 		echo "!get version info from: $b failed"
 		return 1
-	fi 
+	fi
 
 	echo "$v"
 	return 0
@@ -63,12 +63,12 @@ get_prefix() {
 for option
 do
   opt="$opt `echo $option | sed -e \"s/\(--[^=]*=\)\(.* .*\)/\1'\2'/\"`"
-  
+
   case "$option" in
     -*=*) value=`echo "$option" | sed -e 's/[-_a-zA-Z0-9]*=//'` ;;
     *) value="" ;;
   esac
-  
+
   case "$option" in
     --emacs-bin-path=*)      e_bin_path="$value" 		    ;;
     --terminal)              E_TERMINAL="yes"  		      ;;
@@ -137,4 +137,8 @@ END
 
 chmod 644 ${E_DESKTOP_NAME}
 
+# /usr/share/applications
+# /usr/local/share/applications
+# ~/.local/share/applications
+# /var/lib/snapd/desktop/applications
 # sudo cp ${E_DESKTOP_NAME} /usr/share/applications/

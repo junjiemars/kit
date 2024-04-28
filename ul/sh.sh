@@ -711,14 +711,14 @@ posix_path() {
 check_opt_dir () {
   $(if on_windows_nt; then
     echo "  if [ -d \"\/d\" ]; then"
-    echo "    [ -d \"/d/opt\" ] || $mkdir -p \"/d/opt\""
-    echo "    echo \"/d/opt\""
+    echo "    [ -d \"/d/opt/nore\" ] || $mkdir -p \"/d/opt/nore\""
+    echo "    echo \"/d/opt/nore\""
     echo "  else"
-    echo "    [ -d \"/c/opt\" ] || $mkdir -p \"/c/opt\""
-    echo "    echo \"/c/opt\""
+    echo "    [ -d \"/c/opt/nore\" ] || $mkdir -p \"/c/opt/nore\""
+    echo "    echo \"/c/opt/nore\""
     echo "  fi"
   else
-    echo "  [ -d \"/opt\" ] && echo \"/opt\""
+    echo "  [ -d \"/opt/nore\" ] && echo \"/opt/nore\""
   fi)
 }
 
@@ -726,7 +726,7 @@ $(if on_windows_nt; then
   echo "sort_path () {"
   echo "  # let MSYS_NT and user defined commands first"
   echo "  local ps=\$@"
-  echo "  local opt_p=\$(check_opt_dir)/nore/bin"
+  echo "  local opt_p=\$(check_opt_dir)/bin"
   echo "  local win_p='^/c/'"
   echo "  local opt="
   echo "  local ori="
@@ -748,9 +748,8 @@ export_path_env () {
     echo "local lib_path=\"\$LD_LIBRARY_PATH\""
   fi)
   local opt_path="\$(check_opt_dir)"
-  # /opt/nore
-  bin_path="\${opt_path}/nore/bin:\$bin_path"
-  lib_path="\${opt_path}/nore/lib:\$lib_path"
+  bin_path="\${opt_path}/bin:\$bin_path"
+  lib_path="\${opt_path}/lib:\$lib_path"
 
   $(if on_windows_nt; then
     echo "bin_path=\"$(sort_path \$bin_path)\""
@@ -1275,7 +1274,7 @@ make_oracle_sqlplus_sh () {
   if [ ! -x "\$s" ]; then
     return 1
   fi
-  local opt_bin="\$(check_opt_dir)/nore/bin"
+  local opt_bin="\$(check_opt_dir)/bin"
   if [ ! -d "\$opt_bin" ]; then
     return 1
   fi
@@ -1415,7 +1414,7 @@ make_python_lsp () {
   if [ -z "\$pip" ]; then
     return 1
   fi
-  local opt_bin="\$(check_opt_dir)/nore/bin"
+  local opt_bin="\$(check_opt_dir)/bin"
   if [ ! -d "\$opt_bin" ]; then
     return 1
   fi
