@@ -1344,6 +1344,10 @@ END
   $chmod u+x "\$sqlplus_sh"
 }
 
+check_oracle_sample_schemas () {
+  $printf "%s\n" 'https://github.com/oracle-samples/db-sample-schemas'
+}
+
 if [ "\$o_check_oracle_env" = "yes" ]; then
   :
 fi
