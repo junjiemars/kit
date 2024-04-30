@@ -1014,6 +1014,57 @@ make_java_lsp () {
   : #nop
 }
 
+make_java_maven_settings () {
+  cat <<END>/dev/stdout
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 http://maven.apache.org/xsd/settings-1.2.0.xsd">
+  <!--
+  <servers>
+    <server>
+      <id>maven-http-local-public</id>
+      <username>username1</username>
+      <password>password1</password>
+    </server>
+    <server>
+      <id>maven-http-local-snapshots</id>
+      <username>username1</username>
+      <password>password1</password>
+    </server>
+  </servers>
+  -->
+  <mirrors>
+    <mirror>
+      <id>maven-http-local-public</id>
+      <mirrorOf>external:http:*</mirrorOf>
+      <name>maven-http-local-public</name>
+      <url>http://127.0.0.1:8081/repository/maven-public/</url>
+    </mirror>
+    <mirror>
+      <id>maven-http-local-snapshots</id>
+      <mirrorOf>external:http:*</mirrorOf>
+      <name>maven-http-local-snapshots</name>
+      <url>http://127.0.0.1:8081/repository/maven-snapshots/</url>
+      <username>admin</username>
+      <password>admin123</password>
+    </mirror>
+    <mirror>
+      <id>nexus-aliyun</id>
+      <mirrorOf>central</mirrorOf>
+      <name>Nexus aliyun</name>
+      <url>https://maven.aliyun.com/repository/public</url>
+    </mirror>
+    <mirror>
+      <id>nexus-aliyun-snapshots</id>
+      <mirrorOf>cental-snapshots</mirrorOf>
+      <name>Nexus aliyun snapshots</name>
+      <url>https://maven.aliyun.com/repository/snapshots</url>
+    </mirror>
+  </mirrors>
+</settings>
+END
+}
+
 # eof
 EOF
   echo_yes_or_no $?
