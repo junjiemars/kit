@@ -1045,8 +1045,6 @@ make_java_maven_settings () {
       <mirrorOf>external:http:*</mirrorOf>
       <name>maven-http-local-snapshots</name>
       <url>http://127.0.0.1:8081/repository/maven-snapshots/</url>
-      <username>admin</username>
-      <password>admin123</password>
     </mirror>
     <mirror>
       <id>nexus-aliyun</id>
