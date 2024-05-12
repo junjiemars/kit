@@ -1,9 +1,10 @@
 .tables
 .object.list
+**/*.log
 object.list
 ul/oracle/.tables-trimed
 .*.sql
-exp-*.log
+
 exp-*.sql
 
 *.buf

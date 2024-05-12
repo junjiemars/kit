@@ -1373,7 +1373,7 @@ check_podman_env () {
      return 1
   fi
   local r="\${HOME}/.config/registries.conf"
-  [ -r "\$r" ] && $printf "%s\n" "\$(where podman)"
+  [ -r "\$r" ] && $printf "%s\n" "\$(command -v podman)"
 }
 
 check_podman_registry () {
@@ -1382,6 +1382,14 @@ check_podman_registry () {
   $printf "%s\n" 'registry.redhat.io'
 }
 
+check_podman_config () {
+  local f="\${HOME}/.config/registries.conf"
+  [ -f "\$f" ] && $printf "%s\n" "\$f"
+  f="\${HOME}/.config/containers/podman"
+  [ -d "\$f" ] && $find "\$f"
+  f="\${HOME}/.local/share/containers/podman"
+  [ -d "\$f" ] && $find "\$f"
+}
 
 # eof
 EOF
