@@ -861,7 +861,7 @@ gen_shell_locale_env () {
 #   $SH <($SH_ENV)
 #------------------------------------------------
 
-check_locale_env () {
+export_locale_env () {
   local la="en_US.utf8"
   local lc="en_US.utf8"
 $(if on_windows_nt; then
@@ -882,6 +882,7 @@ else
 fi)
 }
 
+export_locale_env
 # eof
 EOF
   echo_yes_or_no $?
