@@ -1632,14 +1632,14 @@ make_rust_debug () {
   local lldb="\${etc}/lldb_commands"
   local from="/rustc/\${hash}"
   if [ -f "\$gdb" ]; then
-     if ! $grep 'set substitute-path' \$gdb &>/dev/null; then
+     if ! $grep -q 'set substitute-path' \$gdb; then
        $cp \$gdb \${gdb}.b0
      fi
      $sed -i.b1 '/set substitute-path/d' \$gdb
      $printf "gdb.execute('set substitute-path \$from \$src')" >> \$gdb
   fi
   if [ -f "\$lldb" ]; then
-    if ! $grep 'settings set target.source-map' \$lldb &>/dev/null; then
+    if ! $grep -q 'settings set target.source-map' \$lldb; then
       $cp \$lldb \${lldb}.b0
     fi
     $sed -i.b1 '/settings set target\.source-map/d' \$lldb
