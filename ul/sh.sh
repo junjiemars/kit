@@ -243,7 +243,7 @@ inside_container_p () {
     return 0
   fi
   if [ -f /proc/1/cgroup ]; then
-    if $cat /proc/1/cgroup | $grep '/docker/' >/dev/null; then
+    if $cat /proc/1/cgroup | $grep -q '/docker/'; then
       export INSIDE_CONTAINER=1
       return 0
     fi
@@ -530,7 +530,7 @@ EOF
     $grep -f "$fent" "$f" 2>/dev/null >> "$fbuf"
     $grep -vf "$fold" "$fnew" 2>/dev/null >> "$fbuf"
   fi
-  if ! $grep '^o_.*_env=.*$' "$fbuf" &>/dev/null; then
+  if ! $grep -q '^o_.*_env=.*$' "$fbuf"; then
     $cp "$fnew" "$fbuf"
   fi
   $printf "+ generate $f ... "
@@ -873,7 +873,7 @@ elif on_darwin; then
   $printf "  export LC_ALL=\"\$lc\"\n"
 elif on_linux; then
   $printf "  # sudo dpkg-reconfigure locales\n"
-  $printf "  if \$(locale -a|grep \"$la\" 2>/dev/null >&2); then\n"
+  $printf "  if \$(locale -a|grep -q \"$la\"); then\n"
   printf "    export LANG=\"\$la\"\n"
   $printf "  fi\n"
   $printf "  export LC_ALL=\"\$lc\"\n"
