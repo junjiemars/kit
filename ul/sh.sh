@@ -1581,6 +1581,27 @@ install_rustup () {
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 }
 
+check_rust_cargo_mirror () {
+  $printf "%s %s\n" 'tuna' 'https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git'
+  $printf "%s %s\n" 'ustc' 'https://mirrors.ustc.edu.cn/crates.io-index'
+  $printf "%s %s\n" 'aliyun' 'https://mirrors.aliyun.com/crates.io-index'
+}
+
+make_rust_cargo_mirror () {
+  local sr="\$(check_rust_env)"
+  local c=""
+  if [ -z "\$sr" ]; then
+    return 1
+  fi
+  c="\${HOME}/.cargo/config"
+  cat <<END>"\$c"
+[source.crates-io]
+replace-with = '\$1'
+[source.\$1]
+registry = '\${2}/'
+END
+}
+
 check_rust_completion () {
   local rc="${r}/rust_cargo_completion"
   local ru="${r}/rust_rustup_completion"
