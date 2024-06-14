@@ -1593,7 +1593,7 @@ make_rust_cargo_mirror () {
   if [ -z "\$sr" ]; then
     return 1
   fi
-  c="\${HOME}/.cargo/config"
+  c="\${HOME}/.cargo/config.toml"
   cat <<END>"\$c"
 [source.crates-io]
 replace-with = '\$1'
