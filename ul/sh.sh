@@ -1455,7 +1455,7 @@ make_python_venv () {
   \$p -m venv "\$d" && $printf "%s\n" "\$d"
 }
 
-check_python_pip_mirror () {
+list_python_pip_mirror () {
   $printf "%s\n" 'https://pypi.tuna.tsinghua.edu.cn/simple/'
   $printf "%s\n" 'https://pypi.mirrors.ustc.edu.cn/simple/'
   $printf "%s\n" 'http://mirrors.aliyun.com/pypi/simple/'
@@ -1581,7 +1581,7 @@ install_rustup () {
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 }
 
-check_rust_cargo_mirror () {
+list_rust_cargo_mirror () {
   $printf "%s %s\n" 'tuna' 'https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git'
   $printf "%s %s\n" 'ustc' 'https://mirrors.ustc.edu.cn/crates.io-index'
   $printf "%s %s\n" 'aliyun' 'https://mirrors.aliyun.com/crates.io-index'
