@@ -754,7 +754,7 @@ export_path_env () {
     echo "local lib_path=\"\$LD_LIBRARY_PATH\""
   fi)
   local opt_path="\$(check_opt_dir)"
-  bin_path="\${opt_path}/bin:\$bin_path"
+  bin_path="\${opt_path}/bin:\${opt_path}/sbin:\$bin_path"
   lib_path="\${opt_path}/lib:\$lib_path"
 
   $(if on_windows_nt; then
