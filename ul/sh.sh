@@ -1032,6 +1032,7 @@ make_java_maven_settings () {
 <settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 http://maven.apache.org/xsd/settings-1.2.0.xsd">
+  <localRepository>${HOME}/.m2/repository</localRepository>
   <!--
   <servers>
     <server>
@@ -1048,30 +1049,48 @@ make_java_maven_settings () {
   -->
   <mirrors>
     <mirror>
-      <id>maven-http-local-public</id>
-      <mirrorOf>external:http:*</mirrorOf>
-      <name>maven-http-local-public</name>
-      <url>http://127.0.0.1:8081/repository/maven-public/</url>
-    </mirror>
-    <mirror>
-      <id>maven-http-local-snapshots</id>
-      <mirrorOf>external:http:*</mirrorOf>
-      <name>maven-http-local-snapshots</name>
-      <url>http://127.0.0.1:8081/repository/maven-snapshots/</url>
-    </mirror>
-    <mirror>
-      <id>nexus-aliyun</id>
-      <mirrorOf>central</mirrorOf>
-      <name>Nexus aliyun</name>
-      <url>https://maven.aliyun.com/repository/public</url>
-    </mirror>
-    <mirror>
-      <id>nexus-aliyun-snapshots</id>
-      <mirrorOf>cental-snapshots</mirrorOf>
-      <name>Nexus aliyun snapshots</name>
-      <url>https://maven.aliyun.com/repository/snapshots</url>
+      <!--This sends everything else to /public -->
+      <id>nexus</id>
+      <mirrorOf>*</mirrorOf>
+      <url>https://maven.aliyun.com/nexus/content/groups/public</url>
     </mirror>
   </mirrors>
+  <profiles>
+    <profile>
+      <id>XXX</id>
+      <!--Enable snapshots for the built in central repo to direct -->
+      <!--all requests to nexus via the mirror -->
+      <repositories>
+        <repository>
+          <id>nexus</id>
+          <name>Team Nexus Repository</name>
+          <url>https://maven.aliyun.com/nexus/content/groups/public</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+          <id>central</id>
+          <url>http://central</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+      </repositories>
+      <!--
+      <repository>
+        <id>nexus_private_repo1</id>
+        <name>Private Nexus Respository</name>
+        <url>http://192.168.2.238:8080/repo_new/</url>
+        <releases><enabled>true</enabled></releases>
+        <snapshots><enabled>true</enabled></snapshots>
+      </repository>
+      -->
+      <pluginRepositories>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>XXX</activeProfile>
+  </activeProfiles>
 </settings>
 END
 }
