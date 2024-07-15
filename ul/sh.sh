@@ -1020,6 +1020,23 @@ select_java_env () {
   export_java_env "\$javac"
 }
 
+select_java_gradle_env() {
+  local gradle="\$1"
+  if [ ! -x "\$gradle" ]; then
+    return 1
+  fi
+  local opt_bin="\$(check_opt_dir)/bin"
+  if [ ! -d "\$opt_bin" ]; then
+    return 1
+  fi
+  local gradle_sh="\${opt_bin}/gradle"
+  cat <<END>"\$gradle_sh"
+#!$SHELL
+exec \$gradle \\\$@
+END
+  $chmod u+x "\$gradle_sh"
+}
+
 make_java_lsp () {
   # download https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.9.0/jdt-language-server-1.9.0-202203031534.tar.gz
   # config
