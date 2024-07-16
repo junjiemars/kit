@@ -1032,7 +1032,7 @@ select_java_gradle_env() {
   local gradle_sh="\${opt_bin}/gradle"
   cat <<END>"\$gradle_sh"
 #!$SHELL
-exec \$gradle \\\$@
+\$gradle \\\$@
 END
   $chmod u+x "\$gradle_sh"
 }
