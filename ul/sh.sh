@@ -1038,7 +1038,11 @@ END
 }
 
 make_java_lsp () {
-  # download https://www.eclipse.org/downloads/download.php?file=/jdtls/milestones/1.9.0/jdt-language-server-1.9.0-202203031534.tar.gz
+  # download jdtls from http://download.eclipse.org/jdtls/milestones/
+  local jdtls="\$1"
+  if [ ! -x "\$jdtls" ]; then
+    return 1
+  fi
   # config
   # generate startup script
   : #nop
