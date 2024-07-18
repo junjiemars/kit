@@ -1436,19 +1436,21 @@ check_podman_env () {
   [ -r "\$r" ] && $printf "%s\n" "\$(command -v podman)"
 }
 
-check_podman_registry () {
+list_podman_registry () {
   $printf "%s\n" 'docker.io'
   $printf "%s\n" 'registry.access.redhat.com'
   $printf "%s\n" 'registry.redhat.io'
 }
 
-check_podman_config () {
-  local f="\${HOME}/.config/registries.conf"
-  [ -f "\$f" ] && $printf "%s\n" "\$f"
-  f="\${HOME}/.config/containers/podman"
-  [ -d "\$f" ] && $find "\$f"
-  f="\${HOME}/.local/share/containers/podman"
-  [ -d "\$f" ] && $find "\$f"
+list_podman_config () {
+$(if on_linux; then
+  $printf "  local etc=\"%s\"\n" "/etc/containers/registeries.conf"
+  $printf "  $printf \"%s %d\n\" \"\$etc\" \$(test -f \"\$etc\"; echo \$?)"
+fi)
+  local h="\${HOME}/.config/registries.conf"
+  $printf "%s %d\n" "\$h" \$(test -f "\$h"; echo \$?)
+  local p="\${HOME}/.config/containers/podman"
+  $printf "%s %d\n" "\$p" \$(test -f "\$p"; echo \$?)
 }
 
 # eof
