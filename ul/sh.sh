@@ -1197,7 +1197,25 @@ gen_latex_env () {
 # https://www.latex-project.org
 #------------------------------------------------
 
-# install texlive-latex-recommented
+install_latex_texlive () {
+$(if on_darwin; then
+  echo "  echo \"sudo port install texlive-latex-recommented\""
+elif on_linux; then
+  echo "  echo \"sudo apt install texlive-latex-recommented\""
+else
+  echo "  :"
+fi)
+}
+
+install_latex_lsp () {
+$(if on_darwin; then
+  echo "  sudo port install texlab"
+elif on_linux; then
+  echo "  sudo apt install texlab"
+else
+  echo "  :"
+fi)
+}
 
 # eof
 EOF
