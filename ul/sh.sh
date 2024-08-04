@@ -1209,9 +1209,9 @@ fi)
 
 install_latex_lsp () {
 $(if on_darwin; then
-  echo "  sudo port install texlab"
+  echo "  sudo port install texlive-latex-recommented texlive-xetex texlive-lang-cjk texlab"
 elif on_linux; then
-  echo "  sudo apt install texlab"
+  echo "  sudo apt install install texlive-latex-recommented texlive-xetex texlive-lang-cjk texlab"
 else
   echo "  :"
 fi)
