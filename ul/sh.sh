@@ -985,7 +985,7 @@ gen_c_env () {
 # https://github.com/junjiemars/nore
 #------------------------------------------------
 
-check_c_env () {
+check_c_nore_env () {
   local d="\$HOME/.nore"
   if [ -x "\${d}/cc-env.sh" ]; then
     return 0
@@ -993,21 +993,42 @@ check_c_env () {
   return 1
 }
 
-install_c_sys_env () {
-  :
+install_c_nore_env () {
+  curl https://raw.githubusercontent.com/junjiemars/nore/master/bootstrap.sh -sSfL | sh
 }
 
-install_c_nore_env () {
-  :
+install_c_sys_env () {
+$(if on_darwin; then
+  $printf "  xcode-select install\n"
+  $printf "  sudo port install autoconf automake libtool\n"
+elif on_linux; then
+  $printf "  if command -v apt &>/dev/null; then\n"
+  $printf "    sudo apt install build-essential"
+  $printf "  elif command -v yum &>/dev/null; then\n"
+  $printf "    sudo yum group install \"Development Tools\"\n"
+  $printf "  else\n"
+  $printf "    :\n"
+  $printf "  fi\n"
+else
+  $printf "  :\n"
+fi)
 }
 
 install_c_autotools_env () {
 $(if on_darwin; then
-  echo "  sudo port install autoconf automake libtool"
+  $printf "  if command -v port &>/dev/null; then\n"
+  $printf "    sudo port install autoconf automake libtool\n"
+  $printf "  else\n"
+  $printf "    :\n"
+  $printf "  fi\n"
 elif on_linux; then
-  echo "  :"
+  $printf "  if command -v apt &>/dev/null; then\n"
+  $printf "    sudo apt install autotools-dev\n"
+  $printf "  else\n"
+  $printf "    :\n"
+  $printf "  fi\n"
 else
-  echo "  :"
+  $printf "  :\n"
 fi)
 }
 
