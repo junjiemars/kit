@@ -885,23 +885,21 @@ gen_shell_locale_env () {
 #------------------------------------------------
 
 export_locale_env () {
-  local la="en_US.utf8"
-  local lc="en_US.utf8"
 $(if on_windows_nt; then
   $printf "  # change code page to unicode\n"
   $printf "  chcp.com 65001 &>/dev/null\n"
-  $printf "  export LANG=\"\$la\"\n"
+  $printf "  if locale -a | grep -qF 'en_US.utf8'\n"
+  $printf "    export LANG=en_US.utf8\n"
+  $printf "  fi\n"
 elif on_darwin; then
-  $printf "  export LANG=\"\$la\"\n"
-  $printf "  export LC_ALL=\"\$lc\"\n"
+  $printf "  if locale -a | grep -qF 'en_US.UTF-8'; then\n"
+  $printf "    export LANG=en_US.UTF-8\n"
+  $printf "  fi\n"
 elif on_linux; then
   $printf "  # sudo dpkg-reconfigure locales\n"
-  $printf "  if \$(locale -a|grep -q \"$la\"); then\n"
-  printf "    export LANG=\"\$la\"\n"
+  $printf "  if locale -a | grep -qF 'en_US.utf8'; then\n"
+  printf "     export LANG=en_US.utf8\n"
   $printf "  fi\n"
-  $printf "  export LC_ALL=\"\$lc\"\n"
-else
-  $printf "export LC_ALL=C"
 fi)
 }
 
