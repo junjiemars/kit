@@ -1656,12 +1656,12 @@ END
 $(echo "}")
 
 make_python_http_server () {
-  local py="\$(check_python_env)"
-  if [ -z "\$py" ]; then
+  local p="\$(check_python_env)"
+  if [ -z "\$p" ]; then
     return 1
   fi
-  # \$py -m http.server -h
-  \$py -m http.server \$@
+  # \$p -m http.server -h
+  \$p -m http.server \$@
 }
 
 # eof
