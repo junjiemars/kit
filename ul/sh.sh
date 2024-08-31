@@ -1655,6 +1655,15 @@ END
   $chmod u+x "\$pylsp_sh"
 $(echo "}")
 
+make_python_http_server () {
+  local py="\$(check_python_env)"
+  if [ -z "\$py" ]; then
+    return 1
+  fi
+  # \$py -m http.server -h
+  \$py -m http.server \$@
+}
+
 # eof
 EOF
 
