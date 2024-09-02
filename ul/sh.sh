@@ -1240,21 +1240,31 @@ gen_latex_env () {
 
 install_latex_texlive () {
 $(if on_darwin; then
-  echo "  echo \"sudo port install texlive-latex-recommented\""
+  $printf "  sudo port install texlive-latex-recommented\n"
 elif on_linux; then
-  echo "  echo \"sudo apt install texlive-latex-recommented\""
+  $printf "  sudo apt install texlive-latex-recommented\n"
 else
-  echo "  :"
+  $printf "  :\n"
 fi)
 }
 
 install_latex_lsp () {
 $(if on_darwin; then
-  echo "  sudo port install texlive-latex-recommented texlive-xetex texlive-lang-cjk texlab"
+  $printf "  sudo port install texlive-latex-recommented texlive-xetex texlive-lang-cjk texlab\n"
 elif on_linux; then
-  echo "  sudo apt install install texlive-latex-recommented texlive-xetex texlive-lang-cjk texlab"
+  $printf "  sudo apt install install texlive-latex-recommented texlive-xetex texlive-lang-cjk texlab\n"
 else
-  echo "  :"
+  $printf "  :\n"
+fi)
+}
+
+install_latex_org_mode () {
+$(if on_darwin; then
+  $printf "  sudo port install texlive-latex-extra dvipng\n"
+elif on_linux; then
+  $printf "  sudo apt install install texlive-latex-extra dvipng\n"
+else
+  $printf "  :\n"
 fi)
 }
 
