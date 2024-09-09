@@ -1002,6 +1002,20 @@ else
 fi)
 }
 
+install_c_march_aarch64_gcc_env () {
+$(if on_darwin; then
+  $printf "  :\n"
+elif on_linux; then
+  $printf "  if command -v apt &>/dev/null; then\n"
+  $printf "    sudo apt install gcc-aarch64-linux-gnu\n"
+  $printf "  else\n"
+  $printf "    :\n"
+  $printf "  fi\n"
+else
+  $printf "  :\n"
+fi)
+}
+
 # eof
 EOF
   echo_yes_or_no $?
