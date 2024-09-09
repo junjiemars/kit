@@ -1002,7 +1002,7 @@ else
 fi)
 }
 
-install_c_march_aarch64_gcc_env () {
+install_c_gcc_aarch64_env () {
 $(if on_darwin; then
   $printf "  :\n"
 elif on_linux; then
