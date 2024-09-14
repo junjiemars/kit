@@ -324,8 +324,8 @@ EOF
   echo_yes_or_no $?
 }
 
-gen_shell_util_env () {
-  local f="$HOME/.nore/${SH}/util_env"
+gen_shell_sys_env () {
+  local f="$HOME/.nore/${SH}/sys_env"
   local rc=0
   $printf "+ generate $f ... "
   $cat << EOF > "$f"
@@ -337,91 +337,64 @@ gen_shell_util_env () {
 #   $SH <($SH_ENV)
 #------------------------------------------------
 
-# utc date
-date_from_epoch ()
+# utc
+sys_date_from_epoch ()
 {
   local fmt="+%Y-%m-%d %H:%M:%S"
 $(if on_linux; then
-  echo "  if [ \$# -eq 0 ]; then"
-  echo "    date -u -d@0 \"\$fmt\""
-  echo "  else"
-  echo "    date -u -d@\$@ \"\$fmt\""
-  echo "  fi"
+  $printf "  if [ \$# -eq 0 ]; then\n"
+  $printf "    date -u -d@0 \"\$fmt\"\n"
+  $printf "  else\n"
+  $printf "    date -u -d@\$@ \"\$fmt\"\n"
+  $printf "  fi\n"
 elif on_darwin; then
-  echo "  if [ \$# -eq 0 ]; then"
-  echo "    date -u -r0 \"\$fmt\""
-  echo "  else"
-  echo "    date -u -r\$@ \"\$fmt\""
-  echo "  fi"
+  $printf "  if [ \$# -eq 0 ]; then\n"
+  $printf "    date -u -r0 \"\$fmt\"\n"
+  $printf "  else\n"
+  $printf "    date -u -r\$@ \"\$fmt\"\n"
+  $printf "  fi\n"
 else
-  echo "  return 1"
+  $printf "  return 1\n"
 fi)
 }
 
-date_to_epoch ()
+sys_date_to_epoch ()
 {
   local fmt="%Y-%m-%d %H:%M:%S"
   local out="+%s"
 $(if on_linux; then
-  echo "  if [ \$# -eq 0 ]; then"
-  echo "    date -u \"\$out\""
-  echo "  else"
-  echo "    date -u -d\"\$@\" \"\$out\""
-  echo "  fi"
+  $printf "  if [ \$# -eq 0 ]; then\n"
+  $printf "    date -u \"\$out\"\n"
+  $printf "  else\n"
+  $printf "    date -u -d\"\$@\" \"\$out\"\n"
+  $printf "  fi\n"
 elif on_darwin; then
-  echo "  if [ \$# -eq 0 ]; then"
-  echo "    date -u \"\$out\""
-  echo "  else"
-  echo "    date -u -j -f\"\$fmt\" \"\$@\" \"\$out\""
-  echo "  fi"
+  $printf "  if [ \$# -eq 0 ]; then\n"
+  $printf "    date -u \"\$out\"\n"
+  $printf "  else\n"
+  $printf "    date -u -j -f\"\$fmt\" \"\$@\" \"\$out\"\n"
+  $printf "  fi\n"
 else
-  echo "  return 1"
+  $printf "  return 1"
 fi)
 }
-
-$(if on_darwin; then
-  echo "find_unwanted ()"
-  echo "{"
-  echo "   local what=\"\$@\""
-  echo "   local app_dir=\"/Applications\""
-  echo "   local sup_dir=\"~/Library/Application Support\""
-  echo "   local str_dir=\"~/Library/Saved Application State\""
-  echo "   local cch_dir1=\"/Library/Caches\""
-  echo "   local cch_dir2=\"~/Library/Caches\""
-  echo "   local prf_dir=\"~/Library/Preferences\""
-  echo "   local plg_dir=\"~/Library/Internet Plug-Ins\""
-  echo "   local crs_dir=\"~/Library/Application Support/CrashReporter\""
-  echo "   local lib_dir1=\"/Library\""
-  echo "   local lib_dir2=\"~/Library\""
-  echo "   echo \"check \$app_dir ...\""
-  echo "   echo \"check \$sup_dir ...\""
-  echo "   echo \"check \$str_dir ...\""
-  echo "   echo \"check \$cch_dir2 ...\""
-  echo "   echo \"check \$cch_dir1 ...\""
-  echo "   echo \"check \$prf_dir ...\""
-  echo "   echo \"check \$plg_dir ...\""
-  echo "   echo \"check \$crs_dir ...\""
-  echo "   echo \"check \$lib_dir2 ...\""
-  echo "   echo \"check \$lib_dir1 ...\""
-  echo "}"
-fi)
 
 os_release ()
 {
 $(if on_darwin; then
-  echo "  sw_vers"
+  $printf "  sw_vers\n"
 elif on_linux; then
-  echo "  if [ -f \"/etc/os-release\" ]; then"
-  echo "    cat /etc/os-release"
-  echo "  fi"
+  $printf "  if [ -f \"/etc/os-release\" ]; then\n"
+  $printf "    cat /etc/os-release\n"
+  $printf "  fi\n"
 elif on_windows_nt; then
-  echo "  systeminfo | grep '^OS Version'"
+  $printf "  systeminfo | grep '^OS Version'\n"
 else
-  echo "  return 1"
+  $printf "  return 1\n"
 fi)
 }
 
-outbound_ip ()
+sys_outbound_ip ()
 {
   local u="https://checkip.dns.he.net"
   local v=\$1
@@ -435,7 +408,7 @@ outbound_ip ()
   fi
 }
 
-random_range ()
+sys_random_range ()
 {
    local n=\${1:-8}
    $dd if=/dev/urandom count=\$(( n*4 )) bs=1 2>/dev/null \\
@@ -443,6 +416,44 @@ random_range ()
      | $tr -cd '[:print:]' \\
      | $cut -c 1-\$n
 }
+
+# Doug McIlroy
+sys_word_frequency () {
+  $tr -cs A-Za-z\' '\n' \\
+    | $tr A-Z a-z \\
+    | $sort \\
+    | $uniq -c \\
+    | $sort -k1,1nr -k2 \\
+    | $sed \${1:-24}q
+}
+
+# darwin
+$(if on_darwin; then
+  $printf "sys_find_unwanted ()\n"
+  $printf "{\n"
+  $printf "   local what=\"\$@\"\n"
+  $printf "   local app_dir=\"/Applications\"\n"
+  $printf "   local sup_dir=\"~/Library/Application Support\"\n"
+  $printf "   local str_dir=\"~/Library/Saved Application State\"\n"
+  $printf "   local cch_dir1=\"/Library/Caches\"\n"
+  $printf "   local cch_dir2=\"~/Library/Caches\"\n"
+  $printf "   local prf_dir=\"~/Library/Preferences\"\n"
+  $printf "   local plg_dir=\"~/Library/Internet Plug-Ins\"\n"
+  $printf "   local crs_dir=\"~/Library/Application Support/CrashReporter\"\n"
+  $printf "   local lib_dir1=\"/Library\"\n"
+  $printf "   local lib_dir2=\"~/Library\"\n"
+  $printf "   $printf \"check \$app_dir ...\\\n\"\n"
+  $printf "   $printf \"check \$sup_dir ...\\\n\"\n"
+  $printf "   $printf \"check \$str_dir ...\\\n\"\n"
+  $printf "   $printf \"check \$cch_dir2 ...\\\n\"\n"
+  $printf "   $printf \"check \$cch_dir1 ...\\\n\"\n"
+  $printf "   $printf \"check \$prf_dir ...\\\n\"\n"
+  $printf "   $printf \"check \$plg_dir ...\\\n\"\n"
+  $printf "   $printf \"check \$crs_dir ...\\\n\"\n"
+  $printf "   $printf \"check \$lib_dir2 ...\\\n\"\n"
+  $printf "   $printf \"check \$lib_dir1 ...\\\n\"\n"
+  $printf "}\n"
+fi)
 
 $(if on_linux && where snap >/dev/null 2>&1; then
   echo "snap_remove_disabled ()"
@@ -466,21 +477,11 @@ $(if on_linux && where snap >/dev/null 2>&1; then
   echo "}"
 fi)
 
-# Doug McIlroy
-word_frequency () {
-  $tr -cs A-Za-z\' '\n' \\
-    | $tr A-Z a-z \\
-    | $sort \\
-    | $uniq -c \\
-    | $sort -k1,1nr -k2 \\
-    | $sed \${1:-24}q
-}
-
 $(if on_linux && where unzip >/dev/null 2>&1; then
-  echo "unzip_zhcn ()"
-  echo "{"
-  echo "  unzip -Ogb2312 \$@"
-  echo "}"
+  $printf "unzip_zhcn ()\n"
+  $printf "{\n"
+  $printf "  unzip -Ogb2312 \$@\n"
+  $printf "}\n"
 fi)
 
 # eof
@@ -503,7 +504,7 @@ o_check_completion_env=yes
 o_check_locale_env=yes
 o_check_logout_env=no
 o_check_path_env=yes
-o_check_util_env=yes
+o_check_sys_env=yes
 o_check_alias_env=no
 o_check_c_env=no
 o_check_java_env=no
@@ -592,9 +593,9 @@ if [ "\$o_check_completion_env" = "yes" ]; then
     && . "${h}/completion_env"
 fi
 
-if [ "\$o_check_util_env" = "yes" ]; then
-  [ -f "${h}/util_env" ] \\
-    && . "${h}/util_env"
+if [ "\$o_check_sys_env" = "yes" ]; then
+  [ -f "${h}/sys_env" ] \\
+    && . "${h}/sys_env"
 fi
 
 if [ "\$o_check_alias_env" = "yes" ]; then
@@ -2100,7 +2101,7 @@ gen_shell_prompt_env
 gen_shell_locale_env
 gen_shell_completion_env
 gen_shell_path_env
-gen_shell_util_env
+gen_shell_sys_env
 gen_shell_alias_env
 
 gen_c_env
