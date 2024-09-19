@@ -1052,7 +1052,7 @@ gen_font_env () {
 #   $SH <($SH_ENV)
 #------------------------------------------------
 
-install_font () {
+install_font_file () {
   local d="\$1"
   if [ -z "\$d" ]; then
     return 1
