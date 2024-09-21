@@ -1058,6 +1058,16 @@ gen_font_env () {
 #   $SH <($SH_ENV)
 #------------------------------------------------
 
+list_font_mono () {
+  $printf "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabMono.ttf\n"
+  $printf "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabMono-Italic.ttf\n"
+}
+
+list_font_sans () {
+  $printf "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabSans.ttf\n"
+  $printf "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabSans-Italic.ttf\n"
+}
+
 install_font_file () {
   local d="\$1"
   if [ -z "\$d" ]; then
