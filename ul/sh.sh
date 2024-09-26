@@ -998,7 +998,7 @@ $(if on_darwin; then
   $printf "  sudo port install autoconf automake libtool\n"
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
-  $printf "    sudo apt install build-essential\n"
+  $printf "    sudo apt install build-essential manpages-posix manpages-posix-dev\n"
   $printf "  elif command -v yum &>/dev/null; then\n"
   $printf "    sudo yum group install \"Development Tools\"\n"
   $printf "  else\n"
