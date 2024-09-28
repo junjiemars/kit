@@ -1036,7 +1036,23 @@ elif on_linux; then
   $printf "  else\n"
   $printf "    :\n"
   $printf "  fi\n"
-else
+eplse
+  $printf "  :\n"
+fi)
+}
+
+install_c_lsp_env () {
+$(if on_darwin; then
+  $printf "  if command -v port &>/dev/null; then\n"
+  $printf "    sudo port install clang-12 bear\n"
+  $printf "  fi\n"
+elif on_linux; then
+  $printf "  if command -v apt &>/dev/null; then\n"
+  $printf "    sudo apt install clang-12 bear\n"
+  $printf "  else\n"
+  $printf "    :\n"
+  $printf "  fi\n"
+eplse
   $printf "  :\n"
 fi)
 }
