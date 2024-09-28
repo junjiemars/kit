@@ -1057,6 +1057,22 @@ eplse
 fi)
 }
 
+install_c_cmake_env () {
+$(if on_darwin; then
+  $printf "  if command -v port &>/dev/null; then\n"
+  $printf "    sudo port install cmake\n"
+  $printf "  fi\n"
+elif on_linux; then
+  $printf "  if command -v apt &>/dev/null; then\n"
+  $printf "    sudo apt install cmake\n"
+  $printf "  else\n"
+  $printf "    :\n"
+  $printf "  fi\n"
+eplse
+  $printf "  :\n"
+fi)
+}
+
 # eof
 EOF
   echo_yes_or_no $?
