@@ -657,6 +657,11 @@ if [ "\$o_check_macports_env" = "yes" ]; then
     && . "${h}/macports_env"
 fi
 
+if [ "\$o_check_oracle_env" = "yes" ]; then
+  [ -f "${h}/oracle_env" ] \\
+    && . "${h}/oracle_env"
+fi
+
 if [ "\$o_check_pandoc_env" = "yes" ]; then
   [ -f "${h}/pandoc_env" ] \\
     && . "${h}/pandoc_env"
@@ -1662,8 +1667,8 @@ END
   $chmod u+x "\$sqlplus_sh"
 }
 
-check_oracle_sample_schemas () {
-  $printf "%s\n" 'https://github.com/oracle-samples/db-sample-schemas'
+list_oracle_sample_schemas () {
+  $printf "https://github.com/oracle-samples/db-sample-schemas\n"
 }
 
 if [ "\$o_check_oracle_env" = "yes" ]; then
