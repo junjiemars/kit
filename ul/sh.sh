@@ -1705,9 +1705,7 @@ gen_pandoc_env () {
 #------------------------------------------------
 
 check_pandoc_env () {
-  if ! pandoc -v &>/dev/null; then
-     return 1
-  fi
+  pandoc -v &>/dev/null
 }
 
 install_pandoc () {
