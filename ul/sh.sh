@@ -379,7 +379,7 @@ else
 fi)
 }
 
-os_release ()
+sys_os_release ()
 {
 $(if on_darwin; then
   $printf "  sw_vers\n"
