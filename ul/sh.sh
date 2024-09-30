@@ -427,30 +427,28 @@ sys_word_frequency () {
     | $sed \${1:-24}q
 }
 
-sys_xkill () {
 $(if on_darwin; then
+  $printf "sys_xkill () {\n"
   $printf "  pbcopy \$@\n"
-elif on_linux; then
-  $printf "  xsel --clipboard --input \$@\n"
-else
-  $printf "  :\n"
-fi)
-}
-
-sys_xyank () {
-$(if on_darwin; then
+  $printf "}\n"
+  $printf "\n"
+  $printf "sys_xyank () {\n"
   $printf "  pbpaste \$@\n"
-elif on_linux; then
-  $printf "  xsel --clipboard --output\$@\n"
-else
-  $printf "  :\n"
+  $printf "}\n"
 fi)
-}
 
-# darwin
+$(if on_linux && $printf "\$DISPLAY\n"|grep -q ':0\$'; then
+  $printf "sys_xkill () {\n"
+  $printf "  xsel --clipboard --input \$@\n"
+  $printf "}\n"
+  $printf "\n"
+  $printf "sys_xyank () {\n"
+  $printf "  xsel --clipboard --output \$@\n"
+  $printf "}\n"
+fi)
+
 $(if on_darwin; then
-  $printf "sys_find_unwanted ()\n"
-  $printf "{\n"
+  $printf "sys_find_unwanted () {\n"
   $printf "   local what=\"\$@\"\n"
   $printf "   local app_dir=\"/Applications\"\n"
   $printf "   local sup_dir=\"~/Library/Application Support\"\n"
@@ -476,30 +474,28 @@ $(if on_darwin; then
 fi)
 
 $(if on_linux && where snap >/dev/null 2>&1; then
-  echo "snap_remove_disabled ()"
-  echo "{"
-  echo "  LANG=C snap list --all | $awk '/disabled/{print \$1, \$3}' |"
-  echo "    while read snapname revision; do"
-  echo "      sudo snap remove \"\$snapname\" --revision=\"\$revision\""
-  echo "    done"
-  echo "}"
-  echo ""
-  echo "snapd_disable ()"
-  echo "{"
-  echo "  sudo systemctl stop snapd"
-  echo "  sudo systemctl disable snapd"
-  echo "}"
-  echo ""
-  echo "snapd_enable ()"
-  echo "{"
-  echo "  sudo systemctl enable snapd"
-  echo "  sudo systemctl restart snapd"
-  echo "}"
+  $printf "snap_remove_disabled () {\n"
+  $printf "  LANG=C snap list --all | $awk '/disabled/{print \$1, \$3}' |\n"
+  $printf "    while read snapname revision; do\n"
+  $printf "      sudo snap remove \"\$snapname\" --revision=\"\$revision\"\n"
+  $printf "    done\n"
+  $printf "}\n"
+  $printf "\n"
+  $printf "snapd_disable ()\n"
+  $printf "{\n"
+  $printf "  sudo systemctl stop snapd\n"
+  $printf "  sudo systemctl disable snapd\n"
+  $printf "}\n"
+  $printf "\n"
+  $printf "snapd_enable ()\n"
+  $printf "{\n"
+  $printf "  sudo systemctl enable snapd\n"
+  $printf "  sudo systemctl restart snapd\n"
+  $printf "}\n"
 fi)
 
 $(if on_linux && where unzip >/dev/null 2>&1; then
-  $printf "unzip_zhcn ()\n"
-  $printf "{\n"
+  $printf "unzip_zhcn () {\n"
   $printf "  unzip -Ogb2312 \$@\n"
   $printf "}\n"
 fi)
