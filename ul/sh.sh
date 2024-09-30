@@ -427,6 +427,26 @@ sys_word_frequency () {
     | $sed \${1:-24}q
 }
 
+sys_xkill () {
+$(if on_darwin; then
+  $printf "  pbcopy \$@\n"
+elif on_linux; then
+  $printf "  xsel --clipboard --input \$@\n"
+else
+  $printf "  :\n"
+fi)
+}
+
+sys_xyank () {
+$(if on_darwin; then
+  $printf "  pbpaste \$@\n"
+elif on_linux; then
+  $printf "  xsel --clipboard --output\$@\n"
+else
+  $printf "  :\n"
+fi)
+}
+
 # darwin
 $(if on_darwin; then
   $printf "sys_find_unwanted ()\n"
