@@ -338,8 +338,7 @@ gen_shell_sys_env () {
 #------------------------------------------------
 
 # utc
-sys_date_from_epoch ()
-{
+sys_date_from_epoch () {
   local fmt="+%Y-%m-%d %H:%M:%S"
 $(if on_linux; then
   $printf "  if [ \$# -eq 0 ]; then\n"
@@ -358,8 +357,7 @@ else
 fi)
 }
 
-sys_date_to_epoch ()
-{
+sys_date_to_epoch () {
   local fmt="%Y-%m-%d %H:%M:%S"
   local out="+%s"
 $(if on_linux; then
@@ -379,8 +377,7 @@ else
 fi)
 }
 
-sys_os_release ()
-{
+sys_os_release () {
 $(if on_darwin; then
   $printf "  sw_vers\n"
 elif on_linux; then
@@ -394,8 +391,7 @@ else
 fi)
 }
 
-sys_outbound_ip ()
-{
+sys_outbound_ip () {
   local u="https://checkip.dns.he.net"
   local v=\$1
   if exist_p curl; then
@@ -408,8 +404,7 @@ sys_outbound_ip ()
   fi
 }
 
-sys_random_range ()
-{
+sys_random_range () {
    local n=\${1:-8}
    $dd if=/dev/urandom count=\$(( n*4 )) bs=1 2>/dev/null \\
      | $iconv -c -t ascii//TRANSLIT 2>/dev/null \\
