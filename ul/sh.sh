@@ -1784,6 +1784,8 @@ gen_printer_env () {
 install_printer_hp_env () {
 $(if on_linux; then
   $printf "  sudo apt install hplip hplip-gui hplip-data hplip-doc\n"
+else
+  $printf "  :\n"
 fi)
 }
 
