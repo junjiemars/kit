@@ -1060,7 +1060,7 @@ elif on_linux; then
   $printf "  else\n"
   $printf "    :\n"
   $printf "  fi\n"
-eplse
+else
   $printf "  :\n"
 fi)
 }
@@ -1076,7 +1076,7 @@ elif on_linux; then
   $printf "  else\n"
   $printf "    :\n"
   $printf "  fi\n"
-eplse
+else
   $printf "  :\n"
 fi)
 }
@@ -1092,7 +1092,7 @@ elif on_linux; then
   $printf "  else\n"
   $printf "    :\n"
   $printf "  fi\n"
-eplse
+else
   $printf "  :\n"
 fi)
 }
