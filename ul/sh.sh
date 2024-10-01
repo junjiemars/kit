@@ -1437,34 +1437,22 @@ gen_llvm_env () {
 # https://llvm.org
 #------------------------------------------------
 
-# https://clangd.llvm.org/installation
-check_llvm_clangd () {
-  if clangd --version &>/dev/null; then
-    return 0
-  fi
-$(if on_darwin; then
-  echo "  echo \"sudo port install clang-12\""
-elif on_linux; then
-  echo "  echo \"sudo apt install clang-12\""
-else
-  echo "  :"
-fi)
-  return 1
+check_llvm_env () {
+  :
 }
 
-# https://github.com/rizsotto/Bear?tab=readme-ov-file
-check_bear () {
-  if bear --version &>/dev/null; then
-    return 0
-  fi
+check_llvm_clangd_env () {
+  clangd --version &>/dev/null
+}
+
+install_llvm_clang_env () {
 $(if on_darwin; then
-  echo "  echo \"sudo port install bear\""
+  $printf "  sudo port install clang-12\n"
 elif on_linux; then
-  echo "  echo \"sudo apt install bear\""
+  $printf "  sudo apt install clang-12\n"
 else
-  echo "  :"
+  $printf "  return 1\n"
 fi)
-  return 1
 }
 
 # eof
