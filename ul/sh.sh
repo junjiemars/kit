@@ -1011,16 +1011,17 @@ install_c_nore_env () {
 install_c_sys_env () {
 $(if on_darwin; then
   $printf "  xcode-select --install\n"
+  $printf "  sudo xcodebuild -license\n"
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    sudo apt install build-essential manpages-posix manpages-posix-dev\n"
   $printf "  elif command -v yum &>/dev/null; then\n"
   $printf "    sudo yum group install \"Development Tools\"\n"
   $printf "  else\n"
-  $printf "    :\n"
+  $printf "    return 1\n"
   $printf "  fi\n"
 else
-  $printf "  :\n"
+  $printf "  return 1\n"
 fi)
 }
 
@@ -1029,16 +1030,16 @@ $(if on_darwin; then
   $printf "  if command -v port &>/dev/null; then\n"
   $printf "    sudo port install autoconf automake libtool\n"
   $printf "  else\n"
-  $printf "    :\n"
+  $printf "    return 1\n"
   $printf "  fi\n"
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    sudo apt install autotools-dev\n"
   $printf "  else\n"
-  $printf "    :\n"
+  $printf "    return 1\n"
   $printf "  fi\n"
 else
-  $printf "  :\n"
+  $printf "  return 1\n"
 fi)
 }
 
@@ -1048,11 +1049,9 @@ $(if on_darwin; then
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    sudo apt install gcc-aarch64-linux-gnu\n"
-  $printf "  else\n"
-  $printf "    :\n"
   $printf "  fi\n"
 else
-  $printf "  :\n"
+  $printf "  return 1\n"
 fi)
 }
 
@@ -1060,15 +1059,17 @@ install_c_lsp_env () {
 $(if on_darwin; then
   $printf "  if command -v port &>/dev/null; then\n"
   $printf "    sudo port install clang-12 bear\n"
+  $printf "  else\n"
+  $printf "    return 1\n"
   $printf "  fi\n"
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    sudo apt install clang-12 bear\n"
   $printf "  else\n"
-  $printf "    :\n"
+  $printf "    return 1\n"
   $printf "  fi\n"
 else
-  $printf "  :\n"
+  $printf "  return 1\n"
 fi)
 }
 
@@ -1076,15 +1077,17 @@ install_c_cmake_env () {
 $(if on_darwin; then
   $printf "  if command -v port &>/dev/null; then\n"
   $printf "    sudo port install cmake\n"
+  $printf "  else\n"
+  $printf "    return 1\n"
   $printf "  fi\n"
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    sudo apt install cmake\n"
   $printf "  else\n"
-  $printf "    :\n"
+  $printf "    return 1\n"
   $printf "  fi\n"
 else
-  $printf "  :\n"
+  $printf "  return 1\n"
 fi)
 }
 
