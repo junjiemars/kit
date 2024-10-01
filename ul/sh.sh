@@ -1091,6 +1091,26 @@ else
 fi)
 }
 
+install_c_clang_format_env () {
+$(if on_darwin; then
+  $printf "  return 1\n"
+elif on_linux && command -v apt &>/dev/null; then
+  $printf "  sudo apt install clang-format\n"
+else
+  $printf "  return 1\n"
+fi)
+}
+
+make_c_clang_format_file () {
+  $printf "# https://clang.llvm.org/docs/ClangFormatStyleOptions.html\n"
+  $printf "%s\n" '---'
+  $printf "Language: Cpp\n"
+  $printf "BasedOnStyle: GNU\n"
+  $printf "IndentWidth: 2\n"
+  $printf "ColumnLimit: 79\n"
+  $printf "%s\n" '---'
+}
+
 # eof
 EOF
   echo_yes_or_no $?
