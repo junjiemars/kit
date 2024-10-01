@@ -1101,7 +1101,7 @@ else
 fi)
 }
 
-list_c_clang_format_options () {
+list_c_clang_format_gnu () {
   $printf "# https://clang.llvm.org/docs/ClangFormatStyleOptions.html\n"
   $printf "%s\n" '---'
   $printf "Language: Cpp\n"
