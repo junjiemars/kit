@@ -1091,7 +1091,7 @@ else
 fi)
 }
 
-install_c_clang_format_env () {
+install_c_clang_format () {
 $(if on_darwin; then
   $printf "  return 1\n"
 elif on_linux && command -v apt &>/dev/null; then
@@ -1101,7 +1101,7 @@ else
 fi)
 }
 
-make_c_clang_format_file () {
+list_c_clang_format_options () {
   $printf "# https://clang.llvm.org/docs/ClangFormatStyleOptions.html\n"
   $printf "%s\n" '---'
   $printf "Language: Cpp\n"
@@ -2000,7 +2000,7 @@ check_rust_env () {
   [ -x "\$sr/bin/rustc" ] && $printf "%s\n" "\$sr"
 }
 
-install_rustup () {
+install_rust_rustup () {
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 }
 
@@ -2010,7 +2010,7 @@ list_rust_cargo_mirror () {
   $printf "%s %s\n" 'aliyun' 'https://mirrors.aliyun.com/crates.io-index'
 }
 
-make_rust_cargo_mirror () {
+make_rust_cargo_mirror_env () {
   local sr="\$(check_rust_env)"
   local c=""
   if [ -z "\$sr" ]; then
@@ -2061,7 +2061,7 @@ check_rust_hash () {
   [ -n "\$hash" ] && echo "\$hash"
 }
 
-make_rust_debug () {
+make_rust_debug_env () {
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
@@ -2113,7 +2113,7 @@ check_rust_tags_file () {
   $printf "%s\n" "\${etc}/.tags_emacs"
 }
 
-make_rust_tags () {
+make_rust_tags_env () {
   local args="\$@"
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
