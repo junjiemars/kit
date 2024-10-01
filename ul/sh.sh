@@ -34,6 +34,7 @@ stat=$(PATH=$PH command -v stat)
 sed=$(PATH=$PH command -v sed)
 sort=$(PATH=$PH command -v sort)
 tail=$(PATH=$PH command -v tail)
+test=$(PATH=$PH command -v test)
 tr=$(PATH=$PH command -v tr)
 uname=$(PATH=$PH command -v uname)
 uniq=$(PATH=$PH command -v uniq)
@@ -998,13 +999,10 @@ gen_c_env () {
 
 check_c_nore_env () {
   local d="\$HOME/.nore"
-  if [ -x "\${d}/cc-env.sh" ]; then
-    return 0
-  fi
-  return 1
+  $test -x "\${d}/cc-env.sh"
 }
 
-install_c_nore_env () {
+install_c_nore () {
   curl https://raw.githubusercontent.com/junjiemars/nore/master/bootstrap.sh -sSfL | sh
 }
 
@@ -1025,7 +1023,7 @@ else
 fi)
 }
 
-install_c_autotools_env () {
+install_c_autotools () {
 $(if on_darwin; then
   $printf "  if command -v port &>/dev/null; then\n"
   $printf "    sudo port install autoconf automake libtool\n"
@@ -1043,37 +1041,17 @@ else
 fi)
 }
 
-install_c_gcc_aarch64_env () {
-$(if on_darwin; then
-  $printf "  :\n"
-elif on_linux; then
+$(if on_linux; then
+  $printf "install_c_gcc_aarch64_env () {\n"
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    sudo apt install gcc-aarch64-linux-gnu\n"
-  $printf "  fi\n"
-else
-  $printf "  return 1\n"
-fi)
-}
-
-install_c_lsp_env () {
-$(if on_darwin; then
-  $printf "  if command -v port &>/dev/null; then\n"
-  $printf "    sudo port install clang-12 bear\n"
   $printf "  else\n"
-  $printf "    return 1\n"
+  $printf "    return 1"
   $printf "  fi\n"
-elif on_linux; then
-  $printf "  if command -v apt &>/dev/null; then\n"
-  $printf "    sudo apt install clang-12 bear\n"
-  $printf "  else\n"
-  $printf "    return 1\n"
-  $printf "  fi\n"
-else
-  $printf "  return 1\n"
+  $printf "}\n"
 fi)
-}
 
-install_c_cmake_env () {
+install_c_cmake () {
 $(if on_darwin; then
   $printf "  if command -v port &>/dev/null; then\n"
   $printf "    sudo port install cmake\n"
@@ -1093,7 +1071,8 @@ fi)
 
 install_c_clang_format () {
 $(if on_darwin; then
-  $printf "  return 1\n"
+  $printf "  # install_llvm_clang\n"
+  $printf "  command -v clang-format &>/dev/null\n"
 elif on_linux && command -v apt &>/dev/null; then
   $printf "  sudo apt install clang-format\n"
 else
@@ -1109,6 +1088,24 @@ list_c_clang_format_gnu () {
   $printf "IndentWidth: 2\n"
   $printf "ColumnLimit: 79\n"
   $printf "%s\n" '---'
+}
+
+install_c_bear () {
+$(if on_darwin; then
+  $printf "  if command -v port &>/dev/null; then\n"
+  $printf "    sudo port install bear\n"
+  $printf "  else\n"
+  $printf "    return 1\n"
+  $printf "  fi\n"
+elif on_linux; then
+  $printf "  if command -v apt &>/dev/null; then\n"
+  $printf "    sudo apt install bear\n"
+  $printf "  else\n"
+  $printf "    return 1\n"
+  $printf "  fi\n"
+else
+  $printf "  return 1\n"
+fi)
 }
 
 # eof
@@ -1445,11 +1442,23 @@ check_llvm_clangd_env () {
   clangd --version &>/dev/null
 }
 
-install_llvm_clang_env () {
+install_llvm () {
+  local v="\${1:-16}"
 $(if on_darwin; then
-  $printf "  sudo port install clang-12\n"
+  $printf "  sudo port install llvm-\$v\n"
 elif on_linux; then
-  $printf "  sudo apt install clang-12\n"
+  $printf "  sudo apt install llvm-\$v\n"
+else
+  $printf "  return 1\n"
+fi)
+}
+
+install_llvm_clang () {
+  local v="\${1:-16}"
+$(if on_darwin; then
+  $printf "  sudo port install clang-\$v\n"
+elif on_linux; then
+  $printf "  sudo apt install clang-\$v\n"
 else
   $printf "  return 1\n"
 fi)
@@ -2205,7 +2214,7 @@ check_tesseract_env () {
  :
 }
 
-install_tesseract () {
+install_tesseract_env () {
   # sudo port install tesseract tesseract-eng
  :
 }
