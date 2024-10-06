@@ -1010,6 +1010,9 @@ install_c_sys_env () {
 $(if on_darwin; then
   $printf "  xcode-select --install\n"
   $printf "  sudo xcodebuild -license\n"
+  $printf "  # if command -v port &>/dev/null; then\n"
+  $printf "  #   sudo port install posix-manpages\n"
+  $printf "  # fi\n"
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    sudo apt install build-essential manpages-posix manpages-posix-dev\n"
