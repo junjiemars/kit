@@ -1049,7 +1049,7 @@ $(if on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    sudo apt install gcc-aarch64-linux-gnu\n"
   $printf "  else\n"
-  $printf "    return 1"
+  $printf "    return 1\n"
   $printf "  fi\n"
   $printf "}\n"
 fi)
