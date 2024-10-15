@@ -2311,6 +2311,9 @@ set ruler
 " visual bell
 set novisualbell
 
+" list special character
+"set list
+
 " shell
 $(if [ "zsh" = "$SH" ]; then
   echo "\"set shell=zsh\ --rcs"
