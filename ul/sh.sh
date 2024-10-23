@@ -2292,6 +2292,7 @@ set fileencoding=utf8
 
 " line number
 set nonumber
+#set relativenumber
 
 " syntax highlight
 syntax enable

@@ -1,6 +1,7 @@
 .tables
 .object.list
 **/*.log
+**/*.nvimlog
 object.list
 ul/oracle/.tables-trimed
 .*.sql
