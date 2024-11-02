@@ -2281,7 +2281,7 @@ set tabstop=2
 "endif
 
 " history
-set history=50
+set history=1000
 
 " 1000 undo levels
 set undolevels=1000
@@ -2317,6 +2317,9 @@ set novisualbell
 
 " list special character
 "set list
+
+" autoread
+"autoread on " :e
 
 " shell
 $(if [ "zsh" = "$SH" ]; then
