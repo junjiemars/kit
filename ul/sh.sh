@@ -2295,10 +2295,12 @@ set nonumber
 "set relativenumber
 
 " syntax highlight
-syntax enable
+"syntax on" :syntax off
 
 " highlight search
-set hlsearch " :nohl
+"set hlsearch " :nohl
+:highlight Search term=bold ctermfg=black ctermbg=yellow guifg=black guibg=yellow
+:highlight Visual term=bold ctermfg=black ctermbg=yellow guifg=black guibg=yellow
 
 " background dark
 set background=light
