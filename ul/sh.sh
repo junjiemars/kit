@@ -2295,7 +2295,7 @@ set nonumber
 "set relativenumber
 
 " syntax highlight
-"syntax on" :syntax off
+"syntax off" :syntax on
 
 " highlight search
 "set hlsearch " :nohl
