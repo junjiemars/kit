@@ -2262,10 +2262,11 @@ $(if [ -f "${rc}.ori" ]; then
 fi)
 "------------------------------------------------
 
-set exrc
+"set exrc
 
 " nocompatible
 "set nocompatible
+"set edcompatible
 
 " indent uses 2 characters
 set shiftwidth=2
