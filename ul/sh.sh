@@ -2270,6 +2270,11 @@ fi)
 "set nocompatible
 "set edcompatible
 
+" help
+":h
+":h vi-difference
+":h vim-difference
+
 " indent uses 2 characters
 set shiftwidth=2
 
@@ -2297,8 +2302,8 @@ set fileencoding=utf8
 set nonumber
 "set relativenumber
 
-" syntax highlight
-"syntax off" :syntax on
+" syntax
+syntax off " :syntax on
 
 " highlight search
 "set hlsearch " :nohl
