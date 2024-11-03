@@ -2262,6 +2262,8 @@ $(if [ -f "${rc}.ori" ]; then
 fi)
 "------------------------------------------------
 
+":source ~/.exrc
+
 "set exrc
 
 " nocompatible
