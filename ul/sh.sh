@@ -1139,6 +1139,11 @@ list_font_sans () {
   $printf "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabSans-Italic.ttf\n"
 }
 
+list_font_dina () {
+  $printf "https://github.com/zshoals/Dina-Font-TTF-Remastered/blob/master/Fonts/DinaRemasterII.ttc\n"
+  $printf "https://github.com/zshoals/Dina-Font-TTF-Remastered/blob/master/Fonts/DinaRemasterCollection.ttc\n"
+}
+
 install_font_file () {
   local d="\$1"
   if [ -z "\$d" ]; then
