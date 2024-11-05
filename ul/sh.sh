@@ -1129,19 +1129,11 @@ gen_font_env () {
 #   $SH <($SH_ENV)
 #------------------------------------------------
 
-list_font_mono () {
-  $printf "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabMono.ttf\n"
-  $printf "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabMono-Italic.ttf\n"
-}
-
-list_font_sans () {
-  $printf "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabSans.ttf\n"
-  $printf "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabSans-Italic.ttf\n"
-}
-
-list_font_dina () {
-  $printf "https://github.com/zshoals/Dina-Font-TTF-Remastered/blob/master/Fonts/DinaRemasterII.ttc\n"
-  $printf "https://github.com/zshoals/Dina-Font-TTF-Remastered/blob/master/Fonts/DinaRemasterCollection.ttc\n"
+list_font_favor () {
+  $printf "mono %s\n" "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabMono.ttf"
+  $printf "mono %s\n" "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabMono-Italic.ttf"
+  $printf "sans %s\n" "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabSans.ttf"
+  $printf "sans %s\n" "https://gitlab-org.gitlab.io/frontend/fonts/fonts/GitLabSans-Italic.ttf"
 }
 
 install_font_file () {
