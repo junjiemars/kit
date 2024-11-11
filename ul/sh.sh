@@ -1180,32 +1180,35 @@ check_java_env () {
 export_java_env () {
   local javac="\${1:-\$(check_java_env)}"
   local d="\$(dirname \$javac)"
-  local java="\${d}/java"
   unset JAVA_HOME
-  if ! "\$java" -version &>/dev/null; then
+  if ! "\$javac" -version &>/dev/null; then
     return 1
   fi
 $(if on_darwin; then
-  echo "  d=\"\$(/usr/libexec/java_home 2>/dev/null)\""
-  echo "  # filter version: /usr/libexec/java_home -F -v 17"
-  echo "  if [ ! -d \"\$d\" ]; then"
-  echo "    return 1"
-  echo "  fi"
-  echo "  export JAVA_HOME=\"\$d\""
+  printf "  [ -d \"\$d\" ] || return 1\n"
+  printf "  export JAVA_HOME=\"\$($dirname \$d)\"\n"
 elif on_linux; then
-  echo "  if [ -L \"\$javac\" ]; then"
-  echo "    d=\"\$(dirname \$(readlink -f \"\$javac\"))\""
-  echo "    if [ ! -d \"\$d\" ]; then"
-  echo "      return 1"
-  echo "    fi"
-  echo "  fi"
-  echo "  export JAVA_HOME=\"\$(dirname \$d)\""
+  printf "  if [ -L \"\$javac\" ]; then\n"
+  printf "    d=\"\$(dirname \$(readlink -f \"\$javac\"))\"\n"
+  printf "    [ -d \"\$d\" ] || return 1\n"
+  printf "  fi\n"
+  printf "  export JAVA_HOME=\"\$($dirname \$d)\"\n"
 else
-  echo "  export JAVA_HOME=\"\$(dirname \$d)\""
+  printf "  export JAVA_HOME=\"\$(dirname \$d)\"\n"
 fi)
   local p="\$PATH"
   p="\$(norm_path \$d:\$(rm_path \$d \$p))"
   [ -z "\$p" ] || export PATH="\$p"
+}
+
+list_java_env () {
+$(if on_darwin; then
+  printf "  /usr/libexec/java_home -V 2>&1|$awk '/^ +[.0-9]+,/{sub(\"[ \\t]+\",\"\");print}'"
+elif on_linux; then
+  printf "  # todo"
+else
+  printf "  :"
+fi)
 }
 
 select_java_env () {
