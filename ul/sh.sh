@@ -1203,7 +1203,7 @@ fi)
 
 list_java_env () {
 $(if on_darwin; then
-  printf "  /usr/libexec/java_home -V 2>&1|$awk '/^ +[.0-9]+,/{sub(\"[ \\t]+\",\"\");print}'"
+  printf "  /usr/libexec/java_home -V 2>&1|$awk '/^ +[.0-9]+,/{sub(\"[ \\\t]+\",\"\");print}'"
 elif on_linux; then
   printf "  # todo"
 else
