@@ -1003,6 +1003,7 @@ gen_c_env () {
 # https://github.com/junjiemars/nore
 # https://godbolt.org
 # https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
+# https://www.bellard.org/tcc/
 #------------------------------------------------
 
 check_c_nore_env () {
