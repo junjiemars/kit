@@ -302,7 +302,7 @@ fi)
 
 alias_emacs () {
   if exist_p emacs; then
-    alias emacs='emacs -nw'
+    alias emacs='emacs -nw --no-site-file'
   fi
 }
 
