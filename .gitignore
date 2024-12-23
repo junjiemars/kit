@@ -1,51 +1,44 @@
-.tables
-.object.list
+# org export
+# podman
+# qemu
+**/*.html
+**/*.iso
+**/*.jar
 **/*.log
 **/*.nvimlog
-object.list
-ul/oracle/.tables-trimed
-.*.sql
-
-exp-*.sql
-
-*.buf
-*.swp
-*.swo
-*.reg
+**/*.pdf
+**/*.pre
+**/*.qcow2
+**/*.tex
+**/*.zip
+**/.oracle.*
+**/tds.sh
 *.b0
-
-TAGS
+*.bak
+*.buf
+*.reg
 *.rkt~
-tags
+*.swo
+*.swp
+.*.sql
+.object.list
+.tables
+.vscode/
+TAGS
 \*shell\*
-ul/td_sha1sum.sh
-ul/td_*.bat
-all/ide/idea/*/installed.txt
+all/ide/idea/**/IntelliJ\ IDEA\ Global\ Settings
 all/ide/idea/**/installed.txt
 all/ide/idea/*/IntelliJ\ IDEA\ Global\ Settings
-all/ide/idea/**/IntelliJ\ IDEA\ Global\ Settings
-all/ide/idea/darwin/options/
+all/ide/idea/*/installed.txt
 all/ide/idea/*/options/
-.vscode/
-*.bak
-**/tds.sh
-**/*.pre
-**/.oracle.*
-
-ul/nginx.sh
-ul/nginx.conf
-
-# org export
-**/*.pdf
-**/*.tex
-**/*.html
-
-**/*.zip
-**/*.jar
-
-# qemu
-**/*.qcow2
-**/*.iso
-
-# podman
+all/ide/idea/darwin/options/
+cscope.out
+exp-*.sql
+object.list
 podman/capture.pcap
+tags
+ul/nginx.conf
+ul/nginx.sh
+ul/oracle/.tables-trimed
+ul/td_*.bat
+ul/td_sha1sum.sh

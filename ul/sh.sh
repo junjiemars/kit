@@ -1006,16 +1006,16 @@ gen_c_env () {
 # https://www.bellard.org/tcc/
 #------------------------------------------------
 
-check_c_nore_env () {
+c_check_nore_env () {
   local d="\$HOME/.nore"
   $test -x "\${d}/cc-env.sh"
 }
 
-install_c_nore () {
+c_install_nore () {
   curl https://raw.githubusercontent.com/junjiemars/nore/master/bootstrap.sh -sSfL | sh
 }
 
-install_c_sys_env () {
+c_install_sys_env () {
 $(if on_darwin; then
   $printf "  xcode-select --install\n"
   $printf "  sudo xcodebuild -license\n"
@@ -1035,7 +1035,7 @@ else
 fi)
 }
 
-install_c_autotools () {
+c_install_autotools () {
 $(if on_darwin; then
   $printf "  if command -v port &>/dev/null; then\n"
   $printf "    sudo port install autoconf automake libtool\n"
@@ -1054,7 +1054,7 @@ fi)
 }
 
 $(if on_linux; then
-  $printf "install_c_gcc_aarch64_env () {\n"
+  $printf "c_install_gcc_aarch64_env () {\n"
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    sudo apt install gcc-aarch64-linux-gnu\n"
   $printf "  else\n"
@@ -1063,7 +1063,7 @@ $(if on_linux; then
   $printf "}\n"
 fi)
 
-install_c_cmake () {
+c_install_cmake () {
 $(if on_darwin; then
   $printf "  if command -v port &>/dev/null; then\n"
   $printf "    sudo port install cmake\n"
@@ -1081,7 +1081,7 @@ else
 fi)
 }
 
-install_c_clang_format () {
+c_install_clang_format () {
 $(if on_darwin; then
   $printf "  # install_llvm_clang\n"
   $printf "  command -v clang-format &>/dev/null\n"
@@ -1092,7 +1092,7 @@ else
 fi)
 }
 
-list_c_clang_format_gnu () {
+c_list_clang_format_gnu () {
   $printf "# https://clang.llvm.org/docs/ClangFormatStyleOptions.html\n"
   $printf "%s\n" '---'
   $printf "Language: Cpp\n"
@@ -1102,7 +1102,7 @@ list_c_clang_format_gnu () {
   $printf "%s\n" '---'
 }
 
-install_c_bear () {
+c_install_bear () {
 $(if on_darwin; then
   $printf "  if command -v port &>/dev/null; then\n"
   $printf "    sudo port install bear\n"
@@ -1112,6 +1112,24 @@ $(if on_darwin; then
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    sudo apt install bear\n"
+  $printf "  else\n"
+  $printf "    return 1\n"
+  $printf "  fi\n"
+else
+  $printf "  return 1\n"
+fi)
+}
+
+c_install_cscope () {
+$(if on_darwin; then
+  $printf "  if command -v port &>/dev/null; then\n"
+  $printf "    sudo port install cscope\n"
+  $printf "  else\n"
+  $printf "    return 1\n"
+  $printf "  fi\n"
+elif on_linux; then
+  $printf "  if command -v apt &>/dev/null; then\n"
+  $printf "    sudo apt install cscope\n"
   $printf "  else\n"
   $printf "    return 1\n"
   $printf "  fi\n"
@@ -1546,7 +1564,7 @@ check_macports_env () {
   return 0
 }
 
-check_macports_llvm_env () {
+macports_check_llvm_env () {
   local p="/opt/local/libexec/llvm"
   if [ ! -L "\$p" ]; then
     # sudo port install llvm-12
@@ -1563,7 +1581,7 @@ export_macports_path () {
   fi
   local p=
   local o=
-  o="\$(check_macports_llvm_env)"
+  o="\$(macports_check_llvm_env)"
   p="\$PATH"
   if [ -d "\${o}/bin" ]; then
     p="\${o}/bin:\$(rm_path \${o}/bin \$p)"
@@ -1584,7 +1602,7 @@ export_macports_libpath () {
   fi
   local p=
   local o=
-  o="\$(check_macports_llvm_env)"
+  o="\$(macports_check_llvm_env)"
   p="\$DYLD_LIBRARY_PATH"
   if [ -d "\${o}/lib" ]; then
     p="\$(norm_path \${o}/lib:\$(rm_path \${o}/lib \$p))"
@@ -1855,7 +1873,7 @@ check_python_env () {
   [ "\$v3" -ge "3" ] && $printf "%s\n" "\$p3"
 }
 
-check_python_pip () {
+python_check_pip () {
   local p3="\$(where pip3 2>/dev/null)"
   if "\$p3" -V &>/dev/null; then
     $printf "%s\n" "\$p3"
@@ -1869,7 +1887,7 @@ check_python_pip () {
   [ \$v3 -ge 3 ] && $printf "%s\n" "\$p3"
 }
 
-make_python_venv () {
+python_make_venv () {
   local d="\${1:-\$(pwd)}"
   local p="\$(check_python_env)"
   if [ -z "\$p" ]; then
@@ -1878,7 +1896,7 @@ make_python_venv () {
   \$p -m venv "\$d" && $printf "%s\n" "\$d"
 }
 
-list_python_pip_mirror () {
+python_list_pip_mirror () {
   $printf "%s\n" 'https://pypi.tuna.tsinghua.edu.cn/simple/'
   $printf "%s\n" 'https://pypi.mirrors.ustc.edu.cn/simple/'
   $printf "%s\n" 'http://mirrors.aliyun.com/pypi/simple/'
@@ -1887,21 +1905,21 @@ list_python_pip_mirror () {
   $printf "%s\n" 'http://pypi.douban.com/simple/'
 }
 
-make_python_pip_mirror () {
-  local m="\${1:-\$(check_python_pip_mirror|$sed -n '1p')}"
-  local p="\$(check_python_pip)"
+python_make_pip_mirror () {
+  local m="\${1:-\$(python_list_pip_mirror|$sed -n '1p')}"
+  local p="\$(python_check_pip)"
   if [ -z "\$p" ]; then
     return 1
   fi
   \$p config set global.index-url "\$m"
 }
 
-make_python_lsp () {
+python_make_lsp () {
   local py="\$(check_python_env)"
   if [ -z "\$py" ]; then
     return 1
   fi
-  local pip="\$(check_python_pip)"
+  local pip="\$(python_check_pip)"
   if [ -z "\$pip" ]; then
     return 1
   fi
@@ -1929,7 +1947,7 @@ END
   $chmod u+x "\$pylsp_sh"
 $(echo "}")
 
-make_python_http_server () {
+python_make_http_server () {
   local p="\$(check_python_env)"
   if [ -z "\$p" ]; then
     return 1
@@ -2009,17 +2027,17 @@ check_rust_env () {
   [ -x "\$sr/bin/rustc" ] && $printf "%s\n" "\$sr"
 }
 
-install_rust_rustup () {
+rust_install_rustup () {
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 }
 
-list_rust_cargo_mirror () {
+rust_list_cargo_mirror () {
   $printf "%s %s\n" 'tuna' 'https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git'
   $printf "%s %s\n" 'ustc' 'https://mirrors.ustc.edu.cn/crates.io-index'
   $printf "%s %s\n" 'aliyun' 'https://mirrors.aliyun.com/crates.io-index'
 }
 
-make_rust_cargo_mirror_env () {
+rust_make_cargo_mirror_env () {
   local sr="\$(check_rust_env)"
   local c=""
   if [ -z "\$sr" ]; then
@@ -2034,7 +2052,7 @@ registry = '\${2}/'
 END
 }
 
-check_rust_completion () {
+rust_check_completion () {
   local rc="${r}/rust_cargo_completion"
   local ru="${r}/rust_rustup_completion"
   rustup completions $SH cargo > \$rc
@@ -2043,7 +2061,7 @@ check_rust_completion () {
   . \$ru
 }
 
-check_rust_etc () {
+rust_check_etc () {
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
@@ -2052,7 +2070,7 @@ check_rust_etc () {
   [ -d "\$etc" ] && echo "\$etc"
 }
 
-check_rust_src () {
+rust_check_src () {
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
@@ -2061,7 +2079,7 @@ check_rust_src () {
   [ -d "\$src" ] && echo "\$src"
 }
 
-check_rust_hash () {
+rust_check_hash () {
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
@@ -2070,20 +2088,20 @@ check_rust_hash () {
   [ -n "\$hash" ] && echo "\$hash"
 }
 
-make_rust_debug_env () {
+rust_make_debug_env () {
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
   fi
-  local hash="\$(check_rust_hash)"
+  local hash="\$(rust_check_hash)"
   if [ -z "\$hash" ]; then
     return 1
   fi
-  local etc="\$(check_rust_etc)"
+  local etc="\$(rust_check_etc)"
   if [ -z "\$etc" ]; then
     return 1
   fi
-  local src="\$(check_rust_src)"
+  local src="\$(rust_check_src)"
   if [ -z "\$src" ]; then
     return 1
   fi
@@ -2106,37 +2124,37 @@ make_rust_debug_env () {
   fi
 }
 
-check_rust_tags_option () {
-  local etc="\$(check_rust_etc)"
+rust_check_tags_option () {
+  local etc="\$(rust_check_etc)"
   if [ -z "\$etc" ]; then
     return 1
   fi
   $printf "%s\n" "\${etc}/ctags.rust"
 }
 
-check_rust_tags_file () {
-  local etc="\$(check_rust_etc)"
+rust_check_tags_file () {
+  local etc="\$(rust_check_etc)"
   if [ -z "\$etc" ]; then
     return 1
   fi
   $printf "%s\n" "\${etc}/.tags_emacs"
 }
 
-make_rust_tags_env () {
+rust_make_tags_env () {
   local args="\$@"
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
   fi
-  local etc="\$(check_rust_etc)"
+  local etc="\$(rust_check_etc)"
   if [ -z "\$etc" ]; then
     return 1
   fi
-  local src="\$(check_rust_src)"
+  local src="\$(rust_check_src)"
   if [ -z "\$src" ]; then
     return 1
   fi
-  local tag_opt="\$(check_rust_tags_option)"
+  local tag_opt="\$(rust_check_tags_option)"
   if [ ! -f "\$tag_opt" ]; then
     local opt_src="https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/ctags.rust"
     $mkdir -p "\${etc}"
@@ -2145,7 +2163,7 @@ make_rust_tags_env () {
   if ! where ctags &>/dev/null; then
     return 1
   fi
-  local d="\$(check_rust_tags_file)"
+  local d="\$(rust_check_tags_file)"
   [ -f "\$d" ] && rm "\$d"
   ctags \$args -R -e -o \$d --options="\$tag_opt" \$src
   $printf "%s\n" "\$d"
@@ -2173,7 +2191,7 @@ if [ "\$o_export_path_env" = "yes" ]; then
 fi
 
 if [ "\$o_check_completion_env" = "yes" ]; then
-  : # check_rust_completion
+  : # rust_check_completion
 fi
 
 # eof
