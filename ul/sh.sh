@@ -1019,9 +1019,6 @@ c_install_sys_env () {
 $(if on_darwin; then
   $printf "  xcode-select --install\n"
   $printf "  sudo xcodebuild -license\n"
-  $printf "  # if command -v port &>/dev/null; then\n"
-  $printf "  #   sudo port install posix-manpages\n"
-  $printf "  # fi\n"
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    sudo apt install build-essential manpages-posix manpages-posix-dev\n"
@@ -1035,16 +1032,16 @@ else
 fi)
 }
 
-c_install_autotools () {
+c_install_tools () {
 $(if on_darwin; then
   $printf "  if command -v port &>/dev/null; then\n"
-  $printf "    sudo port install autoconf automake libtool\n"
+  $printf "    sudo port install autoconf automake bear cmake cscope libtool posix-manpages\n"
   $printf "  else\n"
   $printf "    return 1\n"
   $printf "  fi\n"
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
-  $printf "    sudo apt install autotools-dev\n"
+  $printf "    sudo apt install autotools-dev bear clang-format cmake cscope libtool\n"
   $printf "  else\n"
   $printf "    return 1\n"
   $printf "  fi\n"
@@ -1063,35 +1060,6 @@ $(if on_linux; then
   $printf "}\n"
 fi)
 
-c_install_cmake () {
-$(if on_darwin; then
-  $printf "  if command -v port &>/dev/null; then\n"
-  $printf "    sudo port install cmake\n"
-  $printf "  else\n"
-  $printf "    return 1\n"
-  $printf "  fi\n"
-elif on_linux; then
-  $printf "  if command -v apt &>/dev/null; then\n"
-  $printf "    sudo apt install cmake\n"
-  $printf "  else\n"
-  $printf "    return 1\n"
-  $printf "  fi\n"
-else
-  $printf "  return 1\n"
-fi)
-}
-
-c_install_clang_format () {
-$(if on_darwin; then
-  $printf "  # install_llvm_clang\n"
-  $printf "  command -v clang-format &>/dev/null\n"
-elif on_linux && command -v apt &>/dev/null; then
-  $printf "  sudo apt install clang-format\n"
-else
-  $printf "  return 1\n"
-fi)
-}
-
 c_list_clang_format_gnu () {
   $printf "# https://clang.llvm.org/docs/ClangFormatStyleOptions.html\n"
   $printf "%s\n" '---'
@@ -1100,42 +1068,6 @@ c_list_clang_format_gnu () {
   $printf "IndentWidth: 2\n"
   $printf "ColumnLimit: 79\n"
   $printf "%s\n" '---'
-}
-
-c_install_bear () {
-$(if on_darwin; then
-  $printf "  if command -v port &>/dev/null; then\n"
-  $printf "    sudo port install bear\n"
-  $printf "  else\n"
-  $printf "    return 1\n"
-  $printf "  fi\n"
-elif on_linux; then
-  $printf "  if command -v apt &>/dev/null; then\n"
-  $printf "    sudo apt install bear\n"
-  $printf "  else\n"
-  $printf "    return 1\n"
-  $printf "  fi\n"
-else
-  $printf "  return 1\n"
-fi)
-}
-
-c_install_cscope () {
-$(if on_darwin; then
-  $printf "  if command -v port &>/dev/null; then\n"
-  $printf "    sudo port install cscope\n"
-  $printf "  else\n"
-  $printf "    return 1\n"
-  $printf "  fi\n"
-elif on_linux; then
-  $printf "  if command -v apt &>/dev/null; then\n"
-  $printf "    sudo apt install cscope\n"
-  $printf "  else\n"
-  $printf "    return 1\n"
-  $printf "  fi\n"
-else
-  $printf "  return 1\n"
-fi)
 }
 
 # eof
