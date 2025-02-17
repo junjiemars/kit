@@ -1984,9 +1984,9 @@ rust_make_cargo_mirror_env () {
   c="\${HOME}/.cargo/config.toml"
   cat <<END>"\$c"
 [source.crates-io]
-replace-with = '\$1'
+replace-with = "\$1"
 [source.\$1]
-registry = '\${2}/'
+registry = "\${2}/"
 END
 }
 
