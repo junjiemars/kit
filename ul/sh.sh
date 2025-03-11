@@ -2207,7 +2207,8 @@ gen_unix_env () {
 #------------------------------------------------
 
 list_unix_source_repository () {
-  $printf "macos https://github.com/apple-open-source/macos\n"
+  # git submodule update --init --recursive top
+  $printf "https://github.com/apple-oss-distributions/distribution-macOS"
   $printf "freebsd https://github.com/freebsd/freebsd-src.git\n"
   $printf "linux https://github.com/torvalds/linux\n"
   $printf "xv6-riscv https://github.com/mit-pdos/xv6-riscv\n"
