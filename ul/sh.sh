@@ -1403,7 +1403,7 @@ gen_llvm_env () {
 #------------------------------------------------
 
 check_llvm_env () {
-  :
+  llvm_config --version &>/dev/null
 }
 
 check_llvm_clangd_env () {
@@ -1421,6 +1421,30 @@ else
 fi)
 }
 
+export_llvm_path () {
+  if ! \$(check_llvm_env); then
+    return 1
+  fi
+  local d="\$(llvm-config --bindir 2>/dev/null)"
+  if [ -z "\$d" ] || [ ! -d "\$d" ]; then
+    return 1
+  fi
+  local p="\$(norm_path \$d:\$(rm_path \$d \$PATH))"
+  [ -z "\$p" ] || export PATH="\$p"
+}
+
+export_llvm_libpath () {
+  if ! \$(check_llvm_env); then
+    return 1
+  fi
+  local d="\$(llvm-config --libdir 2>/dev/null)"
+  if [ -z "\$d" ] || [ ! -d "\$d" ]; then
+    return 1
+  fi
+  local p="\$(norm_path \$d:\$(rm_path \$d \$LIBRARY_PATH))"
+  [ -z "\$p" ] || export LIBRARY_PATH="\$p"
+}
+
 install_llvm_clang () {
   local v="\${1:-16}"
 $(if on_darwin; then
@@ -1431,6 +1455,14 @@ else
   $printf "  return 1\n"
 fi)
 }
+
+if [ "\$o_export_path_env" = "yes" ]; then
+  export_llvm_path
+fi
+
+if [ "\$o_export_libpath_env" = "yes" ]; then
+  export_llvm_libpath
+fi
 
 # eof
 EOF
@@ -1502,34 +1534,17 @@ check_macports_env () {
   return 0
 }
 
-macports_check_llvm_env () {
-  local p="/opt/local/libexec/llvm"
-  if [ ! -L "\$p" ]; then
-    # sudo port install llvm-12
-    return 1
-  fi
-  $printf "%s\n" "\$p"
-  return 0
-}
-
 export_macports_path () {
   local h="\$(check_macports_env)"
   if [ -z "\$h" ]; then
     return 1
   fi
-  local p=
-  local o=
-  o="\$(macports_check_llvm_env)"
-  p="\$PATH"
-  if [ -d "\${o}/bin" ]; then
-    p="\${o}/bin:\$(rm_path \${o}/bin \$p)"
+  if [ ! -d "\${h}/sbin" ] || [ ! -d "\${h}/bin" ]; then
+    return 1
   fi
-  if [ -d "\${h}/sbin" ]; then
-    p="\$(norm_path \${h}/sbin:\$(rm_path \${h}/sbin \$p))"
-  fi
-  if [ -d "\${h}/bin" ]; then
-    p="\$(norm_path \${h}/bin:\$(rm_path \${h}/bin \$p))"
-  fi
+  local p="\$PATH"
+  p="\$(norm_path \${h}/sbin:\$(rm_path \${h}/sbin \$p))"
+  p="\$(norm_path \${h}/bin:\$(rm_path \${h}/bin \$p))"
   [ -z "\$p" ] || export PATH="\$p"
 }
 
@@ -1538,16 +1553,11 @@ export_macports_libpath () {
   if [ -z "\$h" ]; then
     return 1
   fi
-  local p=
-  local o=
-  o="\$(macports_check_llvm_env)"
-  p="\$DYLD_LIBRARY_PATH"
-  if [ -d "\${o}/lib" ]; then
-    p="\$(norm_path \${o}/lib:\$(rm_path \${o}/lib \$p))"
+  if [ ! -d "\${h}/lib" ]; then
+    return 1
   fi
-  if [ -d "\${h}/lib" ]; then
-    p="\$(norm_path \${h}/lib:\$(rm_path \${h}/lib \$p))"
-  fi
+  local p="\$DYLD_LIBRARY_PATH"
+  p="\$(norm_path \${h}/lib:\$(rm_path \${h}/lib \$p))"
   [ -z "\$p" ] || export DYLD_LIBRARY_PATH="\$p"
 }
 
