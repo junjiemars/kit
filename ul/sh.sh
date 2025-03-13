@@ -1403,7 +1403,27 @@ gen_llvm_env () {
 #------------------------------------------------
 
 check_llvm_env () {
-  llvm_config --version &>/dev/null
+  local d=
+  if llvm-config --version &>/dev/null; then
+    d="\$(llvm-config --prefix)/bin/llvm_config"
+    if [ -x "\${d}" ]; then
+        $printf "\${d}\n"
+      return 0
+    fi
+  fi
+$(if on_darwin; then
+  $printf "  d=\"/opt/local/libexec/llvm/bin/llvm-config\"\n"
+elif on_linux; then
+  $printf "  d=\"/usr/bin/llvm-config\"\n"
+fi)
+  if [ -x "\${d}" ]; then
+    d="\$(\$d --prefix)/bin/llvm-config"
+    if [ -x "\${d}" ]; then
+      $printf "\${d}\n"
+      return 0
+    fi
+  fi
+  return 1
 }
 
 check_llvm_clangd_env () {
@@ -1411,21 +1431,25 @@ check_llvm_clangd_env () {
 }
 
 install_llvm () {
-  local v="\${1:-16}"
+  local v="\${1:-0}"
 $(if on_darwin; then
-  $printf "  sudo port install llvm-\$v\n"
+  $printf "  if [ "\$v" -eq 0 ]; then\n"
+  $printf "    v=\"\$(clang --version|head -n1|sed -E -e's/^Apple clang version ([0-9]+)\..*\$/\\\1/')\"\n"
+  $printf "  fi\n"
+  $printf "  printf \"sudo port install llvm-\$v\\\n\"\n"
 elif on_linux; then
-  $printf "  sudo apt install llvm-\$v\n"
+  $printf "  printf \"sudo apt install llvm-\$v\\\n\"\n"
 else
   $printf "  return 1\n"
 fi)
 }
 
 export_llvm_path () {
-  if ! \$(check_llvm_env); then
+  local cfg="\$(check_llvm_config)"
+  if [ -z "\${cfg}" ]; then
     return 1
   fi
-  local d="\$(llvm-config --bindir 2>/dev/null)"
+  local d="\$(\$cfg --bindir 2>/dev/null)"
   if [ -z "\$d" ] || [ ! -d "\$d" ]; then
     return 1
   fi
@@ -1434,10 +1458,11 @@ export_llvm_path () {
 }
 
 export_llvm_libpath () {
-  if ! \$(check_llvm_env); then
+  local cfg="\$(check_llvm_config)"
+  if [ -z "\${cfg}" ]; then
     return 1
   fi
-  local d="\$(llvm-config --libdir 2>/dev/null)"
+  local d="\$(\$cfg --libdir 2>/dev/null)"
   if [ -z "\$d" ] || [ ! -d "\$d" ]; then
     return 1
   fi
