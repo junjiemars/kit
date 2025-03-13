@@ -1426,15 +1426,11 @@ fi)
   return 1
 }
 
-check_llvm_clangd_env () {
-  clangd --version &>/dev/null
-}
-
 install_llvm () {
   local v="\${1:-0}"
 $(if on_darwin; then
   $printf "  if [ "\$v" -eq 0 ]; then\n"
-  $printf "    v=\"\$(clang --version|head -n1|sed -E -e's/^Apple clang version ([0-9]+)\..*\$/\\\1/')\"\n"
+  $printf "    v=\"\$(clang --version|sed -nEe's/^Apple clang version ([0-9]+)\..*\$/\\\1/p')\"\n"
   $printf "  fi\n"
   $printf "  printf \"sudo port install llvm-\$v\\\n\"\n"
 elif on_linux; then
@@ -1445,7 +1441,7 @@ fi)
 }
 
 export_llvm_path () {
-  local cfg="\$(check_llvm_config)"
+  local cfg="\$(check_llvm_env)"
   if [ -z "\${cfg}" ]; then
     return 1
   fi
@@ -1458,7 +1454,7 @@ export_llvm_path () {
 }
 
 export_llvm_libpath () {
-  local cfg="\$(check_llvm_config)"
+  local cfg="\$(check_llvm_env)"
   if [ -z "\${cfg}" ]; then
     return 1
   fi
@@ -1468,17 +1464,6 @@ export_llvm_libpath () {
   fi
   local p="\$(norm_path \$d:\$(rm_path \$d \$LIBRARY_PATH))"
   [ -z "\$p" ] || export LIBRARY_PATH="\$p"
-}
-
-install_llvm_clang () {
-  local v="\${1:-16}"
-$(if on_darwin; then
-  $printf "  sudo port install clang-\$v\n"
-elif on_linux; then
-  $printf "  sudo apt install clang-\$v\n"
-else
-  $printf "  return 1\n"
-fi)
 }
 
 if [ "\$o_export_path_env" = "yes" ]; then
