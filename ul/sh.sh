@@ -1354,7 +1354,7 @@ gen_latex_env () {
 # https://www.latex-project.org
 #------------------------------------------------
 
-install_latex_texlive () {
+install_latex_env () {
 $(if on_darwin; then
   $printf "  sudo port install texlive-latex-recommented\n"
 elif on_linux; then
@@ -1364,7 +1364,7 @@ else
 fi)
 }
 
-install_latex_lsp () {
+latex_install_lsp () {
 $(if on_darwin; then
   $printf "  sudo port install texlive-latex-recommented texlive-xetex texlive-lang-cjk texlab\n"
 elif on_linux; then
@@ -1374,7 +1374,7 @@ else
 fi)
 }
 
-install_latex_org_mode () {
+latex_install_org_mode () {
 $(if on_darwin; then
   $printf "  sudo port install texlive-latex-extra dvipng\n"
 elif on_linux; then
@@ -1426,7 +1426,7 @@ fi)
   return 1
 }
 
-install_llvm () {
+install_llvm_env () {
   local v="\${1:-0}"
 $(if on_darwin; then
   $printf "  if [ "\$v" -eq 0 ]; then\n"
@@ -1620,7 +1620,7 @@ check_javascript_nvm_env () {
   return 1
 }
 
-install_javascript_nvm_sh() {
+install_javascript_env () {
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 }
 
@@ -1716,7 +1716,7 @@ check_pandoc_env () {
   pandoc -v &>/dev/null
 }
 
-install_pandoc () {
+install_pandoc_env () {
 $(if on_darwin; then
   $printf "  # for full latex support +full_latex_dependencies\n"
   $printf "  sudo port install pandoc\n"
@@ -1985,7 +1985,7 @@ check_rust_env () {
   [ -x "\$sr/bin/rustc" ] && $printf "%s\n" "\$sr"
 }
 
-rust_install_rustup () {
+install_rust_env () {
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 }
 
