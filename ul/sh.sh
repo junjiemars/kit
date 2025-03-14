@@ -1437,7 +1437,8 @@ $(if on_darwin; then
   $printf "  if [ "\$v" -eq 0 ]; then\n"
   $printf "    v=\"\$(clang --version|sed -nEe's/^Apple clang version ([0-9]+)\..*\$/\\\1/p')\"\n"
   $printf "  fi\n"
-  $printf "  printf \"sudo port install llvm-\$v\\\n\"\n"
+  $printf "  sudo port install llvm-\$v llvm_select\n"
+  $printf "  sudo port select --set llvm \$(port select --list llvm|sed -nEe\"s/^\\\t((mp-)?llvm-\$v).*\$/\\\1/p\")\n"
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    printf \"sudo apt install llvm-\$v\\\n\"\n"
