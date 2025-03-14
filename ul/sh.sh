@@ -1493,17 +1493,10 @@ gen_lisp_env () {
 #------------------------------------------------
 
 check_lisp_env () {
-  local lisp=\$1
-  if [ -n "\$lisp" ]; then
-    \$lisp --version &>/dev/null
-    return
-  fi
-  return 1
+  :
 }
 
-# eof
-
-install_lisp_chez () {
+lisp_install_chez () {
 $(if on_darwin; then
   $printf "  sudo port install chez-scheme\n"
 else
@@ -1511,7 +1504,7 @@ else
 fi)
 }
 
-install_lisp_sbcl () {
+lisp_install_sbcl () {
 $(if on_darwin; then
   $printf "  sudo port install sbcl\n"
 else
