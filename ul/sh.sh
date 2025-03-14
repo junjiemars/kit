@@ -1409,7 +1409,7 @@ gen_llvm_env () {
 check_llvm_env () {
   local d=
   if llvm-config --version &>/dev/null; then
-    d="\$(llvm-config --prefix)/bin/llvm_config"
+    d="\$(llvm-config --prefix)/bin/llvm-config"
     if [ -x "\${d}" ]; then
         $printf "\${d}\n"
       return 0
