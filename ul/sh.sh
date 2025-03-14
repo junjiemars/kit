@@ -1047,13 +1047,17 @@ $(if on_darwin; then
   $printf "  fi\n"
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
-  $printf "    sudo apt install autotools-dev bear clang-format cmake cscope libtool\n"
+  $printf "    sudo apt install autotools-dev bear cmake cscope libtool\n"
   $printf "  else\n"
   $printf "    return 1\n"
   $printf "  fi\n"
 else
   $printf "  return 1\n"
 fi)
+}
+
+c_install_llvm () {
+  $printf "  # using install_llvm_env instead\n"
 }
 
 $(if on_linux; then
@@ -1428,13 +1432,16 @@ fi)
 
 install_llvm_env () {
   local v="\${1:-0}"
+  # llvm already install clangd, clang-format, etc.
 $(if on_darwin; then
   $printf "  if [ "\$v" -eq 0 ]; then\n"
   $printf "    v=\"\$(clang --version|sed -nEe's/^Apple clang version ([0-9]+)\..*\$/\\\1/p')\"\n"
   $printf "  fi\n"
   $printf "  printf \"sudo port install llvm-\$v\\\n\"\n"
 elif on_linux; then
-  $printf "  printf \"sudo apt install llvm-\$v\\\n\"\n"
+  $printf "  if command -v apt &>/dev/null; then\n"
+  $printf "    printf \"sudo apt install llvm-\$v\\\n\"\n"
+  $pritnf "  fi\n"
 else
   $printf "  return 1\n"
 fi)
