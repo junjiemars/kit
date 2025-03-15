@@ -1435,10 +1435,11 @@ install_llvm_env () {
   # llvm already install clangd, clang-format, etc.
 $(if on_darwin; then
   $printf "  if [ "\$v" -eq 0 ]; then\n"
-  $printf "    v=\"\$(clang --version|sed -nEe's/^Apple clang version ([0-9]+)\..*\$/\\\1/p')\"\n"
+  $printf "    v=\"\$(/usr/bin/clang --version|sed -ne'1p'|sed -nEe's/^.*clang version ([0-9]+)\..*\$/\\\1/p')\"\n"
   $printf "  fi\n"
   $printf "  sudo port install llvm-\$v llvm_select clang-\$v clang_select\n"
-  $printf "  sudo port select --set llvm \$(port select --list llvm|sed -nEe\"s/^\\\t((mp-)?llvm-\$v).*\$/\\\1/p\")\n"
+  $printf "  sudo port select --set llvm \$(port select --list llvm|sed -ne'2p'|sed -Ee\"s/^[[:blank:]]*((mp-)?llvm-\$v).*\$/\\\1/\")\n"
+  $printf "  sudo port select --set clang \$(port select --list clang|sed -ne'2p'|sed -Ee\"s/^[[:blank:]]*((mp-)?clang-\$v).*\$/\\\1/\")\n"
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    printf \"sudo apt install llvm-\$v\\\n\"\n"
