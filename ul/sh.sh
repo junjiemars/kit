@@ -1411,7 +1411,7 @@ check_llvm_env () {
   if llvm-config --version &>/dev/null; then
     d="\$(llvm-config --prefix)/bin/llvm-config"
     if [ -x "\${d}" ]; then
-        $printf "\${d}\n"
+      $printf "\${d}\n"
       return 0
     fi
   fi
@@ -1432,10 +1432,10 @@ fi)
 
 install_llvm_env () {
   local v="\${1:-0}"
-  # llvm already install clangd, clang-format, etc.
+  # llvm already install clang, clangd, clang-format, etc.
 $(if on_darwin; then
   $printf "  if [ "\$v" -eq 0 ]; then\n"
-  $printf "    v=\"\$(/usr/bin/clang --version|sed -ne'1p'|sed -nEe's/^.*clang version ([0-9]+)\..*\$/\\\1/p')\"\n"
+  $printf "    v=\"\$(cc --version|sed -ne'1p'|sed -nEe's/^.*clang version ([0-9]+)\..*\$/\\\1/p')\"\n"
   $printf "  fi\n"
   $printf "  sudo port install llvm-\$v llvm_select clang-\$v clang_select\n"
   $printf "  sudo port select --set llvm \$(port select --list llvm|sed -ne'2p'|sed -Ee\"s/^[[:blank:]]*((mp-)?llvm-\$v).*\$/\\\1/\")\n"
@@ -1443,7 +1443,7 @@ $(if on_darwin; then
 elif on_linux; then
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    printf \"sudo apt install llvm-\$v\\\n\"\n"
-  $pritnf "  fi\n"
+  $printf "  fi\n"
 else
   $printf "  return 1\n"
 fi)
