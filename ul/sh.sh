@@ -1476,7 +1476,7 @@ export_llvm_libpath () {
 }
 
 if [ "\$o_export_path_env" = "yes" ]; then
-  # export_llvm_path
+  export_llvm_path
 fi
 
 if [ "\$o_export_libpath_env" = "yes" ]; then
