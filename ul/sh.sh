@@ -1038,10 +1038,10 @@ else
 fi)
 }
 
-c_install_tools () {
+c_install_autotools () {
 $(if on_darwin; then
   $printf "  if command -v port &>/dev/null; then\n"
-  $printf "    sudo port install autoconf automake bear cmake cscope libtool posix-manpages\n"
+  $printf "    sudo port install autoconf autogen automake bear cmake cscope libtool posix-manpages\n"
   $printf "  else\n"
   $printf "    return 1\n"
   $printf "  fi\n"
