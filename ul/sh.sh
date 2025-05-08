@@ -414,7 +414,7 @@ sys_random_range () {
 }
 
 # Doug McIlroy
-sys_word_frequency () {
+sys_word_freq () {
   $tr -cs A-Za-z\' '\n' \\
     | $tr A-Z a-z \\
     | $sort \\
@@ -2172,13 +2172,19 @@ gen_secure_env () {
 #   $SH <($SH_ENV)
 #------------------------------------------------
 
-list_secure_source_site () {
+secure_check_tls () {
+  curl -XGET -H'Content-Type: application/json' 'https://tls.browserleaks.com/tls'
+}
+
+secure_list_source_site () {
   printf "chromium https://github.com/chromium/chromium\n"
   printf "firefox https://searchfox.org\n"
 }
 
-check_secure_tls () {
-  curl -XGET -H'Content-Type: application/json' 'https://tls.browserleaks.com/tls'
+secure_get_onion () {
+  local a="Z2V0dG9yQHRvcnByb2plY3Qub3JnCg=="
+  local m="$($uname -sm)"
+  $printf "echo '%s'|mail -s'' %s\n" \$m \$(echo \$a|base64 -d)
 }
 
 # eof
