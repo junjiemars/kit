@@ -943,22 +943,22 @@ $(if on_windows_nt; then
   $printf "  # change code page to unicode\n"
   $printf "  chcp.com 65001 &>/dev/null\n"
   $printf "  if locale -a | grep -qF 'en_US.utf8'\n"
-  $printf "    export LANG=en_US.utf8\n"
+  $printf "    export LANG='en_US.utf8'\n"
   $printf "  fi\n"
 elif on_darwin; then
-  $printf "  if locale -a | grep -qF 'en_US.UTF-8'; then\n"
-  $printf "    export LANG=en_US.UTF-8\n"
+  $printf "  if [ \"\$LANG\" != 'en_US.UTF-8' ]; then\n"
+  $printf "    export LANG='en_US.UTF-8'\n"
   $printf "  fi\n"
 elif on_linux; then
   $printf "  # sudo dpkg-reconfigure locales\n"
-  $printf "  # sudo locale-gen en_US.UTF-8\n"
-  $printf "  if locale -a | grep -qF 'en_US.utf8'; then\n"
-  printf "     export LANG=en_US.utf8\n"
+  $printf "  # sudo locale-gen en_US.UTF-8 && update-locale\n"
+  $printf "  if [ \"\$LANG\" != 'en_US.UTF-8' ]; then\n"
+  $printf "    export LANG='en_US.UTF-8'\n"
   $printf "  fi\n"
 fi)
 }
 
-# export_locale_env
+export_locale_env
 # eof
 EOF
   echo_yes_or_no $?
@@ -2298,11 +2298,11 @@ set undolevels=1000
 set fileencoding=utf8
 
 " line number
-set nonumber
-"set relativenumber
+"set nonumber
+set relativenumber
 
 " syntax
-syntax off " :syntax on
+syntax on " :syntax off
 
 " highlight search
 "set hlsearch " :nohl
