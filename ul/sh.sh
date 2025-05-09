@@ -951,13 +951,14 @@ elif on_darwin; then
   $printf "  fi\n"
 elif on_linux; then
   $printf "  # sudo dpkg-reconfigure locales\n"
+  $printf "  # sudo locale-gen en_US.UTF-8\n"
   $printf "  if locale -a | grep -qF 'en_US.utf8'; then\n"
   printf "     export LANG=en_US.utf8\n"
   $printf "  fi\n"
 fi)
 }
 
-export_locale_env
+# export_locale_env
 # eof
 EOF
   echo_yes_or_no $?
