@@ -806,7 +806,7 @@ $(if on_windows_nt; then
   echo "  opt=\$($printf \"\${ps}\"|$tr ':' '\n'|$grep \"\$opt_p\"|$tr '\n' ':')"
   echo "  ori=\$($printf \"\${ps}\"|$tr ':' '\n'|$grep -v \"\$opt_p\"|$grep -v \"\$win_p\" | $tr '\n' ':')"
   echo "  win=\$($printf \"\${ps}\"|$tr ':' '\n'|$grep \"\$win_p\" | $tr '\n' ':')"
-  echo "  sorted=\$($printf \"\${ori}\${opt:+\$opt }\${win}\""
+  echo "  sorted=\$($printf \"\${ori}\${opt:+\$opt }\${win}\")"
   echo "  $printf \"\${sorted}\""
   echo "}"
 fi)
@@ -823,7 +823,7 @@ export_path_env () {
   lib_path="\${opt_path}/lib:\$lib_path"
 
   $(if on_windows_nt; then
-    echo "bin_path=\"$(sort_path \$bin_path)\""
+    echo "bin_path=\"\$(sort_path \$bin_path)\""
   fi)
   local p=""
   # export path env
@@ -942,7 +942,7 @@ export_locale_env () {
 $(if on_windows_nt; then
   $printf "  # change code page to unicode\n"
   $printf "  chcp.com 65001 &>/dev/null\n"
-  $printf "  if locale -a | grep -qF 'en_US.utf8'\n"
+  $printf "  if locale -a | grep -qF 'en_US.utf8'; then\n"
   $printf "    export LANG='en_US.utf8'\n"
   $printf "  fi\n"
 elif on_darwin; then
