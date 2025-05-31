@@ -1191,7 +1191,7 @@ select_java_env () {
 
 list_java_gradle_mirror () {
   local ver="\${1:-8.12.1}"
-  $printf "%s\n" 'https\://mirrors.cloud.tencent.com/gradle/gradle-\$ver-bin.zip"
+  $printf "%s\n" "https\://mirrors.cloud.tencent.com/gradle/gradle-\$ver-bin.zip"
 }
 
 select_java_gradle_env() {
