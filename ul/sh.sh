@@ -1624,10 +1624,12 @@ check_javascript_nvm_env () {
 }
 
 install_javascript_env () {
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+  local repo="git@github.com:nvm-sh/nvm.git"
+  local home="\$HOME/.nvm"
+  git clone --depth=1 --branch=master \$repo \$home && \$home/install.sh
 }
 
-export_javascript_nvm_env () {
+init_javascript_nvm_env () {
   if check_javascript_nvm_env; then
     local p="\$PATH"
     p="\$(norm_path \$d:\$(rm_path \$NM_DIR \$p))"
@@ -1636,7 +1638,7 @@ export_javascript_nvm_env () {
 }
 
 # if [ "\$o_check_javascript_nvm_env" = "yes" ]; then
-#   export_javascript_nvm_env
+#   init_javascript_nvm_env
 # fi
 
 # eof
