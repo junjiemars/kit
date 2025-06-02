@@ -1622,7 +1622,7 @@ check_java_bun_env () {
 install_javascript_deno_env () {
   # curl -fsSL https://deno.land/install.sh | $SHELL
 $(if on_darwin; then
-  $printf "# %s\n" "sudo port install deno"
+  $printf "  $printf \"sudo port install deno\\\n\""
 fi)
 }
 
@@ -1652,6 +1652,12 @@ export_javascript_nvm_env () {
     p="\$(norm_path \$d:\$(rm_path \$NM_DIR \$p))"
     [ -z "\$p" ] || export PATH="\$p"
   fi
+}
+
+make_javascript_npm_env () {
+  local npmrc="\$HOME/.npmrc"
+  cat <<END > "\$npmrc"
+END
 }
 
 # if [ "\$o_check_javascript_env" = "yes" ]; then
