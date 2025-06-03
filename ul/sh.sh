@@ -1230,21 +1230,9 @@ make_java_maven_settings () {
                               http://maven.apache.org/xsd/settings-1.2.0.xsd">
   <mirrors>
     <mirror>
-      <id>aliyun-central</id>
-      <mirrorOf>central</mirrorOf>
-      <url>https://maven.aliyun.com/repository/central</url>
-      <blocked>false</blocked>
-    </mirror>
-    <mirror>
-      <id>aliyun-public</id>
-      <mirrorOf>public</mirrorOf>
-      <url>https://maven.aliyun.com/repository/public</url>
-      <blocked>false</blocked>
-    </mirror>
-    <mirror>
-      <id>aliyun-gradle-plugin</id>
-      <mirrorOf>gradle-plugin</mirrorOf>
-      <url>https://maven.aliyun.com/repository/gradle-plugin</url>
+      <id>aliyun*</id>
+      <mirrorOf>*</mirrorOf>
+      <url>https://maven.aliyun.com/repository</url>
       <blocked>false</blocked>
     </mirror>
   </mirrors>
