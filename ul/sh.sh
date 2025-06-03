@@ -1173,7 +1173,7 @@ fi)
 
 list_java_env () {
 $(if on_darwin; then
-  printf "  /usr/libexec/java_home -V 2>&1|$awk '/^ +[.0-9]+,/{sub(\"[ \\\t]+\",\"\");print}'"
+  printf "  /usr/libexec/java_home -V\n"
 elif on_linux; then
   printf "  # todo"
 else
@@ -1226,66 +1226,28 @@ make_java_maven_settings () {
   cat <<END>/dev/stdout
 <settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 http://maven.apache.org/xsd/settings-1.2.0.xsd">
-  <localRepository>${HOME}/.m2/repository</localRepository>
-  <!--
-  <servers>
-    <server>
-      <id>maven-http-local-public</id>
-      <username>username1</username>
-      <password>password1</password>
-    </server>
-    <server>
-      <id>maven-http-local-snapshots</id>
-      <username>username1</username>
-      <password>password1</password>
-    </server>
-  </servers>
-  -->
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0
+                              http://maven.apache.org/xsd/settings-1.2.0.xsd">
   <mirrors>
     <mirror>
-      <!--This sends everything else to /public -->
-      <id>nexus</id>
-      <mirrorOf>*</mirrorOf>
-      <url>https://maven.aliyun.com/nexus/content/groups/public</url>
+      <id>aliyun-central</id>
+      <mirrorOf>central</mirrorOf>
+      <url>https://maven.aliyun.com/repository/central</url>
+      <blocked>false</blocked>
+    </mirror>
+    <mirror>
+      <id>aliyun-public</id>
+      <mirrorOf>public</mirrorOf>
+      <url>https://maven.aliyun.com/repository/public</url>
+      <blocked>false</blocked>
+    </mirror>
+    <mirror>
+      <id>aliyun-gradle-plugin</id>
+      <mirrorOf>gradle-plugin</mirrorOf>
+      <url>https://maven.aliyun.com/repository/gradle-plugin</url>
+      <blocked>false</blocked>
     </mirror>
   </mirrors>
-  <profiles>
-    <profile>
-      <id>XXX</id>
-      <!--Enable snapshots for the built in central repo to direct -->
-      <!--all requests to nexus via the mirror -->
-      <repositories>
-        <repository>
-          <id>nexus</id>
-          <name>Team Nexus Repository</name>
-          <url>https://maven.aliyun.com/nexus/content/groups/public</url>
-          <releases><enabled>true</enabled></releases>
-          <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-        <repository>
-          <id>central</id>
-          <url>http://central</url>
-          <releases><enabled>true</enabled></releases>
-          <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-      </repositories>
-      <!--
-      <repository>
-        <id>nexus_private_repo1</id>
-        <name>Private Nexus Respository</name>
-        <url>http://192.168.2.238:8080/repo_new/</url>
-        <releases><enabled>true</enabled></releases>
-        <snapshots><enabled>true</enabled></snapshots>
-      </repository>
-      -->
-      <pluginRepositories>
-      </pluginRepositories>
-    </profile>
-  </profiles>
-  <activeProfiles>
-    <activeProfile>XXX</activeProfile>
-  </activeProfiles>
 </settings>
 END
 }
