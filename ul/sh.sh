@@ -2013,7 +2013,7 @@ check_rust_etc () {
   [ -d "\$etc" ] && echo "\$etc"
 }
 
-rust_check_src () {
+check_rust_src () {
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
@@ -2044,7 +2044,7 @@ make_rust_debug_env () {
   if [ -z "\$etc" ]; then
     return 1
   fi
-  local src="\$(rust_check_src)"
+  local src="\$(check_rust_src)"
   if [ -z "\$src" ]; then
     return 1
   fi
@@ -2075,7 +2075,7 @@ check_rust_tags_option () {
   $printf "%s\n" "\${etc}/ctags.rust"
 }
 
-rust_check_tags_file () {
+check_rust_tags_file () {
   local etc="\$(check_rust_etc)"
   if [ -z "\$etc" ]; then
     return 1
@@ -2083,7 +2083,7 @@ rust_check_tags_file () {
   $printf "%s\n" "\${etc}/.tags_emacs"
 }
 
-rust_make_tags_env () {
+make_rust_tags_env () {
   local args="\$@"
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
@@ -2093,7 +2093,7 @@ rust_make_tags_env () {
   if [ -z "\$etc" ]; then
     return 1
   fi
-  local src="\$(rust_check_src)"
+  local src="\$(check_rust_src)"
   if [ -z "\$src" ]; then
     return 1
   fi
@@ -2106,7 +2106,7 @@ rust_make_tags_env () {
   if ! where ctags &>/dev/null; then
     return 1
   fi
-  local d="\$(rust_check_tags_file)"
+  local d="\$(check_rust_tags_file)"
   [ -f "\$d" ] && rm "\$d"
   ctags \$args -R -e -o \$d --options="\$tag_opt" \$src
   $printf "%s\n" "\$d"
