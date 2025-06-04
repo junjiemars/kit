@@ -1976,13 +1976,13 @@ install_rust_env () {
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 }
 
-rust_list_cargo_mirror () {
+list_rust_cargo_mirror () {
   $printf "%s %s\n" 'tuna' 'https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git'
   $printf "%s %s\n" 'ustc' 'https://mirrors.ustc.edu.cn/crates.io-index'
   $printf "%s %s\n" 'aliyun' 'https://mirrors.aliyun.com/crates.io-index'
 }
 
-rust_make_cargo_mirror_env () {
+make_rust_cargo_mirror_env () {
   local sr="\$(check_rust_env)"
   local c=""
   if [ -z "\$sr" ]; then
@@ -1997,16 +1997,14 @@ registry = "\${2}/"
 END
 }
 
-rust_check_completion () {
+make_rust_completion () {
   local rc="${r}/rust_cargo_completion"
   local ru="${r}/rust_rustup_completion"
   rustup completions $SH cargo > \$rc
   rustup completions $SH rustup > \$ru
-  . \$rc
-  . \$ru
 }
 
-rust_check_etc () {
+check_rust_etc () {
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
@@ -2024,7 +2022,7 @@ rust_check_src () {
   [ -d "\$src" ] && echo "\$src"
 }
 
-rust_check_hash () {
+check_rust_hash () {
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
@@ -2033,16 +2031,16 @@ rust_check_hash () {
   [ -n "\$hash" ] && echo "\$hash"
 }
 
-rust_make_debug_env () {
+make_rust_debug_env () {
   local sr="\$(check_rust_env)"
   if [ -z "\$sr" ]; then
     return 1
   fi
-  local hash="\$(rust_check_hash)"
+  local hash="\$(check_rust_hash)"
   if [ -z "\$hash" ]; then
     return 1
   fi
-  local etc="\$(rust_check_etc)"
+  local etc="\$(check_rust_etc)"
   if [ -z "\$etc" ]; then
     return 1
   fi
@@ -2069,8 +2067,8 @@ rust_make_debug_env () {
   fi
 }
 
-rust_check_tags_option () {
-  local etc="\$(rust_check_etc)"
+check_rust_tags_option () {
+  local etc="\$(check_rust_etc)"
   if [ -z "\$etc" ]; then
     return 1
   fi
@@ -2078,7 +2076,7 @@ rust_check_tags_option () {
 }
 
 rust_check_tags_file () {
-  local etc="\$(rust_check_etc)"
+  local etc="\$(check_rust_etc)"
   if [ -z "\$etc" ]; then
     return 1
   fi
@@ -2091,7 +2089,7 @@ rust_make_tags_env () {
   if [ -z "\$sr" ]; then
     return 1
   fi
-  local etc="\$(rust_check_etc)"
+  local etc="\$(check_rust_etc)"
   if [ -z "\$etc" ]; then
     return 1
   fi
@@ -2099,7 +2097,7 @@ rust_make_tags_env () {
   if [ -z "\$src" ]; then
     return 1
   fi
-  local tag_opt="\$(rust_check_tags_option)"
+  local tag_opt="\$(check_rust_tags_option)"
   if [ ! -f "\$tag_opt" ]; then
     local opt_src="https://raw.githubusercontent.com/rust-lang/rust/master/src/etc/ctags.rust"
     $mkdir -p "\${etc}"
@@ -2136,7 +2134,8 @@ if [ "\$o_export_path_env" = "yes" ]; then
 fi
 
 if [ "\$o_check_completion_env" = "yes" ]; then
-  : # rust_check_completion
+  # [ -r "${r}/rust_cargo_completion" ] && . "${r}/rust_cargo_completion"
+  # [ -r "${r}/rust_rustup_completion" ] && . "${r}/rust_rustup_completion"
 fi
 
 # eof
