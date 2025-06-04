@@ -101,16 +101,24 @@ where () {
 }
 
 gen_shell_dot_profile () {
-  local profile="$HOME/.${SH}_profile"
-  local callrc="test -r \${HOME}/.${SH}rc && . \${HOME}/.${SH}rc"
+  local profile=""
+  local callrc=""
   case $SH in
-    bash) profile="$HOME/.bash_profile" ;;
-    zsh) profile="$HOME/.zprofile"
-         if on_darwin; then
-           callrc="# test -r \${HOME}/.${SH}rc && . \${HOME}/.${SH}rc"
-         fi
-         ;;
-    sh) profile="$HOME/.profile" ;;
+    bash)
+      profile="$HOME/.bash_profile"
+      callrc="[ -r \${HOME}/.${SH}rc ] && . \${HOME}/.${SH}rc"
+      ;;
+    zsh)
+      profile="$HOME/.zshenv"
+      callrc=""
+      ;;
+    sh)
+      profile="$HOME/.profile"
+      callrc="[ -r \${HOME}/.${SH}rc ] && . \${HOME}/.${SH}rc"
+      ;;
+    *)
+      return 1
+      ;;
   esac
   save_as "$profile"
   $printf "+ generate $profile ... "
@@ -171,8 +179,9 @@ EOF
 
 gen_shell_dot_rc () {
   local rc="$HOME/.${SH}rc"
-  local ss="# nore
-[ -f \$HOME/.nore/${SH}/init ] && . \$HOME/.nore/${SH}/init
+  local ss="
+# nore
+[ -r \$HOME/.nore/${SH}/init ] && . \$HOME/.nore/${SH}/init
 
 # eof
 "
