@@ -993,7 +993,7 @@ check_completion_env () {
 $(if [ "bash" = "$SH" ]; then
    echo "  local b=\"/etc/profile.d/bash_completion.sh\""
    echo "  [ -r \"\$b\" ] && . \"\$b\""
-   echo "  . \${c}/*"
+   echo "  . "\${c}"/*"
 elif [ "zsh" = "$SH" ]; then
    echo "  fpath=(\$c \$fpath)"
    echo "  autoload -Uz compinit && compinit -u"
