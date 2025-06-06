@@ -994,7 +994,7 @@ $(if [ "bash" = "$SH" ]; then
    echo "  [ -r \"\$c\" ] && . \"\$c\""
    echo "  [ -r \"\$f\" ] && . \"\$f\""
 elif [ "zsh" = "$SH" ]; then
-   echo "  local c=\"${f}/_completion\""
+   echo "  local c=\"${r}/_completion\""
    echo "  [ -d \"\$c\" ] || $mkdir -p \"\$c\""
    echo "  fpath=(\$c \$fpath)"
    echo "  autoload -Uz compinit && compinit -u"
