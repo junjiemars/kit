@@ -991,10 +991,9 @@ check_completion_env () {
   local c="${r}/_completion"
   [ -d "\$c" ] || $mkdir -p "\$c"
 $(if [ "bash" = "$SH" ]; then
-   echo "  local c=\"/etc/profile.d/bash_completion.sh\""
-   echo "  local f=\"\${c}/\$1\""
-   echo "  [ -r \"\$c\" ] && . \"\$c\""
-   echo "  [ -r \"\$f\" ] && . \"\$f\""
+   echo "  local b=\"/etc/profile.d/bash_completion.sh\""
+   echo "  [ -r \"\$b\" ] && . \"\$b\""
+   echo "  [ -r \"\$c\" ] && . \"\${c}/*\""
 elif [ "zsh" = "$SH" ]; then
    echo "  fpath=(\$c \$fpath)"
    echo "  autoload -Uz compinit && compinit -u"
