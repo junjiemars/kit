@@ -2144,11 +2144,6 @@ if [ "\$o_export_path_env" = "yes" ]; then
   export_rust_env
 fi
 
-if [ "\$o_check_completion_env" = "yes" ]; then
-  # [ -r "${r}/rust_cargo_completion" ] && . "${r}/rust_cargo_completion"
-  # [ -r "${r}/rust_rustup_completion" ] && . "${r}/rust_rustup_completion"
-fi
-
 # eof
 EOF
   echo_yes_or_no $?
