@@ -988,14 +988,14 @@ gen_shell_completion_env () {
 #------------------------------------------------
 
 check_completion_env () {
+  local c="${r}/_completion"
+  [ -d "\$c" ] || $mkdir -p "\$c"
 $(if [ "bash" = "$SH" ]; then
    echo "  local c=\"/etc/profile.d/bash_completion.sh\""
    echo "  local f=\"\${c}/\$1\""
    echo "  [ -r \"\$c\" ] && . \"\$c\""
    echo "  [ -r \"\$f\" ] && . \"\$f\""
 elif [ "zsh" = "$SH" ]; then
-   echo "  local c=\"${r}/_completion\""
-   echo "  [ -d \"\$c\" ] || $mkdir -p \"\$c\""
    echo "  fpath=(\$c \$fpath)"
    echo "  autoload -Uz compinit && compinit -u"
 else
