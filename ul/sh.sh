@@ -615,11 +615,6 @@ if [ "\$o_check_locale_env" = "yes" ]; then
     && . "${h}/locale_env"
 fi
 
-if [ "\$o_check_completion_env" = "yes" ]; then
-  [ -f "${h}/completion_env" ] \\
-    && . "${h}/completion_env"
-fi
-
 if [ "\$o_check_sys_env" = "yes" ]; then
   [ -f "${h}/sys_env" ] \\
     && . "${h}/sys_env"
@@ -728,6 +723,11 @@ fi
 if [ "\$o_check_unix_env" = "yes" ]; then
   [ -f "${h}/unix_env" ] \\
     && . "${h}/unix_env"
+fi
+
+if [ "\$o_check_completion_env" = "yes" ]; then
+  [ -f "${h}/completion_env" ] \\
+    && . "${h}/completion_env"
 fi
 
 # eof
@@ -975,7 +975,8 @@ EOF
 }
 
 gen_shell_completion_env () {
-  local f="$HOME/.nore/${SH}/completion_env"
+  local r="${HOME}/.nore/${SH}"
+  local f="${r}/completion_env"
   $printf "+ generate $f ... "
   $cat << EOF > "$f"
 #### -*- mode:sh -*- vim:ft=sh
@@ -989,18 +990,21 @@ gen_shell_completion_env () {
 check_completion_env () {
 $(if [ "bash" = "$SH" ]; then
    echo "  local c=\"/etc/profile.d/bash_completion.sh\""
-   echo "  if [ -f \"\$c\" ]; then"
-   echo "    . \"\$c\""
-   echo "  fi"
+   echo "  local f=\"\${c}/\$1\""
+   echo "  [ -r \"\$c\" ] && . \"\$c\""
+   echo "  [ -r \"\$f\" ] && . \"\$f\""
 elif [ "zsh" = "$SH" ]; then
-   echo "  autoload -Uz compinit && compinit"
+   echo "  local c=\"${f}/_completion\""
+   echo "  [ -d \"\$c\" ] || $mkdir -p \"\$c\""
+   echo "  fpath=(\$c \$fpath)"
+   echo "  autoload -Uz compinit && compinit -u"
 else
    echo "  # nop"
    echo ":"
 fi)
 }
 
-check_completion_env
+# check_completion_env
 
 # eof
 EOF
@@ -1581,8 +1585,14 @@ check_java_bun_env () {
 install_javascript_deno_env () {
   # curl -fsSL https://deno.land/install.sh | $SHELL
 $(if on_darwin; then
-  $printf "  $printf \"sudo port install deno\\\n\""
+  $printf "# sudo port install deno\\\n"
 fi)
+  cargo install deno --locked
+}
+
+make_javascript_deno_completion () {
+  local c="\${HOME}/.nore/${SH}/_completion"
+  deno completions ${SH} > "\${c}/_deno"
 }
 
 # nvm
@@ -1998,8 +2008,9 @@ END
 }
 
 make_rust_completion () {
-  local rc="${r}/rust_cargo_completion"
-  local ru="${r}/rust_rustup_completion"
+  local c="${r}/_completion"
+  local rc="\${c}/_cargo"
+  local ru="\${c}/_rustup"
   rustup completions $SH cargo > \$rc
   rustup completions $SH rustup > \$ru
 }
