@@ -1017,7 +1017,8 @@ EOF
 }
 
 gen_c_env () {
-  local f="$HOME/.nore/${SH}/c_env"
+  local r="${HOME}/.nore/${SH}"
+  local f="${r}/c_env"
   $printf "+ generate $f ... "
   $cat << EOF > "$f"
 #### -*- mode:sh -*- vim:ft=sh
@@ -1032,16 +1033,19 @@ gen_c_env () {
 # https://www.bellard.org/tcc/
 #------------------------------------------------
 
-c_check_nore_env () {
-  local d="\$HOME/.nore"
-  $test -x "\${d}/cc-env.sh"
+check_c_nore_env () {
+  local x="\$HOME/.nore/cc-env.sh"
+  if [ -x "\$x" ]; then
+    $printf "\$(dirname \$x)\n"
+  fi
+  return 1
 }
 
-c_install_nore () {
+install_c_nore () {
   curl https://raw.githubusercontent.com/junjiemars/nore/master/bootstrap.sh -sSfL | sh
 }
 
-c_install_sys_env () {
+install_c_sys_env () {
 $(if on_darwin; then
   $printf "  xcode-select --install\n"
   $printf "  sudo xcodebuild -license\n"
@@ -1058,7 +1062,7 @@ else
 fi)
 }
 
-c_install_autotools () {
+install_c_autotools () {
 $(if on_darwin; then
   $printf "  if command -v port &>/dev/null; then\n"
   $printf "    sudo port install autoconf autogen automake bear cmake cscope libtool posix-manpages\n"
@@ -1076,12 +1080,12 @@ else
 fi)
 }
 
-c_install_llvm () {
+install_c_llvm () {
   $printf "  # using install_llvm_env instead\n"
 }
 
 $(if on_linux; then
-  $printf "c_install_gcc_aarch64_env () {\n"
+  $printf "install_c_gcc_aarch64_env () {\n"
   $printf "  if command -v apt &>/dev/null; then\n"
   $printf "    sudo apt install gcc-aarch64-linux-gnu\n"
   $printf "  else\n"
@@ -1090,7 +1094,7 @@ $(if on_linux; then
   $printf "}\n"
 fi)
 
-c_list_clang_format_gnu () {
+list_c_clang_format_gnu () {
   $printf "# https://clang.llvm.org/docs/ClangFormatStyleOptions.html\n"
   $printf "%s\n" '---'
   $printf "Language: Cpp\n"
