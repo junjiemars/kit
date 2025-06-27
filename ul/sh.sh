@@ -1767,11 +1767,33 @@ gen_qemu_env () {
 #------------------------------------------------
 
 check_qemu_env () {
-  local q="qemu-system-\$($uname -m)"
+  local q="qemu-system-$($uname -m)"
   if "\$q" -v &>/dev/null; then
     return 1
   fi
   $printf "\$q\n"
+}
+
+install_qemu_require () {
+$(if on_darwin; then
+  echo "  echo \"sudo port install libiconv libvirt libvirt-glib libpixman pkgconfig\""
+fi)
+}
+
+build_qemu_from_source () {
+  local r="\$1"
+  local d="\${r}/build"
+  [ -d "\$r" ] || return 1
+  mkdir -p "\$d"
+$(if on_darwin; then
+  echo "  cd \$d && ../configure --prefix=/opt/nore \\\\"
+  echo "    --disable-kvm \\\\"
+  echo "    --enable-hvf \\\\"
+  echo "    --enable-curses \\\\"
+  echo "    --enable-iconv \\\\"
+  echo "    --target-list=$(uname -m)-softmmu \\\\"
+  echo "    --disable-cocoa"
+fi)
 }
 
 make_qemu_makefile () {
