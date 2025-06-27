@@ -1768,6 +1768,9 @@ gen_qemu_env () {
 
 check_qemu_env () {
   local q="qemu-system-\$($uname -m)"
+  if "\$q" -v &>/dev/null; then
+    return 1
+  fi
   $printf "\$q\n"
 }
 
