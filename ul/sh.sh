@@ -1767,7 +1767,13 @@ gen_qemu_env () {
 #------------------------------------------------
 
 check_qemu_env () {
-  local q="qemu-system-$($uname -m)"
+  local m="$(uname -m)"
+  local q="qemu-system-\$m"
+$(if on_darwin; then
+  echo "  if [ \"\\\$m\" = \"arm64\" ]; then"
+  echo "    q=\"qemu-system-aarch64\""
+  echo "  fi"
+fi)
   if "\$q" -v &>/dev/null; then
     return 1
   fi
@@ -1775,6 +1781,7 @@ check_qemu_env () {
 }
 
 install_qemu_require () {
+  # build from source
 $(if on_darwin; then
   echo "  echo \"sudo port install libiconv libvirt libvirt-glib libpixman pkgconfig\""
 fi)
@@ -1797,11 +1804,10 @@ fi)
 }
 
 make_qemu_makefile () {
-  local f="$HOME/.nore/${SH}/qemu.Makefile"
   local o="\${1:-freebsd}"
   local v="\${2:-11.4}"
   local i="\${3:-http://ftp-archive.freebsd.org/pub/FreeBSD-Archive/old-releases/ISO-IMAGES/11.4/FreeBSD-11.4-RELEASE-amd64-disc1.iso}"
-  $cat <<END >"\${f}"
+  $cat <<END >&1
 # QEMU
 
 # qemu settings
@@ -1840,14 +1846,14 @@ create-img: \\\$(IMG)
 start: \\\$(IMG)
 	@echo "Start image from \\\$(ISO)..."
 	\\\${QEMU} \\\\
-    -d guest_errors \\\\
     -m \\\${RAM} \\\\
     -smp \\\${SMP} \\\\
     -hda \\\${IMG} \\\\
     -cdrom \\\${ISO} \\\\
     -net nic,model=virtio \\\\
     -net user,hostfwd=tcp::2222-:22 \\\\
-    -nographic
+    -nographic \\\\
+    -boot menu=on
 
 clean:
 	@echo "Cleaning image..."
