@@ -1780,10 +1780,11 @@ fi)
   $printf "\$q\n"
 }
 
-install_qemu_require () {
+list_qemu_require () {
   # build from source
+  # bios: https://github.com/kholia/OSX-KVM
 $(if on_darwin; then
-  echo "  echo \"sudo port install libiconv libvirt libvirt-glib libpixman pkgconfig\""
+  echo "  echo \"libiconv libvirt libvirt-glib libpixman pkgconfig\""
 fi)
 }
 
