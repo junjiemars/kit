@@ -1767,22 +1767,21 @@ gen_qemu_env () {
 #------------------------------------------------
 
 check_qemu_env () {
-  local m="$(uname -m)"
+  local m="\$(uname -m)"
   local q="qemu-system-\$m"
 $(if on_darwin; then
-  echo "  if [ \"\\\$m\" = \"arm64\" ]; then"
+  echo "  if [ \"\$m\" = \"arm64\" ]; then"
   echo "    q=\"qemu-system-aarch64\""
   echo "  fi"
 fi)
   if "\$q" -v &>/dev/null; then
     return 1
   fi
-  $printf "\$q\n"
+  echo "\$q"
 }
 
-list_qemu_require () {
+list_qemu_required_packages () {
   # build from source
-  # bios: https://github.com/kholia/OSX-KVM
 $(if on_darwin; then
   echo "  echo \"libiconv libvirt libvirt-glib libpixman pkgconfig\""
 fi)
@@ -1800,11 +1799,13 @@ $(if on_darwin; then
   echo "    --enable-curses \\\\"
   echo "    --enable-iconv \\\\"
   echo "    --target-list=$(uname -m)-softmmu \\\\"
-  echo "    --disable-cocoa"
+  echo "    --disable-cocoa \\\\"
+  echo "  && make -j2"
 fi)
 }
 
 make_qemu_makefile () {
+  local q="\$(check_qemu_env)"
   local o="\${1:-freebsd}"
   local v="\${2:-11.4}"
   local i="\${3:-http://ftp-archive.freebsd.org/pub/FreeBSD-Archive/old-releases/ISO-IMAGES/11.4/FreeBSD-11.4-RELEASE-amd64-disc1.iso}"
@@ -1813,9 +1814,17 @@ make_qemu_makefile () {
 
 # qemu settings
 MAC = \\\$(shell uname -m)
-QEMU = \\\$(check_qemu_env)
+QEMU = \${q}
 RAM = 2G
 SMP = 2
+
+$(if on_darwin; then
+  echo "# efi settings"
+  echo "EFI_CODE = ./efi/ovmf_code.fd"
+  echo "EIF_CODE_URL = https://github.com/kholia/OSX-KVM/raw/refs/heads/master/OVMF_CODE.fd"
+  echo "EFI_VARS = ./efi/ovmf_vars.fd"
+  echo "EFI_VARS_URL = https://github.com/kholia/OSX-KVM/raw/refs/heads/master/OVMF_VARS-1920x1080.fd"
+fi)
 
 # disk image settings
 ISO_VER = \${v}
@@ -1828,9 +1837,19 @@ IMG_SIZE = 20G
 SSH_HOST_PORT = 2222
 SSH_GUEST_PORT = 22
 
-.PHONY: all download-iso create-img start clean help
+.PHONY: all start clean help download-efi download-iso create-img
 
 all: start
+
+\\\$(EFI_CODE):
+	@echo "Downloading efi code..."
+	mkdir -p ./efi
+	aria2c -c -x8 "\\\$(EFI_CODE_URL)" -o \\\$@
+
+\\\$(EFI_VARS):
+	@echo "Downloading efi vars..."
+	mkdir -p ./efi
+	aria2c -c -x8 "\\\$(EFI_VARS_URL)" -o \\\$@
 
 \\\$(ISO):
 	@echo "Downloading iso file..."
@@ -1841,6 +1860,7 @@ all: start
 	mkdir -p ./img
 	qemu-img create -f qcow2 \\\$(IMG) \\\$(IMG_SIZE)
 
+download-efi: \\\$(EFI_CODE)
 download-iso: \\\$(ISO)
 create-img: \\\$(IMG)
 
