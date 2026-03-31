@@ -2027,7 +2027,7 @@ check_python_env () {
   [ "\$v3" -ge "3" ] && $printf "%s\n" "\$p3"
 }
 
-python_check_pip () {
+check_python_pip () {
   local p3="\$(where pip3 2>/dev/null)"
   if "\$p3" -V &>/dev/null; then
     $printf "%s\n" "\$p3"
@@ -2041,7 +2041,7 @@ python_check_pip () {
   [ \$v3 -ge 3 ] && $printf "%s\n" "\$p3"
 }
 
-python_make_venv () {
+make_python_venv () {
   local d="\${1:-\$(pwd)}"
   local p="\$(check_python_env)"
   if [ -z "\$p" ]; then
@@ -2050,7 +2050,7 @@ python_make_venv () {
   \$p -m venv "\$d" && $printf "%s\n" "\$d"
 }
 
-python_list_pip_mirror () {
+list_python_pip_mirror () {
   $printf "%s\n" 'https://pypi.tuna.tsinghua.edu.cn/simple/'
   $printf "%s\n" 'https://pypi.mirrors.ustc.edu.cn/simple/'
   $printf "%s\n" 'http://mirrors.aliyun.com/pypi/simple/'
@@ -2059,7 +2059,7 @@ python_list_pip_mirror () {
   $printf "%s\n" 'http://pypi.douban.com/simple/'
 }
 
-python_make_pip_mirror () {
+make_python_pip_mirror () {
   local m="\${1:-\$(python_list_pip_mirror|$sed -n '1p')}"
   local p="\$(python_check_pip)"
   if [ -z "\$p" ]; then
@@ -2068,7 +2068,7 @@ python_make_pip_mirror () {
   \$p config set global.index-url "\$m"
 }
 
-python_make_lsp () {
+make_python_lsp () {
   local py="\$(check_python_env)"
   if [ -z "\$py" ]; then
     return 1
@@ -2101,7 +2101,7 @@ END
   $chmod u+x "\$pylsp_sh"
 $(echo "}")
 
-python_make_http_server () {
+make_python_http_server () {
   local p="\$(check_python_env)"
   if [ -z "\$p" ]; then
     return 1
