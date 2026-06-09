@@ -111,6 +111,10 @@ comment_backup () {
   fi
 }
 
+gen_call_nore_check() {
+  echo "[ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check"
+}
+
 gen_shell_dot_profile () {
   local profile=""
   local init="\${HOME}/.nore/${SH}/init"
@@ -178,10 +182,9 @@ EOF
 
 gen_shell_dot_rc () {
   local rc="${HOME}/.${SH}rc"
-  local check="\${HOME}/.nore/${SH}/check"
   local ss="\
 # nore
-[ -r ${check} ] && . ${check}
+$(gen_call_nore_check)
 
 # eof
 "
@@ -268,7 +271,7 @@ inside_vim_p () {
 
 [ -f \$HOME/.nore/${SH}/vars ] && . \$HOME/.nore/${SH}/vars
 $(if [ "bash" = "${SH}" ]; then
-  echo "[ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check"
+  gen_shell_check
 fi)
 
 # eof
