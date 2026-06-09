@@ -184,7 +184,9 @@ gen_shell_dot_rc () {
   local rc="${HOME}/.${SH}rc"
   local ss="\
 # nore
-$(gen_call_nore_check)
+$(if [ "bash" = "${SH}" ]; then
+  gen_call_nore_check
+fi)
 
 # eof
 "
