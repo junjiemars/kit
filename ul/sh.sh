@@ -267,6 +267,10 @@ inside_vim_p () {
 }
 
 [ -f \$HOME/.nore/${SH}/vars ] && . \$HOME/.nore/${SH}/vars
+$(if [ "${SH}" = "bash" ]; then
+  # .bashrc may not be called from .bash_profile
+  [ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check
+fi)
 
 # eof
 EOF
