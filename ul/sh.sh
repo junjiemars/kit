@@ -271,7 +271,7 @@ inside_vim_p () {
 
 [ -f \$HOME/.nore/${SH}/vars ] && . \$HOME/.nore/${SH}/vars
 $(if [ "bash" = "${SH}" ]; then
-  gen_shell_check
+  gen_call_nore_check
 fi)
 
 # eof
