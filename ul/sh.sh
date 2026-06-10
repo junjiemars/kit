@@ -138,9 +138,12 @@ $(comment_backup "${profile}")
 #------------------------------------------------
 
 # nore
-[ -r ${init} ] && . ${init}
 $(if [ -n "${bashrc}" ]; then
-  echo "[ -r ${bashrc} ] && . ${bashrc}"
+  if $grep -q ".bashrc"; then
+	  echo "[ -r ${bashrc} ] && . ${bashrc}"
+  fi
+else
+  echo "[ -r ${init} ] && . ${init}"
 fi)
 # eof
 EOF
@@ -186,7 +189,11 @@ gen_shell_dot_rc () {
   local rc="${HOME}/.${SH}rc"
   local ss="\
 # nore
-[ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check
+$(if [ "bash" = "${SH}" ]; then
+  echo "[ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check"
+else
+  echo "[ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check"
+fi)
 
 # eof
 "
@@ -272,6 +279,9 @@ inside_vim_p () {
 }
 
 [ -f \$HOME/.nore/${SH}/vars ] && . \$HOME/.nore/${SH}/vars
+$(if [ "bash" = "${SH}" ]; then
+  echo "[ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check"
+fi)
 
 # eof
 EOF
