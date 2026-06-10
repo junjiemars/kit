@@ -139,8 +139,8 @@ $(comment_backup "${profile}")
 
 # nore
 $(if [ -n "${bashrc}" ]; then
-  if $grep -q ".bashrc"; then
-	  echo "[ -r ${bashrc} ] && . ${bashrc}"
+  if $grep -q '.bashrc' "${HOME}/.${SH}rc"; then
+    echo "[ -r ${bashrc} ] && . ${bashrc}"
   fi
 else
   echo "[ -r ${init} ] && . ${init}"
@@ -190,7 +190,7 @@ gen_shell_dot_rc () {
   local ss="\
 # nore
 $(if [ "bash" = "${SH}" ]; then
-  echo "[ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check"
+  echo "[ -f \$HOME/.nore/${SH}/init ] && . \$HOME/.nore/${SH}/init"
 else
   echo "[ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check"
 fi)
