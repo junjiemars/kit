@@ -1008,8 +1008,11 @@ check_completion_env () {
   [ -d "\$c" ] || $mkdir -p "\$c"
 $(if [ "bash" = "$SH" ]; then
    echo "  local b=\"/etc/profile.d/bash_completion.sh\""
+   echo "  local f=\"\""
    echo "  [ -r \"\$b\" ] && . \"\$b\""
-   echo "  . "\${c}"/*"
+   echo "  while read -r -d '' f; do"
+   echo "    . \"\${f}\""
+   echo "  done < <($find \"\${c}/\" -maxdepth 1 -type f -print0)"
 elif [ "zsh" = "$SH" ]; then
    echo "  fpath=(\$c \$fpath)"
    echo "  autoload -Uz compinit && compinit -u"
