@@ -111,17 +111,17 @@ comment_backup () {
   fi
 }
 
-gen_call_nore_check() {
-  echo "[ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check"
-}
-
 gen_shell_dot_profile () {
   local profile=""
   local init="\${HOME}/.nore/${SH}/init"
+  local bashrc=""
   case $SH in
-    bash) profile="$HOME/.bash_profile" ;;
-    zsh) profile="$HOME/.zprofile" ;;
-    sh) profile="$HOME/.profile" ;;
+    bash)
+      profile="${HOME}/.bash_profile"
+      bashrc="\${HOME}/.bashrc"
+      ;;
+    zsh) profile="${HOME}/.zprofile" ;;
+    sh) profile="${HOME}/.profile" ;;
     *) return 1 ;;
   esac
   save_as "${profile}"
@@ -139,7 +139,9 @@ $(comment_backup "${profile}")
 
 # nore
 [ -r ${init} ] && . ${init}
-
+$(if [ -n "${bashrc}" ]; then
+  echo "[ -r ${bashrc} ] && . ${bashrc}"
+fi)
 # eof
 EOF
   echo_yes_or_no $?
@@ -184,9 +186,7 @@ gen_shell_dot_rc () {
   local rc="${HOME}/.${SH}rc"
   local ss="\
 # nore
-$(if [ "bash" != "${SH}" ]; then
-  gen_call_nore_check
-fi)
+[ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check
 
 # eof
 "
@@ -272,9 +272,6 @@ inside_vim_p () {
 }
 
 [ -f \$HOME/.nore/${SH}/vars ] && . \$HOME/.nore/${SH}/vars
-$(if [ "bash" = "${SH}" ]; then
-  gen_call_nore_check
-fi)
 
 # eof
 EOF
