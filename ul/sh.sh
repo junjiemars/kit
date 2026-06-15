@@ -1647,6 +1647,14 @@ export_macports_libpath () {
   [ -z "\$p" ] || export DYLD_LIBRARY_PATH="\$p"
 }
 
+select_macports_gcc () {
+  sudo port select --set gcc "\${1:-mp-gcc15}"
+}
+
+unselect_macports_gcc () {
+  sudo port select --set gcc none
+}
+
 if [ "\$o_export_path_env" = "yes" ]; then
   export_macports_path
 fi
