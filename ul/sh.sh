@@ -220,7 +220,7 @@ EOF
   echo_yes_or_no $?
 }
 
-gen_shell_init () {
+gen_nore_init () {
   local idir="${HOME}/.nore/${SH}"
   local init="${idir}/init"
   [ -d "${idir}" ] || mkdir -p "${idir}"
@@ -288,7 +288,7 @@ EOF
   echo_yes_or_no $?
 }
 
-gen_shell_alias_env () {
+gen_nore_alias_env () {
   local f="$HOME/.nore/${SH}/alias_env"
   $printf "+ generate $f ... "
   $cat << EOF > "$f"
@@ -344,7 +344,7 @@ EOF
   echo_yes_or_no $?
 }
 
-gen_shell_sys_env () {
+gen_nore_sys_env () {
   local f="$HOME/.nore/${SH}/sys_env"
   local rc=0
   $printf "+ generate $f ... "
@@ -520,7 +520,7 @@ EOF
   echo_yes_or_no $?
 }
 
-gen_shell_vars () {
+gen_nore_vars () {
   local vdir="$HOME/.nore/${SH}"
   local f="${vdir}/vars"
   save_as "$f"
@@ -599,7 +599,7 @@ EOF
   echo_yes_or_no $?
 }
 
-gen_shell_check () {
+gen_nore_check () {
   local h="$HOME/.nore/${SH}"
   local f="${h}/check"
   $printf "+ generate $f ... "
@@ -757,7 +757,7 @@ EOF
   echo_yes_or_no $?
 }
 
-gen_shell_path_env () {
+gen_nore_path_env () {
   local f="$HOME/.nore/${SH}/path_env"
   $printf "+ generate $f ... "
   $cat << EOF > "$f"
@@ -882,7 +882,7 @@ EOF
   echo_yes_or_no $?
 }
 
-gen_shell_prompt_env () {
+gen_nore_prompt_env () {
   local f="$HOME/.nore/${SH}/prompt_env"
   $printf "+ generate $f ... "
   $cat << EOF > "$f"
@@ -952,7 +952,7 @@ EOF
   echo_yes_or_no $?
 }
 
-gen_shell_locale_env () {
+gen_nore_locale_env () {
   local f="$HOME/.nore/${SH}/locale_env"
   $printf "+ generate $f ... "
   $cat << EOF > "$f"
@@ -996,7 +996,7 @@ EOF
   echo_yes_or_no $?
 }
 
-gen_shell_completion_env () {
+gen_nore_completion_env () {
   local r="${HOME}/.nore/${SH}"
   local f="${r}/completion_env"
   $printf "+ generate $f ... "
@@ -2598,16 +2598,16 @@ gen_shell_dot_profile
 gen_shell_dot_logout
 gen_shell_dot_rc
 
-gen_shell_init
-gen_shell_vars
-gen_shell_check
+gen_nore_init
+gen_nore_vars
+gen_nore_check
 
-gen_shell_prompt_env
-gen_shell_locale_env
-gen_shell_completion_env
-gen_shell_path_env
-gen_shell_sys_env
-gen_shell_alias_env
+gen_nore_prompt_env
+gen_nore_locale_env
+gen_nore_completion_env
+gen_nore_path_env
+gen_nore_sys_env
+gen_nore_alias_env
 
 gen_c_env
 gen_font_env
