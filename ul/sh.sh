@@ -138,13 +138,10 @@ $(comment_backup "${profile}")
 #------------------------------------------------
 
 # nore
-$(if [ -n "${bashrc}" ]; then
-  if $grep -q '.bashrc' "${HOME}/.${SH}rc"; then
-    echo "[ -r ${bashrc} ] && . ${bashrc}"
-  fi
-else
-  echo "[ -r ${init} ] && . ${init}"
-fi)
+if [ "_yes" != "_\${o_nore_init}" ]; then
+  [ -r ${init} ] && . ${init}
+  o_nore_init=yes
+fi
 # eof
 EOF
   echo_yes_or_no $?
@@ -189,12 +186,11 @@ gen_shell_dot_rc () {
   local rc="${HOME}/.${SH}rc"
   local ss="\
 # nore
-$(if [ "bash" = "${SH}" ]; then
-  echo "[ -f \$HOME/.nore/${SH}/init ] && . \$HOME/.nore/${SH}/init"
-else
-  echo "[ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check"
-fi)
-
+if [ \"_yes\" != \"_\${o_nore_init}\" ]; then
+  [ -r \$HOME/.nore/${SH}/init ] && . \$HOME/.nore/${SH}/init
+  o_nore_init=yes
+fi
+[ -r \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check
 # eof
 "
   save_as "$rc"
@@ -278,11 +274,7 @@ inside_vim_p () {
   [ -n "\$VIMRUNTIME" ]
 }
 
-[ -f \$HOME/.nore/${SH}/vars ] && . \$HOME/.nore/${SH}/vars
-$(if [ "bash" = "${SH}" ]; then
-  echo "[ -f \$HOME/.nore/${SH}/check ] && . \$HOME/.nore/${SH}/check"
-fi)
-
+[ -r \$HOME/.nore/${SH}/vars ] && . \$HOME/.nore/${SH}/vars
 # eof
 EOF
   echo_yes_or_no $?
