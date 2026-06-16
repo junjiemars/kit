@@ -1648,7 +1648,12 @@ export_macports_libpath () {
 }
 
 select_macports_gcc () {
-  sudo port select --set gcc "\${1:-mp-gcc15}"
+  local v="\$1"
+  if [ -n "\${v}" ]; then
+    sudo port select --set gcc "\${v}"
+  else
+    port select --list gcc
+  fi
 }
 
 unselect_macports_gcc () {
