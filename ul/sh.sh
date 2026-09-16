@@ -1174,12 +1174,20 @@ gen_ai_env () {
 $(if on_darwin; then
   echo "list_ai_xcode_assistant_dir () {"
   echo "  local r=\"\$HOME/Library/Developer/Xcode/CodingAssistant/\""
-  echo "  if [ -d "\$r" ]; then"
+  echo "  if [ -d \"\$r\" ]; then"
   echo "    echo \"\$r\""
   echo "  else"
   echo "    return 1"
   echo "  fi"
-  echo "} # end of list_ai_favor"
+  echo "} # end of list_ai_xcode_assistant_dir"
+  echo ""
+  echo "make_ai_xcode_agent_codex_env () {"
+  echo "  if ! codex mcp get xcode &>/dev/null; then"
+  echo "    codex mcp add xcode -- xcrun mcpbridge"
+  echo "  fi"
+  echo "  echo CODEX_HOME=\"\$CODEX_HOME\""
+  echo "  echo CODEX_SQLITE_HOME=\"\$CODEX_SQLITE_HOME\""
+  echo "} # end of make_ai_xcode_agent_codex_env"
 fi)
 
 # eof
