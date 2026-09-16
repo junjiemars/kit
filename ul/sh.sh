@@ -1173,9 +1173,9 @@ gen_ai_env () {
 
 $(if on_darwin; then
   echo "list_ai_xcode_assistant_dir () {"
-  echo "  local r=\"\$HOME/Library/Developer/Xcode/CodingAssistant/\""
-  echo "  if [ -d \"\$r\" ]; then"
-  echo "    echo \"\$r\""
+  echo "  local d=\"\$HOME/Library/Developer/Xcode/CodingAssistant/\""
+  echo "  if [ -d \"\$d\" ]; then"
+  echo "    echo \"\$d\""
   echo "  else"
   echo "    return 1"
   echo "  fi"
@@ -1183,7 +1183,9 @@ $(if on_darwin; then
   echo ""
   echo "make_ai_xcode_agent_codex_env () {"
   echo "  if ! codex mcp get xcode &>/dev/null; then"
-  echo "    codex mcp add xcode -- xcrun mcpbridge"
+  echo "    # codex mcp add xcode -- xcrun mcpbridge"
+  echo "    # required: sudo port install uv"
+  echo "    codex mcp add xcode -- uvx --from mcpbridge-wrapper mcpbridge-wrapper --broker"
   echo "  fi"
   echo "  echo CODEX_HOME=\"\$CODEX_HOME\""
   echo "  echo CODEX_SQLITE_HOME=\"\$CODEX_SQLITE_HOME\""
