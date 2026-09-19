@@ -803,6 +803,11 @@ posix_path() {
   echo \${cdr}
 }
 
+check_local_dir () {
+  local d="$HOME/.local"
+  [ -d "\$d" ] && echo "\$d"
+}
+
 check_opt_dir () {
   $(if on_windows_nt; then
     echo "  if [ -d \"\/d\" ]; then"
@@ -842,10 +847,13 @@ export_path_env () {
   else
     echo "local lib_path=\"\$LD_LIBRARY_PATH\""
   fi)
+  # /opt/nore
   local opt_path="\$(check_opt_dir)"
   bin_path="\${opt_path}/bin:\${opt_path}/sbin:\$bin_path"
   lib_path="\${opt_path}/lib:\$lib_path"
-
+  # ~/.local/bin
+  local local_path="\$(check_local_dir)"
+  bin_path="\${local_path}/bin:\$bin_path"
   $(if on_windows_nt; then
     echo "bin_path=\"\$(sort_path \$bin_path)\""
   fi)
