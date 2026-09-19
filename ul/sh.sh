@@ -1191,6 +1191,8 @@ $(if on_darwin; then
   echo ""
   echo "make_ai_xcode_agent_codex_env () {"
   echo "  if ! codex mcp get xcode &>/dev/null; then"
+  echo "    # xcrun mcp-server enable --format json"
+  echo "    # xcrun mcp-server status --format json"
   echo "    # codex mcp add xcode -- xcrun mcpbridge"
   echo "    # required: sudo port install uv"
   echo "    codex mcp add xcode -- uvx --from mcpbridge-wrapper mcpbridge-wrapper --broker"
