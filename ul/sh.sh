@@ -1179,6 +1179,14 @@ gen_ai_env () {
 #   $SH <($SH_ENV)
 #------------------------------------------------
 
+make_ai_codex () {
+$(if on_windows_nt; then
+  echo "  \$env:CODEX_INSTALLER_USE_RELEASES_OPENAI_COM='false'; irm https://chatgpt.com/codex/install.ps1 | iex"
+else
+  echo "  curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_INSTALLER_USE_RELEASES_OPENAI_COM=false sh"
+  fi)
+}
+
 $(if on_darwin; then
   echo "list_ai_xcode_assistant_dir () {"
   echo "  local d=\"\$HOME/Library/Developer/Xcode/CodingAssistant/\""
