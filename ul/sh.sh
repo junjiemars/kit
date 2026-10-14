@@ -1179,14 +1179,6 @@ gen_ai_env () {
 #   $SH <($SH_ENV)
 #------------------------------------------------
 
-make_ai_codex () {
-$(if on_windows_nt; then
-  echo "  \$env:CODEX_INSTALLER_USE_RELEASES_OPENAI_COM='false'; irm https://chatgpt.com/codex/install.ps1 | iex"
-else
-  echo "  curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_INSTALLER_USE_RELEASES_OPENAI_COM=false sh"
-  fi)
-}
-
 $(if on_darwin; then
   echo "list_ai_xcode_assistant_dir () {"
   echo "  local d=\"\$HOME/Library/Developer/Xcode/CodingAssistant/\""
@@ -1211,6 +1203,35 @@ $(if on_darwin; then
   echo "  fi"
   echo "} # end of make_ai_xcode_external_codex_env"
 fi)
+
+make_ai_claude_code_env () {
+$(if on_darwin; then
+  echo "  if \$where port; then"
+  echo "    sudo port install claude-code"
+  echo "  else"
+  echo "    curl -fsSL https://claude.ai/install.sh | bash"
+  echo "  fi"
+elif on_windows; then
+  echo "  # powershell"
+  echo "  irm https://claude.ai/install.ps1 | iex"
+else
+  echo "  curl -fsSL https://claude.ai/install.sh | bash"
+fi)
+}
+
+make_ai_codex_env () {
+$(if on_darwin; then
+  echo "  if \$where port; then"
+  echo "    sudo port install codex"
+  echo "  else"
+  echo "    curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_INSTALLER_USE_RELEASES_OPENAI_COM=false sh"
+  echo "  fi"
+elif on_windows_nt; then
+  echo "  \$env:CODEX_INSTALLER_USE_RELEASES_OPENAI_COM='false'; irm https://chatgpt.com/codex/install.ps1 | iex"
+else
+  echo "  curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_INSTALLER_USE_RELEASES_OPENAI_COM=false sh"
+  fi)
+}
 
 # eof
 EOF
